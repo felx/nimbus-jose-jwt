@@ -1,0 +1,111 @@
+<project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
+
+	<property name="version" value="2.0"/>
+	<property name="version-date" value="2012-09-14"/>
+	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
+	
+	<path id="classpath.compile">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<path id="classpath.runtime">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+		<pathelement location="build"/>
+	</path>
+	
+	<target name="clean">
+		<delete dir="procsrc"/>
+		<delete dir="build"/>
+		<delete dir="javadoc"/>
+		<delete file="${jarfile}"/>
+		<delete>
+			<fileset dir="." includes="**/TEST-*"/>
+		</delete>
+	</target>
+	
+	<target name="src">
+		<mkdir dir="procsrc"/>
+		<copy todir="procsrc">
+    			<fileset dir="src"/>
+  		</copy>
+		
+		<!-- Indicate Nimbus-JOSE-JWT version number and version date -->
+		<replace dir="procsrc" token="$version$" value="${version}">
+			<include name="**/*.java"/>
+		</replace>
+		<replace dir="procsrc" token="$version-date$" value="${version-date}">
+			<include name="**/*.java"/>
+		</replace>
+	</target>
+	
+	<target name="compile" depends="src">
+		<mkdir dir="build"/>
+		<javac srcdir="procsrc" 
+		       destdir="build" 
+		       classpathref="classpath.compile"
+		       includeantruntime="false">
+			<compilerarg value="-Xlint:unchecked"/>
+			<compilerarg value="-Xlint:deprecation"/>
+		</javac>
+	</target>
+	
+	<target name="compile-tests">
+		<mkdir dir="build"/>
+		<javac srcdir="test" 
+		       destdir="build" 
+		       classpathref="classpath.compile"
+		       includeantruntime="false"/>
+	</target>
+	
+	<target name="junit" depends="compile,compile-tests">
+		<junit showoutput="true">
+			<classpath refid="classpath.runtime"/>
+			<formatter type="plain"/>
+			<!-- 
+			<test name="com.nimbusds.jwt.JWKSetTest"/>
+			<test name="com.nimbusds.jwt.PlainJWTHeaderTest"/>
+			<test name="com.nimbusds.jwt.JWSHeaderTest"/>
+			<test name="com.nimbusds.jwt.JWEHeaderTest"/>
+			<test name="com.nimbusds.jwt.JWTTest"/>
+			<test name="com.nimbusds.jwt.PlainJWTTest"/>
+			<test name="com.nimbusds.jwt.SignedJWTTest"/>
+			<test name="com.nimbusds.jwt.EncryptedJWTTest"/>
+			<test name="com.nimbusds.jwt.CompressionUtilsTest"/>
+			<test name="com.nimbusds.jwt.CryptoUtilsTest"/>
+			<test name="com.nimbusds.jwt.BASE64Test"/>
+			<test name="com.nimbusds.jwt.JWSETest"/>
+			-->
+		</junit>
+	</target>
+	
+	<target name="javadoc" depends="src">
+		<mkdir dir="javadoc"/>
+		<javadoc packagenames="com.nimbusds.jose.* com.nimbusds.jwt.*"
+	        	 sourcepath="procsrc"
+			 classpathref="classpath.compile"
+			 destdir="javadoc"
+			 author="true"
+			 version="true"
+			 use="false"
+			 linksource="true"
+			 windowtitle="Nimbus JOSE + JWT"
+			 doctitle="Nimbus JOSE + JWT">
+		</javadoc>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<jar destfile="${jarfile}" basedir="build" excludes="**/*Test.class"/>
+	</target>
+	
+	<target name="dist" depends="clean,src,compile,compile-tests,junit,javadoc,jar">
+		<delete dir="build"/>
+		<delete>
+			<fileset dir="." includes="**/TEST-*"/>
+		</delete>
+	</target>
+
+</project>
