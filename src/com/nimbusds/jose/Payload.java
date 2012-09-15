@@ -46,21 +46,19 @@ public class Payload {
 		
 		
 		/**
-		 * The payload was created from a JSON object string.
+		 * The payload was created from a string.
 		 */
 		STRING,
 		
 		
 		/**
-		 * The payload was created from a byte array representing a JSON
-		 * object string.
+		 * The payload was created from a byte array.
 		 */
 		BYTE_ARRAY,
 		
 		
 		/**
-		 * The payload was created from a Base64URL representing a JSON
-		 * object string.
+		 * The payload was created from a Base64URL-encoded object.
 		 */
 		BASE64URL;
 	}
