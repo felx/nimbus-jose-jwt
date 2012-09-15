@@ -12,7 +12,7 @@ import com.nimbusds.util.Base64URL;
 
 /**
  * Payload with JSON object, string, byte array and Base64URL views. Represents
- * the original object to be signed and / or encrypted.
+ * the original object signed with JWS or encrypted with JWE.
  *
  * <p>Non-initial views are created on demand to conserve resources.
  *
