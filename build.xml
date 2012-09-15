@@ -1,7 +1,7 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
 	<property name="version" value="2.0"/>
-	<property name="version-date" value="2012-09-14"/>
+	<property name="version-date" value="2012-09-15"/>
 	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
@@ -84,7 +84,7 @@
 	
 	<target name="javadoc" depends="src">
 		<mkdir dir="javadoc"/>
-		<javadoc packagenames="com.nimbusds.jose.* com.nimbusds.jwt.*"
+		<javadoc packagenames="com.nimbusds.jose.*, com.nimbusds.jwt.*, com.nimbusds.util.*"
 	        	 sourcepath="procsrc"
 			 classpathref="classpath.compile"
 			 destdir="javadoc"
