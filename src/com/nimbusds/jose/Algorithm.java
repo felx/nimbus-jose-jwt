@@ -30,7 +30,13 @@ public final class Algorithm implements JSONAware {
 		/**
 		 * Encryption use.
 		 */
-		ENCRYPTION;
+		ENCRYPTION,
+		
+		
+		/**
+		 * None (plain JOSE object).
+		 */
+		NONE;
 	}
 	
 	
@@ -62,7 +68,7 @@ public final class Algorithm implements JSONAware {
 	/**
 	 * No algorithm (plain JOSE object).
 	 */
-	public static final Algorithm NONE = new Algorithm("none", Use.SIGNATURE, Requirement.REQUIRED);
+	public static final Algorithm NONE = new Algorithm("none", Use.NONE, Requirement.REQUIRED);
 	
 	
 	/**
@@ -96,7 +102,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * The implementation requirement.
+	 * The implementation requirement, {@code null} if not known.
 	 */
 	private final Requirement requirement;
 	
@@ -107,8 +113,8 @@ public final class Algorithm implements JSONAware {
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 * @param use  The algorithm use. Must not be {@code null}.
-	 * @param req  The implementation requirement. Must not be
-	 *             {@code null}.
+	 * @param req  The implementation requirement, {@code null} if not 
+	 *             known.
 	 */
 	public Algorithm(final String name, final Use use, final Requirement req) {
 	
@@ -124,6 +130,18 @@ public final class Algorithm implements JSONAware {
 		this.use = use;
 		
 		requirement = req;
+	}
+	
+	
+	/**
+	 * Creates a new JOSE algorithm with the specified name and use.
+	 *
+	 * @param name The algorithm name. Must not be {@code null}.
+	 * @param use  The algorithm use. Must not be {@code null}.
+	 */
+	public Algorithm(final String name, final Use use) {
+	
+		this(name, use, null);
 	}
 	
 	
@@ -152,7 +170,7 @@ public final class Algorithm implements JSONAware {
 	/**
 	 * Gets the implementation requirement of this algorithm.
 	 *
-	 * @return The implementation requirement.
+	 * @return The implementation requirement, {@code null} if not known.
 	 */
 	public Requirement getRequirement() {
 	
