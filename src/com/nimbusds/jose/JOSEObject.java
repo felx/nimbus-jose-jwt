@@ -7,44 +7,43 @@ import com.nimbusds.util.Base64URL;
 
 
 /**
- * The base abstract class for {@link JWSObject JWS-secured} and
- * {@link JWEObject JWE-secured} objects.
+ * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-15)
+ * @version $version$ (2012-09-17)
  */
-public abstract class JWObject {
+public abstract class JOSEObject {
 
 
 	/**
-	 * The payload.
+	 * The payload (message).
 	 */
 	private Payload payload;
 	
 	
 	/**
-	 * Creates a new JWS/JWE object. The payload is not defined.
+	 * Creates a new JOSE object. The payload is not defined.
 	 */
-	protected JWObject() {
+	protected JOSEObject() {
 	
 		payload = null;
 	}
 	
 	
 	/**
-	 * Creates a new JWS/JWE object with the specified payload.
+	 * Creates a new JOSE object with the specified payload.
 	 *
 	 * @param payload The payload, {@code null} if not available (e.g for an
 	 *                encrypted JWE object).
 	 */
-	protected JWObject(final Payload payload) {
+	protected JOSEObject(final Payload payload) {
 	
 		this.payload = payload;
 	}
 	
 	
 	/**
-	 * Sets the payload of this JWE/JWE object.
+	 * Sets the payload of this JOSE object.
 	 *
 	 * @param payload The payload, {@code null} if not available (e.g. for 
 	 *                an encrypted JWE object).
@@ -56,7 +55,7 @@ public abstract class JWObject {
 	
 	
 	/**
-	 * Gets the payload of this JWS/JWE object.
+	 * Gets the payload of this JOSE object.
 	 *
 	 * @return The payload, {@code null} if not available (e.g. for an
 	 *         encrypted JWE that isn't decrypted.
@@ -68,13 +67,13 @@ public abstract class JWObject {
 	
 	
 	/**
-	 * Serialises this JWS/JWE object to its canonical compact format
+	 * Serialises this JOSE object to its canonical compact format
 	 * consisting of Base64URL-encoded parts delimited by period ('.') 
 	 * characters.
 	 *
-	 * @return The serialised JWS/JWE object.
+	 * @return The serialised JOSE object.
 	 *
-	 * @throws JOSEException If the JWS/JWE object is not in a state 
+	 * @throws JOSEException If the JOSE object is not in a state 
 	 *                       permitting serialisation.
 	 */
 	public abstract String serialize()
@@ -82,13 +81,13 @@ public abstract class JWObject {
 	
 	
 	/**
-	 * Splits a serialised JWS/JWE object into its Base64URL-encoded parts.
+	 * Splits a serialised JOSE object into its Base64URL-encoded parts.
 	 *
-	 * @param s The serialised JWS/JWE object to split. Must not be 
+	 * @param s The serialised JOSE object to split. Must not be 
 	 *          {@code null}.
 	 *
-	 * @return The JWS/JWE Base64URL-encoded parts (three for JWS objects, 
-	 *         four for JWE objects).
+	 * @return The JOSE Base64URL-encoded parts (three for plain and JWS
+	 *         objects, four for JWE objects).
 	 *
 	 * @throws JOSEException If the specified string couldn't be split into
 	 *                       three or four Base64URL-encoded parts.
@@ -137,7 +136,7 @@ public abstract class JWObject {
 
 
 	/**
-	 * Parses a JWS/JWE object.
+	 * Parses a JOSE object.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
@@ -147,7 +146,7 @@ public abstract class JWObject {
 	 * @throws JOSEException If the string couldn't be parsed to a valid 
 	 *                       JWS/JWE object.
 	 */
-	public static JWObject parse(final String s) 
+	public static JOSEObject parse(final String s) 
 		throws JOSEException {
 		
 		Base64URL[] parts = split(s);
