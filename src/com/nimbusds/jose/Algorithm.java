@@ -102,7 +102,8 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Creates a new JOSE algorithm with the specified name.
+	 * Creates a new JOSE algorithm with the specified name, use and
+	 * implementation requirement.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 * @param use  The algorithm use. Must not be {@code null}.
