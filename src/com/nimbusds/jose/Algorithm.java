@@ -7,36 +7,80 @@ import net.minidev.json.JSONObject;
 
 /**
  * Javascript Object Signing and Encryption (JOSE) algorithm name, with optional
- * usage and requirement flags. This class is immutable.
+ * use and requirement properties. This class is immutable.
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-09-15)
+ * @version $version$ (2012-09-17)
  */
 public final class Algorithm implements JSONAware {
 
 	
 	/**
+	 * Enumeration of algorithm uses.
+	 */
+	public static enum Use {
+	
+		
+		/**
+		 * Signature use.
+		 */
+		SIGNATURE,
+		
+		
+		/**
+		 * Encryption use.
+		 */
+		ENCRYPTION;
+	}
+	
+	
+	/**
+	 * Enumeration of implementation requirements.
+	 */
+	public static enum Requirement {
+	
+		
+		/**
+		 * Required implementation.
+		 */
+		REQUIRED,
+		
+		
+		/**
+		 * Recommended implementation.
+		 */
+		RECOMMENDED,
+		
+		
+		/**
+		 * Optional implementation.
+		 */
+		OPTIONAL;
+	}
+		 
+		 
+	/**
 	 * No algorithm (plain JOSE object).
 	 */
-	public static final Algorithm NONE = new Algorithm("none");
+	public static final Algorithm NONE = new Algorithm("none", Use.SIGNATURE, Requirement.REQUIRED);
 	
 	
 	/**
 	 * HMAC using SHA-256 hash algorithm (required).
 	 */
-	public static final Algorithm HS256 = new Algorithm("HS256");
+	public static final Algorithm HS256 = new Algorithm("HS256", Use.SIGNATURE, Requirement.REQUIRED);
 	
 	
 	/**
 	 * HMAC using SHA-384 hash algorithm (optional).
 	 */
-	public static final Algorithm HS384 = new Algorithm("HS384");
+	public static final Algorithm HS384 = new Algorithm("HS384", Use.SIGNATURE, Requirement.OPTIONAL);
 	
 	
 	/**
 	 * HMAC using SHA-512 hash algorithm (optional).
 	 */
-	public static final Algorithm HS512 = new Algorithm("HS512");
+	public static final Algorithm HS512 = new Algorithm("HS512", Use.SIGNATURE, Requirement.OPTIONAL);
 	
 
 	/**
@@ -46,16 +90,39 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
+	 * The algorithm use.
+	 */
+	private final Use use;
+	
+	
+	/**
+	 * The implementation requirement.
+	 */
+	private final Requirement requirement;
+	
+	
+	/**
 	 * Creates a new JOSE algorithm with the specified name.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
+	 * @param use  The algorithm use. Must not be {@code null}.
+	 * @param req  The implementation requirement. Must not be
+	 *             {@code null}.
 	 */
-	public Algorithm(final String name) {
+	public Algorithm(final String name, final Use use, final Requirement req) {
 	
 		if (name == null)
 			throw new IllegalArgumentException("The algorithm name must not be null");
 		
 		this.name = name;
+		
+		
+		if (use == null)
+			throw new IllegalArgumentException("The algorithm use must not be null");
+		
+		this.use = use;
+		
+		requirement = req;
 	}
 	
 	
@@ -67,6 +134,28 @@ public final class Algorithm implements JSONAware {
 	public String getName() {
 	
 		return name;
+	}
+	
+	
+	/**
+	 * Gets the algorithm use.
+	 *
+	 * @return The algorithm use.
+	 */
+	public Use getUse() {
+	
+		return use;
+	}
+	
+	
+	/**
+	 * Gets the implementation requirement.
+	 *
+	 * @return The implementation requirement.
+	 */
+	public Requirement getRequirement() {
+	
+		return requirement;
 	}
 	
 	
