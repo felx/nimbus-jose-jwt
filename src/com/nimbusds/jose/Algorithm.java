@@ -127,7 +127,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Gets the algorithm name.
+	 * Gets the name of this algorithm.
 	 *
 	 * @return The algorithm name.
 	 */
@@ -138,7 +138,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Gets the algorithm use.
+	 * Gets the use of this algorithm.
 	 *
 	 * @return The algorithm use.
 	 */
@@ -149,7 +149,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Gets the implementation requirement.
+	 * Gets the implementation requirement of this algorithm.
 	 *
 	 * @return The implementation requirement.
 	 */
@@ -187,7 +187,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Returns the string representation of algorithm.
+	 * Returns the string representation of this algorithm.
 	 *
 	 * @see #getName
 	 *
