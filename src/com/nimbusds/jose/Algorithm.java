@@ -10,40 +10,15 @@ import net.minidev.json.JSONObject;
  * is immutable.
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-18)
  */
 public final class Algorithm implements JSONAware {
-
-	
-	/**
-	 * Enumeration of algorithm uses.
-	 */
-	public static enum Use {
-	
-		
-		/**
-		 * Signature use.
-		 */
-		SIGNATURE,
-		
-		
-		/**
-		 * Encryption use.
-		 */
-		ENCRYPTION,
-		
-		
-		/**
-		 * None (plain JOSE object).
-		 */
-		NONE;
-	}
 		 
 		 
 	/**
 	 * No algorithm (plain JOSE object).
 	 */
-	public static final Algorithm NONE = new Algorithm("none", Use.NONE, Requirement.REQUIRED);
+	public static final Algorithm NONE = new Algorithm("none", null, Requirement.REQUIRED);
 	
 	
 	/**
@@ -71,7 +46,7 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * The algorithm use.
+	 * The algorithm use, {@code null} for none.
 	 */
 	private final Use use;
 	
@@ -87,7 +62,7 @@ public final class Algorithm implements JSONAware {
 	 * implementation requirement.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
-	 * @param use  The algorithm use. Must not be {@code null}.
+	 * @param use  The algorithm use, {@code null} for none.
 	 * @param req  The implementation requirement, {@code null} if not 
 	 *             known.
 	 */
@@ -97,10 +72,6 @@ public final class Algorithm implements JSONAware {
 			throw new IllegalArgumentException("The algorithm name must not be null");
 		
 		this.name = name;
-		
-		
-		if (use == null)
-			throw new IllegalArgumentException("The algorithm use must not be null");
 		
 		this.use = use;
 		
@@ -112,7 +83,7 @@ public final class Algorithm implements JSONAware {
 	 * Creates a new JOSE algorithm with the specified name and use.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
-	 * @param use  The algorithm use. Must not be {@code null}.
+	 * @param use  The algorithm use, {@code null} for none.
 	 */
 	public Algorithm(final String name, final Use use) {
 	
@@ -134,7 +105,7 @@ public final class Algorithm implements JSONAware {
 	/**
 	 * Gets the use of this algorithm.
 	 *
-	 * @return The algorithm use.
+	 * @return The algorithm use, {@code null} for none.
 	 */
 	public Use getUse() {
 	
