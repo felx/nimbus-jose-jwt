@@ -6,8 +6,8 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * Javascript Object Signing and Encryption (JOSE) algorithm name, with optional
- * use and requirement properties. This class is immutable.
+ * JOSE algorithm name, with optional use and requirement properties. This class 
+ * is immutable.
  *
  * @author Vladimir Dzhuvinov 
  * @version $version$ (2012-09-17)
@@ -37,31 +37,6 @@ public final class Algorithm implements JSONAware {
 		 * None (plain JOSE object).
 		 */
 		NONE;
-	}
-	
-	
-	/**
-	 * Enumeration of implementation requirements.
-	 */
-	public static enum Requirement {
-	
-		
-		/**
-		 * Required implementation.
-		 */
-		REQUIRED,
-		
-		
-		/**
-		 * Recommended implementation.
-		 */
-		RECOMMENDED,
-		
-		
-		/**
-		 * Optional implementation.
-		 */
-		OPTIONAL;
 	}
 		 
 		 
