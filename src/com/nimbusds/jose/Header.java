@@ -18,7 +18,7 @@ import com.nimbusds.util.Base64URL;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-18)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -160,12 +160,12 @@ public abstract class Header implements ReadOnlyHeader {
 	 * Parses a header JSON object from the specified string. Intended for
 	 * initial parsing of plain, JWS and JWE headers.
 	 *
-	 * @param s The string to parse, must not be {@code null}.
+	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The parsed JSON object.
+	 * @return The JSON object.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't 
-	 *                        represent a header.
+	 * @throws ParseException If the specified string couldn't be parsed to 
+	 *                        a JSON object.
 	 */
 	protected static JSONObject parseHeaderJSON(final String s)
 		throws ParseException {
@@ -221,13 +221,13 @@ public abstract class Header implements ReadOnlyHeader {
 		
 		
 		// Infer algorithm use
-		Algorithm.Use use = Algorithm.Use.SIGNATURE;
+		Use use = Use.SIGNATURE;
 		
 		if (algName.equals(Algorithm.NONE.getName()))
-			use = Algorithm.Use.NONE;
+			use = null;
 			
 		else if (json.containsKey("enc"))
-			use = Algorithm.Use.ENCRYPTION;
+			use = Use.ENCRYPTION;
 		
 		
 		return new Algorithm(algName, use);
@@ -280,21 +280,18 @@ public abstract class Header implements ReadOnlyHeader {
 		
 		
 		// Get the "alg" mandatory parameter
-		Algorithm alg = parseAlgorithm(json);
+		Use use = parseAlgorithm(json).getUse();
 		
-		switch (alg.getUse()) {
+		if (use == null) 
+			return PlainHeader.parse(json);
+			
+		else if (use == Use.SIGNATURE)
+			return JWSHeader.parse(json);
+			
+		else if (use == Use.ENCRYPTION)
+			return JWEHeader.parse(json);
 		
-			case NONE:
-				return PlainHeader.parse(json);
-				
-			case SIGNATURE:
-				return JWSHeader.parse(json);
-			
-			case ENCRYPTION:
-				return JWEHeader.parse(json);
-			
-			default:
-				throw new AssertionError("Unknown algorithm use: " + alg.getUse());
-		}
+		else
+			throw new AssertionError("Unknown algorithm use: " + use);
 	}
 }
