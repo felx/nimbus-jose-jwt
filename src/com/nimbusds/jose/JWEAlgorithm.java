@@ -105,4 +105,42 @@ public final class JWEAlgorithm extends Algorithm {
 	
 		return object instanceof JWEAlgorithm && this.toString().equals(object.toString());
 	}
+	
+	
+	/**
+	 * Parses a JWE algorithm from the specified string.
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The JWE algorithm.
+	 */
+	public static JWEAlgorithm parse(final String s) {
+	
+		if (s == RSA1_5.getName())
+			return RSA1_5;
+		
+		else if (s == RSA_OAEP.getName())
+			return RSA_OAEP;
+		
+		else if (s == A128KW.getName())
+			return A128KW;
+		
+		else if (s == A256KW.getName())
+			return A256KW;
+		
+		else if (s == DIR.getName())
+			return DIR;
+		
+		else if (s == ECDH_ES.getName())
+			return ECDH_ES;
+		
+		else if (s == ECDH_ES_A128KW.getName())
+			return ECDH_ES_A128KW;
+		
+		else if (s == ECDH_ES_A256KW.getName())
+			return ECDH_ES_A256KW;
+		
+		else
+			return new JWEAlgorithm(s);
+	}
 }

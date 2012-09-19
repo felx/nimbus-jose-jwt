@@ -267,7 +267,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		if (! (json.get("enc") instanceof String))
 			throw new ParseException("Invalid encryption method \"enc\" header parameter: Must be string");
 		
-		return new EncryptionMethod((String)json.get("enc"));
+		return EncryptionMethod.parse((String)json.get("enc"));
 	}
 	
 	
@@ -325,11 +325,11 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 				}
 				else if (name.equals("int")) {
 				
-					
+					h.setIntegrityAlgorithm(JWSAlgorithm.parse((String)value));
 				}
 				else if (name.equals("kdf")) {
 				
-					
+					h.setKeyDerivationFunction(KeyDerivationFunction.parse((String)value));
 				}
 				else if (name.equals("iv")) {
 				

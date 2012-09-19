@@ -94,4 +94,45 @@ public final class JWSAlgorithm extends Algorithm {
 	
 		return object instanceof JWSAlgorithm && this.toString().equals(object.toString());
 	}
+	
+	
+	/**
+	 * Parses a JWS algorithm from the specified string.
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The JWS algorithm.
+	 */
+	public static JWSAlgorithm parse(final String s) {
+		
+		if (s == HS256.getName())
+			return HS256;
+		
+		else if (s == HS384.getName())
+			return HS384;
+			
+		else if (s == HS512.getName())
+			return HS512;
+		
+		else if (s == RS256.getName())
+			return RS256;
+		
+		else if (s == RS384.getName())
+			return RS384;
+		
+		else if (s == RS512.getName())
+			return RS512;
+		
+		else if (s == ES256.getName())
+			return ES256;
+		
+		else if (s == ES384.getName())
+			return ES384;
+		
+		else if (s == ES512.getName())
+			return ES512;
+		
+		else
+			return new JWSAlgorithm(s);
+	}
 }

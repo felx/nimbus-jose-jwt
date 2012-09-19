@@ -68,4 +68,30 @@ public final class EncryptionMethod extends Algorithm {
 	
 		return object instanceof EncryptionMethod && this.toString().equals(object.toString());
 	}
+	
+	
+	/**
+	 * Parses an encryption method from the specified string.
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The encryption method.
+	 */
+	public static EncryptionMethod parse(final String s) {
+	
+		if (s == A128CBC.getName())
+			return A128CBC;
+		
+		else if (s == A256CBC.getName())
+			return A256CBC;
+		
+		else if (s == A128GCM.getName())
+			return A128GCM;
+		
+		else if (s == A256GCM.getName())
+			return A256GCM;
+		
+		else
+			return new EncryptionMethod(s);
+	}
 }

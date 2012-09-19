@@ -63,4 +63,27 @@ public final class KeyDerivationFunction extends Algorithm {
 	
 		return object instanceof KeyDerivationFunction && this.toString().equals(object.toString());
 	}
+	
+	
+	/**
+	 * Parses a key derivation function from the specified string.
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The key derivation function.
+	 */
+	public static KeyDerivationFunction parse(final String s) {
+	
+		if (s == CS256.getName())
+			return CS256;
+		
+		else if (s == CS384.getName())
+			return CS384;
+		
+		else if (s == CS512.getName())
+			return CS512;
+		
+		else
+			return new KeyDerivationFunction(s);
+	}
 }

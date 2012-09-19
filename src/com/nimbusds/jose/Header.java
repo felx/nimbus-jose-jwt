@@ -211,6 +211,9 @@ public abstract class Header implements ReadOnlyHeader {
 	 * header JSON object. Intended for initial parsing of plain, JWS and 
 	 * JWE headers.
 	 *
+	 * <p>The algorithm type (none, JWS or JWE) is determined by inspecting
+	 * the algorithm name for "none" and the presence of an "enc" parameter.
+	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
 	 * @return The algorithm, an instance of {@link Algorithm#NONE},
@@ -237,10 +240,10 @@ public abstract class Header implements ReadOnlyHeader {
 			return Algorithm.NONE;
 			
 		else if (json.containsKey("enc"))
-			return new JWEAlgorithm(algName);
+			return JWEAlgorithm.parse(algName);
 			
 		else
-			return new JWSAlgorithm(algName);
+			return JWSAlgorithm.parse(algName);
 	}
 	
 	
