@@ -24,10 +24,9 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	/**
 	 * Gets the encryption method ({@code enc}) parameter.
 	 *
-	 * @return The encryption method parameter, {@code null} if not 
-	 *         specified.
+	 * @return The encryption method parameter.
 	 */
-	public Algorithm getEncryptionMethod();
+	public EncryptionMethod getEncryptionMethod();
 	
 	
 	/**
@@ -44,7 +43,7 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *
 	 * @return The key derivation function, {@code null} if not specified.
 	 */
-	public Algorithm getKeyDerivationFunction();
+	public KeyDerivationFunction getKeyDerivationFunction();
 	
 	
 	/**

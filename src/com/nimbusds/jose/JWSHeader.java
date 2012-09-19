@@ -173,12 +173,12 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	/**
 	 * Parses a JWS header from the specified JSON string.
 	 *
-	 * @param s The JSON string to parse, must not be {@code null}.
+	 * @param s The JSON string to parse. Must not be {@code null}.
 	 *
 	 * @return The JWS header.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't 
-	 *                         represent a valid or supported header.
+	 * @throws ParseException If the specified JSON object string doesn't 
+	 *                        represent a valid JWS header.
 	 */
 	public static JWSHeader parse(final String s)
 		throws ParseException {
@@ -192,12 +192,12 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	/**
 	 * Parses a JWS header from the specified Base64URL.
 	 *
-	 * @param base64URL The Base64URL to parse, must not be {@code null}.
+	 * @param base64URL The Base64URL to parse. Must not be {@code null}.
 	 *
 	 * @return The JWS header.
 	 *
-	 * @throws HeaderException If the specified JSON object doesn't 
-	 *                         represent a valid or supported header.
+	 * @throws ParseException If the specified Base64URL doesn't represent a 
+	 *                        valid JWS header.
 	 */
 	public static JWSHeader parse(final Base64URL base64URL)
 		throws ParseException {

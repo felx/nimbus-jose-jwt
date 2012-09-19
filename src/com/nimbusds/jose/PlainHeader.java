@@ -144,8 +144,8 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *
 	 * @return The plain header.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't represent 
-	 *                        a valid plain header.
+	 * @throws ParseException If the specified Base64URL doesn't represent a
+	 *                        valid plain header.
 	 */
 	public static PlainHeader parse(final Base64URL base64URL)
 		throws ParseException {
