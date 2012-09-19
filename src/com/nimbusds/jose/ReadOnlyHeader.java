@@ -10,7 +10,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-19)
  */
 public interface ReadOnlyHeader {
 
@@ -24,11 +24,11 @@ public interface ReadOnlyHeader {
 	
 	
 	/**
-	 * Gets the algorithm ({@code alg}) parameter.
+	 * Gets the content type ({@code cty}) parameter.
 	 *
-	 * @return The algorithm parameter.
+	 * @return The content type parameter, {@code null} if not specified.
 	 */
-	public Algorithm getAlgorithm();
+	public String getContentType();
 	
 	
 	/**

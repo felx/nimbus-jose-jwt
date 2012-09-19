@@ -18,6 +18,7 @@ import com.nimbusds.util.Base64URL;
  * specifications:
  *
  * <ul>
+ *     <li>alg
  *     <li>jku
  *     <li>jwk
  *     <li>x5u
@@ -29,7 +30,7 @@ import com.nimbusds.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
 public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 	
@@ -69,18 +70,6 @@ public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEH
 	 * Key ID, {@code null} if not specified.
 	 */
 	private String kid;
-	
-	
-	/**
-	 * Type, {@code null} if not specified.
-	 */
-	private JOSEObjectType typ;
-	
-	
-	/**
-	 * Content type, {@code null} if not specified.
-	 */
-	private String cty;
 	
 
 	/**
@@ -210,42 +199,6 @@ public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEH
 	
 	
 	@Override
-	public JOSEObjectType getType() {
-	
-		return typ;
-	}
-	
-	
-	/**
-	 * Sets the type ({@code typ}) parameter.
-	 *
-	 * @param typ The type parameter, {@code null} if not specified.
-	 */
-	public void setType(final JOSEObjectType typ) {
-	
-		this.typ = typ;
-	}
-	
-	
-	@Override
-	public String getContentType() {
-	
-		return cty;
-	}
-	
-	
-	/**
-	 * Sets the content type ({@code cty}) parameter.
-	 *
-	 * @param cty The content type parameter, {@code null} if not specified.
-	 */
-	public void setContentType(final String cty) {
-	
-		this.cty = cty;
-	}
-	
-	
-	@Override
 	public JSONObject toJSONObject() {
 	
 		JSONObject o = super.toJSONObject();
@@ -267,12 +220,6 @@ public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEH
 		
 		if (kid != null)
 			o.put("kid", kid);
-		
-		if (typ != null)
-			o.put("typ", typ.toString());
-		
-		if (cty != null)
-			o.put("cty", cty);
 		
 		return o;
 	}

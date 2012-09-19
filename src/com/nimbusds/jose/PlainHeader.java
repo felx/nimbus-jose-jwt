@@ -14,8 +14,16 @@ import com.nimbusds.util.Base64URL;
 /**
  * Plain header.
  *
+ * <p>Supports all reserved header parameters of the plain specification:
+ *
+ * <ul>
+ *     <li>alg
+ *     <li>typ
+ *     <li>cty
+ * </ul>
+ *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
- * these will be serialised and parsed along the supported ones.
+ * these will be serialised and parsed along the reserved ones.
  *
  * <p>Example:
  *
@@ -26,7 +34,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-19)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -40,15 +48,11 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	}
 	
 	
-	/**
-	 * The algorithm of the plain header cannot be modified.
-	 *
-	 * @throws UnsupportedOperationException If this method is called.
-	 */
-	@Override
-	public void setAlgorithm(final Algorithm alg) {
 	
-		throw new UnsupportedOperationException("The plain header algorithm cannot be modified");
+	@Override
+	public Algorithm getAlgorithm() {
+	
+		return alg;
 	}
 	
 	
@@ -73,18 +77,14 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		Algorithm alg = Header.parseAlgorithm(json);
 		
 		if (alg != Algorithm.NONE)
-			throw new ParseException("The \"alg\" parameter must be \"none\"");
+			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"");
 			
 		
 		// Create a minimal header, type may be set later
 		PlainHeader h = new PlainHeader();
 		
 		
-		// Get the optional type parameter
-		h.setType(Header.parseType(json));
-		
-		
-		// Parse custom parameters
+		// Parse optional + custom parameters
 		Map<String,Object> customParameters = new HashMap<String,Object>();
 		
 		Iterator<Map.Entry<String,Object>> it = json.entrySet().iterator();
@@ -95,10 +95,20 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 			String name = entry.getKey();
 			Object value = entry.getValue();
 			
-			if (name.equals("alg") || name.equals("typ") || value == null)
+			if (value == null)
 				continue;
-			
-			customParameters.put(name, value);
+				
+			else if (name.equals("alg"))
+				continue;
+				
+			else if (name.equals("typ"))
+				h.setType(Header.parseType(json));
+				
+			else if (name.equals("cty"))
+				h.setContentType(Header.parseContentType(json));
+				
+			else
+				customParameters.put(name, value);
 		}
 		
 		if (! customParameters.isEmpty())

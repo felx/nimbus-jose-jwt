@@ -8,11 +8,19 @@ import com.nimbusds.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
 
+	/**
+	 * Gets the algorithm ({@code alg}) parameter.
+	 *
+	 * @return The algorithm parameter.
+	 */
+	public JWEAlgorithm getAlgorithm();
+	
+	
 	/**
 	 * Gets the encryption method ({@code enc}) parameter.
 	 *
@@ -28,7 +36,7 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 * @return The integrity algorithm parameter, {@code null} if not 
 	 *         specified.
 	 */
-	public Algorithm getIntegrityAlgorithm();
+	public JWSAlgorithm getIntegrityAlgorithm();
 	
 	
 	/**

@@ -35,18 +35,17 @@ import com.nimbusds.util.Base64URL;
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
  * these will be serialised and parsed along the reserved ones.
  *
- * <p>Example header of a signed JSON Web Token (JWT) using the 
- * {@link Algorithm#HS256 HMAC SHA-256 algorithm}:
+ * <p>Example header of a JSON Web Signature (JWS) object using the 
+ * {@link JWSAlgorithm#HS256 HMAC SHA-256 algorithm}:
  *
  * <pre>
  * {
- *   "typ" : "JWT",
  *   "alg" : "HS256"
  * }
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -54,33 +53,18 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	/**
 	 * Creates a new JSON Web Signature (JWS) header.
 	 *
-	 * @param alg The signature algorithm. Must not be {@code null}.
-	 *
-	 * @throws IllegalArgumentException If the algorithm use is null or not
-	 *                                  for signatures.
+	 * @param alg The JWS algorithm. Must not be {@code null}.
 	 */
-	public JWSHeader(final Algorithm alg) {
+	public JWSHeader(final JWSAlgorithm alg) {
 	
 		super(alg);
-		
-		if (alg.getUse() != Use.SIGNATURE)
-			throw new IllegalArgumentException("The JWS header algorithm must be for signatures");
 	}
 	
 	
-	/**
-	 * @inheritDoc
-	 *
-	 * @throws IllegalArgumentException If the algorithm use is null or not
-	 *                                  for signatures.
-	 */
 	@Override
-	public void setAlgorithm(final Algorithm alg) {
+	public JWSAlgorithm getAlgorithm() {
 	
-		if (alg == null || alg.getUse() != Use.SIGNATURE)
-			throw new IllegalArgumentException("The JWS header algorithm must be for signatures");
-		
-		super.setAlgorithm(alg);
+		return (JWSAlgorithm)alg;
 	}
 	
 	
@@ -104,11 +88,11 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
 		
-		if (alg.getUse() != Use.SIGNATURE)
-			throw new ParseException("The \"alg\" parameter must be for signatures");
+		if (! (alg instanceof JWSAlgorithm))
+			throw new ParseException("The algorithm \"alg\" header parameter must be for signatures");
 		
 		// Create a minimal header
-		JWSHeader h = new JWSHeader(alg);
+		JWSHeader h = new JWSHeader((JWSAlgorithm)alg);
 		
 		
 		// Parse optional + custom parameters
@@ -126,17 +110,21 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 				continue;
 			
 			try {
-				if (name.equals("typ")) {
-
-					h.setType(new JOSEObjectType((String)value));
+				if (name.equals("alg")) {
+				
+					continue;
+				}
+				else if (name.equals("typ")) {
+				
+					h.setType(Header.parseType(json));
+				}
+				else if (name.equals("cty")) {
+					
+					h.setContentType(Header.parseContentType(json));
 				}
 				else if (name.equals("jku")) {
 
 					h.setJWKURL(new URL((String)value));
-				}
-				else if (name.equals("kid")) {
-				
-					h.setKeyID((String)value);
 				}
 				else if (name.equals("jwk")) {
 				
@@ -154,6 +142,10 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 					
 					h.setX509CertChain(CommonSEHeader.parseX509CertChain((JSONArray)value));
 				}
+				else if (name.equals("kid")) {
+				
+					h.setKeyID((String)value);
+				}
 				else {
 					// Custom parameter
 					customParameters.put(name, value);
@@ -162,12 +154,12 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			} catch (ClassCastException e) {
 			
 				// All params
-				throw new ParseException("Unexpected JSON type of the \"" + name + "\" parameter", e);
+				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter", e);
 				
 			} catch (MalformedURLException e) {
 			
 				// All URL params
-				throw new ParseException("Invalid URL of the \"" + name + "\" parameter", e);
+				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter", e);
 			}
 		}
 		

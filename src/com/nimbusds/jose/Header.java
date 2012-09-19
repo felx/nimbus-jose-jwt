@@ -12,27 +12,34 @@ import com.nimbusds.util.Base64URL;
 
 
 /**
- * The base abstract class for plain, JWS and JWE headers.
+ * The base abstract class for plain, JSON Web Signature (JWS) and JSON Web 
+ * Encryption (JWE) headers.
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
 	
 	/**
-	 * The JOSE object type.
+	 * The algorithm ({@code alg}) parameter.
+	 */
+	final protected Algorithm alg;
+	
+	
+	/**
+	 * The JOSE object type ({@code typ}) parameter.
 	 */
 	private JOSEObjectType typ;
 	
 	
 	/**
-	 * The algorithm.
+	 * The content type ({@code cty}) parameter.
 	 */
-	private Algorithm alg;
+	private String cty;
 	
 	
 	/**
@@ -49,7 +56,10 @@ public abstract class Header implements ReadOnlyHeader {
 	 */
 	protected Header(final Algorithm alg) {
 	
-		setAlgorithm(alg);
+		if (alg == null)
+			throw new IllegalArgumentException("The algorithm \"alg\" header parameter must not be null");
+		
+		this.alg = alg;
 	}
 	
 	
@@ -72,23 +82,20 @@ public abstract class Header implements ReadOnlyHeader {
 	
 	
 	@Override
-	public Algorithm getAlgorithm() {
+	public String getContentType() {
 	
-		return alg;
+		return cty;
 	}
 	
 	
 	/**
-	 * Sets the algorithm ({@code alg}) parameter.
+	 * Sets the content type ({@code cty}) parameter.
 	 *
-	 * @param alg The algorithm parameter. Must not be {@code null}.
+	 * @param cty The content type parameter, {@code null} if not specified.
 	 */
-	public void setAlgorithm(final Algorithm alg) {
+	public void setContentType(final String cty) {
 	
-		if (alg == null)
-			throw new NullPointerException("The algorithm \"alg\" must not be null");
-		
-		this.alg = alg;
+		this.cty = cty;
 	}
 	
 	
@@ -127,6 +134,9 @@ public abstract class Header implements ReadOnlyHeader {
 	
 		if (typ != null)
 			o.put("typ", typ.toString());
+		
+		if (cty != null)
+			o.put("cty", cty);
 		
 		return o;
 	}
@@ -203,7 +213,8 @@ public abstract class Header implements ReadOnlyHeader {
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
-	 * @return The algorithm.
+	 * @return The algorithm, an instance of {@link Algorithm#NONE},
+	 *         {@link JWSAlgorithm} or {@link JWEAlgorithm}.
 	 *
 	 * @throws ParseException If the {@code alg} parameter couldn't be 
 	 *                        parsed.
@@ -212,25 +223,24 @@ public abstract class Header implements ReadOnlyHeader {
 		throws ParseException {
 		
 		if (! json.containsKey("alg") || json.get("alg") == null)
-			throw new ParseException("Missing \"alg\" header parameter");
+			throw new ParseException("Missing algorithm \"alg\" header parameter");
 		
 		if (! (json.get("alg") instanceof String))
-			throw new ParseException("Invalid \"alg\" header parameter: Must be string");
+			throw new ParseException("Invalid algorithm \"alg\" header parameter: Must be string");
 		
 		String algName = (String)json.get("alg");
 		
 		
-		// Infer algorithm use
-		Use use = Use.SIGNATURE;
+		// Infer algorithm type
 		
 		if (algName.equals(Algorithm.NONE.getName()))
-			use = null;
+			return Algorithm.NONE;
 			
 		else if (json.containsKey("enc"))
-			use = Use.ENCRYPTION;
-		
-		
-		return new Algorithm(algName, use);
+			return new JWEAlgorithm(algName);
+			
+		else
+			return new JWSAlgorithm(algName);
 	}
 	
 	
@@ -256,7 +266,35 @@ public abstract class Header implements ReadOnlyHeader {
 			
 		} catch (Exception e) {
 		
-			throw new ParseException("Invalid \"typ\" header parameter: " + e.getMessage(), e);
+			throw new ParseException("Invalid type \"typ\" header parameter: " + e.getMessage(), e);
+		}
+	}
+	
+	
+	/**
+	 * Parses a content type ({@code cty}) parameter from the specified 
+	 * header JSON object. Intended for initial parsing of plain, JWS and 
+	 * JWE headers.
+	 *
+	 * @param json The JSON object to parse. Must not be {@code null}.
+	 *
+	 * @return The content type, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the {@code cty} parameter couldn't be
+	 *                        parsed.
+	 */
+	protected static String parseContentType(final JSONObject json)
+		throws ParseException {
+		
+		if (! json.containsKey("cty"))
+			return null;
+		
+		try {
+			return (String)json.get("cty");
+			
+		} catch (Exception e) {
+		
+			throw new ParseException("Invalid content type \"cty\" header parameter: " + e.getMessage(), e);
 		}
 	}
 	
@@ -278,20 +316,18 @@ public abstract class Header implements ReadOnlyHeader {
 		if (json == null)
 			throw new ParseException("The JSON object must not be null");
 		
+		Algorithm alg = parseAlgorithm(json);
 		
-		// Get the "alg" mandatory parameter
-		Use use = parseAlgorithm(json).getUse();
-		
-		if (use == null) 
+		if (alg.equals(Algorithm.NONE))
 			return PlainHeader.parse(json);
 			
-		else if (use == Use.SIGNATURE)
+		else if (alg instanceof JWSAlgorithm)
 			return JWSHeader.parse(json);
 			
-		else if (use == Use.ENCRYPTION)
+		else if (alg instanceof JWEAlgorithm)
 			return JWEHeader.parse(json);
 		
 		else
-			throw new AssertionError("Unknown algorithm use: " + use);
+			throw new AssertionError("Unknown algorithm type: " + alg);
 	}
 }

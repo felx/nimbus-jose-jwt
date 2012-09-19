@@ -140,11 +140,11 @@ public abstract class JOSEObject {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The corresponding {@link PlainJWT}, {@link SignedJWT} or
-	 *         {@link EncryptedJWT} instance.
+	 * @return The corresponding {@link PlainObject}, {@link JWSObject} or
+	 *         {@link JWEObject} instance.
 	 *
 	 * @throws JOSEException If the string couldn't be parsed to a valid 
-	 *                       JWS/JWE object.
+	 *                       plain, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
 		throws JOSEException {

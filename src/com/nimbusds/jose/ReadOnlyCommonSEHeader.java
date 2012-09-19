@@ -8,10 +8,10 @@ import com.nimbusds.util.Base64URL;
 
 
 /**
- * Read-only view of a {@link CommonSEHeader common JWS/JWE header}.
+ * Read-only view of {@link CommonSEHeader common JWS/JWE header parameters}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
 public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	
@@ -68,20 +68,4 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 * @return The key ID parameter, {@code null} if not specified.
 	 */
 	public String getKeyID();
-	
-	
-	/**
-	 * Gets the type ({@code typ}) parameter.
-	 *
-	 * @return The type parameter, {@code null} if not specified.
-	 */
-	public JOSEObjectType getType();
-	
-	
-	/**
-	 * Gets the content type ({@code cty}) parameter.
-	 *
-	 * @return The content type parameter, {@code null} if not specified.
-	 */
-	public String getContentType();
 }

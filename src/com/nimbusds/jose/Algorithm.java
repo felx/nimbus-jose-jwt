@@ -6,49 +6,24 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * JOSE algorithm name, with optional use and requirement properties. This class 
- * is immutable.
+ * Algorithm name, with optional implementation requirement.
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-19)
  */
-public final class Algorithm implements JSONAware {
+public class Algorithm implements JSONAware {
 		 
 		 
 	/**
 	 * No algorithm (plain JOSE object).
 	 */
-	public static final Algorithm NONE = new Algorithm("none", null, Requirement.REQUIRED);
+	public static final Algorithm NONE = new Algorithm("none", Requirement.REQUIRED);
 	
 	
-	/**
-	 * HMAC using SHA-256 hash algorithm (required).
-	 */
-	public static final Algorithm HS256 = new Algorithm("HS256", Use.SIGNATURE, Requirement.REQUIRED);
-	
-	
-	/**
-	 * HMAC using SHA-384 hash algorithm (optional).
-	 */
-	public static final Algorithm HS384 = new Algorithm("HS384", Use.SIGNATURE, Requirement.OPTIONAL);
-	
-	
-	/**
-	 * HMAC using SHA-512 hash algorithm (optional).
-	 */
-	public static final Algorithm HS512 = new Algorithm("HS512", Use.SIGNATURE, Requirement.OPTIONAL);
-	
-
 	/**
 	 * The algorithm name.
 	 */
 	private final String name;
-	
-	
-	/**
-	 * The algorithm use, {@code null} for none.
-	 */
-	private final Use use;
 	
 	
 	/**
@@ -58,36 +33,31 @@ public final class Algorithm implements JSONAware {
 	
 	
 	/**
-	 * Creates a new JOSE algorithm with the specified name, use and
-	 * implementation requirement.
+	 * Creates a new JOSE algorithm name.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
-	 * @param use  The algorithm use, {@code null} for none.
 	 * @param req  The implementation requirement, {@code null} if not 
 	 *             known.
 	 */
-	public Algorithm(final String name, final Use use, final Requirement req) {
+	public Algorithm(final String name, final Requirement req) {
 	
 		if (name == null)
 			throw new IllegalArgumentException("The algorithm name must not be null");
 		
 		this.name = name;
 		
-		this.use = use;
-		
 		requirement = req;
 	}
 	
 	
 	/**
-	 * Creates a new JOSE algorithm with the specified name and use.
+	 * Creates a new JOSE algorithm name.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
-	 * @param use  The algorithm use, {@code null} for none.
 	 */
-	public Algorithm(final String name, final Use use) {
+	public Algorithm(final String name) {
 	
-		this(name, use, null);
+		this(name, null);
 	}
 	
 	
@@ -99,17 +69,6 @@ public final class Algorithm implements JSONAware {
 	public String getName() {
 	
 		return name;
-	}
-	
-	
-	/**
-	 * Gets the use of this algorithm.
-	 *
-	 * @return The algorithm use, {@code null} for none.
-	 */
-	public Use getUse() {
-	
-		return use;
 	}
 	
 	
