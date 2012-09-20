@@ -1,6 +1,5 @@
 /**
- * Implementation of the Javascript Object Signing and Encryption (JOSE) spec 
- * suite.
+ * Javascript Object Signing and Encryption (JOSE) spec suite implementation.
  *
  * <p>Provides representation, compact serialisation and parsing for the 
  * following JOSE objects:

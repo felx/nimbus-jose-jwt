@@ -20,6 +20,7 @@ public class JWSObject extends JOSEObject {
 	 */
 	public static enum State {
 	
+	
 		/**
 		 * The JWS object is created but not signed yet.
 		 */
@@ -250,8 +251,8 @@ public class JWSObject extends JOSEObject {
 	
 	
 	/**
-	 * Signs this JWS object using the specified JWS signer. The JWS object
-	 * must be in a {@link State#UNSIGNED unsigned} state.
+	 * Signs this JWS object with the specified signer. The JWS object must
+	 * be in a {@link State#UNSIGNED unsigned} state.
 	 *
 	 * @param signer The JWS signer. Must not be {@code null}.
 	 *
@@ -274,7 +275,7 @@ public class JWSObject extends JOSEObject {
 		
 	
 	/**
-	 * Verifies the signature of this JWS object using the specified JWS 
+	 * Verifies the signature of this JWS object with the specified  
 	 * verifier. The JWS object must be in a {@link State#SIGNED signed} 
 	 * state.
 	 *
@@ -337,7 +338,7 @@ public class JWSObject extends JOSEObject {
 	
 	/**
 	 * Parses a JWS object from the specified string in compact format. The
-	 * state of the parsed JWS object must be {@link State#SIGNED}.
+	 * parsed JWS object will be given a {@link State#SIGNED} state.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
