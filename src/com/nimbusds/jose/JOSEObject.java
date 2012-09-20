@@ -10,7 +10,7 @@ import com.nimbusds.util.Base64URL;
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-20)
  */
 public abstract class JOSEObject {
 
@@ -89,11 +89,11 @@ public abstract class JOSEObject {
 	 * @return The JOSE Base64URL-encoded parts (three for plain and JWS
 	 *         objects, four for JWE objects).
 	 *
-	 * @throws JOSEException If the specified string couldn't be split into
-	 *                       three or four Base64URL-encoded parts.
+	 * @throws ParseException If the specified string couldn't be split into
+	 *                        three or four Base64URL-encoded parts.
 	 */
 	public static Base64URL[] split(final String s)
-		throws JOSEException {
+		throws ParseException {
 		
 		// We must have at least 2 dots but no more that 3
 		
@@ -101,18 +101,18 @@ public abstract class JOSEObject {
 		final int dot1 = s.indexOf(".");
 		
 		if (dot1 == -1)
-			throw new JOSEException("Invalid serialized JWS/JWE object: Missing part delimiters");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing part delimiters");
 			
 		final int dot2 = s.indexOf(".", dot1 + 1);
 		
 		if (dot2 == -1)
-			throw new JOSEException("Invalid serialized JWS/JWE object: Missing second delimiter");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing second delimiter");
 		
 		// Third dot for JWE only
 		final int dot3 = s.indexOf(".", dot2 + 1);
 		
 		if (dot3 != -1 && s.indexOf(".", dot3 + 1) != -1)
-			throw new JOSEException("Invalid serialized JWS/JWE object: Too many part delimiters");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters");
 		
 		
 		if (dot3 == -1) {
@@ -143,34 +143,29 @@ public abstract class JOSEObject {
 	 * @return The corresponding {@link PlainObject}, {@link JWSObject} or
 	 *         {@link JWEObject} instance.
 	 *
-	 * @throws JOSEException If the string couldn't be parsed to a valid 
+	 * @throws ParseException If the string couldn't be parsed to a valid 
 	 *                       plain, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
-		throws JOSEException {
+		throws ParseException {
 		
 		Base64URL[] parts = split(s);
 		
 		JSONObject headerJSON = null;
 		
-// 		try {
-// 			headerJSON = Header.parseHeaderJSON(parts[0].decodeToString());
-// 			
-// 		} catch (HeaderException e) {
-// 		
-// 			throw new JOSEException("Invalid JWS/JWE header: " + e.getMessage(), e);
-// 		}
-// 		
-// 		JWA alg = null;
-// 		
-// 		try {
-// 			alg = Header.parseAlgorithm(headerJSON);
-// 			
-// 		} catch (HeaderException e) {
-// 		
-// 			throw new JOSEException("Missing, invalid or unsupported JWS/JWE algorithm: " + e.getMessage(), e);
-// 		}
-// 		
+ 		try {
+ 			headerJSON = Header.parseHeaderJSON(parts[0].decodeToString());
+ 			
+ 		} catch (ParseException e) {
+ 		
+ 			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), e);
+ 		}
+		
+		Algorithm alg = Header.parseAlgorithm(headerJSON);
+
+		if (alg.equals(Algorithm.NONE))
+			return PlainObject.parse(s);
+		
 // 		switch (alg.getType()) {
 // 		
 // 			case NONE:
