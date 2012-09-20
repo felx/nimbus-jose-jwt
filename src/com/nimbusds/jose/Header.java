@@ -236,12 +236,15 @@ public abstract class Header implements ReadOnlyHeader {
 		
 		// Infer algorithm type
 		
+		// Plain
 		if (algName.equals(Algorithm.NONE.getName()))
 			return Algorithm.NONE;
-			
+		
+		// JWE
 		else if (json.containsKey("enc"))
 			return JWEAlgorithm.parse(algName);
-			
+		
+		// JWS
 		else
 			return JWSAlgorithm.parse(algName);
 	}

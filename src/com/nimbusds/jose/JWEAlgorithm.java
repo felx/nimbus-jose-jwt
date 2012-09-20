@@ -2,8 +2,23 @@ package com.nimbusds.jose;
 
 
 /**
- * JSON Web Encryption (JWE) algorithm name, with optional implementation 
- * requirement. This class is immutable.
+ * JSON Web Encryption (JWE) algorithm name, represents the {@code alg} header 
+ * parameter in JWE objects. This class is immutable.
+ *
+ * <p>Includes constants for the following standard JWE algorithm names:
+ *
+ * <ul>
+ *     <li>{@link #RSA1_5}
+ *     <li>{@link #RSA_OAEP RSA-OAEP}
+ *     <li>{@link #A128KW}
+ *     <li>{@link #A256KW}
+ *     <li>{@link #DIR}
+ *     <li>{@link #ECDH_ES}
+ *     <li>{@link #ECDH_ES_A128KW}
+ *     <li>{@link #ECDH_ES_A256KW}
+ * </ul>
+ *
+ * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-19)
@@ -19,21 +34,22 @@ public final class JWEAlgorithm extends Algorithm {
 	
 	/**
 	 * RSAES using Optimal Assymetric Encryption Padding (OAEP) (RFC 3447),
-	 * with the default parameters specified by RFC 3447 in section A.2.1.
+	 * with the default parameters specified by RFC 3447 in section A.2.1
+	 * (recommended).
 	 */
 	public static final JWEAlgorithm RSA_OAEP = new JWEAlgorithm("RSA-OAEP", Requirement.RECOMMENDED);
 	
 	
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394) 
-	 * using 256 bit keys.
+	 * using 256 bit keys (recommended).
 	 */
 	public static final JWEAlgorithm A128KW = new JWEAlgorithm("A128KW", Requirement.RECOMMENDED);
 	
 	
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394) 
-	 * using 256 bit keys.
+	 * using 256 bit keys (recommended).
 	 */
 	public static final JWEAlgorithm A256KW = new JWEAlgorithm("A256KW", Requirement.RECOMMENDED);
 	
@@ -41,7 +57,7 @@ public final class JWEAlgorithm extends Algorithm {
 	/**
 	 * Direct use of a shared symmetric key as the Content Master Key (CMK)
 	 * for the block encryption step (rather than using the symmetric key to
-	 * wrap the CMK).
+	 * wrap the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm DIR = new JWEAlgorithm("dir", Requirement.RECOMMENDED);
 	
@@ -52,7 +68,7 @@ public final class JWEAlgorithm extends Algorithm {
 	 * NIST.800-56A, where the Digest Method is SHA-256 and all OtherInfo
 	 * parameters the empty bit string, with the agreed-upon key being used
 	 * directly as the Content Master Key (CMK) (rather than being used to
-	 * wrap the CMK).
+	 * wrap the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES = new JWEAlgorithm("ECDH-ES", Requirement.RECOMMENDED);
 	
@@ -61,7 +77,7 @@ public final class JWEAlgorithm extends Algorithm {
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
 	 * Master Key (CMK) with the "A128KW" function (rather than being used
-	 * directly as the CMK).
+	 * directly as the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A128KW = new JWEAlgorithm("ECDH-ES+A128KW", Requirement.RECOMMENDED);
 	
@@ -70,7 +86,7 @@ public final class JWEAlgorithm extends Algorithm {
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
 	 * Master Key (CMK) with the "A256KW" function (rather than being used
-	 * directly as the CMK).
+	 * directly as the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A256KW = new JWEAlgorithm("ECDH-ES+A256KW", Requirement.RECOMMENDED);
 	

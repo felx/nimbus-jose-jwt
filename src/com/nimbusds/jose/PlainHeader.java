@@ -17,7 +17,7 @@ import com.nimbusds.util.Base64URL;
  * <p>Supports all reserved header parameters of the plain specification:
  *
  * <ul>
- *     <li>alg
+ *     <li>alg (set to {@link Algorithm#NONE "none"}).
  *     <li>typ
  *     <li>cty
  * </ul>

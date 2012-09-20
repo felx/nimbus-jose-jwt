@@ -316,11 +316,11 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			
 			try {
 				if (name.equals("alg")) {
-				
+					// Skip
 					continue;
 				}
 				else if (name.equals("enc")) {
-				
+					// Skip
 					continue;
 				}
 				else if (name.equals("int")) {

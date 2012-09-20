@@ -6,16 +6,22 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * Algorithm name, with optional implementation requirement.
+ * The base class for algorithm names, with optional implementation requirement.
+ *
+ * <p>Includes constants for the following standard algorithm names:
+ *
+ * <ul>
+ *     <li>{@link #NONE none}
+ * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-20)
  */
 public class Algorithm implements JSONAware {
 		 
 		 
 	/**
-	 * No algorithm (plain JOSE object).
+	 * No algorithm (plain JOSE object without signature/encryption).
 	 */
 	public static final Algorithm NONE = new Algorithm("none", Requirement.REQUIRED);
 	
@@ -39,7 +45,7 @@ public class Algorithm implements JSONAware {
 	 * @param req  The implementation requirement, {@code null} if not 
 	 *             known.
 	 */
-	public Algorithm(final String name, final Requirement req) {
+	protected Algorithm(final String name, final Requirement req) {
 	
 		if (name == null)
 			throw new IllegalArgumentException("The algorithm name must not be null");
@@ -55,7 +61,7 @@ public class Algorithm implements JSONAware {
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 */
-	public Algorithm(final String name) {
+	protected Algorithm(final String name) {
 	
 		this(name, null);
 	}

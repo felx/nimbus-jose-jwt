@@ -2,8 +2,18 @@ package com.nimbusds.jose;
 
 
 /**
- * Key derivation function (KDF), used in JSON Web Encryption (JWE), with 
- * optional implementation requirement. This class is immutable.
+ * Key derivation function (KDF) name, represents the {@code kdf} header 
+ * parameter in JSON Web Encryption (JWE) objects. This class is immutable.
+ *
+ * <p>Includes constants for the following standard KDF names:
+ *
+ * <ul>
+ *     <li>{@link #CS256}
+ *     <li>{@link #CS384}
+ *     <li>{@link #CS512}
+ * </ul>
+ *
+ * <p>Additional KDF names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-19)
@@ -13,21 +23,24 @@ public final class KeyDerivationFunction extends Algorithm {
 
 	/**
 	 * Concat KDF, as defined in section 5.8.1 of NIST.800-56A, with
-	 * parameters per section 4.13, using SHA-256 as the digest method.
+	 * parameters per section 4.13, using SHA-256 as the digest method
+	 * (required).
 	 */
 	public static final KeyDerivationFunction CS256 = new KeyDerivationFunction("CS256", Requirement.REQUIRED);
 	
 	
 	/**
 	 * Concat KDF, as defined in section 5.8.1 of NIST.800-56A, with
-	 * parameters per section 4.13, using SHA-384 as the digest method.
+	 * parameters per section 4.13, using SHA-384 as the digest method
+	 * (optional).
 	 */
 	public static final KeyDerivationFunction CS384 = new KeyDerivationFunction("CS384", Requirement.OPTIONAL);
 	
 	
 	/**
 	 * Concat KDF, as defined in section 5.8.1 of NIST.800-56A, with
-	 * parameters per section 4.13, using SHA-512 as the digest method.
+	 * parameters per section 4.13, using SHA-512 as the digest method
+	 * (optional).
 	 */
 	public static final KeyDerivationFunction CS512 = new KeyDerivationFunction("CS512", Requirement.OPTIONAL);
 	

@@ -2,8 +2,24 @@ package com.nimbusds.jose;
 
 
 /**
- * JSON Web Signature (JWS) algorithm name, with optional implementation 
- * requirement. This class is immutable.
+ * JSON Web Signature (JWS) algorithm name, represents the {@code alg} header
+ * parameter in JWS objects. This class is immutable.
+ *
+ * <p>Includes constants for the following standard JWS algorithm names:
+ *
+ * <ul>
+ *     <li>{@link #HS256}
+ *     <li>{@link #HS384}
+ *     <li>{@link #HS512}
+ *     <li>{@link #RS256}
+ *     <li>{@link #RS384}
+ *     <li>{@link #RS512}
+ *     <li>{@link #ES256}
+ *     <li>{@link #ES384}
+ *     <li>{@link #ES512}
+ * </ul>
+ *
+ * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-19)
@@ -48,19 +64,19 @@ public final class JWSAlgorithm extends Algorithm {
 	
 	
 	/**
-	 * ECDSA using P-256 curve and SHA-256 hash algorithm.
+	 * ECDSA using P-256 curve and SHA-256 hash algorithm (recommended).
 	 */
 	public static final JWSAlgorithm ES256 = new JWSAlgorithm("ES256", Requirement.RECOMMENDED);
 	
 	
 	/**
-	 * ECDSA using P-384 curve and SHA-384 hash algorithm.
+	 * ECDSA using P-384 curve and SHA-384 hash algorithm (optional).
 	 */
 	public static final JWSAlgorithm ES384 = new JWSAlgorithm("ES384", Requirement.OPTIONAL);
 	
 	
 	/**
-	 * ECDSA using P-521 curve and SHA-512 hash algorithm.
+	 * ECDSA using P-521 curve and SHA-512 hash algorithm (optional).
 	 */
 	public static final JWSAlgorithm ES512 = new JWSAlgorithm("ES512", Requirement.OPTIONAL);
 	

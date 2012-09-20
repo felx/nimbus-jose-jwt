@@ -2,8 +2,19 @@ package com.nimbusds.jose;
 
 
 /**
- * Encryption method, used in JSON Web Encryption (JWE), with optional 
- * implementation requirement. This class is immutable.
+ * Encryption method name, represents the {@code enc} header parameter in JSON
+ * Web Encryption (JWE) objects. This class is immutable.
+ *
+ * <p>Includes constants for the following standard encryption method names:
+ *
+ * <ul>
+ *     <li>{@link #A128CBC}
+ *     <li>{@link #A256CBC}
+ *     <li>{@link #A128GCM}
+ *     <li>{@link #A256GCM}
+ * </ul>
+ *
+ * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-19)
@@ -13,28 +24,30 @@ public final class EncryptionMethod extends Algorithm {
 
 	/**
 	 * Advanced Encryption Standard (AES) in Cipher Block Chaining (CBC)
-	 * mode with PKCS #5 padding (NIST.800-38A) using 128 bit keys.
+	 * mode with PKCS #5 padding (NIST.800-38A) using 128 bit keys
+	 * (required).
 	 */
 	public static final EncryptionMethod A128CBC = new EncryptionMethod("A128CBC", Requirement.REQUIRED);
 	
 	
 	/**
 	 * Advanced Encryption Standard (AES) in Cipher Block Chaining (CBC)
-	 * mode with PKCS #5 padding (NIST.800-38A) using 256 bit keys.
+	 * mode with PKCS #5 padding (NIST.800-38A) using 256 bit keys
+	 * (required).
 	 */
 	public static final EncryptionMethod A256CBC = new EncryptionMethod("A256CBC", Requirement.REQUIRED);
 	
 	
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
-	 * (NIST.800-38D) using 128 bit keys.
+	 * (NIST.800-38D) using 128 bit keys (recommended).
 	 */
 	public static final EncryptionMethod A128GCM = new EncryptionMethod("A128GCM", Requirement.RECOMMENDED);
 	
 	
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
-	 * (NIST.800-38D) using 256 bit keys.
+	 * (NIST.800-38D) using 256 bit keys (recommended).
 	 */
 	public static final EncryptionMethod A256GCM = new EncryptionMethod("A256GCM", Requirement.RECOMMENDED);
 	

@@ -111,7 +111,7 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			
 			try {
 				if (name.equals("alg")) {
-				
+					// Skip
 					continue;
 				}
 				else if (name.equals("typ")) {

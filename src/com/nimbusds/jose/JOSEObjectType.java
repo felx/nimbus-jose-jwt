@@ -6,7 +6,18 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * JOSE object type. This class is immutable.
+ * JOSE object type, represents the {@code typ} header parameter in plain, JSON
+ * Web Signature (JWS) and JSON Web Encryption (JWE) objects. This class is 
+ * immutable.
+ *
+ * <p>Includes constants for the following standard types:
+ *
+ * <ul>
+ *     <li>{@link #JWS}
+ *     <li>{@link #JWE}
+ * </ul>
+ *
+ * <p>Additional types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-17)

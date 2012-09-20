@@ -6,7 +6,8 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * Compression algorithm for JSON Web Encryption (JWE).
+ * Compression algorithm name, represents the {@code zip} header parameter in 
+ * JSON Web Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-17)

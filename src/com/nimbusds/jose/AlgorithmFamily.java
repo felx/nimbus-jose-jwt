@@ -6,14 +6,17 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * JOSE algorithm family. This class is immutable.
+ * JOSE algorithm family name, represents the {@code alg} parameter in JSON
+ * Web Keys (JWKs). This class is immutable.
  *
- * <p>Includes constants for the two standard algorithm families:
+ * <p>Includes constants for the following standard algorithm families:
  *
  * <ul>
- *     <li>{@link #EC} Elliptic Curve (DSS).
- *     <li>{@link #RSA} RSA (RFC 3447).
+ *     <li>{@link #EC}
+ *     <li>{@link #RSA}
  * </ul>
+ *
+ * <p>Additional algorithm family names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-18)

@@ -33,8 +33,8 @@ public class Payload {
 
 
 	/**
-	 * Enumeration of the supported original data types used to create a 
-	 * payload.
+	 * Enumeration of the original data types used to create a 
+	 * {@link Payload}.
 	 */
 	public static enum Origin {
 	
