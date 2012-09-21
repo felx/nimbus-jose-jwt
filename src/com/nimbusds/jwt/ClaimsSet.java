@@ -2,7 +2,9 @@ package com.nimbusds.jwt;
 
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import net.minidev.json.JSONObject;
@@ -11,10 +13,27 @@ import net.minidev.json.JSONObject;
 /**
  * JSON Web Token (JWT) claims set.
  *
+ * <p>Supports all {@link #getReservedNames reserved claims} of the JWT 
+ * specification:
+ *
+ * <ul>
+ *     <li>exp - Expiration Time
+ *     <li>nbf - Not Before
+ *     <li>iat - Issued At
+ *     <li>iss - Issuer
+ *     <li>aud - Audience
+ *     <li>prn - Principal
+ *     <li>jti - JWT ID
+ *     <li>typ - Type
+ * </ul>
+ *
+ * <p>The set may also carry {@link #setCustomClaims custom claims}; these will 
+ * be serialised and parsed along the reserved ones.
+ *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-21)
  */
-public class ClaimsSet {
+public class ClaimsSet implements ReadOnlyClaimsSet {
 
 
 	/**
@@ -91,6 +110,12 @@ public class ClaimsSet {
 	
 	
 	/**
+	 * Custom claims.
+	 */
+	private Map<String,Object> customClaims = new HashMap<String,Object>();
+	
+	
+	/**
 	 * Creates a new empty claims set.
 	 */
 	public ClaimsSet() {
@@ -110,11 +135,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the expiration time ({@code exp}) claim.
-	 *
-	 * @return The expiration time, -1 if not specified.
-	 */
+	@Override
 	public long getExpirationTimeClaim() {
 	
 		return exp;
@@ -132,11 +153,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the not-before ({@code nbf}) claim.
-	 *
-	 * @return The not-before claim, -1 if not specified.
-	 */
+	@Override
 	public long getNotBeforeClaim() {
 	
 		return nbf;
@@ -154,11 +171,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the issued-at ({@code iat}) claim.
-	 *
-	 * @return The issued-at claim, -1 if not specified.
-	 */
+	@Override
 	public long getIssuedAtClaim() {
 	
 		return iat;
@@ -176,11 +189,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the issuer ({@code iss}) claim.
-	 *
-	 * @return The issuer claim, {@code null} if not specified.
-	 */
+	@Override
 	public String getIssuerClaim() {
 	
 		return iss;
@@ -198,11 +207,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the audience ({@code aud}) clam.
-	 *
-	 * @return The audience claim, {@code null} if not specified.
-	 */
+	@Override
 	public String getAudienceClaim() {
 	
 		return iss;
@@ -220,11 +225,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the principal ({@code prn}) claim.
-	 *
-	 * @return The principal claim, {@code null} if not specified.
-	 */
+	@Override
 	public String getPrincipalClaim() {
 	
 		return prn;
@@ -242,11 +243,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the JWT ID ({@code jti}) claim.
-	 *
-	 * @return The JWT ID claim, {@code null} if not specified.
-	 */
+	@Override
 	public String getJWTIDClaim() {
 	
 		return jti;
@@ -264,11 +261,7 @@ public class ClaimsSet {
 	}
 	
 	
-	/**
-	 * Gets the type ({@code typ}) claim.
-	 *
-	 * @return The type claim, {@code null} if not specified.
-	 */
+	@Override
 	public String getTypeClaim() {
 	
 		return typ;
@@ -286,11 +279,30 @@ public class ClaimsSet {
 	}
 	
 	
+	@Override 
+	public Map<String,Object> getCustomClaims() {
+	
+		return Collections.unmodifiableMap(customClaims);
+	}
+	
+	
 	/**
-	 * Returns the JSON object representation of this claims set.
+	 * Sets the custom (non-reserved) claims. The values must be 
+	 * serialisable to a JSON entity, otherwise will be ignored.
 	 *
-	 * @return The JSON object representation.
+	 * @param customClaims The custom claims, empty map or {@code null} if
+	 *                     none.
 	 */
+	public void setCustomClaims(final Map<String,Object> customClaims) {
+	
+		if (customClaims == null)
+			return;
+		
+		this.customClaims = customClaims;
+	}
+	
+	
+	@Override
 	public JSONObject toJSONObject() {
 	
 		// TBD

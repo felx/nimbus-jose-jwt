@@ -34,7 +34,8 @@ public interface ReadOnlyHeader {
 	/**
 	 * Gets the custom (non-reserved) parameters.
 	 *
-	 * @return The custom parameters, empty map if none.
+	 * @return The custom parameters, as a unmodifiable map, empty map if 
+	 *         none.
 	 */
 	public Map<String,Object> getCustomParameters();
 	

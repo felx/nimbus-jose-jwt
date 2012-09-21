@@ -1,7 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +19,7 @@ import com.nimbusds.util.Base64URL;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-21)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -102,13 +102,13 @@ public abstract class Header implements ReadOnlyHeader {
 	@Override
 	public Map<String,Object> getCustomParameters() {
 	
-		return customParameters;
+		return Collections.unmodifiableMap(customParameters);
 	}
 	
 	
 	/**
-	 * Sets the custom parameters. The values must be serialisable to a JSON
-	 * entity, otherwise will be ignored.
+	 * Sets the custom (non-reserved) parameters. The values must be 
+	 * serialisable to a JSON entity, otherwise will be ignored.
 	 *
 	 * @param customParameters The custom parameters, empty map or 
 	 *                         {@code null} if none.
