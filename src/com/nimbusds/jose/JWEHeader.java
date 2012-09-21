@@ -3,14 +3,16 @@ package com.nimbusds.jose;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
+
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 
 import com.nimbusds.util.Base64URL;
 
@@ -18,7 +20,8 @@ import com.nimbusds.util.Base64URL;
 /**
  * JSON Web Encryption (JWE) header.
  *
- * <p>Supports all reserved header parameters of the JWE specification:
+ * <p>Supports all {@link #getReservedParameterNames reserved header parameters}
+ * of the JWE specification:
  *
  * <ul>
  *     <li>alg
@@ -53,11 +56,43 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-21)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 
+	/**
+	 * The reserved parameter names.
+	 */
+	private static final Set<String> RESERVED_PARAMETER_NAMES;
+	
+	
+	/**
+	 * Initialises the reserved parameter name set.
+	 */
+	static {
+		Set<String> p = new HashSet<String>();
+		
+		p.add("alg");
+		p.add("enc");
+		p.add("int");
+		p.add("kdf");
+		p.add("iv");
+		p.add("epk");
+		p.add("zip");
+		p.add("jku");
+		p.add("jwk");
+		p.add("x5u");
+		p.add("x5t");
+		p.add("x5c");
+		p.add("kid");
+		p.add("typ");
+		p.add("cty");
+		
+		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
+	}
+	
+	
 	/**
 	 * The encryption method ({@code enc}) parameter.
 	 */
@@ -108,6 +143,17 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			throw new IllegalArgumentException("The encryption method \"enc\" parameter must not be null");
 		
 		this.enc = enc;
+	}
+	
+	
+	/**
+	 * Gets the reserved parameter names for JWE headers.
+	 *
+	 * @return The reserved parameter names, as an unmodifiable set.
+	 */
+	public static Set<String> getReservedParameterNames() {
+	
+		return RESERVED_PARAMETER_NAMES;
 	}
 	
 	
