@@ -113,9 +113,9 @@ public class JWEObject extends JOSEObject {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public JWEObject(final Base64URL firstPart, 
-	                    final Base64URL secondPart, 
-			    final Base64URL thirdPart,
-			    final Base64URL fourthPart)
+	                 final Base64URL secondPart, 
+			 final Base64URL thirdPart,
+			 final Base64URL fourthPart)
 		throws ParseException {
 	
 		if (firstPart == null)
