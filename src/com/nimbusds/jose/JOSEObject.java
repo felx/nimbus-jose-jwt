@@ -57,8 +57,8 @@ public abstract class JOSEObject {
 	/**
 	 * Gets the payload of this JOSE object.
 	 *
-	 * @return The payload, {@code null} if not available (e.g. for an
-	 *         encrypted JWE that isn't decrypted.
+	 * @return The payload, {@code null} if not available (for an encrypted
+	 *         JWE that isn't decrypted).
 	 */
 	public Payload getPayload() {
 	
