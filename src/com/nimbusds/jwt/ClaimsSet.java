@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.minidev.json.JSONObject;
+
 
 /**
  * JSON Web Token (JWT) claims set.
@@ -281,5 +283,34 @@ public class ClaimsSet {
 	public void setTypeClaim(final String typ) {
 	
 		this.typ = typ;
+	}
+	
+	
+	/**
+	 * Returns the JSON object representation of this claims set.
+	 *
+	 * @return The JSON object representation.
+	 */
+	public JSONObject toJSONObject() {
+	
+		// TBD
+		return null;
+	}
+	
+	
+	/**
+	 * Parses a JSON Web Token (JWT) claims set from the specified
+	 * JSON object representation.
+	 *
+	 * @param json The JSON object to parse. Must not be {@code null}.
+	 *
+	 * @return The claims set.
+	 *
+	 * @throws
+	 */
+	public static ClaimsSet parse(final JSONObject json) {
+	
+		// TBD
+		return null;
 	}
 }
