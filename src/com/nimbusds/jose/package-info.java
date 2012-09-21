@@ -17,6 +17,6 @@
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ ($version-date$)
  */
 package com.nimbusds.jose;
