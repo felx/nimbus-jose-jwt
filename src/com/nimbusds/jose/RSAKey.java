@@ -68,12 +68,12 @@ public final class RSAKey extends JWK {
 		super(AlgorithmFamily.RSA, use, kid);
 		
 		if (mod == null)
-			throw new NullPointerException("The modulus value must not be null");
+			throw new IllegalArgumentException("The modulus value must not be null");
 		
 		this.mod = mod;
 		
 		if (exp == null)
-			throw new NullPointerException("The exponent value must not be null");
+			throw new IllegalArgumentException("The exponent value must not be null");
 		
 		this.exp = exp;
 	}
@@ -129,9 +129,6 @@ public final class RSAKey extends JWK {
 	 */
 	public static RSAKey parse(final JSONObject jsonObject)
 		throws ParseException {
-		
-		if (jsonObject == null)
-			throw new NullPointerException("The JSON object must not be null");
 		
 		// Parse the mandatory parameters first
 		if (jsonObject.get("alg") == null || ! (jsonObject.get("alg") instanceof String))

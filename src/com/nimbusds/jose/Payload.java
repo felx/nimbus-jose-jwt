@@ -27,7 +27,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-15)
+ * @version $version$ (2012-09-22)
  */
 public class Payload {
 
@@ -185,7 +185,7 @@ public class Payload {
 	public Payload(final JSONObject json) {
 	
 		if (json == null)
-			throw new NullPointerException("The JSON object must not be null");
+			throw new IllegalArgumentException("The JSON object must not be null");
 			
 		jsonView = json;
 		
@@ -202,7 +202,7 @@ public class Payload {
 	public Payload(final String string) {
 	
 		if (string == null)
-			throw new NullPointerException("The string must not be null");
+			throw new IllegalArgumentException("The string must not be null");
 			
 		stringView = string;
 		
@@ -219,7 +219,7 @@ public class Payload {
 	public Payload(final byte[] bytes) {
 	
 		if (bytes == null)
-			throw new NullPointerException("The byte array must not be null");
+			throw new IllegalArgumentException("The byte array must not be null");
 			
 		bytesView = bytes;
 		
@@ -236,7 +236,7 @@ public class Payload {
 	public Payload(final Base64URL base64URL) {
 	
 		if (base64URL == null)
-			throw new NullPointerException("The Base64URL-encoded object must not be null");
+			throw new IllegalArgumentException("The Base64URL-encoded object must not be null");
 			
 		base64URLView = base64URL;
 		
