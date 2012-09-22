@@ -19,7 +19,7 @@ import net.minidev.json.JSONValue;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-03-30)
+ * @version $version$ (2012-09-22)
  */
 public class Base64URL implements JSONAware {
 
@@ -46,7 +46,7 @@ public class Base64URL implements JSONAware {
 	public Base64URL(final String base64URL) {
 	
 		if (base64URL == null)
-			throw new NullPointerException("The Base64URL value must not be null");
+			throw new IllegalArgumentException("The Base64URL value must not be null");
 		
 		value = base64URL;
 	}

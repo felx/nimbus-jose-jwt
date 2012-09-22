@@ -9,7 +9,7 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-03-19)
+ * @version $version$ (2012-09-22)
  */
 public class Base64 implements JSONAware {
 	
@@ -30,7 +30,7 @@ public class Base64 implements JSONAware {
 	public Base64(final String base64) {
 	
 		if (base64 == null)
-			throw new NullPointerException("The Base64 value must not be null");
+			throw new IllegalArgumentException("The Base64 value must not be null");
 		
 		value = base64;
 	}
