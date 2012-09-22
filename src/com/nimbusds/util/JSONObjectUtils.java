@@ -28,16 +28,22 @@ public class JSONObjectUtils {
 	 * <p>Specific JSON to Java entity mapping (as per JSON Smart):
 	 *
 	 * <ul>
-	 *     <li>JSON numbers mapped to {@code java.lang.Number}.
-	 *     <li>JSON integer numbers mapped to {@code long}.
-	 *     <li>JSON fraction numbers mapped to {@code double}.
+	 *     <li>JSON true|false map to {@code java.lang.Boolean}.
+	 *     <li>JSON numbers map to {@code java.lang.Number}.
+	 *         <ul>
+	 *             <li>JSON integer numbers map to {@code long}.
+	 *             <li>JSON fraction numbers map to {@code double}.
+	 *         </ul>
+	 *     <li>JSON strings map to {@code java.lang.String}.
+	 *     <li>JSON arrays map to {@code net.minidev.json.JSONArray}.
+	 *     <li>JSON objects map to {@code net.minidev.json.JSONObject}.
 	 * </ul>
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
 	 * @return The JSON object.
 	 *
-	 * @throws ParseException If the string cannot be parsed to a JSON 
+	 * @throws ParseException If the string cannot be parsed to a valid JSON 
 	 *                        object.
 	 */
 	public static JSONObject parseJSONObject(final String s) 
