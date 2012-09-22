@@ -90,7 +90,7 @@
 			 destdir="javadoc"
 			 author="true"
 			 version="true"
-			 use="false"
+			 use="true"
 			 linksource="true"
 			 windowtitle="Nimbus JOSE + JWT"
 			 doctitle="Nimbus JOSE + JWT">
