@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import java.net.URL;
 import java.util.Arrays;
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -30,7 +32,7 @@ import com.nimbusds.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-22)
  */
 public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 	
@@ -245,10 +247,10 @@ public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEH
 			Object item = jsonArray.get(i);
 			
 			if (item == null)
-				throw new ParseException("The X.509 certificate at position " + i + " must not be null");
+				throw new ParseException("The X.509 certificate at position " + i + " must not be null", 0);
 		
 			if  (! (item instanceof String))
-				throw new ParseException("The X.509 certificate must be encoded as a Base64 string");
+				throw new ParseException("The X.509 certificate must be encoded as a Base64 string", 0);
 			
 			chain[i] = new Base64((String)item);
 		}

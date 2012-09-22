@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.text.ParseException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,7 +58,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-22)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -308,10 +310,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		throws ParseException {
 		
 		if (! json.containsKey("enc") || json.get("enc") == null)
-			throw new ParseException("Missing encryption method \"enc\" header parameter");
+			throw new ParseException("Missing encryption method \"enc\" header parameter", 0);
 		
 		if (! (json.get("enc") instanceof String))
-			throw new ParseException("Invalid encryption method \"enc\" header parameter: Must be string");
+			throw new ParseException("Invalid encryption method \"enc\" header parameter: Must be string", 0);
 		
 		return EncryptionMethod.parse((String)json.get("enc"));
 	}
@@ -330,15 +332,11 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	public static JWEHeader parse(final JSONObject json)
 		throws ParseException {
 	
-		if (json == null)
-			throw new ParseException("The JSON object must not be null");
-		
-		
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
 		
 		if (! (alg instanceof JWEAlgorithm))
-			throw new ParseException("The algorithm \"alg\" header parameter must be for encryption");
+			throw new ParseException("The algorithm \"alg\" header parameter must be for encryption", 0);
 		
 		// Get the "enc" parameter
 		EncryptionMethod enc = parseEncryptionMethod(json);
@@ -429,12 +427,12 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			} catch (ClassCastException e) {
 			
 				// All params
-				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter", e);
+				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
 				
 			} catch (MalformedURLException e) {
 			
 				// All URL params
-				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter", e);
+				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
 			}
 		}
 		
@@ -476,9 +474,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 */
 	public static JWEHeader parse(final Base64URL base64URL)
 		throws ParseException {
-		
-		if (base64URL == null)
-			throw new ParseException("The Base64URL must not be null");
 			
 		return parse(base64URL.decodeToString());
 	}

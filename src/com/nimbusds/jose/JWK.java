@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
@@ -33,7 +35,7 @@ import net.minidev.json.parser.JSONParser;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-22)
  */
 public abstract class JWK implements JSONAware {
 	
@@ -188,9 +190,6 @@ public abstract class JWK implements JSONAware {
 	public static JWK parse(final String s)
 		throws ParseException {
 		
-		if (s == null)
-			throw new ParseException("The JSON object string must not be null");
-		
 		try {
 			JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
 			
@@ -198,11 +197,11 @@ public abstract class JWK implements JSONAware {
 			
 		} catch (net.minidev.json.parser.ParseException e) {
 		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), e);
+			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
 		
 		} catch (ClassCastException e) {
 		
-			throw new ParseException("The top level JSON entity must be an object");
+			throw new ParseException("The top level JSON entity must be an object", 0);
 		}
 	}
 	
@@ -221,10 +220,6 @@ public abstract class JWK implements JSONAware {
 	public static JWK parse(final JSONObject jsonObject)
 		throws ParseException {
 		
-		if (jsonObject == null)
-			throw new ParseException("The JSON object must not be null");
-		
-		
 		AlgorithmFamily alg = null;
 		
 		try {
@@ -232,11 +227,11 @@ public abstract class JWK implements JSONAware {
 			
 		} catch (ClassCastException e) {
 		
-			throw new ParseException("The algorithm family \"alg\" parameter must be a string");
+			throw new ParseException("The algorithm family \"alg\" parameter must be a string", 0);
 			
 		} catch (IllegalArgumentException e) {
 		
-			throw new ParseException("Missing algorithm family \"alg\" parameter");
+			throw new ParseException("Missing algorithm family \"alg\" parameter", 0);
 		}
 		
 		if (alg == AlgorithmFamily.EC)
@@ -246,7 +241,7 @@ public abstract class JWK implements JSONAware {
 			return RSAKey.parse(jsonObject);
 			
 		else
-			throw new ParseException("Unsupported algorithm family \"alg\" parameter: " + alg);
+			throw new ParseException("Unsupported algorithm family \"alg\" parameter: " + alg, 0);
 	}
 	
 	
@@ -267,7 +262,7 @@ public abstract class JWK implements JSONAware {
 			return null;
 
 		if (! (jsonObject.get("use") instanceof String))
-			throw new ParseException("The \"use\" parameter must be a string");
+			throw new ParseException("The \"use\" parameter must be a string", 0);
 
 		String useStr = (String)jsonObject.get("use");
 
@@ -278,7 +273,7 @@ public abstract class JWK implements JSONAware {
 			return Use.ENCRYPTION;
 		
 		else
-			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"");
+			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"", 0);
 	}
 	
 	
@@ -299,7 +294,7 @@ public abstract class JWK implements JSONAware {
 			return null;
 
 		if (! (jsonObject.get("kid") instanceof String))
-			throw new ParseException("The \"kid\" parameter must be a string");
+			throw new ParseException("The \"kid\" parameter must be a string", 0);
 
 		return (String)jsonObject.get("kid");
 	}

@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import com.nimbusds.util.Base64URL;
 
 
@@ -8,7 +10,7 @@ import com.nimbusds.util.Base64URL;
  * JSON Web Encryption (JWE) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-09-22)
  */
 public class JWEObject extends JOSEObject {
 
@@ -126,7 +128,7 @@ public class JWEObject extends JOSEObject {
 			
 		} catch (ParseException e) {
 		
-			throw new ParseException("Invalid JWE header: " + e.getMessage(), e);
+			throw new ParseException("Invalid JWE header: " + e.getMessage(), 0);
 		}
 		
 		if (secondPart == null || secondPart.toString().isEmpty())
@@ -360,7 +362,7 @@ public class JWEObject extends JOSEObject {
 		Base64URL[] parts = JOSEObject.split(s);
 		
 		if (parts.length != 4)
-			throw new ParseException("Unexpected number of Base64URL parts, must be four");
+			throw new ParseException("Unexpected number of Base64URL parts, must be four", 0);
 		
 		return new JWEObject(parts[0], parts[1], parts[2], parts[3]);
 	}

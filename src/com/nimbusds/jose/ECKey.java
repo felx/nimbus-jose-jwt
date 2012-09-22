@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
@@ -26,7 +28,7 @@ import com.nimbusds.util.Base64URL;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-22)
  */
 public final class ECKey extends JWK {
 	
@@ -258,25 +260,22 @@ public final class ECKey extends JWK {
 	public static ECKey parse(final JSONObject jsonObject)
 		throws ParseException {
 		
-		if (jsonObject == null)
-			throw new ParseException("The JSON object must not be null");
-		
 		// Parse the mandatory parameters first
 		if (jsonObject.get("alg") == null || ! (jsonObject.get("alg") instanceof String))
-			throw new ParseException("Missing, null or non-string \"alg\" parameter");
+			throw new ParseException("Missing, null or non-string \"alg\" parameter", 0);
 		
 		if (jsonObject.get("crv") == null || ! (jsonObject.get("crv") instanceof String))
-			throw new ParseException("Missing, null or non-string \"crv\" parameter");
+			throw new ParseException("Missing, null or non-string \"crv\" parameter", 0);
 
 		if (jsonObject.get("x") == null || ! (jsonObject.get("x") instanceof String))
-			throw new ParseException("Missing, null or non-string \"x\" parameter");
+			throw new ParseException("Missing, null or non-string \"x\" parameter", 0);
 					
 		if (jsonObject.get("y") == null || ! (jsonObject.get("y") instanceof String))
-			throw new ParseException("Missing, null or non-string \"y\" parameter");
+			throw new ParseException("Missing, null or non-string \"y\" parameter", 0);
 		
 		
 		if (jsonObject.get("alg") != AlgorithmFamily.EC.getName())
-			throw new ParseException("The algorithm family \"alg\" must be EC");
+			throw new ParseException("The algorithm family \"alg\" must be EC", 0);
 		
 		Curve crv = Curve.parse((String)jsonObject.get("crv"));
 		Base64URL x = new Base64URL((String)jsonObject.get("x"));

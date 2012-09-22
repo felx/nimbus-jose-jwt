@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import java.io.UnsupportedEncodingException;
 
 import com.nimbusds.util.Base64URL;
@@ -10,7 +12,7 @@ import com.nimbusds.util.Base64URL;
  * JSON Web Signature (JWS) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-09-22)
  */
 public class JWSObject extends JOSEObject {
 
@@ -123,7 +125,7 @@ public class JWSObject extends JOSEObject {
 			
 		} catch (ParseException e) {
 		
-			throw new ParseException("Invalid JWS header: " + e.getMessage(), e);
+			throw new ParseException("Invalid JWS header: " + e.getMessage(), 0);
 		}
 		
 		if (secondPart == null)
@@ -353,7 +355,7 @@ public class JWSObject extends JOSEObject {
 		Base64URL[] parts = JOSEObject.split(s);
 		
 		if (parts.length != 3)
-			throw new ParseException("Unexpected number of Base64URL parts, must be three");
+			throw new ParseException("Unexpected number of Base64URL parts, must be three", 0);
 		
 		return new JWSObject(parts[0], parts[1], parts[2]);
 	}

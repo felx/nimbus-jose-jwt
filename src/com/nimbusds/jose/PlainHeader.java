@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,7 +39,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-22)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -104,14 +106,14 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		throws ParseException {
 		
 		if (json == null)
-			throw new ParseException("The JSON object must not be null");
+			throw new ParseException("The JSON object must not be null", 0);
 		
 		
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
 		
 		if (alg != Algorithm.NONE)
-			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"");
+			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"", 0);
 			
 		
 		// Create a minimal header, type may be set later
@@ -185,7 +187,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		throws ParseException {
 		
 		if (base64URL == null)
-			throw new ParseException("The Base64URL must not be null");
+			throw new ParseException("The Base64URL must not be null", 0);
 			
 		return parse(base64URL.decodeToString());
 	}

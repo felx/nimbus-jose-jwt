@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
@@ -10,7 +12,7 @@ import com.nimbusds.util.Base64URL;
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-09-22)
  */
 public abstract class JOSEObject {
 
@@ -101,18 +103,18 @@ public abstract class JOSEObject {
 		final int dot1 = s.indexOf(".");
 		
 		if (dot1 == -1)
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing part delimiters");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing part delimiters", 0);
 			
 		final int dot2 = s.indexOf(".", dot1 + 1);
 		
 		if (dot2 == -1)
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing second delimiter");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing second delimiter", 0);
 		
 		// Third dot for JWE only
 		final int dot3 = s.indexOf(".", dot2 + 1);
 		
 		if (dot3 != -1 && s.indexOf(".", dot3 + 1) != -1)
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters");
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
 		
 		
 		if (dot3 == -1) {
@@ -158,7 +160,7 @@ public abstract class JOSEObject {
  			
  		} catch (ParseException e) {
  		
- 			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), e);
+ 			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
  		}
 		
 		Algorithm alg = Header.parseAlgorithm(headerJSON);

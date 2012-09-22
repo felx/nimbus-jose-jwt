@@ -1,7 +1,8 @@
 package com.nimbusds.jwt;
 
 
-import com.nimbusds.jose.ParseException;
+import java.text.ParseException;
+
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
@@ -13,7 +14,7 @@ import com.nimbusds.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-22)
  */
 public class SignedJWT extends JWSObject implements JWT {
 

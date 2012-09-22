@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,7 +44,7 @@ import net.minidev.json.parser.JSONParser;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-22)
  */
 public class JWKSet {
 
@@ -147,9 +149,6 @@ public class JWKSet {
 	 */
 	public static JWKSet parse(final String s)
 		throws ParseException {
-	
-		if (s == null)
-			throw new ParseException("The parsed JSON string must not be null");
 		
 		try {
 			JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
@@ -158,11 +157,11 @@ public class JWKSet {
 			
 		} catch (net.minidev.json.parser.ParseException e) {
 		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), e);
+			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
 		
 		} catch (ClassCastException e) {
 		
-			throw new ParseException("The top level JSON entity must be an object");
+			throw new ParseException("The top level JSON entity must be an object", 0);
 		}
 	}
 	
@@ -181,11 +180,8 @@ public class JWKSet {
 	public static JWKSet parse(final JSONObject json)
 		throws ParseException {
 		
-		if (json == null)
-			throw new ParseException("The JSON object must not be null");
-		
 		if (! json.containsKey("keys") || json.get("keys") == null)
-			throw new ParseException("Missing or null \"keys\" member in the top level JSON object");
+			throw new ParseException("Missing or null \"keys\" member in the top level JSON object", 0);
 		
 		JSONArray keyArray = null;
 		
@@ -194,7 +190,7 @@ public class JWKSet {
 			
 		} catch (ClassCastException e) {
 		
-			throw new ParseException("The \"keys\" member must be a JSON array");
+			throw new ParseException("The \"keys\" member must be a JSON array", 0);
 		}
 		
 		List<JWK> keys = new LinkedList<JWK>();
@@ -202,7 +198,7 @@ public class JWKSet {
 		for (int i=0; i < keyArray.size(); i++) {
 		
 			if (! (keyArray.get(i) instanceof JSONObject))
-				throw new ParseException("The \"keys\" JSON array must contain JSON objects only");
+				throw new ParseException("The \"keys\" JSON array must contain JSON objects only", 0);
 			
 			JSONObject keyJSON = (JSONObject)keyArray.get(i);
 			
@@ -211,7 +207,7 @@ public class JWKSet {
 				
 			} catch (ParseException e) {
 			
-				throw new ParseException("Invalid JWK at position " + i + ": " + e.getMessage(), e);
+				throw new ParseException("Invalid JWK at position " + i + ": " + e.getMessage(), 0);
 			}
 		}
 		

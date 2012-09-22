@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,7 @@ import com.nimbusds.util.Base64URL;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-22)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -180,9 +182,6 @@ public abstract class Header implements ReadOnlyHeader {
 	protected static JSONObject parseHeaderJSON(final String s)
 		throws ParseException {
 		
-		if (s == null)
-			throw new ParseException("The JSON string must not be null");
-		
 		JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
 		
 		JSONObject json = null;
@@ -192,15 +191,15 @@ public abstract class Header implements ReadOnlyHeader {
 			
 		} catch (net.minidev.json.parser.ParseException e) {
 		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), e);
+			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
 			
 		} catch (ClassCastException e) {
 		
-			throw new ParseException("The header must be a JSON object");
+			throw new ParseException("The header must be a JSON object", 0);
 		}
 		
 		if (json == null)
-			throw new ParseException("The header must be a JSON object");
+			throw new ParseException("The header must be a JSON object", 0);
 		
 		return json;
 	}
@@ -226,10 +225,10 @@ public abstract class Header implements ReadOnlyHeader {
 		throws ParseException {
 		
 		if (! json.containsKey("alg") || json.get("alg") == null)
-			throw new ParseException("Missing algorithm \"alg\" header parameter");
+			throw new ParseException("Missing algorithm \"alg\" header parameter", 0);
 		
 		if (! (json.get("alg") instanceof String))
-			throw new ParseException("Invalid algorithm \"alg\" header parameter: Must be string");
+			throw new ParseException("Invalid algorithm \"alg\" header parameter: Must be string", 0);
 		
 		String algName = (String)json.get("alg");
 		
@@ -272,7 +271,7 @@ public abstract class Header implements ReadOnlyHeader {
 			
 		} catch (Exception e) {
 		
-			throw new ParseException("Invalid type \"typ\" header parameter: " + e.getMessage(), e);
+			throw new ParseException("Invalid type \"typ\" header parameter: " + e.getMessage(), 0);
 		}
 	}
 	
@@ -300,7 +299,7 @@ public abstract class Header implements ReadOnlyHeader {
 			
 		} catch (Exception e) {
 		
-			throw new ParseException("Invalid content type \"cty\" header parameter: " + e.getMessage(), e);
+			throw new ParseException("Invalid content type \"cty\" header parameter: " + e.getMessage(), 0);
 		}
 	}
 	
@@ -318,9 +317,6 @@ public abstract class Header implements ReadOnlyHeader {
 	 */
 	public static Header parse(final JSONObject json)
 		throws ParseException {
-	
-		if (json == null)
-			throw new ParseException("The JSON object must not be null");
 		
 		Algorithm alg = parseAlgorithm(json);
 		

@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import com.nimbusds.util.Base64URL;
 
 
@@ -8,7 +10,7 @@ import com.nimbusds.util.Base64URL;
  * Plain JOSE object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-09-22)
  */
 public class PlainObject extends JOSEObject {
 
@@ -79,7 +81,7 @@ public class PlainObject extends JOSEObject {
 			
 		} catch (ParseException e) {
 		
-			throw new ParseException("Invalid plain header: " + e.getMessage(), e);
+			throw new ParseException("Invalid plain header: " + e.getMessage(), 0);
 		}
 		
 		if (secondPart == null)
@@ -138,7 +140,7 @@ public class PlainObject extends JOSEObject {
 		Base64URL[] parts = JOSEObject.split(s);
 		
 		if (! parts[2].toString().isEmpty())
-			throw new ParseException("Unexpected third part in the plain JOSE object");
+			throw new ParseException("Unexpected third part in the plain JOSE object", 0);
 		
 		return new PlainObject(parts[0], parts[1]);
 	}

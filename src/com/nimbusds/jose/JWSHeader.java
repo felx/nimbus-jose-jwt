@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.text.ParseException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,7 +50,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-22)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -121,15 +123,11 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	public static JWSHeader parse(final JSONObject json)
 		throws ParseException {
 	
-		if (json == null)
-			throw new ParseException("The JSON object must not be null");
-		
-		
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
 		
 		if (! (alg instanceof JWSAlgorithm))
-			throw new ParseException("The algorithm \"alg\" header parameter must be for signatures");
+			throw new ParseException("The algorithm \"alg\" header parameter must be for signatures", 0);
 		
 		// Create a minimal header
 		JWSHeader h = new JWSHeader((JWSAlgorithm)alg);
@@ -194,12 +192,12 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			} catch (ClassCastException e) {
 			
 				// All params
-				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter", e);
+				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
 				
 			} catch (MalformedURLException e) {
 			
 				// All URL params
-				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter", e);
+				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
 			}
 		}
 		
@@ -241,9 +239,6 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	 */
 	public static JWSHeader parse(final Base64URL base64URL)
 		throws ParseException {
-		
-		if (base64URL == null)
-			throw new ParseException("The Base64URL must not be null");
 			
 		return parse(base64URL.decodeToString());
 	}

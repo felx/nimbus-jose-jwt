@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
@@ -30,7 +32,7 @@ import com.nimbusds.util.Base64URL;
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2012-09-22)
  */
 public final class RSAKey extends JWK {
 	
@@ -133,17 +135,17 @@ public final class RSAKey extends JWK {
 		
 		// Parse the mandatory parameters first
 		if (jsonObject.get("alg") == null || ! (jsonObject.get("alg") instanceof String))
-			throw new ParseException("Missing, null or non-string \"alg\" parameter");
+			throw new ParseException("Missing, null or non-string \"alg\" parameter", 0);
 		
 		if (jsonObject.get("mod") == null || ! (jsonObject.get("mod") instanceof String))
-			throw new ParseException("Missing, null or non-string \"mod\" parameter");
+			throw new ParseException("Missing, null or non-string \"mod\" parameter", 0);
 					
 		if (jsonObject.get("exp") == null || ! (jsonObject.get("exp") instanceof String))
-			throw new ParseException("Missing, null or non-string \"exp\" parameter");
+			throw new ParseException("Missing, null or non-string \"exp\" parameter", 0);
 		
 		
 		if (jsonObject.get("alg") != AlgorithmFamily.RSA.getName())
-			throw new ParseException("The algorithm family \"alg\" must be RSA");
+			throw new ParseException("The algorithm family \"alg\" must be RSA", 0);
 		
 		Base64URL mod = new Base64URL((String)jsonObject.get("mod"));
 		Base64URL exp = new Base64URL((String)jsonObject.get("exp"));
