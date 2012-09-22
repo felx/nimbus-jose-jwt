@@ -9,7 +9,8 @@ import java.util.List;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
+
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -150,19 +151,7 @@ public class JWKSet {
 	public static JWKSet parse(final String s)
 		throws ParseException {
 		
-		try {
-			JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
-			
-			return parse((JSONObject)parser.parse(s));
-			
-		} catch (net.minidev.json.parser.ParseException e) {
-		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
-		
-		} catch (ClassCastException e) {
-		
-			throw new ParseException("The top level JSON entity must be an object", 0);
-		}
+		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
 	
 	
@@ -180,18 +169,7 @@ public class JWKSet {
 	public static JWKSet parse(final JSONObject json)
 		throws ParseException {
 		
-		if (! json.containsKey("keys") || json.get("keys") == null)
-			throw new ParseException("Missing or null \"keys\" member in the top level JSON object", 0);
-		
-		JSONArray keyArray = null;
-		
-		try {
-			keyArray = (JSONArray)json.get("keys");
-			
-		} catch (ClassCastException e) {
-		
-			throw new ParseException("The \"keys\" member must be a JSON array", 0);
-		}
+		JSONArray keyArray = JSONObjectUtils.getJSONArray(json, "keys");
 		
 		List<JWK> keys = new LinkedList<JWK>();
 		

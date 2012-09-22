@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
 
 import com.nimbusds.util.Base64URL;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -165,43 +165,6 @@ public abstract class Header implements ReadOnlyHeader {
 	public Base64URL toBase64URL() {
 	
 		return Base64URL.encode(toString());
-	}
-	
-	
-	/**
-	 * Parses a header JSON object from the specified string. Intended for
-	 * initial parsing of plain, JWS and JWE headers.
-	 *
-	 * @param s The string to parse. Must not be {@code null}.
-	 *
-	 * @return The JSON object.
-	 *
-	 * @throws ParseException If the specified string couldn't be parsed to 
-	 *                        a JSON object.
-	 */
-	protected static JSONObject parseHeaderJSON(final String s)
-		throws ParseException {
-		
-		JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
-		
-		JSONObject json = null;
-		
-		try {
-			json = (JSONObject)parser.parse(s);
-			
-		} catch (net.minidev.json.parser.ParseException e) {
-		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
-			
-		} catch (ClassCastException e) {
-		
-			throw new ParseException("The header must be a JSON object", 0);
-		}
-		
-		if (json == null)
-			throw new ParseException("The header must be a JSON object", 0);
-		
-		return json;
 	}
 	
 	

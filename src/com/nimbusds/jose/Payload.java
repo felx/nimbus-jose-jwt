@@ -3,11 +3,12 @@ package com.nimbusds.jose;
 
 import java.io.UnsupportedEncodingException;
 
+import java.text.ParseException;
+
 import net.minidev.json.JSONObject;
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
 
 import com.nimbusds.util.Base64URL;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -99,35 +100,6 @@ public class Payload {
 	 * The Base64URL view.
 	 */
 	private Base64URL base64URLView = null;
-	
-	
-	/**
-	 * Parses the specified JSON object.
-	 *
-	 * @param s The string representation of the JSON object. May be
-	 *          {@code null}.
-	 *
-	 * @return The parsed JSON object, {@code null} if parsing failed.
-	 */
-	private static JSONObject parseJSONObject(final String s) {
-	
-		if (s == null)
-			return null;
-	
-		try {
-			JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
-				
-			return (JSONObject)parser.parse(s);
-			
-		} catch (ParseException e) {
-			
-			return null;
-			
-		} catch (ClassCastException e) {
-		
-			return null;
-		}
-	}
 	
 	
 	/**
@@ -269,17 +241,37 @@ public class Payload {
 		// Convert
 		if (stringView != null) {
 		
-			jsonView = parseJSONObject(stringView);
+			try {
+				jsonView = JSONObjectUtils.parseJSONObject(stringView);
+				
+			} catch (ParseException e) {
+			
+				// jsonView remains null
+			}
 		}
 		else if (bytesView != null) {
 		
 			stringView = byteArrayToString(bytesView);
-			jsonView = parseJSONObject(stringView);
+			
+			try {
+				jsonView = JSONObjectUtils.parseJSONObject(stringView);
+				
+			} catch (ParseException e) {
+			
+				// jsonView remains null
+			}
 		}
 		else if (base64URLView != null) {
 			
 			stringView = base64URLView.decodeToString();
-			jsonView = parseJSONObject(stringView);
+			
+			try {
+				jsonView = JSONObjectUtils.parseJSONObject(stringView);
+				
+			} catch (ParseException e) {
+			
+				// jsonView remains null
+			}
 		}
 		
 		return jsonView;

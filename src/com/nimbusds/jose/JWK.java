@@ -6,7 +6,7 @@ import java.text.ParseException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
-import net.minidev.json.parser.JSONParser;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -190,19 +190,7 @@ public abstract class JWK implements JSONAware {
 	public static JWK parse(final String s)
 		throws ParseException {
 		
-		try {
-			JSONParser parser = new JSONParser(JSONParser.MODE_RFC4627);
-			
-			return parse((JSONObject)parser.parse(s));
-			
-		} catch (net.minidev.json.parser.ParseException e) {
-		
-			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
-		
-		} catch (ClassCastException e) {
-		
-			throw new ParseException("The top level JSON entity must be an object", 0);
-		}
+		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
 	
 	
@@ -220,19 +208,7 @@ public abstract class JWK implements JSONAware {
 	public static JWK parse(final JSONObject jsonObject)
 		throws ParseException {
 		
-		AlgorithmFamily alg = null;
-		
-		try {
-			alg = AlgorithmFamily.parse((String)jsonObject.get("alg"));
-			
-		} catch (ClassCastException e) {
-		
-			throw new ParseException("The algorithm family \"alg\" parameter must be a string", 0);
-			
-		} catch (IllegalArgumentException e) {
-		
-			throw new ParseException("Missing algorithm family \"alg\" parameter", 0);
-		}
+		AlgorithmFamily alg = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
 		
 		if (alg == AlgorithmFamily.EC)
 			return ECKey.parse(jsonObject);
@@ -261,10 +237,7 @@ public abstract class JWK implements JSONAware {
 		if (jsonObject.get("use") == null)
 			return null;
 
-		if (! (jsonObject.get("use") instanceof String))
-			throw new ParseException("The \"use\" parameter must be a string", 0);
-
-		String useStr = (String)jsonObject.get("use");
+		String useStr = JSONObjectUtils.getString(jsonObject, "use");
 
 		if (useStr.equals("sig"))
 			return Use.SIGNATURE;
@@ -293,9 +266,6 @@ public abstract class JWK implements JSONAware {
 		if (jsonObject.get("kid") == null)
 			return null;
 
-		if (! (jsonObject.get("kid") instanceof String))
-			throw new ParseException("The \"kid\" parameter must be a string", 0);
-
-		return (String)jsonObject.get("kid");
+		return JSONObjectUtils.getString(jsonObject, "kid");
 	}
 }
