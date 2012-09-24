@@ -10,7 +10,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-24)
  */
 public interface ReadOnlyHeader {
 
@@ -29,6 +29,17 @@ public interface ReadOnlyHeader {
 	 * @return The content type parameter, {@code null} if not specified.
 	 */
 	public String getContentType();
+	
+	
+	/**
+	 * Gets a custom (non-reserved) parameter.
+	 *
+	 * @param name The name of the custom parameter. Must not be 
+	 *             {@code null}.
+	 *
+	 * @return The custom parameter, {@code null} if not specified.
+	 */
+	public Object getCustomParameter(final String name);
 	
 	
 	/**

@@ -94,6 +94,20 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	
 	
 	/**
+	 * @throws IllegalArgumentException If the specified parameter name
+	 *                                  matches a reserved parameter name.
+	 */
+	@Override
+	public void setCustomParameter(final String name, final Object value) {
+	
+		if (getReservedParameterNames().contains(name))
+			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
+		
+		super.setCustomParameter(name, value);
+	}
+	
+	
+	/**
 	 * Parses a plain header from the specified JSON object.
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
@@ -122,34 +136,24 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		
 		
 		// Parse optional + custom parameters
-		Map<String,Object> customParameters = new HashMap<String,Object>();
-		
-		Iterator<Map.Entry<String,Object>> it = json.entrySet().iterator();
+		Iterator<String> it = json.keySet().iterator();
 		
 		while (it.hasNext()) {
 		
-			Map.Entry<String,Object> entry = it.next();
-			String name = entry.getKey();
-			Object value = entry.getValue();
-			
-			if (value == null)
-				continue;
+			String name = it.next();
 				
-			else if (name.equals("alg"))
+			if (name.equals("alg"))
 				continue;
 				
 			else if (name.equals("typ"))
-				h.setType(Header.parseType(json));
+				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
 				
 			else if (name.equals("cty"))
-				h.setContentType(Header.parseContentType(json));
+				h.setContentType(JSONObjectUtils.getString(json, name));
 				
 			else
-				customParameters.put(name, value);
+				h.setCustomParameter(name, json.get(name));
 		}
-		
-		if (! customParameters.isEmpty())
-			h.setCustomParameters(customParameters);
 		
 		return h;
 	}

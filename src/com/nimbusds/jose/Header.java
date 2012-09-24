@@ -102,6 +102,29 @@ public abstract class Header implements ReadOnlyHeader {
 	
 	
 	@Override
+	public Object getCustomParameter(final String name) {
+		
+		return customParameters.get(name);
+	}
+	
+	
+	/**
+	 * Sets a custom (non-reserved) parameter. Callers and extending classes
+	 * should ensure the parameter name doesn't match a reserved parameter 
+	 * name.
+	 *
+	 * @param name  The name of the custom parameter. Must not match a 
+	 *              reserved parameter name and must not be {@code null}.
+	 * @param value The value of the custom parameter, should map to a valid
+	 *              JSON entity, {@code null} if not specified.
+	 */
+	protected void setCustomParameter(final String name, final Object value) {
+	
+		customParameters.put(name, value);
+	}
+	
+	
+	@Override
 	public Map<String,Object> getCustomParameters() {
 	
 		return Collections.unmodifiableMap(customParameters);
@@ -209,61 +232,6 @@ public abstract class Header implements ReadOnlyHeader {
 		// JWS
 		else
 			return JWSAlgorithm.parse(algName);
-	}
-	
-	
-	/**
-	 * Parses a type ({@code typ}) parameter from the specified header JSON
-	 * object. Intended for initial parsing of plain, JWS and JWE headers.
-	 *
-	 * @param json The JSON object to parse. Must not be {@code null}.
-	 *
-	 * @return The type, {@code null} if not specified.
-	 *
-	 * @throws ParseException If the {@code typ} parameter couldn't be
-	 *                        parsed.
-	 */
-	protected static JOSEObjectType parseType(final JSONObject json)
-		throws ParseException {
-		
-		if (! json.containsKey("typ"))
-			return null;
-		
-		try {
-			return new JOSEObjectType((String)json.get("typ"));
-			
-		} catch (Exception e) {
-		
-			throw new ParseException("Invalid type \"typ\" header parameter: " + e.getMessage(), 0);
-		}
-	}
-	
-	
-	/**
-	 * Parses a content type ({@code cty}) parameter from the specified 
-	 * header JSON object. Intended for initial parsing of plain, JWS and 
-	 * JWE headers.
-	 *
-	 * @param json The JSON object to parse. Must not be {@code null}.
-	 *
-	 * @return The content type, {@code null} if not specified.
-	 *
-	 * @throws ParseException If the {@code cty} parameter couldn't be
-	 *                        parsed.
-	 */
-	protected static String parseContentType(final JSONObject json)
-		throws ParseException {
-		
-		if (! json.containsKey("cty"))
-			return null;
-		
-		try {
-			return (String)json.get("cty");
-			
-		} catch (Exception e) {
-		
-			throw new ParseException("Invalid content type \"cty\" header parameter: " + e.getMessage(), 0);
-		}
 	}
 	
 	

@@ -112,6 +112,20 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	
 	
 	/**
+	 * @throws IllegalArgumentException If the specified parameter name
+	 *                                  matches a reserved parameter name.
+	 */
+	@Override
+	public void setCustomParameter(final String name, final Object value) {
+	
+		if (getReservedParameterNames().contains(name))
+			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
+		
+		super.setCustomParameter(name, value);
+	}
+	
+	
+	/**
 	 * Parses a JWS header from the specified JSON object.
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
@@ -135,75 +149,42 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 		
 		
 		// Parse optional + custom parameters
-		Map<String,Object> customParameters = new HashMap<String,Object>();
-		
-		Iterator<Map.Entry<String,Object>> it = json.entrySet().iterator();
+		Iterator<String> it = json.keySet().iterator();
 		
 		while (it.hasNext()) {
 		
-			Map.Entry<String,Object> entry = it.next();
-			String name = entry.getKey();
-			Object value = entry.getValue();
+			String name = it.next();
 			
-			if (value == null)
-				continue;
+			if (name.equals("alg"))
+				continue; // Skip
 			
-			try {
-				if (name.equals("alg")) {
-					// Skip
-					continue;
-				}
-				else if (name.equals("typ")) {
-				
-					h.setType(Header.parseType(json));
-				}
-				else if (name.equals("cty")) {
-					
-					h.setContentType(Header.parseContentType(json));
-				}
-				else if (name.equals("jku")) {
-
-					h.setJWKURL(new URL((String)value));
-				}
-				else if (name.equals("jwk")) {
-				
-					h.setJWK(JWK.parse((JSONObject)value));
-				}
-				else if (name.equals("x5u")) {
-
-					h.setX509CertURL(new URL((String)value));
-				}
-				else if (name.equals("x5t")) {
-
-					h.setX509CertThumbprint(new Base64URL((String)value));
-				}
-				else if (name.equals("x5c")) {
-					
-					h.setX509CertChain(CommonSEHeader.parseX509CertChain((JSONArray)value));
-				}
-				else if (name.equals("kid")) {
-				
-					h.setKeyID((String)value);
-				}
-				else {
-					// Custom parameter
-					customParameters.put(name, value);
-				}
+			else if (name.equals("typ"))
+				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
 			
-			} catch (ClassCastException e) {
+			else if (name.equals("cty"))
+				h.setContentType(JSONObjectUtils.getString(json, name));
 			
-				// All params
-				throw new ParseException("Unexpected JSON type of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
-				
-			} catch (MalformedURLException e) {
+			else if (name.equals("jku"))
+				h.setJWKURL(JSONObjectUtils.getURL(json, name));
 			
-				// All URL params
-				throw new ParseException("Invalid URL of the \"" + name + "\" header parameter: " + e.getMessage(), 0);
-			}
+			else if (name.equals("jwk"))
+				h.setJWK(JWK.parse(JSONObjectUtils.getJSONObject(json, name)));
+			
+			else if (name.equals("x5u"))
+				h.setX509CertURL(JSONObjectUtils.getURL(json, name));
+			
+			else if (name.equals("x5t"))
+				h.setX509CertThumbprint(new Base64URL(JSONObjectUtils.getString(json, name)));
+			
+			else if (name.equals("x5c"))
+				h.setX509CertChain(CommonSEHeader.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
+			
+			else if (name.equals("kid"))
+				h.setKeyID(JSONObjectUtils.getString(json, name));
+			
+			else
+				h.setCustomParameter(name, json.get(name));
 		}
-		
-		if (! customParameters.isEmpty())
-			h.setCustomParameters(customParameters);
 		
 		return h;
 	}
