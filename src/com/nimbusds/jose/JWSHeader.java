@@ -17,6 +17,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -50,7 +51,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-24)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -221,9 +222,9 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	public static JWSHeader parse(final String s)
 		throws ParseException {
 		
-		JSONObject json = Header.parseHeaderJSON(s);
+		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
 		
-		return parse(json);
+		return parse(jsonObject);
 	}
 	
 	

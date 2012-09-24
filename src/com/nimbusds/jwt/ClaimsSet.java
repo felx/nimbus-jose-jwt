@@ -1,13 +1,18 @@
 package com.nimbusds.jwt;
 
 
+import java.text.ParseException;
+
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import net.minidev.json.JSONObject;
+
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -31,7 +36,7 @@ import net.minidev.json.JSONObject;
  * be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-24)
  */
 public class ClaimsSet implements ReadOnlyClaimsSet {
 
@@ -279,6 +284,32 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	}
 	
 	
+	@Override
+	public Object getCustomClaim(final String name) {
+	
+		return customClaims.get(name);
+	}
+	
+	
+	/**
+	 * Sets a custom (public or private) claim.
+	 *
+	 * @param name  The name of the custom claim. Must not be {@code null}.
+	 * @param value The value of the custom claim, should map to a valid 
+	 *              JSON entity, {@code null} if not specified.
+	 *
+	 * @throws IllegalArgumentException If the specified custom claim name
+	 *                                  matches a reserved claim name.
+	 */
+	public void setCustomClaim(final String name, final Object value) {
+	
+		if (getReservedNames().contains(name))
+			throw new IllegalArgumentException("The claim name \"" + name + "\" matches a reserved name");
+		
+		customClaims.put(name, value);
+	}
+	
+	
 	@Override 
 	public Map<String,Object> getCustomClaims() {
 	
@@ -305,8 +336,33 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	@Override
 	public JSONObject toJSONObject() {
 	
-		// TBD
-		return null;
+		JSONObject o = new JSONObject(customClaims);
+		
+		if (exp > -1)
+			o.put("exp", exp);
+		
+		if (nbf > -1)
+			o.put("nbf", nbf);
+			
+		if (iat > -1)
+			o.put("iat", iat);
+		
+		if (iss != null)
+			o.put("iss", iss);
+		
+		if (aud != null)
+			o.put("aud", aud);
+		
+		if (prn != null)
+			o.put("prn", prn);
+		
+		if (jti != null)
+			o.put("jti", jti);
+		
+		if (typ != null)
+			o.put("typ", typ);
+		
+		return o;
 	}
 	
 	
@@ -318,11 +374,51 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	 *
 	 * @return The claims set.
 	 *
-	 * @throws
+	 * @throws ParseException If the specified JSON object doesn't represent
+	 *                        a valid JWT claims set.
 	 */
-	public static ClaimsSet parse(final JSONObject json) {
+	public static ClaimsSet parse(final JSONObject json)
+		throws ParseException {
 	
-		// TBD
-		return null;
+		ClaimsSet cs = new ClaimsSet();
+	
+		// Parse reserved + custom params
+		
+		Iterator<String> it = json.keySet().iterator();
+		
+		while (it.hasNext()) {
+			
+			String name = it.next();
+			
+			if (name.equals("exp"))
+				cs.setExpirationTimeClaim(JSONObjectUtils.getLong(json, "exp"));
+			
+			else if (name.equals("nbf"))
+				cs.setNotBeforeClaim(JSONObjectUtils.getLong(json, "nbf"));
+			
+			else if (name.equals("iat"))
+				cs.setIssuedAtClaim(JSONObjectUtils.getLong(json, "iat"));
+				
+			else if (name.equals("iss"))
+				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
+				
+			else if (name.equals("aud"))
+				cs.setAudienceClaim(JSONObjectUtils.getString(json, "aud"));
+				
+			else if (name.equals("prn"))
+				cs.setPrincipalClaim(JSONObjectUtils.getString(json, "prn"));
+			
+			else if (name.equals("jti"))
+				cs.setJWTIDClaim(JSONObjectUtils.getString(json, "jti"));
+			
+			else if (name.equals("typ"))
+				cs.setTypeClaim(JSONObjectUtils.getString(json, "typ"));
+			
+			else
+				cs.setCustomClaim(name, json.get(name));
+		}
+		
+		
+		return cs;
 	}
 }

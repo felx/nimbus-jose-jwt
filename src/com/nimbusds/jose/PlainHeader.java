@@ -13,6 +13,7 @@ import java.util.Set;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
@@ -39,7 +40,7 @@ import com.nimbusds.util.Base64URL;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-24)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -167,9 +168,9 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	public static PlainHeader parse(final String s)
 		throws ParseException {
 		
-		JSONObject json = Header.parseHeaderJSON(s);
+		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
 		
-		return parse(json);
+		return parse(jsonObject);
 	}
 	
 	

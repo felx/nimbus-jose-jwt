@@ -10,7 +10,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link ClaimsSet}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-24)
  */
 public interface ReadOnlyClaimsSet {
 
@@ -77,6 +77,16 @@ public interface ReadOnlyClaimsSet {
 	 * @return The type claim, {@code null} if not specified.
 	 */
 	public String getTypeClaim();
+	
+	
+	/**
+	 * Gets a custom (public or private) claim.
+	 * 
+	 * @param name The name of the custom claim. Must not be {@code null}.
+	 *
+	 * @return The value of the custom claim, {@code null} if not specified.
+	 */
+	public Object getCustomClaim(final String name);
 	
 	
 	/**

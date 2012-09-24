@@ -6,13 +6,14 @@ import java.text.ParseException;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.util.Base64URL;
+import com.nimbusds.util.JSONObjectUtils;
 
 
 /**
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-24)
  */
 public abstract class JOSEObject {
 
@@ -153,17 +154,17 @@ public abstract class JOSEObject {
 		
 		Base64URL[] parts = split(s);
 		
-		JSONObject headerJSON = null;
+		JSONObject jsonObject = null;
 		
  		try {
- 			headerJSON = Header.parseHeaderJSON(parts[0].decodeToString());
+ 			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
  			
  		} catch (ParseException e) {
  		
  			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
  		}
 		
-		Algorithm alg = Header.parseAlgorithm(headerJSON);
+		Algorithm alg = Header.parseAlgorithm(jsonObject);
 
 		if (alg.equals(Algorithm.NONE))
 			return PlainObject.parse(s);
