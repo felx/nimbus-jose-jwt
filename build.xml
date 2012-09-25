@@ -65,26 +65,13 @@
 		<junit showoutput="true">
 			<classpath refid="classpath.runtime"/>
 			<formatter type="plain"/>
-			<!-- 
-			<test name="com.nimbusds.jwt.JWKSetTest"/>
-			<test name="com.nimbusds.jwt.PlainJWTHeaderTest"/>
-			<test name="com.nimbusds.jwt.JWSHeaderTest"/>
-			<test name="com.nimbusds.jwt.JWEHeaderTest"/>
-			<test name="com.nimbusds.jwt.JWTTest"/>
-			<test name="com.nimbusds.jwt.PlainJWTTest"/>
-			<test name="com.nimbusds.jwt.SignedJWTTest"/>
-			<test name="com.nimbusds.jwt.EncryptedJWTTest"/>
-			<test name="com.nimbusds.jwt.CompressionUtilsTest"/>
-			<test name="com.nimbusds.jwt.CryptoUtilsTest"/>
-			<test name="com.nimbusds.jwt.BASE64Test"/>
-			<test name="com.nimbusds.jwt.JWSETest"/>
-			-->
+			<test name="com.nimbusds.jose.sdk.util.DeflateUtilsTest"/>
 		</junit>
 	</target>
 	
 	<target name="javadoc" depends="src">
 		<mkdir dir="javadoc"/>
-		<javadoc packagenames="com.nimbusds.jose.*, com.nimbusds.jwt.*, com.nimbusds.util.*"
+		<javadoc packagenames="com.nimbusds.jose.sdk.*, com.nimbusds.jose.sdk.util.*, com.nimbusds.jwt.*"
 	        	 sourcepath="procsrc"
 			 classpathref="classpath.compile"
 			 destdir="javadoc"
