@@ -66,6 +66,7 @@
 			<classpath refid="classpath.runtime"/>
 			<formatter type="plain"/>
 			<test name="com.nimbusds.jose.sdk.util.DeflateUtilsTest"/>
+			<test name="com.nimbusds.jose.sdk.JWKSetTest"/>
 		</junit>
 	</target>
 	
