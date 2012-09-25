@@ -21,7 +21,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-25)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -210,14 +210,7 @@ public abstract class Header implements ReadOnlyHeader {
 	protected static Algorithm parseAlgorithm(final JSONObject json)
 		throws ParseException {
 		
-		if (! json.containsKey("alg") || json.get("alg") == null)
-			throw new ParseException("Missing algorithm \"alg\" header parameter", 0);
-		
-		if (! (json.get("alg") instanceof String))
-			throw new ParseException("Invalid algorithm \"alg\" header parameter: Must be string", 0);
-		
-		String algName = (String)json.get("alg");
-		
+		String algName = JSONObjectUtils.getString(json, "alg");
 		
 		// Infer algorithm type
 		
