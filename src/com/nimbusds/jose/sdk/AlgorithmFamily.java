@@ -153,7 +153,8 @@ public final class AlgorithmFamily implements JSONAware {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The JOSE algorithm family.
+	 * @return The JOSE algorithm family (matching standard algorithm 
+	 *         family constant, else a newly created one).
 	 *
 	 * @throws ParseException If the string couldn't be parsed.
 	 */
