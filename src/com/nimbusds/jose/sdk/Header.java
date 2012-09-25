@@ -254,6 +254,6 @@ public abstract class Header implements ReadOnlyHeader {
 			return JWEHeader.parse(json);
 		
 		else
-			throw new AssertionError("Unknown algorithm type: " + alg);
+			throw new AssertionError("Unexpected algorithm type: " + alg);
 	}
 }

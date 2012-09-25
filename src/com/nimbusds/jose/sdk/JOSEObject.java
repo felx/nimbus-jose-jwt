@@ -13,7 +13,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2012-09-25)
  */
 public abstract class JOSEObject {
 
@@ -61,7 +61,7 @@ public abstract class JOSEObject {
 	 * Gets the payload of this JOSE object.
 	 *
 	 * @return The payload, {@code null} if not available (for an encrypted
-	 *         JWE that isn't decrypted).
+	 *         JWE object that hasn't been decrypted).
 	 */
 	public Payload getPayload() {
 	
@@ -70,17 +70,15 @@ public abstract class JOSEObject {
 	
 	
 	/**
-	 * Serialises this JOSE object to its canonical compact format
-	 * consisting of Base64URL-encoded parts delimited by period ('.') 
-	 * characters.
+	 * Serialises this JOSE object to its compact format consisting of 
+	 * Base64URL-encoded parts delimited by period ('.') characters.
 	 *
 	 * @return The serialised JOSE object.
 	 *
-	 * @throws JOSEException If the JOSE object is not in a state 
-	 *                       permitting serialisation.
+	 * @throws IllegalStateException If the JOSE object is not in a state 
+	 *                               that permits serialisation.
 	 */
-	public abstract String serialize()
-		throws JOSEException;
+	public abstract String serialize();
 	
 	
 	/**
@@ -169,21 +167,13 @@ public abstract class JOSEObject {
 		if (alg.equals(Algorithm.NONE))
 			return PlainObject.parse(s);
 		
-// 		switch (alg.getType()) {
-// 		
-// 			case NONE:
-// 				return PlainJWT.parse(s);
-// 				
-// 			case SIGNATURE:
-// 				return SignedJWT.parse(s);
-// 				
-// 			case ENCRYPTION:
-// 				return EncryptedJWT.parse(s);
-// 			
-// 			default:
-// 				throw new JOSEException("Couldn't determine algorithm type: " + alg);
-// 		}
-	
-		return null;
+		else if (alg instanceof JWSAlgorithm)
+			return JWSObject.parse(s);
+			
+		else if (alg instanceof JWEAlgorithm)
+			return JWEObject.parse(s);
+			
+		else
+			throw new AssertionError("Unexpected algorithm type: " + alg);
 	}
 }

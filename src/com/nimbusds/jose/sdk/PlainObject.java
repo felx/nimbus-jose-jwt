@@ -7,7 +7,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
 
 
 /**
- * Plain JOSE object.
+ * Plain (unsecured) JOSE object.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-22)
