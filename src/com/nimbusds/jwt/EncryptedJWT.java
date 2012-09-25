@@ -3,6 +3,8 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
+import net.minidev.json.JSONObject;
+
 import com.nimbusds.jose.sdk.Payload;
 import com.nimbusds.jose.sdk.JWEHeader;
 import com.nimbusds.jose.sdk.JWEObject;
@@ -14,7 +16,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Encrypted JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-25)
  */
 public class EncryptedJWT extends JWEObject implements JWT {
 
@@ -60,8 +62,19 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	
 	
 	@Override
-	public ClaimsSet getClaimsSet() {
-	
-		return null;
+	public ReadOnlyClaimsSet getClaimsSet()
+		throws ParseException {
+		
+		Payload payload = getPayload();
+		
+		if (payload == null)
+			return null;
+		
+		JSONObject json = payload.toJSONObject();
+		
+		if (json == null)
+			throw new ParseException("Payload of JWE object is not a valid JSON object", 0);
+		
+		return ClaimsSet.parse(json);
 	}
 }

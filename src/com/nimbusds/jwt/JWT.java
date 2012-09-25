@@ -1,11 +1,14 @@
 package com.nimbusds.jwt;
 
 
+import java.text.ParseException;
+
+
 /**
  * JSON Web Token (JWT) interface.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-21)
+ * @version $version$ (2012-09-25)
  */
 public interface JWT {
 
@@ -15,6 +18,11 @@ public interface JWT {
 	 *
 	 * @return The claims set, {@code null} if not available (for an 
 	 *         encrypted JWT that isn't decrypted).
+	 *
+	 * @throws ParseException If payload of the plain/JWS/JWE object doesn't
+	 *                        represent a valid JSON object and a JWT claims
+	 *                        set.
 	 */
-	public ClaimsSet getClaimsSet();
+	public ReadOnlyClaimsSet getClaimsSet()
+		throws ParseException;
 }

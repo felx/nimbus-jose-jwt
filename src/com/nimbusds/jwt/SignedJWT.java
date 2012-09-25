@@ -3,6 +3,8 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
+import net.minidev.json.JSONObject;
+
 import com.nimbusds.jose.sdk.Payload;
 import com.nimbusds.jose.sdk.JWSHeader;
 import com.nimbusds.jose.sdk.JWSObject;
@@ -14,7 +16,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-25)
  */
 public class SignedJWT extends JWSObject implements JWT {
 
@@ -55,8 +57,14 @@ public class SignedJWT extends JWSObject implements JWT {
 	
 	
 	@Override
-	public ClaimsSet getClaimsSet() {
+	public ReadOnlyClaimsSet getClaimsSet()	
+		throws ParseException {
 	
-		return null;
+		JSONObject json = getPayload().toJSONObject();
+		
+		if (json == null)
+			throw new ParseException("Payload of JWS object is not a valid JSON object", 0);
+		
+		return ClaimsSet.parse(json);
 	}
 }
