@@ -6,6 +6,7 @@ import java.text.ParseException;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.sdk.util.JSONObjectUtils;
 
 
 /**
@@ -28,7 +29,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-25)
  */
 public final class ECKey extends JWK {
 	
@@ -261,31 +262,20 @@ public final class ECKey extends JWK {
 		throws ParseException {
 		
 		// Parse the mandatory parameters first
-		if (jsonObject.get("alg") == null || ! (jsonObject.get("alg") instanceof String))
-			throw new ParseException("Missing, null or non-string \"alg\" parameter", 0);
-		
-		if (jsonObject.get("crv") == null || ! (jsonObject.get("crv") instanceof String))
-			throw new ParseException("Missing, null or non-string \"crv\" parameter", 0);
-
-		if (jsonObject.get("x") == null || ! (jsonObject.get("x") instanceof String))
-			throw new ParseException("Missing, null or non-string \"x\" parameter", 0);
-					
-		if (jsonObject.get("y") == null || ! (jsonObject.get("y") instanceof String))
-			throw new ParseException("Missing, null or non-string \"y\" parameter", 0);
-		
-		
-		if (jsonObject.get("alg") != AlgorithmFamily.EC.getName())
-			throw new ParseException("The algorithm family \"alg\" must be EC", 0);
-		
-		Curve crv = Curve.parse((String)jsonObject.get("crv"));
-		Base64URL x = new Base64URL((String)jsonObject.get("x"));
-		Base64URL y = new Base64URL((String)jsonObject.get("y"));
+		AlgorithmFamily af = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
+		Curve crv = Curve.parse(JSONObjectUtils.getString(jsonObject, "crv"));
+		Base64URL x = new Base64URL(JSONObjectUtils.getString(jsonObject, "x"));
+		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
 		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
 		// Get optional key ID
 		String id = JWK.parseKeyID(jsonObject);
+		
+		// Check alg family
+		if (af != AlgorithmFamily.EC)
+			throw new ParseException("The algorithm family \"alg\" must be EC", 0);
 
 		return new ECKey(crv, x, y, use, id);
 	}
