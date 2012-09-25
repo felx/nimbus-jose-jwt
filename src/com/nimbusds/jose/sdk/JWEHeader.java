@@ -1,7 +1,6 @@
 package com.nimbusds.jose.sdk;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.text.ParseException;
@@ -51,15 +50,15 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  *
  * <pre>
  * { 
- *   "alg":"RSA1_5",
- *   "enc":"A128CBC",
- *   "int":"HS256",
- *   "iv":"AxY8DCtDaGlsbGljb3RoZQ"
+ *   "alg" : "RSA1_5",
+ *   "enc" : "A128CBC",
+ *   "int" : "HS256",
+ *   "iv"  : "AxY8DCtDaGlsbGljb3RoZQ"
  * }
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2012-09-25)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -324,13 +323,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	private static EncryptionMethod parseEncryptionMethod(final JSONObject json)
 		throws ParseException {
 		
-		if (! json.containsKey("enc") || json.get("enc") == null)
-			throw new ParseException("Missing encryption method \"enc\" header parameter", 0);
-		
-		if (! (json.get("enc") instanceof String))
-			throw new ParseException("Invalid encryption method \"enc\" header parameter: Must be string", 0);
-		
-		return EncryptionMethod.parse((String)json.get("enc"));
+		return EncryptionMethod.parse(JSONObjectUtils.getString(json, "enc"));
 	}
 	
 	

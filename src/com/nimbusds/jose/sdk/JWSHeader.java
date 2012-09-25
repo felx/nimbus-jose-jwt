@@ -1,7 +1,6 @@
 package com.nimbusds.jose.sdk;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.text.ParseException;
@@ -51,7 +50,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2012-09-25)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 

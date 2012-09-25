@@ -20,5 +20,4 @@ public enum Use {
 	 * Encryption.
 	 */
 	ENCRYPTION;
-
 }

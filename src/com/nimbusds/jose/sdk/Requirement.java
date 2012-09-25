@@ -12,19 +12,19 @@ public enum Requirement {
 
 
 	/**
-	 * Required implementation.
+	 * The implementation of the algorithm is required.
 	 */
 	REQUIRED,
 
 
 	/**
-	 * Recommended implementation.
+	 * The implementation of the algorithm is recommended.
 	 */
 	RECOMMENDED,
 
 
 	/**
-	 * Optional implementation.
+	 * The implementation of the algorithm is optional.
 	 */
 	OPTIONAL;
 }

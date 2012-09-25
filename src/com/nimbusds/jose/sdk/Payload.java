@@ -13,7 +13,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
 
 /**
  * Payload with JSON object, string, byte array and Base64URL views. Represents
- * the original object signed with JWS or encrypted with JWE.
+ * the original object that was signed with JWS or encrypted with JWE.
  *
  * <p>Non-initial views are created on demand to conserve resources.
  *

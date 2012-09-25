@@ -120,10 +120,6 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	public static PlainHeader parse(final JSONObject json)
 		throws ParseException {
 		
-		if (json == null)
-			throw new ParseException("The JSON object must not be null", 0);
-		
-		
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
 		
@@ -143,7 +139,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 			String name = it.next();
 				
 			if (name.equals("alg"))
-				continue;
+				continue; // skip
 				
 			else if (name.equals("typ"))
 				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
