@@ -3,11 +3,11 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
-import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.PlainHeader;
-import com.nimbusds.jose.PlainObject;
+import com.nimbusds.jose.sdk.Payload;
+import com.nimbusds.jose.sdk.PlainHeader;
+import com.nimbusds.jose.sdk.PlainObject;
 
-import com.nimbusds.util.Base64URL;
+import com.nimbusds.jose.sdk.util.Base64URL;
 
 
 /**
@@ -21,7 +21,8 @@ public class PlainJWT extends PlainObject implements JWT {
 
 	/**
 	 * Creates a new plain JSON Web Token (JWT) with a default 
-	 * {@link com.nimbusds.jose.PlainHeader} and the specified claims set.
+	 * {@link com.nimbusds.jose.sdk.PlainHeader} and the specified claims 
+	 * set.
 	 *
 	 * @param claimsSet The claims set. Must not be {@code null}.
 	 */
