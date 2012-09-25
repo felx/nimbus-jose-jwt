@@ -9,8 +9,17 @@ import net.minidev.json.JSONObject;
  * Compression algorithm name, represents the {@code zip} header parameter in 
  * JSON Web Encryption (JWE) objects.
  *
+ * <p>Includes a constant for the standard DEFLATE compression algorithm:
+ *
+ * <ul>
+ *     <li>{@link #DEF}
+ * </ul> 
+ *
+ * <p>Additional compression algorithm names can be defined using the 
+ * constructor. 
+ *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2012-09-25)
  */
 public final class CompressionAlgorithm implements JSONAware {
 	
@@ -108,30 +117,4 @@ public final class CompressionAlgorithm implements JSONAware {
 		sb.append('"');
 		return sb.toString();
 	}
-	
-	
-// 	/**
-// 	 * Parses the specified compression algorithm.
-// 	 *
-// 	 * @param name The canonical compression algorithm name. Must not be
-// 	 *             {@code null}.
-// 	 *
-// 	 * @throws ParseException If the name is {@code null} of doesn't match a
-// 	 *                        compression algorithm name.
-// 	 */
-// 	public static CompressionAlgorithm parse(final String name)
-// 		throws ParseException {
-// 		
-// 		if (name == null)
-// 			throw new ParseException("The compression algorithm name must not be null", 0);
-// 		
-// 		if (name.equals("DEF"))
-// 			return DEF;
-// 			
-// 		else if (name.equals("none"))
-// 			return NONE;
-// 			
-// 		else
-// 			throw new ParseException("Unknown compression algorithm: " + name, 0);
-// 	}
 }
