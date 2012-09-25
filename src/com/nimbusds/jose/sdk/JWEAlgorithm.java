@@ -128,7 +128,8 @@ public final class JWEAlgorithm extends Algorithm {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The JWE algorithm.
+	 * @return The JWE algorithm (matching standard algorithm constant, else
+	 *         a newly created algorithm).
 	 */
 	public static JWEAlgorithm parse(final String s) {
 	

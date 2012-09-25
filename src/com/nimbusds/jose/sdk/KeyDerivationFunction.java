@@ -83,7 +83,8 @@ public final class KeyDerivationFunction extends Algorithm {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The key derivation function.
+	 * @return The key derivation function (matching standard algorithm 
+	 *         constant, else a newly created algorithm).
 	 */
 	public static KeyDerivationFunction parse(final String s) {
 	

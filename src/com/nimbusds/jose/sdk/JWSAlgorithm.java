@@ -3,7 +3,8 @@ package com.nimbusds.jose.sdk;
 
 /**
  * JSON Web Signature (JWS) algorithm name, represents the {@code alg} header
- * parameter in JWS objects. This class is immutable.
+ * parameter in JWS objects. Also used to represent integrity algorithm 
+ * ({@code ia}) header parameters in JWE objects. This class is immutable.
  *
  * <p>Includes constants for the following standard JWS algorithm names:
  *
@@ -117,7 +118,8 @@ public final class JWSAlgorithm extends Algorithm {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The JWS algorithm.
+	 * @return The JWS algorithm (matching standard algorithm constant, else
+	 *         a newly created algorithm).
 	 */
 	public static JWSAlgorithm parse(final String s) {
 		

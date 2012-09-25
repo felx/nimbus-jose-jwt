@@ -88,7 +88,8 @@ public final class EncryptionMethod extends Algorithm {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The encryption method.
+	 * @return The encryption method  (matching standard algorithm constant,
+	 *         else a newly created algorithm).
 	 */
 	public static EncryptionMethod parse(final String s) {
 	
