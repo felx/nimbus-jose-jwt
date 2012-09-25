@@ -113,6 +113,21 @@ public final class ECKey extends JWK {
 		
 		
 		/**
+		 * Overrides {@code Object.equals()}.
+		 *
+		 * @param object The object to compare to.
+		 *
+		 * @return {@code true} if the objects have the same value,
+		 *         otherwise {@code false}.
+		 */
+		@Override
+		public boolean equals(final Object object) {
+
+			return object instanceof Curve && this.toString().equals(object.toString());
+		}
+
+		
+		/**
 		 * Parses a cryptographic curve from the specified string.
 		 *
 		 * @param s The string to parse. Must not be {@code null}.
