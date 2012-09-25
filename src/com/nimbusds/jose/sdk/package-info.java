@@ -1,13 +1,17 @@
 /**
- * Javascript Object Signing and Encryption (JOSE) spec suite implementation.
+ * Javascript Object Signing and Encryption (JOSE) SDK.
  *
- * <p>Provides representation, compact serialisation and parsing for the 
- * following JOSE objects:
+ * <p>This package provides representation, compact serialisation and parsing 
+ * for the following JOSE objects:
  *
  * <ul>
- *     <li>JSON Web Signature (JWS) objects.
- *     <li>JSON Web Encryption (JWE) objects.
- *     <li>JSON Web Key (JWK) objects.
+ *     <li>{@link com.nimbusds.jose.sdk.PlainObject Plain (unprotected) JOSE 
+ *         objects}.
+ *     <li>{@link com.nimbusds.jose.sdk.JWSObject JSON Web Signature (JWS) 
+ *         objects}.
+ *     <li>{@link com.nimbusds.jose.sdk.JWEObject JSON Web Encryption (JWE) 
+ *         objects}.
+ *     <li>{@link com.nimbusds.jose.sdk.JWK JSON Web Key (JWK) objects}.
  * </ul>
  *
  * <p>References:
