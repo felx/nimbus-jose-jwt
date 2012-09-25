@@ -72,7 +72,7 @@
 	
 	<target name="javadoc" depends="src">
 		<mkdir dir="javadoc"/>
-		<javadoc packagenames="com.nimbusds.jose.sdk.*, com.nimbusds.jose.sdk.util.*, com.nimbusds.jwt.*"
+		<javadoc packagenames="com.nimbusds.jose.sdk.*, com.nimbusds.jose.sdk.util.*, com.nimbusds.jwt.*, com.nimbusds.jose.crypto.*"
 	        	 sourcepath="procsrc"
 			 classpathref="classpath.compile"
 			 destdir="javadoc"
