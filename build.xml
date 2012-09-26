@@ -70,6 +70,7 @@
 			<test name="com.nimbusds.jose.sdk.PlainHeaderTest"/>
 			<test name="com.nimbusds.jose.sdk.JWSHeaderTest"/>
 			<test name="com.nimbusds.jose.sdk.JWEHeaderTest"/>
+			<test name="com.nimbusds.jose.sdk.PlainObjectTest"/>
 		</junit>
 	</target>
 	
