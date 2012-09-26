@@ -7,10 +7,16 @@
  * Web Signature (JWS) algorithms:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.crypto.MACSigner} for HS256, HS384 and 
- *         HS512.
- *     <li>{@link com.nimbusds.jose.crypto.MACVerifier} for HS256, HS384 and
- *         HS512.
+ *     <li>For HMAC signature algorithms HS256, HS384 and HS512:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.MACSigner}
+ *             <li>{@link com.nimbusds.jose.crypto.MACVerifier}
+ *         </ul>
+ *     <li>For RSA-SSA signature algorithms RS256, RS384 and RS512:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.RSASSASigner}
+ *             <li>{@link com.nimbusds.jose.crypto.RSASSAVerifier}
+ *         </ul>
  * </ul>
  *
  * @author Vladimir Dzhuvinov

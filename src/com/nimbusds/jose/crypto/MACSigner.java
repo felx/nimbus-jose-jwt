@@ -34,8 +34,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 
 	/**
-	 * Creates a new Message Authentication (MAC) signer with the specified
-	 * shared secret.
+	 * Creates a new Message Authentication (MAC) signer.
 	 *
 	 * @param sharedSecret The shared secret. Must not be {@code null}.
 	 */

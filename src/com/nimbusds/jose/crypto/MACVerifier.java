@@ -34,8 +34,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
-	 * Creates a new Message Authentication (MAC) verifier with the 
-	 * specified shared secret.
+	 * Creates a new Message Authentication (MAC) verifier.
 	 *
 	 * @param sharedSecret The shared secret. Must not be {@code null}.
 	 */
