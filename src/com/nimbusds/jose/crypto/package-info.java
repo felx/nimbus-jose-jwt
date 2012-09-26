@@ -17,6 +17,11 @@
  *             <li>{@link com.nimbusds.jose.crypto.RSASSASigner}
  *             <li>{@link com.nimbusds.jose.crypto.RSASSAVerifier}
  *         </ul>
+ *      <li>For ECDSA signature algorithms ES256, ES384 and ES512:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.ECDSASigner}
+ *             <li>{@link com.nimbusds.jose.crypto.ECDSAVerifier}
+ *         </ul>
  * </ul>
  *
  * @author Vladimir Dzhuvinov

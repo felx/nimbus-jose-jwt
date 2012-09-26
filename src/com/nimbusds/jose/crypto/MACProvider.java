@@ -27,7 +27,7 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-26)
  */
-public abstract class MACProvider extends JWSProvider {
+abstract class MACProvider extends JWSProvider {
 	
 	
 	/**
