@@ -67,6 +67,7 @@
 			<formatter type="plain"/>
 			<test name="com.nimbusds.jose.sdk.util.Base64URLTest"/>
 			<test name="com.nimbusds.jose.sdk.util.DeflateUtilsTest"/>
+			<test name="com.nimbusds.jose.sdk.AlgorithmTest"/>
 			<test name="com.nimbusds.jose.sdk.JWKSetTest"/>
 			<test name="com.nimbusds.jose.sdk.PlainHeaderTest"/>
 			<test name="com.nimbusds.jose.sdk.JWSHeaderTest"/>
