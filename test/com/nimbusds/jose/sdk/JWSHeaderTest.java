@@ -12,7 +12,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-03-26)
+ * @version $version$ (2012-09-26)
  */
 public class JWSHeaderTest extends TestCase {
 	
