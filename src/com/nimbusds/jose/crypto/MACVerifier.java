@@ -28,9 +28,9 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-26)
  */
-public class MACVerifier extends MACService implements JWSVerifier {
+public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
@@ -50,6 +50,8 @@ public class MACVerifier extends MACService implements JWSVerifier {
 	                      final byte[] signedContent, 
 			      final Base64URL signature)
 		throws JOSEException {
+		
+		ensureAcceptedAlgorithm(header.getAlgorithm());
 		
 		Mac mac = getMAC(header.getAlgorithm());
 		

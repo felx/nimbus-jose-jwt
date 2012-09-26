@@ -25,15 +25,15 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-26)
  */
-public abstract class MACService {
+public abstract class MACProvider extends JWSProvider {
 	
 	
 	/**
-	 * The supported algorithms.
+	 * The supported JWS algorithms.
 	 */
-	private static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
+	public static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
 	
 	
 	/**
@@ -56,48 +56,24 @@ public abstract class MACService {
 	private final byte[] sharedSecret;
 	
 	
-	/**
-	 * The accepted algorithms.
-	 */
-	private final Set<JWSAlgorithm> acceptedAlgorithms;
-	
-	
-	/**
-	 * Gets the names of the HMAC algorithms supported by the MAC service.
-	 *
-	 * @return The supported algorithms.
-	 */
-	public static Set<JWSAlgorithm> getSupportedAlgorithms() {
+	@Override
+	public Set<JWSAlgorithm> getSupportedAlgorithms() {
 	
 		return SUPPORTED_ALGORITHMS;
 	}
 	
 	
 	/**
-	 * Creates a new Message Authentication (MAC) service.
+	 * Creates a new Message Authentication (MAC) provider.
 	 *
 	 * @param sharedSecret The shared secret. Must not be {@code null}.
 	 */
-	protected MACService(final byte[] sharedSecret) {
+	protected MACProvider(final byte[] sharedSecret) {
 
-		this(sharedSecret, null);
-	}
-	
-	
-	/**
-	 * Creates a new Message Authentication (MAC) service.
-	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
-	 * @param acceptedAlgs Specifies the accepted algorithms.
-	 */
-	protected MACService(final byte[] sharedSecret, final Set<JWSAlgorithm> acceptedAlgs) {
-	
 		if (sharedSecret == null)
 			throw new IllegalArgumentException("The shared secret must not be null");
-
-		this.sharedSecret = sharedSecret;
 		
-		acceptedAlgorithms = acceptedAlgs;
+		this.sharedSecret = sharedSecret;
 	}
 	
 	
@@ -113,16 +89,6 @@ public abstract class MACService {
 	
 	
 	/**
-	 * 
-	 *
-	 */
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
-	
-		return acceptedAlgorithms;
-	}
-	
-	
-	/**
 	 * Gets a Message Authentication Code (MAC) service for the specified
 	 * HMAC-based JSON Web Algorithm (JWA).
 	 *
@@ -133,7 +99,7 @@ public abstract class MACService {
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	public static Mac getMAC(final JWSAlgorithm alg)
+	protected static Mac getMAC(final JWSAlgorithm alg)
 		throws JOSEException {
 		
 		// The internal crypto provider uses different alg names
