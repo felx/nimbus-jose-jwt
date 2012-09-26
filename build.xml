@@ -65,6 +65,7 @@
 		<junit showoutput="true">
 			<classpath refid="classpath.runtime"/>
 			<formatter type="plain"/>
+			<test name="com.nimbusds.jose.sdk.util.Base64URLTest"/>
 			<test name="com.nimbusds.jose.sdk.util.DeflateUtilsTest"/>
 			<test name="com.nimbusds.jose.sdk.JWKSetTest"/>
 			<test name="com.nimbusds.jose.sdk.PlainHeaderTest"/>
