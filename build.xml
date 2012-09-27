@@ -75,6 +75,7 @@
 			<test name="com.nimbusds.jose.sdk.JOSEObjectTest"/>
 			<test name="com.nimbusds.jose.sdk.PlainObjectTest"/>
 			<test name="com.nimbusds.jose.crypto.MACTest"/>
+			<test name="com.nimbusds.jose.crypto.RSASSATest"/>
 		</junit>
 	</target>
 	
