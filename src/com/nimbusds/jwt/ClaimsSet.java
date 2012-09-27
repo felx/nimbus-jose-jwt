@@ -215,7 +215,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	@Override
 	public String getAudienceClaim() {
 	
-		return iss;
+		return aud;
 	}
 	
 	
