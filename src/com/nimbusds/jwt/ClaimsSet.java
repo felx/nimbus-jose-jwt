@@ -36,7 +36,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2012-09-27)
  */
 public class ClaimsSet implements ReadOnlyClaimsSet {
 
@@ -69,49 +69,49 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	/**
 	 * The expiration time claim.
 	 */
-	private long exp;
+	private long exp = -1l;
 	
 	
 	/**
 	 * The not-before claim.
 	 */
-	private long nbf;
+	private long nbf = -1l;
 	
 	
 	/**
 	 * The issued-at claim.
 	 */
-	private long iat;
+	private long iat = -1l;
 	
 	
 	/**
 	 * The issuer claim.
 	 */
-	private String iss;
+	private String iss = null;
 	
 	
 	/**
 	 * The audience claim.
 	 */
-	private String aud;
+	private String aud = null;
 	
 	
 	/**
 	 * The principal claim.
 	 */
-	private String prn;
+	private String prn = null;
 	
 	
 	/**
 	 * The JWT ID claim.
 	 */
-	private String jti;
+	private String jti = null;
 	
 	
 	/**
 	 * The type claim.
 	 */
-	private String typ;
+	private String typ = null;
 	
 	
 	/**
