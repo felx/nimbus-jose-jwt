@@ -28,7 +28,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-09-27)
  */
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
@@ -50,6 +50,17 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 			throw new IllegalArgumentException("The private RSA key must not be null");
 		
 		this.privateKey = privateKey;
+	}
+	
+	
+	/**
+	 * Gets the private RSA key.
+	 *
+	 * @return The private RSA key.
+	 */
+	public RSAPrivateKey getPrivateKey() {
+	
+		return privateKey;
 	}
 
 

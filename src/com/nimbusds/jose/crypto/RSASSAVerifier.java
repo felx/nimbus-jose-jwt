@@ -28,7 +28,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-09-27)
  */
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
@@ -50,6 +50,17 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 			throw new IllegalArgumentException("The public RSA key must not be null");
 		
 		this.publicKey = publicKey;
+	}
+	
+	
+	/**
+	 * Gets the public RSA key.
+	 *
+	 * @return The public RSA key.
+	 */
+	public RSAPublicKey getPublicKey() {
+	
+		return publicKey;
 	}
 
 
