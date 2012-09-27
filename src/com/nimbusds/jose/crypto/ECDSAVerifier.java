@@ -35,41 +35,66 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-09-27)
  */
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	/**
-	 * The x elliptic curve parameter.
+	 * The 'x' EC coordinate.
 	 */
 	private final BigInteger x;
 	
 	
 	/**
-	 * The y elliptic curve parameter.
+	 * The 'y' EC coordinate.
 	 */
 	private final BigInteger y;
 	
 	
 	
 	/**
-	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
+	 * verifier.
 	 *
-	 * @param x The x elliptic curve parameter. Must not be {@code null}.
-	 * @param y The y elliptic curve parameter. Must not be {@code null}.
+	 * @param x The 'x' coordinate for the elliptic curve point. Must not be
+	 *          {@code null}.
+	 * @param y The 'y' coordinate for the elliptic curve point. Must not be 
+	 *          {@code null}.
 	 */
 	public ECDSAVerifier(final BigInteger x, final BigInteger y) {
 
 		if (x == null)
-			throw new IllegalArgumentException("The \"x\" EC parameter must not be null");
+			throw new IllegalArgumentException("The \"x\" EC coordinate must not be null");
 			
 		this.x = x;
 		
 		if (y == null)
-			throw new IllegalArgumentException("The \"y\" EC parameter must not be null");
+			throw new IllegalArgumentException("The \"y\" EC coordinate must not be null");
 			
 		this.y = y;
+	}
+	
+	
+	/**
+	 * Gets the 'x' coordinate for the elliptic curve point.
+	 *
+	 * @return The 'x' coordinate.
+	 */
+	public BigInteger getX() {
+	
+		return x;
+	}
+	
+	
+	/**
+	 * Gets the 'y' coordinate for the elliptic curve point.
+	 *
+	 * @return The 'y' coordinate.
+	 */
+	public BigInteger getY() {
+	
+		return y;
 	}
 
 

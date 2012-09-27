@@ -164,13 +164,13 @@ public final class ECKey extends JWK {
 	
 	
 	/**
-	 * The x coordinate for the elliptic curve point.
+	 * The 'x' EC coordinate.
 	 */
 	private final Base64URL x;
 	
 	
 	/**
-	 * The y coordinate for the elliptic curve point.
+	 * The 'y' EC coordinate.
 	 */
 	private final Base64URL y;
 	 
@@ -180,10 +180,10 @@ public final class ECKey extends JWK {
 	 * specified parameters.
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
-	 * @param x   The x coordinate for the elliptic curve point. It is 
+	 * @param x   The 'x' coordinate for the elliptic curve point. It is 
 	 *            represented as the Base64URL encoding of the coordinate's 
 	 *            big endian representation. Must not be {@code null}.
-	 * @param y   The y coordinate for the elliptic curve point. It is 
+	 * @param y   The 'y' coordinate for the elliptic curve point. It is 
 	 *            represented as the Base64URL encoding of the coordinate's 
 	 *            big endian representation. Must not be {@code null}.
 	 * @param use The key use, {@code null} if not specified.
@@ -223,11 +223,11 @@ public final class ECKey extends JWK {
 	
 	
 	/**
-	 * Gets the x coordinate for the elliptic curve point. It is represented
-	 * as the Base64URL encoding of the coordinate's big endian 
+	 * Gets the 'x' coordinate for the elliptic curve point. It is 
+	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
-	 * @return The x coordinate.
+	 * @return The 'x' coordinate.
 	 */
 	public Base64URL getX() {
 	
@@ -236,11 +236,11 @@ public final class ECKey extends JWK {
 	
 	
 	/**
-	 * Gets the y coordinate for the elliptic curve point. It is represented
-	 * as the Base64URL encoding of the coordinate's big endian 
+	 * Gets the 'y' coordinate for the elliptic curve point. It is 
+	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
-	 * @return The y coordinate.
+	 * @return The 'y' coordinate.
 	 */
 	public Base64URL getY() {
 	

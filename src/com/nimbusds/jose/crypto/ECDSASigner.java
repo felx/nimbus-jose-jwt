@@ -17,7 +17,6 @@ import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
 import com.nimbusds.jose.sdk.util.Base64URL;
 
 
-
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) signer of 
  * {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
@@ -32,7 +31,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-09-27)
  */
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
@@ -47,7 +46,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * signer.
 	 *
-	 * @param privateKey The private key. Must not be {@code null}.
+	 * @param privateKey The private key ('d' parameter). Must not be 
+	 *                   {@code null}.
 	 */
 	public ECDSASigner(final BigInteger privateKey) {
 
@@ -55,6 +55,17 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 			throw new IllegalArgumentException("The private key must not be null");
 		
 		this.privateKey = privateKey;
+	}
+	
+	
+	/**
+	 * Gets the private key ('d' parameter).
+	 *
+	 * @return The private key.
+	 */
+	public BigInteger getPrivateKey() {
+	
+		return privateKey;
 	}
 	
 	
@@ -85,36 +96,36 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	
 	/**
 	 * Converts the specified big integers to byte arrays and returns their
-	 * concatenation.
+	 * 64-byte array concatenation.
 	 *
-	 * @param r The first big integer. Must not be {@code null}.
-	 * @param s The second big integer. Must not be {@code null}.
+	 * @param r The R parameter. Must not be {@code null}.
+	 * @param s The S parameter. Must not be {@code null}.
 	 *
-	 * @return The resulting byte array.
+	 * @return The resulting 64-byte array.
 	 */
 	private static byte[] formatSignature(final BigInteger r, final BigInteger s) {
 		
 		byte[] rBytes = r.toByteArray();
 		byte[] sBytes = s.toByteArray();
+		
 		byte[] rsBytes = new byte[64];
 		
-		for (int i=0; i<rsBytes.length; i++) {
+		for (int i=0; i<rsBytes.length; i++)
 			rsBytes[i] = 0;
-		}
 		
-		if (rBytes.length >= 32) {
+		if (rBytes.length >= 32)
 			System.arraycopy(rBytes, rBytes.length - 32, rsBytes, 0, 32);
-		}
-		else {
-			System.arraycopy(rBytes, 0, rsBytes, 32 - rBytes.length, rBytes.length);
-		}
 		
-		if (sBytes.length >= 32) {
+		else
+			System.arraycopy(rBytes, 0, rsBytes, 32 - rBytes.length, rBytes.length);
+		
+		
+		if (sBytes.length >= 32)
 			System.arraycopy(sBytes, sBytes.length - 32, rsBytes, 32, 32);
-		}
-		else {
+		
+		else
 			System.arraycopy(sBytes, 0, rsBytes, 64 - sBytes.length, sBytes.length);
-		}
+		
 		
 		return rsBytes;
 	}

@@ -89,7 +89,7 @@ public class ECDSATest extends TestCase {
 		
 		
 		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
-		// assertNotNull("Private key check", signer.getPrivateKey());
+		assertEquals("Private key check", new BigInteger(1, d), signer.getPrivateKey());
 		
 		jwsObject.sign(signer);
 		
@@ -97,7 +97,8 @@ public class ECDSATest extends TestCase {
 		
 		
 		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
-		// assertNotNull("Public key check", verifier.getPublicKey());
+		assertEquals("X check", new BigInteger(1, x), verifier.getX());
+		assertEquals("Y check", new BigInteger(1, x), verifier.getY());
 		
 		boolean valid = jwsObject.verify(verifier);
 		
