@@ -77,6 +77,7 @@
 			<test name="com.nimbusds.jose.crypto.MACTest"/>
 			<test name="com.nimbusds.jose.crypto.RSASSATest"/>
 			<test name="com.nimbusds.jose.crypto.ECDSATest"/>
+			<test name="com.nimbusds.jwt.ClaimsSetTest"/>
 		</junit>
 	</target>
 	
