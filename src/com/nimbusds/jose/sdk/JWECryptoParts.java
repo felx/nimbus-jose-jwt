@@ -6,13 +6,13 @@ import com.nimbusds.jose.sdk.util.Base64URL;
 
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
- * a simple wrapper for returning return the cipher text, the encrypted key and 
- * the integrity value from {@link JWEEncrypter} implementations.
+ * a simple wrapper for returning the cipher text, encrypted key and integrity 
+ * value from {@link JWEEncrypter} implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-09-27)
  */
-public final class JWEParts {
+public final class JWECryptoParts {
 
 
 	/**
@@ -46,9 +46,9 @@ public final class JWEParts {
 	 *                       provides built-in integrity check, else
 	 *                       {@code null}.
 	 */
-	public JWEParts(final Base64URL encryptedKey, 
-		        final Base64URL cipherText, 
-		        final Base64URL integrityValue) {
+	public JWECryptoParts(final Base64URL encryptedKey, 
+		              final Base64URL cipherText, 
+		              final Base64URL integrityValue) {
 
 		this.encryptedKey = encryptedKey;
 		this.cipherText = cipherText;

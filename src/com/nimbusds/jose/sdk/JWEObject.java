@@ -10,7 +10,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * JSON Web Encryption (JWE) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-27)
  */
 public class JWEObject extends JOSEObject {
 
@@ -267,7 +267,7 @@ public class JWEObject extends JOSEObject {
 	
 		ensureUnencryptedState();
 		
-		JWEParts parts = encrypter.encrypt(getHeader(), getPayload().toBytes());
+		JWECryptoParts parts = encrypter.encrypt(getHeader(), getPayload().toBytes());
 		
 		encryptedKey = parts.getEncryptedKey();
 		cipherText = parts.getCipherText();
