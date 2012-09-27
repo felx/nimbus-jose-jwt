@@ -98,7 +98,7 @@ public class ECDSATest extends TestCase {
 		
 		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
 		assertEquals("X check", new BigInteger(1, x), verifier.getX());
-		assertEquals("Y check", new BigInteger(1, x), verifier.getY());
+		assertEquals("Y check", new BigInteger(1, y), verifier.getY());
 		
 		boolean valid = jwsObject.verify(verifier);
 		
