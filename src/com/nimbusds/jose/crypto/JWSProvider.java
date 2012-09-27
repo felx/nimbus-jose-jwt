@@ -11,13 +11,13 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-09-27)
  */
 public abstract class JWSProvider {
 
 
 	/**
-	 * The accepted algorithms.
+	 * The accepted algorithms, if {@code null} all are accepted.
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs;
 	
@@ -57,8 +57,12 @@ public abstract class JWSProvider {
 	 * @return The accepted JWS algorithms.
 	 */
 	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
-	
-		return acceptedAlgs;
+		
+		if (acceptedAlgs == null)
+			return getSupportedAlgorithms();
+			
+		else
+			return acceptedAlgs;
 	}
 	
 	
@@ -71,6 +75,9 @@ public abstract class JWSProvider {
 	 */
 	public void ensureAcceptedAlgorithm(final JWSAlgorithm alg)
 		throws JOSEException {
+		
+		if (acceptedAlgs == null)
+			return;
 		
 		if (! acceptedAlgs.contains(alg))
 			throw new JOSEException("The specified \"" + alg + "\" algorithm is not accepted");
