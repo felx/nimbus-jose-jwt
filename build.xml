@@ -1,7 +1,7 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
 	<property name="version" value="2.0"/>
-	<property name="version-date" value="2012-09-26"/>
+	<property name="version-date" value="2012-09-27"/>
 	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
@@ -74,6 +74,7 @@
 			<test name="com.nimbusds.jose.sdk.JWEHeaderTest"/>
 			<test name="com.nimbusds.jose.sdk.JOSEObjectTest"/>
 			<test name="com.nimbusds.jose.sdk.PlainObjectTest"/>
+			<test name="com.nimbusds.jose.crypto.MACTest"/>
 		</junit>
 	</target>
 	
