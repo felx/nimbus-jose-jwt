@@ -1,6 +1,6 @@
 /**
- * Implementations of selected standard Javascript Object Signing and Encryption
- * (JOSE) algorithms.
+ * Implementations of selected Javascript Object Signing and Encryption (JOSE)
+ * algorithms.
  *
  * <p>Provides {@link com.nimbusds.jose.sdk.JWSSigner signers} and 
  * {@link com.nimbusds.jose.sdk.JWSVerifier verifiers} for the following JSON
