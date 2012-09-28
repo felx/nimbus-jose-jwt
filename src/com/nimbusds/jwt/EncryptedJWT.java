@@ -5,6 +5,7 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.sdk.JOSEObject;
 import com.nimbusds.jose.sdk.Payload;
 import com.nimbusds.jose.sdk.JWEHeader;
 import com.nimbusds.jose.sdk.JWEObject;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Encrypted JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-28)
  */
 public class EncryptedJWT extends JWEObject implements JWT {
 
@@ -76,5 +77,28 @@ public class EncryptedJWT extends JWEObject implements JWT {
 			throw new ParseException("Payload of JWE object is not a valid JSON object", 0);
 		
 		return ClaimsSet.parse(json);
+	}
+	
+	
+	/**
+	 * Parses an encrypted JSON Web Token (JWT) from the specified string in
+	 * compact format. 
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The encrypted JWT.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to a valid 
+	 *                        encrypted JWT.
+	 */
+	public static EncryptedJWT parse(final String s)
+		throws ParseException {
+		
+		Base64URL[] parts = JOSEObject.split(s);
+		
+		if (parts.length != 4)
+			throw new ParseException("Unexpected number of Base64URL parts, must be four", 0);
+		
+		return new EncryptedJWT(parts[0], parts[1], parts[2], parts[3]);
 	}
 }

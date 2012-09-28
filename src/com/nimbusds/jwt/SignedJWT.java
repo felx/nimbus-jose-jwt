@@ -5,6 +5,7 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.sdk.JOSEObject;
 import com.nimbusds.jose.sdk.Payload;
 import com.nimbusds.jose.sdk.JWSHeader;
 import com.nimbusds.jose.sdk.JWSObject;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-28)
  */
 public class SignedJWT extends JWSObject implements JWT {
 
@@ -66,5 +67,28 @@ public class SignedJWT extends JWSObject implements JWT {
 			throw new ParseException("Payload of JWS object is not a valid JSON object", 0);
 		
 		return ClaimsSet.parse(json);
+	}
+	
+	
+	/**
+	 * Parses a signed JSON Web Token (JWT) from the specified string in 
+	 * compact format. 
+	 *
+	 * @param s The string to parse. Must not be {@code null}.
+	 *
+	 * @return The signed JWT.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to a valid 
+	 *                        signed JWT.
+	 */
+	public static SignedJWT parse(final String s)
+		throws ParseException {
+		
+		Base64URL[] parts = JOSEObject.split(s);
+		
+		if (parts.length != 3)
+			throw new ParseException("Unexpected number of Base64URL parts, must be three", 0);
+		
+		return new SignedJWT(parts[0], parts[1], parts[2]);
 	}
 }

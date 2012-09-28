@@ -10,7 +10,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Plain (unsecured) JOSE object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-28)
  */
 public class PlainObject extends JOSEObject {
 
@@ -140,7 +140,7 @@ public class PlainObject extends JOSEObject {
 		Base64URL[] parts = JOSEObject.split(s);
 		
 		if (! parts[2].toString().isEmpty())
-			throw new ParseException("Unexpected third part in the plain JOSE object", 0);
+			throw new ParseException("Unexpected third Base64URL part", 0);
 		
 		return new PlainObject(parts[0], parts[1]);
 	}
