@@ -21,7 +21,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-28)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -207,7 +207,7 @@ public abstract class Header implements ReadOnlyHeader {
 	 * @throws ParseException If the {@code alg} parameter couldn't be 
 	 *                        parsed.
 	 */
-	protected static Algorithm parseAlgorithm(final JSONObject json)
+	public static Algorithm parseAlgorithm(final JSONObject json)
 		throws ParseException {
 		
 		String algName = JSONObjectUtils.getString(json, "alg");

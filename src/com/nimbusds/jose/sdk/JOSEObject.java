@@ -145,7 +145,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Parses a JOSE object.
+	 * Parses a JOSE object from the specified string in compact format.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
