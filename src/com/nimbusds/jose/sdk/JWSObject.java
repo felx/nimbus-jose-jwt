@@ -12,7 +12,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * JSON Web Signature (JWS) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-09-28)
  */
 public class JWSObject extends JOSEObject {
 
@@ -144,11 +144,7 @@ public class JWSObject extends JOSEObject {
 	}
 	
 	
-	/**
-	 * Gets the header of this JWS object.
-	 *
-	 * @return The header.
-	 */
+	@Override
 	public ReadOnlyJWSHeader getHeader() {
 	
 		return header;

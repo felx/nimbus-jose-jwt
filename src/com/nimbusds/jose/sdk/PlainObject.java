@@ -91,11 +91,7 @@ public class PlainObject extends JOSEObject {
 	}
 	
 	
-	/**
-	 * Gets the header of this plain JOSE object.
-	 *
-	 * @return The header.
-	 */
+	@Override
 	public ReadOnlyPlainHeader getHeader() {
 	
 		return header;

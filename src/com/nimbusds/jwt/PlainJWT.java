@@ -96,7 +96,7 @@ public class PlainJWT extends PlainObject implements JWT {
 		Base64URL[] parts = JOSEObject.split(s);
 		
 		if (! parts[2].toString().isEmpty())
-			throw new ParseException("Unexpected third Base64URL part", 0);
+			throw new ParseException("Unexpected third Base64URL part in the plain JWT object", 0);
 		
 		return new PlainJWT(parts[0], parts[1]);
 	}

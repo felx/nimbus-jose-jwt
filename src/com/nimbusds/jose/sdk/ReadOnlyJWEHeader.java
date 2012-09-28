@@ -8,7 +8,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-28)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
@@ -18,6 +18,7 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *
 	 * @return The algorithm parameter.
 	 */
+	@Override
 	public JWEAlgorithm getAlgorithm();
 	
 	

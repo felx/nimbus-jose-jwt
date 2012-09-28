@@ -13,7 +13,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-09-28)
  */
 public abstract class JOSEObject {
 
@@ -43,6 +43,14 @@ public abstract class JOSEObject {
 	
 		this.payload = payload;
 	}
+	
+	
+	/**
+	 * Gets the header of this JOSE object.
+	 *
+	 * @return The header.
+	 */
+	public abstract ReadOnlyHeader getHeader();
 	
 	
 	/**

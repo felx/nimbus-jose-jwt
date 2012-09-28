@@ -40,7 +40,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2012-09-28)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -66,7 +66,8 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	
 	
 	/**
-	 * Creates a new plain header.
+	 * Creates a new plain header with algorithm 
+	 * {@link Algorithm#NONE none}.
 	 */
 	public PlainHeader() {
 	
@@ -83,7 +84,6 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	
 		return RESERVED_PARAMETER_NAMES;
 	}
-	
 	
 	
 	@Override

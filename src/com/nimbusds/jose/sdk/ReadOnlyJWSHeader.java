@@ -5,7 +5,7 @@ package com.nimbusds.jose.sdk;
  * Read-only view of a {@link JWSHeader JWS header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-09-28)
  */
 public interface ReadOnlyJWSHeader extends ReadOnlyCommonSEHeader {
 	
@@ -15,5 +15,6 @@ public interface ReadOnlyJWSHeader extends ReadOnlyCommonSEHeader {
 	 *
 	 * @return The algorithm parameter.
 	 */
+	@Override
 	public JWSAlgorithm getAlgorithm();
 }
