@@ -1,6 +1,6 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
-	<property name="version" value="2.0"/>
+	<property name="version" value="2.0.1"/>
 	<property name="version-date" value="2012-09-29"/>
 	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
 	
