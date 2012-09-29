@@ -1,0 +1,76 @@
+version 1.0 (2012-03-01)
+	* First version based on the OpenInfoCard JWT, JWS and JWE code base.
+
+version 1.1 (2012-03-06)
+	* Introduces type-safe enumeration of the JSON Web Algorithms (JWA).
+	* Refactors the JWT class.
+
+version 1.2 (2012-03-08)
+	* Moves JWS and JWE code into separate classes.
+
+version 1.3 (2012-03-09)
+	* Switches to Apache Commons Codec for Base64URL encoding and decoding
+	* Consolidates the crypto utilities within the package.
+	* Introduces a JWT content serialiser class.
+
+version 1.4 (2012-03-09)
+	* Refactoring of JWT class and JUnit tests.
+
+version 1.5 (2012-03-18)
+	* Switches to JSON Smart for JSON serialisation and parsing.
+	* Introduces claims set class with JSON objects, string, Base64URL and
+	  byte array views.
+
+version 1.6 (2012-03-20)
+	* Creates class for representing, serialising and parsing JSON Web Keys
+	  (JWK).
+	* Introduces separate class for representing JWT headers.
+
+version 1.7 (2012-04-01)
+	* Introduces separate classes for plain, JWS and JWE headers.
+	* Introduces separate classes for plain, signed and encrypted JWTs.
+	* Removes the JWTContent class.
+	* Removes password-based (PE820) encryption support.
+
+version 1.8 (2012-04-03)
+	* Adds support for the ZIP JWE header parameter.
+	* Removes unsupported algorithms from the JWA enumeration.
+
+version 1.9 (2012-04-03)
+	* Renames JWEHeader.{get|set}EncryptionAlgorithm() to
+	  JWEHeader.{get|set}EncryptionMethod().
+
+version 1.9.1 (2012-04-03)
+	* Upgrades JSON Smart JAR to 1.1.1.
+
+version 1.10 (2012-04-14)
+	* Introduces serialize() method to base abstract JWT class.
+
+version 1.11 (2012-05-13)
+	* JWT.serialize() throws checked JWTException instead of
+	  IllegalStateException.
+
+version 1.12 (2012-05-21)
+	* Updates the alternative JWT header type ("typ") parameter value to
+	  "urn:ietf:params:oauth:token-type:jwt" (to reflect changes in
+	  draft-jones-json-web-token-10).
+	* Renames the JWS and JWE header parameter "jpk" to "jwk" (to reflect
+	  changes in draft-ietf-jose-json-web-signature-02 and
+	  draft-ietf-jose-json-web-encryption-02).
+	* Changes the JWE compression algorithm to DEFLATE (to reflect changes
+	  in draft-ietf-jose-json-web-encryption-02).
+	* Renames JWK class to JWKSet and JWKKeyObject class to JWK (to reflect 
+	  changes in draft-ietf-jose-json-web-key-02).
+	* Adds toJSONObject() method to the ReadOnlyHeader interface.
+	* Updates JavaDocs.
+
+version 2.0 (2012-09-29)
+	* Full rewrite of 1.* code to decouple plain/JWS/JWE/JWT object 
+	  representation from JWA implementations.
+	* JWS code updated to draft-ietf-jose-json-web-signature-05.
+	* JWE code updated to draft-ietf-jose-json-web-encryption-05.
+	* JWK code updated to draft-ietf-jose-json-web-key-05.
+	* JWA code updated to draft-ietf-jose-json-web-algorithms-05.
+	* JWT code updated to draft-ietf-oauth-json-web-token-03.
+	* Removes existing JWE algorithm implementations since no longer
+	  compatible with newer -05 specs (to be reimplemented).
