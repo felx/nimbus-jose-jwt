@@ -93,7 +93,8 @@
 			 use="true"
 			 linksource="true"
 			 windowtitle="Nimbus JOSE + JWT"
-			 doctitle="Nimbus JOSE + JWT">
+			 doctitle="Nimbus JOSE + JWT"
+			 overview="doc/overview.html">
 		</javadoc>
 	</target>
 	
