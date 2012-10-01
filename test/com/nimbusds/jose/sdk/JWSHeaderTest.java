@@ -12,7 +12,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-01)
  */
 public class JWSHeaderTest extends TestCase {
 	
@@ -38,6 +38,10 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
 		assertNull(h.getContentType());
+		
+		assertTrue(h.getDefinedParameters().contains("alg"));
+		assertTrue(h.getDefinedParameters().contains("typ"));
+		assertEquals(2, h.getDefinedParameters().size());
 	}
 	
 	

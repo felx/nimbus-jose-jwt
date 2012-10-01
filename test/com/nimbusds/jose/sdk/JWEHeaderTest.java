@@ -16,7 +16,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-01)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -47,6 +47,11 @@ public class JWEHeaderTest extends TestCase {
 		assertNull(h.getContentType());
 		
 		assertEquals(new Base64URL("48V1_ALb6US04U3b"), h.getInitializationVector());
+		
+		assertTrue(h.getDefinedParameters().contains("alg"));
+		assertTrue(h.getDefinedParameters().contains("enc"));
+		assertTrue(h.getDefinedParameters().contains("iv"));
+		assertEquals(3, h.getDefinedParameters().size());
 	}
 	
 	
@@ -77,6 +82,12 @@ public class JWEHeaderTest extends TestCase {
 		assertNull(h.getContentType());
 		
 		assertEquals(new Base64URL("AxY8DCtDaGlsbGljb3RoZQ"), h.getInitializationVector());
+		
+		assertTrue(h.getDefinedParameters().contains("alg"));
+		assertTrue(h.getDefinedParameters().contains("enc"));
+		assertTrue(h.getDefinedParameters().contains("int"));
+		assertTrue(h.getDefinedParameters().contains("iv"));
+		assertEquals(4, h.getDefinedParameters().size());
 	}
 	
 	
@@ -150,5 +161,18 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64("asd"), certChain[0]);
 		assertEquals(new Base64("fgh"), certChain[1]);
 		assertEquals(new Base64("jkl"), certChain[2]);
+		
+		assertTrue(h.getDefinedParameters().contains("alg"));
+		assertTrue(h.getDefinedParameters().contains("typ"));
+		assertTrue(h.getDefinedParameters().contains("enc"));
+		assertTrue(h.getDefinedParameters().contains("iv"));
+		assertTrue(h.getDefinedParameters().contains("zip"));
+		assertTrue(h.getDefinedParameters().contains("jku"));
+		assertTrue(h.getDefinedParameters().contains("jwk"));
+		assertTrue(h.getDefinedParameters().contains("kid"));
+		assertTrue(h.getDefinedParameters().contains("x5u"));
+		assertTrue(h.getDefinedParameters().contains("x5t"));
+		assertTrue(h.getDefinedParameters().contains("x5c"));
+		assertEquals(11, h.getDefinedParameters().size());
 	}
 }

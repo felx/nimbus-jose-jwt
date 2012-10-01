@@ -291,7 +291,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		definedParams.add("enc");
 		
 		if (getIntegrityAlgorithm() != null)
-			definedParams.add("ia");
+			definedParams.add("int");
 		
 		if (getKeyDerivationFunction() != null)
 			definedParams.add("kdf");

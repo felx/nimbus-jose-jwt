@@ -12,7 +12,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests plain header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-01)
  */
 public class PlainHeaderTest extends TestCase {
 	
@@ -29,6 +29,12 @@ public class PlainHeaderTest extends TestCase {
 		h.setType(new JOSEObjectType("JWT"));
 		h.setContentType("application/jwt");
 		h.setCustomParameter("xCustom", "abc");
+		
+		assertTrue(h.getDefinedParameters().contains("alg"));
+		assertTrue(h.getDefinedParameters().contains("typ"));
+		assertTrue(h.getDefinedParameters().contains("cty"));
+		assertTrue(h.getDefinedParameters().contains("xCustom"));
+		assertEquals(4, h.getDefinedParameters().size());
 		
 		
 		Base64URL b64url = h.toBase64URL();
