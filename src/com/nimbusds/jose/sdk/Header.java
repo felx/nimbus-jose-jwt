@@ -21,7 +21,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-01)
  */
 public abstract class Header implements ReadOnlyHeader {
 	

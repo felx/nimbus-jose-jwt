@@ -2,6 +2,7 @@ package com.nimbusds.jose.sdk;
 
 
 import java.util.Map;
+import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
@@ -10,7 +11,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-01)
  */
 public interface ReadOnlyHeader {
 
@@ -57,6 +58,15 @@ public interface ReadOnlyHeader {
 	 *         none.
 	 */
 	public Map<String,Object> getCustomParameters();
+	
+	
+	/**
+	 * Gets the names of all defined parameters (reserved and custom) in the
+	 * header instance.
+	 *
+	 * @return The defined parameters.
+	 */
+	public Set<String> getDefinedParameters();
 	
 	
 	/**

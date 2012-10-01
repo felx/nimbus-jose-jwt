@@ -40,7 +40,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-01)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -104,6 +104,23 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
 		
 		super.setCustomParameter(name, value);
+	}
+	
+	
+	@Override
+	public Set<String> getDefinedParameters() {
+	
+		Set<String> definedParams = new HashSet<String>(getCustomParameters().keySet());
+		
+		definedParams.add("alg");
+		
+		if (getType() != null)
+			definedParams.add("typ");
+			
+		if (getContentType() != null)
+			definedParams.add("cty");
+		
+		return definedParams;
 	}
 	
 	

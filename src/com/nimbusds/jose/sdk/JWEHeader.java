@@ -58,7 +58,7 @@ import com.nimbusds.jose.sdk.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-10-01)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -279,6 +279,57 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
 		
 		super.setCustomParameter(name, value);
+	}
+	
+	
+	@Override
+	public Set<String> getDefinedParameters() {
+	
+		Set<String> definedParams = new HashSet<String>(getCustomParameters().keySet());
+		
+		definedParams.add("alg");
+		definedParams.add("enc");
+		
+		if (getIntegrityAlgorithm() != null)
+			definedParams.add("ia");
+		
+		if (getKeyDerivationFunction() != null)
+			definedParams.add("kdf");
+		
+		if (getInitializationVector() != null)
+			definedParams.add("iv");
+		
+		if (getEphemeralPublicKey() != null)
+			definedParams.add("epk");
+		
+		if (getCompressionAlgorithm() != null)
+			definedParams.add("zip");
+		
+		if (getType() != null)
+			definedParams.add("typ");
+			
+		if (getContentType() != null)
+			definedParams.add("cty");
+		
+		if (getJWKURL() != null)
+			definedParams.add("jku");
+		
+		if (getJWK() != null)
+			definedParams.add("jwk");
+		
+		if (getX509CertURL() != null)
+			definedParams.add("x5u");
+		
+		if (getX509CertThumbprint() != null)
+			definedParams.add("x5t");
+		
+		if (getX509CertChain() != null)
+			definedParams.add("x5c");
+		
+		if (getKeyID() != null)
+			definedParams.add("kid");
+		
+		return definedParams;
 	}
 	
 	
