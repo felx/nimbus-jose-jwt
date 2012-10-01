@@ -61,12 +61,12 @@ public interface ReadOnlyHeader {
 	
 	
 	/**
-	 * Gets the names of all defined parameters (reserved and custom) in the
-	 * header instance.
+	 * Gets the names of all included parameters (reserved and custom) in 
+	 * the header instance.
 	 *
-	 * @return The defined parameters.
+	 * @return The included parameters.
 	 */
-	public Set<String> getDefinedParameters();
+	public Set<String> getIncludedParameters();
 	
 	
 	/**

@@ -125,37 +125,38 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	
 	
 	@Override
-	public Set<String> getDefinedParameters() {
+	public Set<String> getIncludedParameters() {
 	
-		Set<String> definedParams = new HashSet<String>(getCustomParameters().keySet());
+		Set<String> includedParameters = 
+			new HashSet<String>(getCustomParameters().keySet());
 		
-		definedParams.add("alg");
+		includedParameters.add("alg");
 		
 		if (getType() != null)
-			definedParams.add("typ");
+			includedParameters.add("typ");
 			
 		if (getContentType() != null)
-			definedParams.add("cty");
+			includedParameters.add("cty");
 		
 		if (getJWKURL() != null)
-			definedParams.add("jku");
+			includedParameters.add("jku");
 		
 		if (getJWK() != null)
-			definedParams.add("jwk");
+			includedParameters.add("jwk");
 		
 		if (getX509CertURL() != null)
-			definedParams.add("x5u");
+			includedParameters.add("x5u");
 		
 		if (getX509CertThumbprint() != null)
-			definedParams.add("x5t");
+			includedParameters.add("x5t");
 		
 		if (getX509CertChain() != null)
-			definedParams.add("x5c");
+			includedParameters.add("x5c");
 		
 		if (getKeyID() != null)
-			definedParams.add("kid");
+			includedParameters.add("kid");
 		
-		return definedParams;
+		return includedParameters;
 	}
 	
 	

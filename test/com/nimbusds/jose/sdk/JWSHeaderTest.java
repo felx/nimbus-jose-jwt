@@ -39,9 +39,9 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
 		assertNull(h.getContentType());
 		
-		assertTrue(h.getDefinedParameters().contains("alg"));
-		assertTrue(h.getDefinedParameters().contains("typ"));
-		assertEquals(2, h.getDefinedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("typ"));
+		assertEquals(2, h.getIncludedParameters().size());
 	}
 	
 	

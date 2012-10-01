@@ -108,19 +108,20 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	
 	
 	@Override
-	public Set<String> getDefinedParameters() {
+	public Set<String> getIncludedParameters() {
 	
-		Set<String> definedParams = new HashSet<String>(getCustomParameters().keySet());
+		Set<String> includedParameters = 
+			new HashSet<String>(getCustomParameters().keySet());
 		
-		definedParams.add("alg");
+		includedParameters.add("alg");
 		
 		if (getType() != null)
-			definedParams.add("typ");
+			includedParameters.add("typ");
 			
 		if (getContentType() != null)
-			definedParams.add("cty");
+			includedParameters.add("cty");
 		
-		return definedParams;
+		return includedParameters;
 	}
 	
 	

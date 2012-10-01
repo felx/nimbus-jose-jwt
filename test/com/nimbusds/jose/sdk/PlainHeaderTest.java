@@ -30,11 +30,11 @@ public class PlainHeaderTest extends TestCase {
 		h.setContentType("application/jwt");
 		h.setCustomParameter("xCustom", "abc");
 		
-		assertTrue(h.getDefinedParameters().contains("alg"));
-		assertTrue(h.getDefinedParameters().contains("typ"));
-		assertTrue(h.getDefinedParameters().contains("cty"));
-		assertTrue(h.getDefinedParameters().contains("xCustom"));
-		assertEquals(4, h.getDefinedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("typ"));
+		assertTrue(h.getIncludedParameters().contains("cty"));
+		assertTrue(h.getIncludedParameters().contains("xCustom"));
+		assertEquals(4, h.getIncludedParameters().size());
 		
 		
 		Base64URL b64url = h.toBase64URL();

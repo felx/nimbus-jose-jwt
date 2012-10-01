@@ -48,10 +48,10 @@ public class JWEHeaderTest extends TestCase {
 		
 		assertEquals(new Base64URL("48V1_ALb6US04U3b"), h.getInitializationVector());
 		
-		assertTrue(h.getDefinedParameters().contains("alg"));
-		assertTrue(h.getDefinedParameters().contains("enc"));
-		assertTrue(h.getDefinedParameters().contains("iv"));
-		assertEquals(3, h.getDefinedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("enc"));
+		assertTrue(h.getIncludedParameters().contains("iv"));
+		assertEquals(3, h.getIncludedParameters().size());
 	}
 	
 	
@@ -83,11 +83,11 @@ public class JWEHeaderTest extends TestCase {
 		
 		assertEquals(new Base64URL("AxY8DCtDaGlsbGljb3RoZQ"), h.getInitializationVector());
 		
-		assertTrue(h.getDefinedParameters().contains("alg"));
-		assertTrue(h.getDefinedParameters().contains("enc"));
-		assertTrue(h.getDefinedParameters().contains("int"));
-		assertTrue(h.getDefinedParameters().contains("iv"));
-		assertEquals(4, h.getDefinedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("enc"));
+		assertTrue(h.getIncludedParameters().contains("int"));
+		assertTrue(h.getIncludedParameters().contains("iv"));
+		assertEquals(4, h.getIncludedParameters().size());
 	}
 	
 	
@@ -162,17 +162,17 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64("fgh"), certChain[1]);
 		assertEquals(new Base64("jkl"), certChain[2]);
 		
-		assertTrue(h.getDefinedParameters().contains("alg"));
-		assertTrue(h.getDefinedParameters().contains("typ"));
-		assertTrue(h.getDefinedParameters().contains("enc"));
-		assertTrue(h.getDefinedParameters().contains("iv"));
-		assertTrue(h.getDefinedParameters().contains("zip"));
-		assertTrue(h.getDefinedParameters().contains("jku"));
-		assertTrue(h.getDefinedParameters().contains("jwk"));
-		assertTrue(h.getDefinedParameters().contains("kid"));
-		assertTrue(h.getDefinedParameters().contains("x5u"));
-		assertTrue(h.getDefinedParameters().contains("x5t"));
-		assertTrue(h.getDefinedParameters().contains("x5c"));
-		assertEquals(11, h.getDefinedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("typ"));
+		assertTrue(h.getIncludedParameters().contains("enc"));
+		assertTrue(h.getIncludedParameters().contains("iv"));
+		assertTrue(h.getIncludedParameters().contains("zip"));
+		assertTrue(h.getIncludedParameters().contains("jku"));
+		assertTrue(h.getIncludedParameters().contains("jwk"));
+		assertTrue(h.getIncludedParameters().contains("kid"));
+		assertTrue(h.getIncludedParameters().contains("x5u"));
+		assertTrue(h.getIncludedParameters().contains("x5t"));
+		assertTrue(h.getIncludedParameters().contains("x5c"));
+		assertEquals(11, h.getIncludedParameters().size());
 	}
 }
