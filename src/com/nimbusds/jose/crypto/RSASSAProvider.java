@@ -13,7 +13,8 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
 
 /**
  * The base abstract class for RSA Signature-Scheme-with-Appendix (RSASSA) 
- * signers and verifiers of {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
+ * signers and validators of {@link com.nimbusds.jose.sdk.JWSObject JWS 
+ * objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
@@ -57,17 +58,17 @@ abstract class RSASSAProvider extends JWSProvider {
 	
 	
 	/**
-	 * Gets an RSA signer and verifier for the specified RSASSA-based JSON 
+	 * Gets an RSA signer and validator for the specified RSASSA-based JSON 
 	 * Web Algorithm (JWA).
 	 *
 	 * @param alg The JSON Web Algorithm (JWA). Must be supported and not
 	 *            {@code null}.
 	 *
-	 * @return An RSA signer and verifier instance.
+	 * @return An RSA signer and validator instance.
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	protected static Signature getRSASignerAndVerifier(final JWSAlgorithm alg)
+	protected static Signature getRSASignerAndValidator(final JWSAlgorithm alg)
 		throws JOSEException {
 		
 		// The internal crypto provider uses different alg names

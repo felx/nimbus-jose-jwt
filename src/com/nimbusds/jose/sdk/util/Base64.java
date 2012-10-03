@@ -24,7 +24,7 @@ public class Base64 implements JSONAware {
 	 * Creates a new Base64-encoded object.
 	 *
 	 * @param base64 The Base64-encoded object value. The value is not 
-	 *               verified for having characters from a Base64 
+	 *               validated for having characters from a Base64 
 	 *               alphabet. Must not be {@code null}.
 	 */
 	public Base64(final String base64) {

@@ -12,7 +12,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * JSON Web Signature (JWS) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-03)
  */
 public class JWSObject extends JOSEObject {
 
@@ -30,15 +30,15 @@ public class JWSObject extends JOSEObject {
 		
 		
 		/**
-		 * The JWS object is signed but not verified yet.
+		 * The JWS object is signed but not validated yet.
 		 */
 		SIGNED,
 		
 		
 		/**
-		 * The JWS object is signed and was successfully verified.
+		 * The JWS object is signed and was successfully validated.
 		 */
-		VERIFIED;
+		VALIDATED;
 	}
 	
 	
@@ -140,7 +140,7 @@ public class JWSObject extends JOSEObject {
 		
 		signature = thirdPart;
 		
-		state = State.SIGNED; // but not verified yet!
+		state = State.SIGNED; // but not validated yet!
 	}
 	
 	
@@ -191,7 +191,7 @@ public class JWSObject extends JOSEObject {
 	 * </pre>
 	 *
 	 * @return The signable content, ready for passing to the signing or
-	 *         verification service.
+	 *         validation service.
 	 */
 	public byte[] getSignableContent() {
 	
@@ -236,15 +236,15 @@ public class JWSObject extends JOSEObject {
 	
 	/**
 	 * Ensures the current state is {@link State#SIGNED signed} or
-	 * {@link State#VERIFIED verified}.
+	 * {@link State#VALIDATED validated}.
 	 *
 	 * @throws IllegalStateException If the current state is not signed or
-	 *                               verified.
+	 *                               validated.
 	 */
-	private void ensureSignedOrVerifiedState() {
+	private void ensureSignedOrValidatedState() {
 	
-		if (state != State.SIGNED && state != State.VERIFIED)
-			throw new IllegalStateException("The JWS object must be in a signed or verified state");
+		if (state != State.SIGNED && state != State.VALIDATED)
+			throw new IllegalStateException("The JWS object must be in a signed or validated state");
 	}
 	
 	
@@ -273,34 +273,34 @@ public class JWSObject extends JOSEObject {
 		
 	
 	/**
-	 * Verifies the signature of this JWS object with the specified  
-	 * verifier. The JWS object must be in a {@link State#SIGNED signed} 
-	 * state.
+	 * Checks the signature of this JWS object with the specified validator. 
+	 * The JWS object must be in a {@link State#SIGNED signed} state.
 	 *
-	 * @param verifier The JWS verifier. Must not be {@code null}.
+	 * @param validator The JWS validator. Must not be {@code null}.
 	 *
-	 * @return {@code true} if the signature was successfully verified, else
-         *         {@code false} if the signature was found to be invalid.
+	 * @return {@code true} if the signature was successfully validated, 
+         *         else {@code false} if the signature was found to be invalid.
 	 *
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
-	 *                               {@link State#VERIFIED verified state}.
-	 * @throws JOSEException         If the JWS object couldn't be verified.
+	 *                               {@link State#VALIDATED validated 
+	 *                               state}.
+	 * @throws JOSEException         If the JWS object couldn't be validated.
 	 */
-	public boolean verify(final JWSVerifier verifier)
+	public boolean validate(final JWSValidator validator)
 		throws JOSEException {
 	
-		if (verifier == null)
-			throw new IllegalArgumentException("The JWS verifier must not be null");
+		if (validator == null)
+			throw new IllegalArgumentException("The JWS validator must not be null");
 		
-		ensureSignedOrVerifiedState();
+		ensureSignedOrValidatedState();
 		
-		boolean verified = verifier.verify(getHeader(), getSignableContent(), getSignature());
+		boolean valid = validator.validate(getHeader(), getSignableContent(), getSignature());
 		
-		if (verified)
-			state = State.VERIFIED;
+		if (valid)
+			state = State.VALIDATED;
 			
-		return verified;
+		return valid;
 	}
 	
 	
@@ -308,7 +308,7 @@ public class JWSObject extends JOSEObject {
 	 * Serialises this JWS object to its compact format consisting of 
 	 * Base64URL-encoded parts delimited by period ('.') characters. It must 
 	 * be in a {@link State#SIGNED signed} or 
-	 * {@link State#VERIFIED verified} state.
+	 * {@link State#VALIDATED validated} state.
 	 *
 	 * <pre>
 	 * [header-base64url].[payload-base64url].[signature-base64url]
@@ -318,12 +318,13 @@ public class JWSObject extends JOSEObject {
 	 *
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
-	 *                               {@link State#VERIFIED verified state}.
+	 *                               {@link State#VALIDATED validated 
+	 *                               state}.
 	 */
 	@Override
 	public String serialize() {
 	
-		ensureSignedOrVerifiedState();
+		ensureSignedOrValidatedState();
 		
 		StringBuilder sb = new StringBuilder(header.toBase64URL().toString());
 		sb.append('.');

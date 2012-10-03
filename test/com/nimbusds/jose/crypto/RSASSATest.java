@@ -13,15 +13,12 @@ import java.security.spec.RSAPublicKeySpec;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.crypto.RSASSASigner;
-import com.nimbusds.jose.crypto.RSASSAVerifier;
-
 import com.nimbusds.jose.sdk.JOSEObjectType;
 import com.nimbusds.jose.sdk.JWSAlgorithm;
 import com.nimbusds.jose.sdk.JWSHeader;
 import com.nimbusds.jose.sdk.JWSObject;
 import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.JWSVerifier;
+import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.Payload;
 
 import com.nimbusds.jose.sdk.util.Base64URL;
@@ -31,7 +28,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests RS256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-03)
  */
 public class RSASSATest extends TestCase {
 
@@ -153,7 +150,7 @@ public class RSASSATest extends TestCase {
 	
 	
 	
-	public void testSignAndVerify()
+	public void testSignAndValidate()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
@@ -173,14 +170,14 @@ public class RSASSATest extends TestCase {
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
 		
-		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
-		assertNotNull("Public key check", verifier.getPublicKey());
+		RSASSAValidator validator = new RSASSAValidator(publicKey);
+		assertNotNull("Public key check", validator.getPublicKey());
 		
-		boolean valid = jwsObject.verify(verifier);
+		boolean valid = jwsObject.validate(validator);
 		
 		assertTrue("Valid signature check", valid);
 		
-		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
 	}
 	
 	
@@ -197,20 +194,20 @@ public class RSASSATest extends TestCase {
 	}
 	
 	
-	public void testVerifyWithReadyVector()
+	public void testValidateWithReadyVector()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
 		
-		JWSVerifier verifier = new RSASSAVerifier(publicKey);
+		JWSValidator validator = new RSASSAValidator(publicKey);
 		
-		boolean valid = verifier.verify(header, signable, b64sig);
+		boolean valid = validator.validate(header, signable, b64sig);
 		
 		assertTrue("Signature check", valid);
 	}
 	
 	
-	public void testParseAndVerify()
+	public void testParseAndValidate()
 		throws Exception {
 	
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
@@ -219,12 +216,12 @@ public class RSASSATest extends TestCase {
 		
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
-		JWSVerifier verifier = new RSASSAVerifier(publicKey);
+		JWSValidator validator = new RSASSAValidator(publicKey);
 		
-		boolean valid = jwsObject.verify(verifier);
+		boolean valid = jwsObject.validate(validator);
 		
 		assertTrue("Signature check", valid);
 		
-		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
 	}
 }

@@ -40,7 +40,7 @@ public class Base64URL implements JSONAware {
 	 * Creates a new Base64URL-encoded object.
 	 *
 	 * @param base64URL The Base64URL-encoded object value. The value is not
-	 *                  verified for having characters from a Base64URL 
+	 *                  validated for having characters from a Base64URL 
 	 *                  alphabet. Must not be {@code null}.
 	 */
 	public Base64URL(final String base64URL) {

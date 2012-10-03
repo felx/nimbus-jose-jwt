@@ -14,7 +14,7 @@ import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
 import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSVerifier;
+import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
 
 import com.nimbusds.jose.sdk.util.Base64URL;
@@ -22,7 +22,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
 
 
 /**
- * Elliptic Curve Digital Signature Algorithm (ECDSA) verifier of 
+ * Elliptic Curve Digital Signature Algorithm (ECDSA) validator of 
  * {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
@@ -35,9 +35,9 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-03)
  */
-public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
+public class ECDSAValidator extends ECDSAProvider implements JWSValidator {
 
 
 	/**
@@ -55,14 +55,14 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 	
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
-	 * verifier.
+	 * validator.
 	 *
 	 * @param x The 'x' coordinate for the elliptic curve point. Must not be
 	 *          {@code null}.
 	 * @param y The 'y' coordinate for the elliptic curve point. Must not be 
 	 *          {@code null}.
 	 */
-	public ECDSAVerifier(final BigInteger x, final BigInteger y) {
+	public ECDSAValidator(final BigInteger x, final BigInteger y) {
 
 		if (x == null)
 			throw new IllegalArgumentException("The \"x\" EC coordinate must not be null");
@@ -99,9 +99,9 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	@Override
-	public boolean verify(final ReadOnlyJWSHeader header, 
-	                      final byte[] signedContent, 
-			      final Base64URL signature)
+	public boolean validate(final ReadOnlyJWSHeader header, 
+	                        final byte[] signedContent, 
+			        final Base64URL signature)
 		throws JOSEException {
 		
 		ensureAcceptedAlgorithm(header.getAlgorithm());
@@ -143,15 +143,15 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 		ECPublicKeyParameters ecPublicKeyParameters = new ECPublicKeyParameters(
 								q, ecDomainParameters);
 
-		org.bouncycastle.crypto.signers.ECDSASigner verifier = 
+		org.bouncycastle.crypto.signers.ECDSASigner validator = 
 			new org.bouncycastle.crypto.signers.ECDSASigner();
 		
-		verifier.init(false, ecPublicKeyParameters);
+		validator.init(false, ecPublicKeyParameters);
 		
 		digest.update(signedContent, 0, signedContent.length);
 		byte[] out = new byte[digest.getDigestSize()];
 		digest.doFinal(out, 0);
 
-		return verifier.verifySignature(out, r, s);
+		return validator.verifySignature(out, r, s);
 	}
 }

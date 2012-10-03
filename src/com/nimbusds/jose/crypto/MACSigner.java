@@ -28,7 +28,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-03)
  */
 public class MACSigner extends MACProvider implements JWSSigner {
 

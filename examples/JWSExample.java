@@ -1,14 +1,14 @@
 import java.text.ParseException;
 
 import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACVerifier;
+import com.nimbusds.jose.crypto.MACValidator;
 
 import com.nimbusds.jose.sdk.JOSEException;
 import com.nimbusds.jose.sdk.JWSAlgorithm;
 import com.nimbusds.jose.sdk.JWSHeader;
 import com.nimbusds.jose.sdk.JWSObject;
 import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.JWSVerifier;
+import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.Payload;
 
 
@@ -16,7 +16,7 @@ import com.nimbusds.jose.sdk.Payload;
  * Example use of JWS objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-29)
+ * @version $version$ (2012-10-03)
  */
 public class JWSExample {
 
@@ -79,12 +79,12 @@ public class JWSExample {
 		
 		System.out.println("JWS object successfully parsed");
 		
-		JWSVerifier verifier = new MACVerifier(sharedKey.getBytes());
+		JWSValidator validator = new MACValidator(sharedKey.getBytes());
 		
 		boolean validSignature = false;
 		
 		try {
-			validSignature = jwsObject.verify(verifier);
+			validSignature = jwsObject.validator(validator);
 			
 		} catch (JOSEException e) {
 		

@@ -8,7 +8,7 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
 
 
 /**
- * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
+ * The base abstract class for JSON Web Signature (JWS) signers and validators.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-27)
@@ -33,7 +33,7 @@ public abstract class JWSProvider {
 	/**
 	 * Sets the accepted JWS algorithms. These represent a subset of the 
 	 * supported algorithms. Supported but not accepted algorithms will be 
-	 * rejected by JWS providers when processing sign or verification 
+	 * rejected by JWS providers when processing sign or validation 
 	 * requests.
 	 *
 	 * @param acceptedAlgs The accepted JWS algorithms. Must be a subset of
@@ -51,7 +51,7 @@ public abstract class JWSProvider {
 	/**
 	 * Gets the accepted JWS algorithms. These represent a subset of the 
 	 * supported algorithms. Supported but not accepted algorithms will be 
-	 * rejected by JWS providers when processing sign or verification 
+	 * rejected by JWS providers when processing sign or validation 
 	 * requests.
 	 *
 	 * @return The accepted JWS algorithms.

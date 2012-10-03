@@ -5,15 +5,12 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.crypto.ECDSAVerifier;
-
 import com.nimbusds.jose.sdk.JOSEObjectType;
 import com.nimbusds.jose.sdk.JWSAlgorithm;
 import com.nimbusds.jose.sdk.JWSHeader;
 import com.nimbusds.jose.sdk.JWSObject;
 import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.JWSVerifier;
+import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.Payload;
 
 import com.nimbusds.jose.sdk.util.Base64URL;
@@ -23,7 +20,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * Tests ES256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-03)
  */
 public class ECDSATest extends TestCase {
 
@@ -76,7 +73,7 @@ public class ECDSATest extends TestCase {
 	
 	
 	
-	public void testSignAndVerify()
+	public void testSignAndValidate()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
@@ -96,15 +93,15 @@ public class ECDSATest extends TestCase {
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
 		
-		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
-		assertEquals("X check", new BigInteger(1, x), verifier.getX());
-		assertEquals("Y check", new BigInteger(1, y), verifier.getY());
+		ECDSAValidator validator = new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
+		assertEquals("X check", new BigInteger(1, x), validator.getX());
+		assertEquals("Y check", new BigInteger(1, y), validator.getY());
 		
-		boolean valid = jwsObject.verify(verifier);
+		boolean valid = jwsObject.validate(validator);
 		
 		assertTrue("Valid signature check", valid);
 		
-		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
 	}
 	
 	
@@ -123,20 +120,20 @@ public class ECDSATest extends TestCase {
 	}
 	
 	
-	public void testVerifyWithReadyVector()
+	public void testValidateWithReadyVector()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
 		
-		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		JWSValidator validator =  new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
 		
-		boolean valid = verifier.verify(header, signable, b64sig);
+		boolean valid = validator.validate(header, signable, b64sig);
 		
 		assertTrue("Signature check", valid);
 	}
 	
 	
-	public void testParseAndVerify()
+	public void testParseAndValidate()
 		throws Exception {
 	
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
@@ -145,12 +142,12 @@ public class ECDSATest extends TestCase {
 		
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
-		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		JWSValidator validator =  new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
 		
-		boolean valid = jwsObject.verify(verifier);
+		boolean valid = jwsObject.validate(validator);
 		
 		assertTrue("Signature check", valid);
 		
-		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
 	}
 }

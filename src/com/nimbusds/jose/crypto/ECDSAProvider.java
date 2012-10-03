@@ -22,7 +22,7 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
 
 /**
  * The base abstract class for Elliptic Curve Digital Signature Algorithm 
- * (ECDSA) signers and verifiers of {@link com.nimbusds.jose.sdk.JWSObject JWS 
+ * (ECDSA) signers and validators of {@link com.nimbusds.jose.sdk.JWSObject JWS 
  * objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
