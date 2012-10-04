@@ -55,6 +55,8 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	
 		this.algs = Collections.unmodifiableSet(algs);
 		
+		acceptedAlgs = this.algs;
+		
 		
 		if (acceptedParams == null)
 			throw new IllegalArgumentException("The accepted JWS header parameter set must not be null");
