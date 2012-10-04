@@ -35,9 +35,9 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-04)
  */
-abstract class ECDSAProvider extends JWSProvider {
+abstract class ECDSAProvider extends BaseJWSProvider {
 	
 	
 	/**
@@ -60,10 +60,13 @@ abstract class ECDSAProvider extends JWSProvider {
 	}
 	
 	
-	@Override
-	public Set<JWSAlgorithm> getSupportedAlgorithms() {
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
+	 * provider.
+	 */
+	protected ECDSAProvider() {
 	
-		return SUPPORTED_ALGORITHMS;
+		super(SUPPORTED_ALGORITHMS);
 	}
 	
 	

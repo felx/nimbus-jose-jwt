@@ -7,17 +7,38 @@ import com.nimbusds.jose.sdk.util.Base64URL;
 /**
  * Interface for validating JSON Web Signature (JWS) objects.
  *
+ * <p>Callers can query the validator to determine its algorithm capabilities as
+ * well as the JWS algorithms and header parameters that are accepted for 
+ * processing.
+ *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-04)
  */
-public interface JWSValidator {
+public interface JWSValidator extends JWSAlgorithmProvider {
 
 
+	/**
+	 * Gets the JWS header filter associated with the validator. Specifies 
+	 * the names of those {@link #supportedAlgorithms supported JWS 
+	 * algorithms} and header parameters that the validator is configured to
+	 * accept.
+	 *
+	 * <p>Attempting to {@link #validate validate} a JWS object with an
+	 * algorithm or header parameter that is not accepted must result in a 
+	 * {@link JOSEException}.
+	 *
+	 * @return The JWS header filter.
+	 */
+	public JWSHeaderFilter getJWSHeaderFilter();
+	
+	
 	/**
 	 * Validates the specified {@link JWSObject#getSignature signature} of a
 	 * {@link JWSObject JWS object}.
 	 *
-	 * @param header        The JSON Web Signature (JWS) header. Must not be
+	 * @param header        The JSON Web Signature (JWS) header. Must 
+	 *                      specify an accepted JWS algorithm, must contain
+	 *                      only accepted header parameters, and must not be
 	 *                      {@code null}.
 	 * @param signedContent The signed content. Must not be {@code null}.
 	 * @param signature     The signature part of the JWS object. Must not
@@ -26,9 +47,9 @@ public interface JWSValidator {
 	 * @return {@code true} if the signature was successfully validated, 
          *         else {@code false} if the signature was found to be invalid.
 	 *
-	 * @throws JOSEException If the JWS algorithm is not supported or if
-	 *                       signature validation failed for some other 
-	 *                       reason.
+	 * @throws JOSEException If the JWS algorithm is not accepted, if a 
+	 *                       header parameter is not accepted, or if
+	 *                       validation failed for some other reason.
 	 */
 	public boolean validate(final ReadOnlyJWSHeader header, 
 	                        final byte[] signedContent, 

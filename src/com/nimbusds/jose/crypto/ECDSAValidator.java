@@ -3,6 +3,9 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bouncycastle.asn1.x9.X9ECParameters;
 
 import org.bouncycastle.crypto.Digest;
@@ -14,6 +17,7 @@ import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
 import com.nimbusds.jose.sdk.JOSEException;
+import com.nimbusds.jose.sdk.JWSHeaderFilter;
 import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
 
@@ -32,14 +36,48 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES384}
  *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES512}
  * </ul>
+ *
+ * <p>Accepts the following JWS header parameters:
+ *
+ * <ul>
+ *     <li>{@code alg}
+ *     <li>{@code typ}
+ *     <li>{@code cty}
+ * </ul>
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-04)
  */
 public class ECDSAValidator extends ECDSAProvider implements JWSValidator {
 
 
+	/**
+	 * The accepted JWS header parameters.
+	 */
+	private static final Set<String> ACCEPTED_HEADER_PARAMETERS;
+	
+	
+	/**
+	 * Initialises the accepted JWS header parameters.
+	 */
+	static {
+	
+		Set<String> params = new HashSet<String>();
+		params.add("alg");
+		params.add("typ");
+		params.add("cty");
+		
+		ACCEPTED_HEADER_PARAMETERS = params;
+	}
+	
+	
+	/**
+	 * The JWS header filter.
+	 */
+	private DefaultJWSHeaderFilter headerFilter;
+	
+	
 	/**
 	 * The 'x' EC coordinate.
 	 */
@@ -73,6 +111,8 @@ public class ECDSAValidator extends ECDSAProvider implements JWSValidator {
 			throw new IllegalArgumentException("The \"y\" EC coordinate must not be null");
 			
 		this.y = y;
+		
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
 	}
 	
 	
@@ -96,6 +136,13 @@ public class ECDSAValidator extends ECDSAProvider implements JWSValidator {
 	
 		return y;
 	}
+	
+	
+	@Override
+	public JWSHeaderFilter getJWSHeaderFilter() {
+	
+		return headerFilter;
+	}
 
 
 	@Override
@@ -103,8 +150,6 @@ public class ECDSAValidator extends ECDSAProvider implements JWSValidator {
 	                        final byte[] signedContent, 
 			        final Base64URL signature)
 		throws JOSEException {
-		
-		ensureAcceptedAlgorithm(header.getAlgorithm());
 		
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();

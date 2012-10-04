@@ -25,15 +25,15 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-04)
  */
-abstract class MACProvider extends JWSProvider {
+abstract class MACProvider extends BaseJWSProvider {
 	
 	
 	/**
 	 * The supported JWS algorithms.
 	 */
-	public static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
+	private static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
 	
 	
 	/**
@@ -56,19 +56,14 @@ abstract class MACProvider extends JWSProvider {
 	private final byte[] sharedSecret;
 	
 	
-	@Override
-	public Set<JWSAlgorithm> getSupportedAlgorithms() {
-	
-		return SUPPORTED_ALGORITHMS;
-	}
-	
-	
 	/**
 	 * Creates a new Message Authentication (MAC) provider.
 	 *
 	 * @param sharedSecret The shared secret. Must not be {@code null}.
 	 */
 	protected MACProvider(final byte[] sharedSecret) {
+
+		super(SUPPORTED_ALGORITHMS);
 
 		if (sharedSecret == null)
 			throw new IllegalArgumentException("The shared secret must not be null");

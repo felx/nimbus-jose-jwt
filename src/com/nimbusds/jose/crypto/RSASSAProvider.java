@@ -25,9 +25,9 @@ import com.nimbusds.jose.sdk.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-04)
  */
-abstract class RSASSAProvider extends JWSProvider {
+abstract class RSASSAProvider extends BaseJWSProvider {
 	
 	
 	/**
@@ -50,10 +50,12 @@ abstract class RSASSAProvider extends JWSProvider {
 	}
 	
 	
-	@Override
-	public Set<JWSAlgorithm> getSupportedAlgorithms() {
+	/**
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) provider.
+	 */
+	protected RSASSAProvider() {
 	
-		return SUPPORTED_ALGORITHMS;
+		super(SUPPORTED_ALGORITHMS);
 	}
 	
 	

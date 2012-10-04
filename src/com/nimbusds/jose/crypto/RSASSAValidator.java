@@ -1,6 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import java.security.Signature;
 import java.security.InvalidKeyException;
 import java.security.SignatureException;
@@ -8,6 +11,7 @@ import java.security.SignatureException;
 import java.security.interfaces.RSAPublicKey;
 
 import com.nimbusds.jose.sdk.JOSEException;
+import com.nimbusds.jose.sdk.JWSHeaderFilter;
 import com.nimbusds.jose.sdk.JWSValidator;
 import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
 
@@ -26,13 +30,47 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS384}
  *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS512}
  * </ul>
+ *
+ * <p>Accepts the following JWS header parameters:
+ *
+ * <ul>
+ *     <li>{@code alg}
+ *     <li>{@code typ}
+ *     <li>{@code cty}
+ * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-04)
  */
 public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 
 
+	/**
+	 * The accepted JWS header parameters.
+	 */
+	private static final Set<String> ACCEPTED_HEADER_PARAMETERS;
+	
+	
+	/**
+	 * Initialises the accepted JWS header parameters.
+	 */
+	static {
+	
+		Set<String> params = new HashSet<String>();
+		params.add("alg");
+		params.add("typ");
+		params.add("cty");
+		
+		ACCEPTED_HEADER_PARAMETERS = params;
+	}
+	
+	
+	/**
+	 * The JWS header filter.
+	 */
+	private DefaultJWSHeaderFilter headerFilter;
+	
+	
 	/**
 	 * The public RSA key.
 	 */
@@ -50,6 +88,8 @@ public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 			throw new IllegalArgumentException("The public RSA key must not be null");
 		
 		this.publicKey = publicKey;
+		
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
 	}
 	
 	
@@ -62,6 +102,13 @@ public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 	
 		return publicKey;
 	}
+	
+	
+	@Override
+	public JWSHeaderFilter getJWSHeaderFilter() {
+	
+		return headerFilter;
+	}
 
 
 	@Override
@@ -69,8 +116,6 @@ public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 	                        final byte[] signedContent, 
 			        final Base64URL signature)
 		throws JOSEException {
-		
-		ensureAcceptedAlgorithm(header.getAlgorithm());
 		
 		Signature validator = getRSASignerAndValidator(header.getAlgorithm());
 		

@@ -7,16 +7,19 @@ import com.nimbusds.jose.sdk.util.Base64URL;
 /**
  * Interface for encrypting JSON Web Encryption (JWE) objects.
  *
+ * <p>Callers can query the encrypter to determine its algorithm capabilities.
+ *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-04)
  */
-public interface JWEEncrypter {
+public interface JWEEncrypter extends JWEAlgorithmProvider {
 
 
 	/**
 	 * Encrypts the specified clear text of a {@link JWEObject JWE object}.
 	 *
-	 * @param header    The JSON Web Encryption (JWE) header. Must not be
+	 * @param header    The JSON Web Encryption (JWE) header. Must specify a
+	 *                  supported JWE algorithm and must not be
 	 *                  {@code null}.
 	 * @param clearText The clear text to encrypt. Must not be {@code null}.
 	 *

@@ -28,7 +28,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-04)
  */
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
@@ -67,8 +67,6 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	@Override
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
 		throws JOSEException {
-		
-		ensureAcceptedAlgorithm(header.getAlgorithm());
 		
 		Signature signer = getRSASignerAndValidator(header.getAlgorithm());
 		

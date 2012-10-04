@@ -1,9 +1,11 @@
 package com.nimbusds.jose.sdk;
 
 
+import java.io.UnsupportedEncodingException;
+
 import java.text.ParseException;
 
-import java.io.UnsupportedEncodingException;
+import java.util.Set;
 
 import com.nimbusds.jose.sdk.util.Base64URL;
 
@@ -12,7 +14,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * JSON Web Signature (JWS) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-04)
  */
 public class JWSObject extends JOSEObject {
 
@@ -249,6 +251,52 @@ public class JWSObject extends JOSEObject {
 	
 	
 	/**
+	 * Ensures the specified JWS signer supports the algorithm of this JWS
+	 * object.
+	 *
+	 * @throws JOSEException If the JWS algorithm is not supported.
+	 */
+	private void ensureJWSSignerSupport(final JWSSigner signer)
+		throws JOSEException {
+	
+		if (! signer.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
+		
+			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
+			                        "\" algorithm is not supported by the JWS signer");
+		}
+	}
+	
+	
+	/**
+	 * Ensures the specified JWS validator accepts the algorithm and the 
+	 * headers of this JWS object.
+	 *
+	 * @throws JOSEException If the JWS algorithm or headers are not 
+	 *                       accepted.
+	 */
+	private void ensureJWSValidatorAcceptance(final JWSValidator validator)
+		throws JOSEException {
+		
+		JWSHeaderFilter filter = validator.getJWSHeaderFilter();
+		
+		if (filter == null)
+			return;
+		
+		if (! filter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
+		
+			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
+			                        "\" algorithm is not accepted by the JWS validator");
+		}
+			
+		
+		if (! filter.getAcceptedParameters().containsAll(getHeader().getIncludedParameters())) {
+		
+			throw new JOSEException("One or more header parameters not accepted by the JWS validator");
+		}
+	}
+	
+	
+	/**
 	 * Signs this JWS object with the specified signer. The JWS object must
 	 * be in a {@link State#UNSIGNED unsigned} state.
 	 *
@@ -261,10 +309,9 @@ public class JWSObject extends JOSEObject {
 	public void sign(final JWSSigner signer)
 		throws JOSEException {
 	
-		if (signer == null)
-			throw new IllegalArgumentException("The JWS signer must not be null");
-	
 		ensureUnsignedState();
+		
+		ensureJWSSignerSupport(signer);
 		
 		signature = signer.sign(getHeader(), getSignableContent());
 	
@@ -289,11 +336,10 @@ public class JWSObject extends JOSEObject {
 	 */
 	public boolean validate(final JWSValidator validator)
 		throws JOSEException {
-	
-		if (validator == null)
-			throw new IllegalArgumentException("The JWS validator must not be null");
 		
 		ensureSignedOrValidatedState();
+		
+		ensureJWSValidatorAcceptance(validator);
 		
 		boolean valid = validator.validate(getHeader(), getSignableContent(), getSignature());
 		

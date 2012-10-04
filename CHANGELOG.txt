@@ -78,7 +78,9 @@ version 2.0 (2012-09-29)
 version 2.0.1 (2012-09-29)
 	* Adds JWS object use example.
 
-version 2.1 (2012-10-03)
+version 2.1 (2012-10-04)
 	* Changes naming from "verifier" to "validator" to conform with JWS
 	  terminology.
-	* Adds Header.getDefinedParameters() method.
+	* Refactors library to enforce header parameter checking of signed JWS 
+	  and encrypted JWE objects.
+	  

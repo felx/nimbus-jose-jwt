@@ -10,7 +10,7 @@ import com.nimbusds.jose.sdk.util.Base64URL;
  * JSON Web Encryption (JWE) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-04)
  */
 public class JWEObject extends JOSEObject {
 
@@ -244,6 +244,102 @@ public class JWEObject extends JOSEObject {
 	
 	
 	/**
+	 * Ensures the specified JWE encrypter supports the algorithms of this 
+	 * JWE object.
+	 *
+	 * @throws JOSEException If the JWE algorithms are not supported.
+	 */
+	private void ensureJWEEncrypterSupport(final JWEEncrypter encrypter)
+		throws JOSEException {
+	
+		if (! encrypter.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
+		
+			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
+			                        "\" algorithm is not supported by the JWE encrypter");
+		}
+		
+		if (! encrypter.supportedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
+		
+			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
+			                        "\" encryption method is not supported by the JWE encrypter");
+		}
+		
+		// Optional parameters
+		
+		JWSAlgorithm ia = getHeader().getIntegrityAlgorithm();
+		
+		if (ia != null && ! encrypter.supportedIntegrityAlgorithms().contains(ia)) {
+		
+			throw new JOSEException("The \"" + ia + "\" integrity algorithm is not supported by the JWE encrypter");
+		}
+		
+		
+		KeyDerivationFunction kdf = getHeader().getKeyDerivationFunction();
+		
+		if (kdf != null && ! encrypter.supportedKeyDerivationFunctions().contains(kdf)) {
+		
+			throw new JOSEException("The \"" + kdf + "\" key derivation function is not supported by the JWE encrypter");
+		}
+	}
+	
+	
+	/**
+	 * Ensures the specified JWE decrypter accepts the algorithms and the 
+	 * headers of this JWE object.
+	 *
+	 * @throws JOSEException If the JWE algorithms or headers are not 
+	 *                       accepted.
+	 */
+	private void ensureJWEDecrypterAcceptance(final JWEDecrypter decrypter)
+		throws JOSEException {
+		
+		JWEHeaderFilter filter = decrypter.getJWEHeaderFilter();
+		
+		if (filter == null)
+			return;
+		
+		
+		if (! filter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
+		
+			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
+			                        "\" algorithm is not accepted by the JWE decrypter");
+		}
+		
+		
+		if (! filter.getAcceptedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
+		
+			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
+			                        "\" encryption method is not accepted by the JWE decrypter");
+		}
+		
+		// Optional parameters
+		
+		JWSAlgorithm ia = getHeader().getIntegrityAlgorithm();
+		
+		if (ia != null && ! filter.getAcceptedIntegrityAlgorithms().contains(ia)) {
+		
+			throw new JOSEException("The \"" + ia + "\" integrity algorithm is not accepted by the JWE decrypter");
+		}
+		
+		
+		KeyDerivationFunction kdf = getHeader().getKeyDerivationFunction();
+		
+		if (kdf != null && ! filter.getAcceptedKeyDerivationFunctions().contains(kdf)) {
+		
+			throw new JOSEException("The \"" + kdf + "\" key derivation function is not accepted by the JWE decrypter");
+		}
+		
+		
+		// Header params
+		
+		if (! filter.getAcceptedParameters().containsAll(getHeader().getIncludedParameters())) {
+		
+			throw new JOSEException("One or more header parameters not accepted by the JWE decrypter");
+		}
+	}
+	
+	
+	/**
 	 * Encrypts this JWE object with the specified encrypter. The JWE object
 	 * must be in an {@link State#UNENCRYPTED unencrypted} state.
 	 *
@@ -258,10 +354,9 @@ public class JWEObject extends JOSEObject {
 	public void encrypt(final JWEEncrypter encrypter)
 		throws JOSEException {
 	
-		if (encrypter == null)
-			throw new IllegalArgumentException("The JWE encrypter must not be null");
-	
 		ensureUnencryptedState();
+		
+		ensureJWEEncrypterSupport(encrypter);
 		
 		JWECryptoParts parts = encrypter.encrypt(getHeader(), getPayload().toBytes());
 		
@@ -288,10 +383,9 @@ public class JWEObject extends JOSEObject {
 	public void decrypt(final JWEDecrypter decrypter)
 		throws JOSEException {
 		
-		if (decrypter == null)
-			throw new IllegalArgumentException("The JWE decrypter must not be null");
-	
 		ensureEncryptedState();
+		
+		ensureJWEDecrypterAcceptance(decrypter);
 		
 		setPayload(new Payload(decrypter.decrypt(getHeader(), 
 		                                         getEncryptedKey(), 
