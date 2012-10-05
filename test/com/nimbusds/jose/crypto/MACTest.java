@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HS256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-05)
  */
 public class MACTest extends TestCase {
 
@@ -67,6 +67,10 @@ public class MACTest extends TestCase {
 		
 		MACSigner signer = new MACSigner(sharedSecret);
 		assertEquals("Shared secret check", sharedSecret, signer.getSharedSecret());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 		
 		jwsObject.sign(signer);
 		
@@ -75,6 +79,10 @@ public class MACTest extends TestCase {
 		
 		MACValidator validator = new MACValidator(sharedSecret);
 		assertEquals("Shared secret check", sharedSecret, validator.getSharedSecret());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 		
 		boolean valid = jwsObject.validate(validator);
 		

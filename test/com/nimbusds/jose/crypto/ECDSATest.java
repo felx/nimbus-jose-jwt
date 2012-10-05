@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-05)
  */
 public class ECDSATest extends TestCase {
 
@@ -87,6 +87,10 @@ public class ECDSATest extends TestCase {
 		
 		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
 		assertEquals("Private key check", new BigInteger(1, d), signer.getPrivateKey());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
 		
 		jwsObject.sign(signer);
 		
@@ -96,6 +100,10 @@ public class ECDSATest extends TestCase {
 		ECDSAValidator validator = new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
 		assertEquals("X check", new BigInteger(1, x), validator.getX());
 		assertEquals("Y check", new BigInteger(1, y), validator.getY());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
 		
 		boolean valid = jwsObject.validate(validator);
 		

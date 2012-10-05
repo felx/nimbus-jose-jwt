@@ -28,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests RS256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-05)
  */
 public class RSASSATest extends TestCase {
 
@@ -164,6 +164,10 @@ public class RSASSATest extends TestCase {
 		
 		RSASSASigner signer = new RSASSASigner(privateKey);
 		assertNotNull("Private key check", signer.getPrivateKey());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
 		
 		jwsObject.sign(signer);
 		
@@ -172,6 +176,10 @@ public class RSASSATest extends TestCase {
 		
 		RSASSAValidator validator = new RSASSAValidator(publicKey);
 		assertNotNull("Public key check", validator.getPublicKey());
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
 		
 		boolean valid = jwsObject.validate(validator);
 		
