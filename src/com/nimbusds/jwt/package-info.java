@@ -1,5 +1,5 @@
 /**
- * JSON Web Token (JWT) implementation.
+ * JSON Web Token (JWT) classes.
  *
  * <p>References:
  *

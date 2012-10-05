@@ -5,12 +5,12 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.sdk.JOSEObject;
-import com.nimbusds.jose.sdk.Payload;
-import com.nimbusds.jose.sdk.JWEHeader;
-import com.nimbusds.jose.sdk.JWEObject;
+import com.nimbusds.jose.JOSEObject;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -25,7 +25,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	/**
 	 * Creates a new to-be-encrypted JSON Web Token (JWT) with the specified
 	 * header and claims set. The initial state will be 
-	 * {@link com.nimbusds.jose.sdk.JWEObject.State#UNENCRYPTED unencrypted}.
+	 * {@link com.nimbusds.jose.JWEObject.State#UNENCRYPTED unencrypted}.
 	 *
 	 * @param header    The JWE header. Must not be {@code null}.
 	 * @param claimsSet The claims set. Must not be {@code null}.
@@ -39,7 +39,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	/**
 	 * Creates a new encrypted JSON Web Token (JWT) with the specified 
 	 * serialised parts. The state will be 
-	 * {@link com.nimbusds.jose.sdk.JWEObject.State#ENCRYPTED encrypted}.
+	 * {@link com.nimbusds.jose.JWEObject.State#ENCRYPTED encrypted}.
 	 *
 	 * @param firstPart  The first part, corresponding to the JWE header. 
 	 *                   Must not be {@code null}.

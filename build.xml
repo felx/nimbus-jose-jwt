@@ -1,7 +1,7 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
 	<property name="version" value="2.1"/>
-	<property name="version-date" value="2012-10-04"/>
+	<property name="version-date" value="2012-10-05"/>
 	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
@@ -65,15 +65,15 @@
 		<junit showoutput="true">
 			<classpath refid="classpath.runtime"/>
 			<formatter type="plain"/>
-			<test name="com.nimbusds.jose.sdk.util.Base64URLTest"/>
-			<test name="com.nimbusds.jose.sdk.util.DeflateUtilsTest"/>
-			<test name="com.nimbusds.jose.sdk.AlgorithmTest"/>
-			<test name="com.nimbusds.jose.sdk.JWKSetTest"/>
-			<test name="com.nimbusds.jose.sdk.PlainHeaderTest"/>
-			<test name="com.nimbusds.jose.sdk.JWSHeaderTest"/>
-			<test name="com.nimbusds.jose.sdk.JWEHeaderTest"/>
-			<test name="com.nimbusds.jose.sdk.JOSEObjectTest"/>
-			<test name="com.nimbusds.jose.sdk.PlainObjectTest"/>
+			<test name="com.nimbusds.jose.util.Base64URLTest"/>
+			<test name="com.nimbusds.jose.util.DeflateUtilsTest"/>
+			<test name="com.nimbusds.jose.AlgorithmTest"/>
+			<test name="com.nimbusds.jose.JWKSetTest"/>
+			<test name="com.nimbusds.jose.PlainHeaderTest"/>
+			<test name="com.nimbusds.jose.JWSHeaderTest"/>
+			<test name="com.nimbusds.jose.JWEHeaderTest"/>
+			<test name="com.nimbusds.jose.JOSEObjectTest"/>
+			<test name="com.nimbusds.jose.PlainObjectTest"/>
 			<test name="com.nimbusds.jose.crypto.MACTest"/>
 			<test name="com.nimbusds.jose.crypto.RSASSATest"/>
 			<test name="com.nimbusds.jose.crypto.ECDSATest"/>
@@ -84,7 +84,7 @@
 	
 	<target name="javadoc" depends="src">
 		<mkdir dir="javadoc"/>
-		<javadoc packagenames="com.nimbusds.jose.sdk.*, com.nimbusds.jose.sdk.util.*, com.nimbusds.jwt.*, com.nimbusds.jose.crypto.*"
+		<javadoc packagenames="com.nimbusds.jose.*, com.nimbusds.jose.util.*, com.nimbusds.jwt.*, com.nimbusds.jose.crypto.*"
 	        	 sourcepath="procsrc"
 			 classpathref="classpath.compile"
 			 destdir="javadoc"

@@ -7,21 +7,21 @@ import java.util.Set;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 
 
 /**
  * The base abstract class for RSA Signature-Scheme-with-Appendix (RSASSA) 
- * signers and validators of {@link com.nimbusds.jose.sdk.JWSObject JWS 
+ * signers and validators of {@link com.nimbusds.jose.JWSObject JWS 
  * objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS512}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov

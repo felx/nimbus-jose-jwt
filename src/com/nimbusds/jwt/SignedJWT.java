@@ -5,12 +5,12 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.sdk.JOSEObject;
-import com.nimbusds.jose.sdk.Payload;
-import com.nimbusds.jose.sdk.JWSHeader;
-import com.nimbusds.jose.sdk.JWSObject;
+import com.nimbusds.jose.JOSEObject;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -25,7 +25,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	/**
 	 * Creates a new to-be-signed JSON Web Token (JWT) with the specified
 	 * header and claims set. The initial state will be 
-	 * {@link com.nimbusds.jose.sdk.JWSObject.State#UNSIGNED unsigned}.
+	 * {@link com.nimbusds.jose.JWSObject.State#UNSIGNED unsigned}.
 	 *
 	 * @param header    The JWS header. Must not be {@code null}.
 	 * @param claimsSet The claims set. Must not be {@code null}.
@@ -39,7 +39,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	/**
 	 * Creates a new signed JSON Web Token (JWT) with the specified 
 	 * serialised parts. The state will be 
-	 * {@link com.nimbusds.jose.sdk.JWSObject.State#SIGNED signed}.
+	 * {@link com.nimbusds.jose.JWSObject.State#SIGNED signed}.
 	 *
 	 * @param firstPart  The first part, corresponding to the JWS header. 
 	 *                   Must not be {@code null}.

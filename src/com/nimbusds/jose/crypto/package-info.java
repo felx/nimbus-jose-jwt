@@ -2,8 +2,8 @@
  * Implementations of selected Javascript Object Signing and Encryption (JOSE)
  * algorithms.
  *
- * <p>Provides {@link com.nimbusds.jose.sdk.JWSSigner signers} and 
- * {@link com.nimbusds.jose.sdk.JWSValidator validators} for the following JSON
+ * <p>Provides {@link com.nimbusds.jose.JWSSigner signers} and 
+ * {@link com.nimbusds.jose.JWSValidator validators} for the following JSON
  * Web Signature (JWS) algorithms:
  *
  * <ul>
@@ -22,6 +22,14 @@
  *             <li>{@link com.nimbusds.jose.crypto.ECDSASigner}
  *             <li>{@link com.nimbusds.jose.crypto.ECDSAValidator}
  *         </ul>
+ * </ul>
+ *
+ * <p>Provides {@link com.nimbusds.jose.JWEEncrypter encrypters} and 
+ * {@link com.nimbusds.jose.JWEDecrypter decrypters} for the following JSON
+ * Web Signature (JWS) algorithms:
+ *
+ * <ul>
+ *     <li>TBD
  * </ul>
  *
  * @author Vladimir Dzhuvinov

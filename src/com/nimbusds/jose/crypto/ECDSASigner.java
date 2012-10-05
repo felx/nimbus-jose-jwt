@@ -10,23 +10,23 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.ReadOnlyJWSHeader;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) signer of 
- * {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES512}
  * </ul>
  * 
  * @author Axel Nennker

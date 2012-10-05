@@ -12,7 +12,7 @@ import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.sdk.util.JSONObjectUtils;
+import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**

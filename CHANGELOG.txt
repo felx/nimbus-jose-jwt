@@ -83,4 +83,4 @@ version 2.1 (2012-10-04)
 	  terminology.
 	* Refactors library to enforce header parameter checking of signed JWS 
 	  and encrypted JWE objects.
-	  
+	* Simplifies package tree.

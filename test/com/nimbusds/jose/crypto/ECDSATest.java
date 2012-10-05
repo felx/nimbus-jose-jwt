@@ -5,15 +5,15 @@ import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.sdk.JOSEObjectType;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
-import com.nimbusds.jose.sdk.JWSHeader;
-import com.nimbusds.jose.sdk.JWSObject;
-import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.JWSValidator;
-import com.nimbusds.jose.sdk.Payload;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.Payload;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

@@ -7,24 +7,24 @@ import java.security.SignatureException;
 
 import java.security.interfaces.RSAPrivateKey;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.ReadOnlyJWSHeader;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 
 /**
  * RSA Signature-Scheme-with-Appendix (RSASSA) signer of 
- * {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#RS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS512}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov

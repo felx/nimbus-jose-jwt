@@ -3,9 +3,9 @@ package com.nimbusds.jwt;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.sdk.Algorithm;
+import com.nimbusds.jose.Algorithm;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

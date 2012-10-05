@@ -10,25 +10,25 @@ import javax.crypto.Mac;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSHeaderFilter;
-import com.nimbusds.jose.sdk.JWSValidator;
-import com.nimbusds.jose.sdk.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSHeaderFilter;
+import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.ReadOnlyJWSHeader;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 
 /**
  * Message Authentication Code (MAC) validator of 
- * {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS512}
  * </ul>
  *
  * <p>Accepts the following JWS header parameters:

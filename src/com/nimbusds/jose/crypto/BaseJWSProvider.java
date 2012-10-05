@@ -4,8 +4,8 @@ package com.nimbusds.jose.crypto;
 import java.util.Collections;
 import java.util.Set;
 
-import com.nimbusds.jose.sdk.JWSAlgorithm;
-import com.nimbusds.jose.sdk.JWSAlgorithmProvider;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSAlgorithmProvider;
 
 
 /**

@@ -5,14 +5,14 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.sdk.Algorithm;
-import com.nimbusds.jose.sdk.Header;
-import com.nimbusds.jose.sdk.JOSEObject;
-import com.nimbusds.jose.sdk.JWEAlgorithm;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.Header;
+import com.nimbusds.jose.JOSEObject;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
 
-import com.nimbusds.jose.sdk.util.Base64URL;
-import com.nimbusds.jose.sdk.util.JSONObjectUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**

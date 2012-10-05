@@ -3,7 +3,7 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
-import com.nimbusds.jose.sdk.ReadOnlyHeader;
+import com.nimbusds.jose.ReadOnlyHeader;
 
 
 /**

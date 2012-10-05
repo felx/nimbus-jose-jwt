@@ -16,21 +16,21 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA384Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 
 
 /**
  * The base abstract class for Elliptic Curve Digital Signature Algorithm 
- * (ECDSA) signers and validators of {@link com.nimbusds.jose.sdk.JWSObject JWS 
+ * (ECDSA) signers and validators of {@link com.nimbusds.jose.JWSObject JWS 
  * objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#ES512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES512}
  * </ul>
  * 
  * @author Axel Nennker

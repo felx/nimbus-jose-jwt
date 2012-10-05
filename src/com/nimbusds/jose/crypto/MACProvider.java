@@ -8,20 +8,20 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 
 
 /**
  * The base abstract class for Message Authentication Code (MAC) signers and
- * validators of {@link com.nimbusds.jose.sdk.JWSObject JWS objects}.
+ * validators of {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS256}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS384}
- *     <li>{@link com.nimbusds.jose.sdk.JWSAlgorithm#HS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS512}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
