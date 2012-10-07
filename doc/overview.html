@@ -7,27 +7,30 @@
 	<body>
 		<h3>Nimbus JOSE+JWT</h3>
 		
-		<p>Nimbus JOSE+JWT is a comprehensive Java implementation of the Javascript Object 
-		Signing and Encryption (JOSE) spec suite and the closely related JSON Web Token 
-		(JWT) spec. </p>
+		<p>Nimbus JOSE+JWT implements the Javascript Object Signing and Encryption (JOSE) 
+		spec suite and the closely related JSON Web Token (JWT) spec. </p>
 		
 		<p>The library supports creating, querying, serialising and parsing of the 
 		following JOSE and JWT objects:</p>
 		
 		<ul>
-			<li>Plain (unsecured) JOSE objects.</li>
-			<li>JSON Web Signature (JWS) objects.</li>
-			<li>JSON Web Encryption (JWE) objects.</li>
-			<li>JSON Web Key (JWK) objects and JSON Web Key (JWK) Sets.</li>
-			<li>Plain, signed and encrypted JSON Web Tokens (JWTs).</li>
+			<li>{@link com.nimbusds.jose.PlainObject Plain (unsecured) JOSE objects}.</li>
+			<li>{@link com.nimbusds.jose.JWSObject JSON Web Signature (JWS) objects}.</li>
+			<li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) objects}.</li>
+			<li>{@link com.nimbusds.jose.JWK JSON Web Key (JWK) objects} and 
+			    {@link com.nimbusds.jose.JWKSet JSON Web Key (JWK) Sets}.</li>
+			<li>{@link com.nimbusds.jwt.PlainJWT Plain}, 
+			    {@link com.nimbusds.jwt.SignedJWT signed} and 
+			    {@link com.nimbusds.jwt.EncryptedJWT encrypted} 
+			    {@link com.nimbusds.jwt.JWT JSON Web Tokens (JWTs)}.</li>
 		</ul>
 			
 		<p>The JOSE and JWT object representation is completely decoupled from JSON Web 
 		Algorithm (JWA) implementations through a set of simple interfaces for signing,
 		validating, encrypting and decrypting the objects.</p>
 		
-		<p>The library currently ships a ready implementation of the following standard 
-		algorithms:</p>
+		<p>The library currently ships a ready {@link com.nimbusds.jose.crypto implementation} 
+		of the following standard algorithms:</p>
 		
 		<ul>
 			<li>HMAC signatures with HS256, HS384 and HS512.</li>
@@ -38,11 +41,11 @@
 		<p>Related IETF drafts:</p>
 		
 		<ul>
-			<li>[JWA] draft-ietf-jose-json-web-algorithms-05</li>
-			<li>[JWS] draft-ietf-jose-json-web-signature-05</li>
-			<li>[JWE] draft-ietf-jose-json-web-encryption-05</li>
-			<li>[JWK] draft-ietf-jose-json-web-key-05</li>
-			<li>[JWT] draft-ietf-oauth-json-web-token-03</li>					
+			<li>[JWA] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-05">draft-ietf-jose-json-web-algorithms-05</a></li>
+			<li>[JWS] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-05">draft-ietf-jose-json-web-signature-05</a></li>
+			<li>[JWE] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-05">draft-ietf-jose-json-web-encryption-05</a></li>
+			<li>[JWK] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-05">draft-ietf-jose-json-web-key-05</a></li>
+			<li>[JWT] <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-03">draft-ietf-oauth-json-web-token-03</a></li>					
 		</ul>
 		
 		<p>Dependencies:</p>
