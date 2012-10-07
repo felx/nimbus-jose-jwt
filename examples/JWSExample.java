@@ -3,20 +3,20 @@ import java.text.ParseException;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACValidator;
 
-import com.nimbusds.jose.sdk.JOSEException;
-import com.nimbusds.jose.sdk.JWSAlgorithm;
-import com.nimbusds.jose.sdk.JWSHeader;
-import com.nimbusds.jose.sdk.JWSObject;
-import com.nimbusds.jose.sdk.JWSSigner;
-import com.nimbusds.jose.sdk.JWSValidator;
-import com.nimbusds.jose.sdk.Payload;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.Payload;
 
 
 /**
  * Example use of JWS objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-03)
+ * @version $version$ (2012-10-07)
  */
 public class JWSExample {
 
@@ -84,7 +84,7 @@ public class JWSExample {
 		boolean validSignature = false;
 		
 		try {
-			validSignature = jwsObject.validator(validator);
+			validSignature = jwsObject.validate(validator);
 			
 		} catch (JOSEException e) {
 		
