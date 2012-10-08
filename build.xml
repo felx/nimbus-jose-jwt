@@ -1,7 +1,7 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
 	<property name="version" value="2.1"/>
-	<property name="version-date" value="2012-10-07"/>
+	<property name="version-date" value="2012-10-08"/>
 	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
@@ -104,6 +104,7 @@
 	</target>
 	
 	<target name="dist" depends="clean,src,compile,compile-tests,junit,javadoc,jar">
+		<delete dir="procsrc"/>
 		<delete dir="build"/>
 		<delete>
 			<fileset dir="." includes="**/TEST-*"/>
