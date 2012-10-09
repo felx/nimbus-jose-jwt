@@ -84,3 +84,7 @@ version 2.1 (2012-10-07)
 	* Refactors library to enforce header parameter checking of signed JWS 
 	  and encrypted JWE objects.
 	* Simplifies package tree.
+
+version 2.1.1 (2012-10-09)
+	* Upgrades BouncyCastle.org JAR to 1.47.
+	* Removes stale RSASSAVerifier.
