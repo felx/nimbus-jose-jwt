@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Plain header.
+ * Plaintext JOSE header.
  *
  * <p>Supports all {@link #getReservedParameterNames reserved header parameters}
  * of the plain specification:
