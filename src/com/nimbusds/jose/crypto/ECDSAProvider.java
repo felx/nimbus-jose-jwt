@@ -4,7 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
@@ -35,7 +35,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-09)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 	
@@ -84,7 +84,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	protected static ECDSAParameters getECDSAParameters(final JWSAlgorithm alg)
 		throws JOSEException {
 		
-		DERObjectIdentifier oid = null;
+		ASN1ObjectIdentifier oid = null;
 		Digest digest = null;
 		
 		if (alg.equals(JWSAlgorithm.ES256)) {
