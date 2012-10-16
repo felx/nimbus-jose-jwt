@@ -12,10 +12,10 @@ package com.nimbusds.jose;
  *     <li>{@link #RSA_OAEP RSA-OAEP}
  *     <li>{@link #A128KW}
  *     <li>{@link #A256KW}
- *     <li>{@link #DIR}
- *     <li>{@link #ECDH_ES}
- *     <li>{@link #ECDH_ES_A128KW}
- *     <li>{@link #ECDH_ES_A256KW}
+ *     <li>{@link #DIR dir}
+ *     <li>{@link #ECDH_ES ECDH-ES}
+ *     <li>{@link #ECDH_ES_A128KW ESDH-ES+A128KW}
+ *     <li>{@link #ECDH_ES_A256KW ESDH-ES+A256KW}
  * </ul>
  *
  * <p>Additional JWE algorithm names can be defined using the constructors.

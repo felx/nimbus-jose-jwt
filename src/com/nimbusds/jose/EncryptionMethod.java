@@ -8,8 +8,8 @@ package com.nimbusds.jose;
  * <p>Includes constants for the following standard encryption method names:
  *
  * <ul>
- *     <li>{@link #A128CBC}
- *     <li>{@link #A256CBC}
+ *     <li>{@link #A128CBC_HS256 A128CBC+HS256}
+ *     <li>{@link #A256CBC_HS512 A256CBC+HS512}
  *     <li>{@link #A128GCM}
  *     <li>{@link #A256GCM}
  * </ul>
@@ -17,25 +17,27 @@ package com.nimbusds.jose;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-10-16)
  */
 public final class EncryptionMethod extends Algorithm {
 
 
 	/**
-	 * Advanced Encryption Standard (AES) in Cipher Block Chaining (CBC)
-	 * mode with PKCS #5 padding (NIST.800-38A) using 128 bit keys
-	 * (required).
+	 * Composite AED algorithm using Advanced Encryption Standard (AES) in 
+	 * Cipher Block Chaining (CBC) mode with PKCS #5 padding (NIST.800-38A) 
+	 * with an integrity calculation using HMAC SHA-256, using a 256 bit CMK
+	 * (and a 128 bit CEK) (required).
 	 */
-	public static final EncryptionMethod A128CBC = new EncryptionMethod("A128CBC", Requirement.REQUIRED);
+	public static final EncryptionMethod A128CBC_HS256 = new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED);
 	
 	
 	/**
-	 * Advanced Encryption Standard (AES) in Cipher Block Chaining (CBC)
-	 * mode with PKCS #5 padding (NIST.800-38A) using 256 bit keys
-	 * (required).
+	 * Composite AED algorithm using Advanced Encryption Standard (AES) in 
+	 * Cipher Block Chaining (CBC) mode with PKCS #5 padding (NIST.800-38A) 
+	 * with an integrity calculation using HMAC SHA-512, using a 512 bit CMK
+	 * (and a 256 bit CEK) (required).
 	 */
-	public static final EncryptionMethod A256CBC = new EncryptionMethod("A256CBC", Requirement.REQUIRED);
+	public static final EncryptionMethod A256CBC_HS512 = new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED);
 	
 	
 	/**
@@ -93,11 +95,11 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public static EncryptionMethod parse(final String s) {
 	
-		if (s == A128CBC.getName())
-			return A128CBC;
+		if (s == A128CBC_HS256.getName())
+			return A128CBC_HS256;
 		
-		else if (s == A256CBC.getName())
-			return A256CBC;
+		else if (s == A256CBC_HS512.getName())
+			return A256CBC_HS512;
 		
 		else if (s == A128GCM.getName())
 			return A128GCM;
