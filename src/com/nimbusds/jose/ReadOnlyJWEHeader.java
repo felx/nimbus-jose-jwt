@@ -8,7 +8,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-16)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
@@ -28,32 +28,6 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 * @return The encryption method parameter.
 	 */
 	public EncryptionMethod getEncryptionMethod();
-	
-	
-	/**
-	 * Gets the integrity algorithm ({@code int}) parameter.
-	 *
-	 * @return The integrity algorithm parameter, {@code null} if not 
-	 *         specified.
-	 */
-	public JWSAlgorithm getIntegrityAlgorithm();
-	
-	
-	/**
-	 * Gets the key derivation function ({@code kdf}) parameter.
-	 *
-	 * @return The key derivation function, {@code null} if not specified.
-	 */
-	public KeyDerivationFunction getKeyDerivationFunction();
-	
-	
-	/**
-	 * Gets the initialisation vector ({@code iv}) parameter.
-	 *
-	 * @return The initialisation vector parameter, {@code null} if not 
-	 *         specified.
-	 */
-	public Base64URL getInitializationVector();
 	
 	
 	/**
