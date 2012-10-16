@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-16)
  */
 public class JWEObject extends JOSEObject {
 
@@ -263,23 +263,6 @@ public class JWEObject extends JOSEObject {
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
 			                        "\" encryption method is not supported by the JWE encrypter");
 		}
-		
-		// Optional parameters
-		
-		JWSAlgorithm ia = getHeader().getIntegrityAlgorithm();
-		
-		if (ia != null && ! encrypter.supportedIntegrityAlgorithms().contains(ia)) {
-		
-			throw new JOSEException("The \"" + ia + "\" integrity algorithm is not supported by the JWE encrypter");
-		}
-		
-		
-		KeyDerivationFunction kdf = getHeader().getKeyDerivationFunction();
-		
-		if (kdf != null && ! encrypter.supportedKeyDerivationFunctions().contains(kdf)) {
-		
-			throw new JOSEException("The \"" + kdf + "\" key derivation function is not supported by the JWE encrypter");
-		}
 	}
 	
 	
@@ -310,25 +293,7 @@ public class JWEObject extends JOSEObject {
 		
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
 			                        "\" encryption method is not accepted by the JWE decrypter");
-		}
-		
-		// Optional parameters
-		
-		JWSAlgorithm ia = getHeader().getIntegrityAlgorithm();
-		
-		if (ia != null && ! filter.getAcceptedIntegrityAlgorithms().contains(ia)) {
-		
-			throw new JOSEException("The \"" + ia + "\" integrity algorithm is not accepted by the JWE decrypter");
-		}
-		
-		
-		KeyDerivationFunction kdf = getHeader().getKeyDerivationFunction();
-		
-		if (kdf != null && ! filter.getAcceptedKeyDerivationFunctions().contains(kdf)) {
-		
-			throw new JOSEException("The \"" + kdf + "\" key derivation function is not accepted by the JWE decrypter");
-		}
-		
+		}		
 		
 		// Header params
 		
