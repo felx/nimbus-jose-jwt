@@ -38,7 +38,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
  * SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
  * w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
- *	"exp":"AQAB",
+ *	"xpo":"AQAB",
  *	"kid":"2011-04-29"}
  *   ]
  * }

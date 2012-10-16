@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *            nYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt
  *            -bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIq
  *            bw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
- *   "exp" : "AQAB",
+ *   "xpo" : "AQAB",
  *   "kid" : "2012-09-18"
  * }
  * </pre>
@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-10-16)
  */
 public final class RSAKey extends JWK {
 	
@@ -47,7 +47,7 @@ public final class RSAKey extends JWK {
 	/**
 	 * The exponent value for the RSA public key.
 	 */
-	private final Base64URL exp;
+	private final Base64URL xpo;
 	 
 	
 	/**
@@ -57,13 +57,13 @@ public final class RSAKey extends JWK {
 	 * @param mod The the modulus value for the RSA public key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param exp The exponent value for the RSA public key. It is 
+	 * @param xpo The exponent value for the RSA public key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
 	 * @param kid The key ID. {@code null} if not specified.
 	 */
-	public RSAKey(final Base64URL mod, final Base64URL exp, 
+	public RSAKey(final Base64URL mod, final Base64URL xpo, 
 	              final Use use, final String kid) {
 	
 		super(AlgorithmFamily.RSA, use, kid);
@@ -73,10 +73,10 @@ public final class RSAKey extends JWK {
 		
 		this.mod = mod;
 		
-		if (exp == null)
+		if (xpo == null)
 			throw new IllegalArgumentException("The exponent value must not be null");
 		
-		this.exp = exp;
+		this.xpo = xpo;
 	}
 	
 	
@@ -100,7 +100,7 @@ public final class RSAKey extends JWK {
 	 */
 	public Base64URL getExponent() {
 	
-		return exp;
+		return xpo;
 	}
 	
 	
@@ -111,7 +111,7 @@ public final class RSAKey extends JWK {
 		
 		// Append RSA public key specific attributes
 		o.put("mod", mod.toString());
-		o.put("exp", exp.toString());
+		o.put("xpo", xpo.toString());
 	
 		return o;
 	}
@@ -134,7 +134,7 @@ public final class RSAKey extends JWK {
 		// Parse the mandatory parameters first
 		AlgorithmFamily af = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
 		Base64URL mod = new Base64URL(JSONObjectUtils.getString(jsonObject, "mod"));
-		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "exp"));
+		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "xpo"));
 		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
