@@ -1,0 +1,5 @@
+build
+javadoc
+procsrc
+nimbus-jose-jwt-*.jar
+TEST*
