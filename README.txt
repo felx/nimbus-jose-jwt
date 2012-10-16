@@ -36,15 +36,15 @@ standard algorithms:
 
 Related IETF drafts:
 
-	* [JWA] draft-ietf-jose-json-web-algorithms-05
+	* [JWA] draft-ietf-jose-json-web-algorithms-06
 
-	* [JWS] draft-ietf-jose-json-web-signature-05
+	* [JWS] draft-ietf-jose-json-web-signature-06
 
-	* [JWE] draft-ietf-jose-json-web-encryption-05
+	* [JWE] draft-ietf-jose-json-web-encryption-06
 
-	* [JWK] draft-ietf-jose-json-web-key-05
+	* [JWK] draft-ietf-jose-json-web-key-06
 
-	* [JWT] draft-ietf-oauth-json-web-token-03
+	* [JWT] draft-ietf-oauth-json-web-token-04
 
 
 Dependencies:
