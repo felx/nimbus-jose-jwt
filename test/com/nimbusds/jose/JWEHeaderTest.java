@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2012-10-16)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -24,8 +24,8 @@ public class JWEHeaderTest extends TestCase {
 	public void testParse1() {
 	
 		// Example header from JWE spec
-		// {"alg":"RSA-OAEP","enc":"A256GCM","iv":"48V1_ALb6US04U3b"}
-		String s = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00iLCJpdiI6IjQ4VjFfQUxiNlVTMDRVM2IifQ";
+		// {"alg":"RSA-OAEP","enc":"A256GCM"}
+		String s = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ";
 	
 		JWEHeader h = null;
 		
@@ -41,26 +41,21 @@ public class JWEHeaderTest extends TestCase {
 		
 		assertEquals(JWEAlgorithm.RSA_OAEP, h.getAlgorithm());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-		assertNull(h.getIntegrityAlgorithm());
 		
 		assertNull(h.getType());
 		assertNull(h.getContentType());
 		
-		assertEquals(new Base64URL("48V1_ALb6US04U3b"), h.getInitializationVector());
-		
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
-		assertTrue(h.getIncludedParameters().contains("iv"));
-		assertEquals(3, h.getIncludedParameters().size());
+		assertEquals(2, h.getIncludedParameters().size());
 	}
 	
 	
 	public void testParse2() {
 	
 		// Example header from JWE spec
-		// {"alg":"RSA1_5","enc":"A128CBC","int":"HS256","iv":"AxY8DCtDaGlsbGljb3RoZQ"}
-		String s = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDIiwiaW50IjoiSFMyNTYiLCJp" +
-			"diI6IkF4WThEQ3REYUdsc2JHbGpiM1JvWlEifQ";
+		// {"alg":"RSA1_5","enc":"A128CBC+HS256"}
+		String s = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0";
 	
 		JWEHeader h = null;
 		
@@ -75,19 +70,14 @@ public class JWEHeaderTest extends TestCase {
 		assertNotNull(h);
 		
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
-		assertEquals(EncryptionMethod.A128CBC, h.getEncryptionMethod());
-		assertEquals(JWSAlgorithm.HS256, h.getIntegrityAlgorithm());
+		assertEquals(EncryptionMethod.A128CBC_HS256, h.getEncryptionMethod());
 		
 		assertNull(h.getType());
 		assertNull(h.getContentType());
 		
-		assertEquals(new Base64URL("AxY8DCtDaGlsbGljb3RoZQ"), h.getInitializationVector());
-		
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
-		assertTrue(h.getIncludedParameters().contains("int"));
-		assertTrue(h.getIncludedParameters().contains("iv"));
-		assertEquals(4, h.getIncludedParameters().size());
+		assertEquals(2, h.getIncludedParameters().size());
 	}
 	
 	
@@ -98,8 +88,6 @@ public class JWEHeaderTest extends TestCase {
 		                            EncryptionMethod.A256GCM);
 		
 		h.setType(new JOSEObjectType("JWT"));
-		h.setIntegrityAlgorithm(null);
-		h.setInitializationVector(new Base64URL("abc"));
 		h.setCompressionAlgorithm(CompressionAlgorithm.DEF);
 		h.setJWKURL(new URL("https://example.com/jku.json"));
 		h.setKeyID("1234");
@@ -140,8 +128,6 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-		assertNull(h.getIntegrityAlgorithm());
-		assertEquals(new Base64URL("abc"), h.getInitializationVector());
 		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
 		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
@@ -165,7 +151,6 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
-		assertTrue(h.getIncludedParameters().contains("iv"));
 		assertTrue(h.getIncludedParameters().contains("zip"));
 		assertTrue(h.getIncludedParameters().contains("jku"));
 		assertTrue(h.getIncludedParameters().contains("jwk"));
@@ -173,6 +158,6 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5u"));
 		assertTrue(h.getIncludedParameters().contains("x5t"));
 		assertTrue(h.getIncludedParameters().contains("x5c"));
-		assertEquals(11, h.getIncludedParameters().size());
+		assertEquals(10, h.getIncludedParameters().size());
 	}
 }
