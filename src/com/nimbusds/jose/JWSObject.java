@@ -69,7 +69,7 @@ public class JWSObject extends JOSEObject {
 	
 	
 	/**
-	 * The state.
+	 * The JWS object state.
 	 */
 	private State state;
 	

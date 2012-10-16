@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Encrypted JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-16)
  */
 public class EncryptedJWT extends JWEObject implements JWT {
 
@@ -45,9 +45,11 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 *                   Must not be {@code null}.
 	 * @param secondPart The second part, corresponding to the encrypted 
 	 *                   key. Empty or {@code null} if none.
-	 * @param thirdPart  The third part, corresponding to the cipher text.
+	 * @param thirdPart  The third part, corresponding to the initialisation
+	 *                   vectory. Empty or {@code null} if none.
+	 * @param fourthPart The fourth part, corresponding to the cipher text.
 	 *                   Must not be {@code null}.
-	 * @param fourthPart The fourth part, corresponding to the integrity
+	 * @param fifthPart  The fifth part, corresponding to the integrity
 	 *                   value. Empty of {@code null} if none.
 	 *
 	 * @throws ParseException If parsing of the serialised parts failed.
@@ -55,10 +57,11 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	public EncryptedJWT(final Base64URL firstPart, 
 	                    final Base64URL secondPart, 
 			    final Base64URL thirdPart,
-			    final Base64URL fourthPart)
+			    final Base64URL fourthPart,
+			    final Base64URL fifthPart)
 		throws ParseException {
 	
-		super(firstPart, secondPart, thirdPart, fourthPart);
+		super(firstPart, secondPart, thirdPart, fourthPart, fifthPart);
 	}
 	
 	
@@ -96,9 +99,9 @@ public class EncryptedJWT extends JWEObject implements JWT {
 		
 		Base64URL[] parts = JOSEObject.split(s);
 		
-		if (parts.length != 4)
-			throw new ParseException("Unexpected number of Base64URL parts, must be four", 0);
+		if (parts.length != 5)
+			throw new ParseException("Unexpected number of Base64URL parts, must be five", 0);
 		
-		return new EncryptedJWT(parts[0], parts[1], parts[2], parts[3]);
+		return new EncryptedJWT(parts[0], parts[1], parts[2], parts[3], parts[4]);
 	}
 }

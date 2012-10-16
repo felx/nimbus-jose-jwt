@@ -6,11 +6,11 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
- * a simple wrapper for returning the cipher text, encrypted key and integrity 
- * value from {@link JWEEncrypter} implementations.
+ * a simple wrapper for returning the cipher text, initialisation vector (IV), 
+ * encrypted key and integrity value from {@link JWEEncrypter} implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2012-10-16)
  */
 public final class JWECryptoParts {
 
@@ -19,6 +19,12 @@ public final class JWECryptoParts {
 	 * The encrypted key (optional).
 	 */
 	final Base64URL encryptedKey;
+	
+	
+	/**
+	 * The initialisation vector (optional).
+	 */
+	final Base64URL iv;
 
 
 	/**
@@ -38,17 +44,26 @@ public final class JWECryptoParts {
 	 *
 	 * @param encryptedKey   The encrypted key, {@code null} if not
 	 *                       required by the encryption algorithm.
-	 * @param cipherText     The cipher text. Must not be 
-	 *                       {@code null}.
+	 * @param iv             The initialisation vector (IV), {@code null} if
+	 *                       not required by the encryption algorithm.
+	 * @param cipherText     The cipher text. Must not be {@code null}.
 	 * @param integrityValue The integrity value, {@code null} if the JWE 
 	 *                       algorithm provides built-in integrity check.
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
+	                      final Base64URL iv,
 		              final Base64URL cipherText, 
 		              final Base64URL integrityValue) {
 
 		this.encryptedKey = encryptedKey;
+		
+		this.iv = iv;
+		
+		if (cipherText == null)
+			throw new IllegalArgumentException("The cipher text must not be null");
+		
 		this.cipherText = cipherText;
+		
 		this.integrityValue = integrityValue;
 	}
 
@@ -62,6 +77,18 @@ public final class JWECryptoParts {
 	public Base64URL getEncryptedKey() {
 
 		return encryptedKey;
+	}
+	
+	
+	/**
+	 * Gets the initialisation vector (IV).
+	 *
+	 * @return The initialisation vector (IV), {@code null} if not required
+	 *         by the JWE algorithm.
+	 */
+	public Base64URL getInitializationVector() {
+	
+		return iv;
 	}
 
 

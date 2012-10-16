@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * The base abstract class for plain, JWS-secured and JWE-secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-16)
  */
 public abstract class JOSEObject {
 
@@ -96,15 +96,15 @@ public abstract class JOSEObject {
 	 *          {@code null}.
 	 *
 	 * @return The JOSE Base64URL-encoded parts (three for plain and JWS
-	 *         objects, four for JWE objects).
+	 *         objects, five for JWE objects).
 	 *
 	 * @throws ParseException If the specified string couldn't be split into
-	 *                        three or four Base64URL-encoded parts.
+	 *                        three or five Base64URL-encoded parts.
 	 */
 	public static Base64URL[] split(final String s)
 		throws ParseException {
 		
-		// We must have at least 2 dots but no more that 3
+		// We must have 2 (JWS) or 4 dots (JWE)
 		
 		// String.split() cannot handle empty parts
 		final int dot1 = s.indexOf(".");
@@ -120,7 +120,13 @@ public abstract class JOSEObject {
 		// Third dot for JWE only
 		final int dot3 = s.indexOf(".", dot2 + 1);
 		
-		if (dot3 != -1 && s.indexOf(".", dot3 + 1) != -1)
+		if (dot3 == -1)
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing third delimiter", 0);
+		
+		// Fourth final dot for JWE
+		final int dot4 = s.indexOf(".", dot3 + 1);
+		
+		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1)
 			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
 		
 		
@@ -133,12 +139,13 @@ public abstract class JOSEObject {
 			return parts;
 		}
 		else {
-			// Three dots -> four parts
+			// Four dots -> five parts
 			Base64URL[] parts = new Base64URL[4];
 			parts[0] = new Base64URL(s.substring(0, dot1));
 			parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
 			parts[2] = new Base64URL(s.substring(dot2 + 1, dot3));
-			parts[3] = new Base64URL(s.substring(dot3 + 1));
+			parts[3] = new Base64URL(s.substring(dot3 + 1, dot2));
+			parts[4] = new Base64URL(s.substring(dot4 + 1));
 			return parts;
 		}
 	}

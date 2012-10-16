@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-16)
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
@@ -43,6 +43,8 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                       be {@code null}.
 	 * @param encryptedKey   The encrypted key, {@code null} if not required
 	 *                       by the JWE algorithm.
+	 * @param iv             The initialisation vector, {@code null} if not
+	 *                       required by the JWE algorithm.
 	 * @param cipherText     The cipher text to decrypt. Must not be 
 	 *                       {@code null}.
 	 * @param integrityValue The integrity value, {@code null} if not 
@@ -56,6 +58,7 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 */
 	public byte[] decrypt(final ReadOnlyJWEHeader header, 
 	                      final Base64URL encryptedKey,
+			      final Base64URL iv,
 			      final Base64URL cipherText,
 			      final Base64URL integrityValue)
 		throws JOSEException;

@@ -47,25 +47,32 @@ public class JWEObject extends JOSEObject {
 	
 	
 	/** 
-	 * The encrypted key, {@code null} if not applicable or available.
+	 * The encrypted key, {@code null} if not computed or applicable.
 	 */
 	private Base64URL encryptedKey;
 	
 	
 	/**
-	 * The cipher text, {@code null} if not available.
+	 * The initialisation vector, {@code null} if not generated or 
+	 * applicable.
+	 */
+	private Base64URL initializationVector;
+	
+	
+	/**
+	 * The cipher text, {@code null} if not computed.
 	 */
 	private Base64URL cipherText;
 	
 	
 	/**
-	 * The integrity value, {@code null} if not available.
+	 * The integrity value, {@code null} if not computed or applicable.
 	 */
 	private Base64URL integrityValue;
 	
 	
 	/**
-	 * The state.
+	 * The JWE object state.
 	 */
 	private State state;
 	
@@ -107,9 +114,11 @@ public class JWEObject extends JOSEObject {
 	 *                   Must not be {@code null}.
 	 * @param secondPart The second part, corresponding to the encrypted 
 	 *                   key. Empty or {@code null} if none.
-	 * @param thirdPart  The third part, corresponding to the cipher text.
+	 * @param thirdPart  The third part, corresponding to the initialisation
+	 *                   vector. Empty or {@code null} if none.
+	 * @param fourthPart The fourth part, corresponding to the cipher text.
 	 *                   Must not be {@code null}.
-	 * @param fourthPart The fourth part, corresponding to the integrity
+	 * @param fifthPart  The fifth part, corresponding to the integrity
 	 *                   value. Empty of {@code null} if none.
 	 *
 	 * @throws ParseException If parsing of the serialised parts failed.
@@ -117,7 +126,8 @@ public class JWEObject extends JOSEObject {
 	public JWEObject(final Base64URL firstPart, 
 	                 final Base64URL secondPart, 
 			 final Base64URL thirdPart,
-			 final Base64URL fourthPart)
+			 final Base64URL fourthPart,
+			 final Base64URL fifthPart)
 		throws ParseException {
 	
 		if (firstPart == null)
@@ -132,19 +142,24 @@ public class JWEObject extends JOSEObject {
 		}
 		
 		if (secondPart == null || secondPart.toString().isEmpty())
+			initializationVector = null;
+		else
+			initializationVector = secondPart;
+		
+		if (thirdPart == null || thirdPart.toString().isEmpty())
 			encryptedKey = null;
 		else
 			encryptedKey = secondPart;
 	
-		if (thirdPart == null)
-			throw new IllegalArgumentException("The third part must not be null");
+		if (fourthPart == null)
+			throw new IllegalArgumentException("The fourth part must not be null");
 		
-		cipherText = thirdPart;
+		cipherText = fourthPart;
 		
-		if (fourthPart == null || fourthPart.toString().isEmpty())
+		if (fifthPart == null || fifthPart.toString().isEmpty())
 			integrityValue = null;
 		else
-			integrityValue = fourthPart;
+			integrityValue = fifthPart;
 		
 		state = State.ENCRYPTED; // but not decrypted yet!
 	}
@@ -170,7 +185,19 @@ public class JWEObject extends JOSEObject {
 	
 	
 	/**
-	 * Gets the cipher of this JWE object.
+	 * Gets the initialisation vector (IV) of this JWE object.
+	 *
+	 * @return The initialisation vector (IV), {@code null} if not 
+	 *         applicable or the JWE object has not been encrypted yet.
+	 */
+	public Base64URL getInitializationVector() {
+	
+		return initializationVector;
+	}
+	
+	
+	/**
+	 * Gets the cipher text of this JWE object.
 	 *
 	 * @return The cipher text, {@code null} if the JWE object has not been
 	 *         encrypted yet.
@@ -326,6 +353,7 @@ public class JWEObject extends JOSEObject {
 		JWECryptoParts parts = encrypter.encrypt(getHeader(), getPayload().toBytes());
 		
 		encryptedKey = parts.getEncryptedKey();
+		initializationVector = parts.getInitializationVector();
 		cipherText = parts.getCipherText();
 		integrityValue = parts.getIntegrityValue();
 		
@@ -354,6 +382,7 @@ public class JWEObject extends JOSEObject {
 		
 		setPayload(new Payload(decrypter.decrypt(getHeader(), 
 		                                         getEncryptedKey(), 
+							 getInitializationVector(),
 							 getCipherText(), 
 							 getIntegrityValue())));
 		
@@ -368,7 +397,7 @@ public class JWEObject extends JOSEObject {
 	 * {@link State#DECRYPTED decrypted} state.
 	 *
 	 * <pre>
-	 * [header-base64url].[encryptedKey-base64url].[cipherText-base64url].[integrityValue-base64url]
+	 * [header-base64url].[encryptedKey-base64url].[iv-base64url].[cipherText-base64url].[integrityValue-base64url]
 	 * </pre>
 	 *
 	 * @return The serialised JWE object.
@@ -390,9 +419,16 @@ public class JWEObject extends JOSEObject {
 			sb.append(encryptedKey.toString());
 		
 		sb.append('.');
+		
+		if (initializationVector != null)
+			sb.append(initializationVector.toString());
+		
+		sb.append('.');
+		
 		sb.append(cipherText.toString());
 		
 		sb.append('.');
+		
 		if (integrityValue != null)
 			sb.append(integrityValue.toString());
 		
@@ -416,9 +452,9 @@ public class JWEObject extends JOSEObject {
 	
 		Base64URL[] parts = JOSEObject.split(s);
 		
-		if (parts.length != 4)
-			throw new ParseException("Unexpected number of Base64URL parts, must be four", 0);
+		if (parts.length != 5)
+			throw new ParseException("Unexpected number of Base64URL parts, must be five", 0);
 		
-		return new JWEObject(parts[0], parts[1], parts[2], parts[3]);
+		return new JWEObject(parts[0], parts[1], parts[2], parts[3], parts[4]);
 	}
 }
