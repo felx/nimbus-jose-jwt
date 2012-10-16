@@ -12,7 +12,7 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-16)
  */
 public interface JWEAlgorithmProvider {
 
@@ -33,22 +33,4 @@ public interface JWEAlgorithmProvider {
 	 * @return The supported encryption methods, empty set if none.
 	 */
 	public Set<EncryptionMethod> supportedEncryptionMethods();
-	
-	
-	/**
-	 * Returns the names of the supported integrity algorithms. These
-	 * correspond to the optional {@code int} header parameter.
-	 *
-	 * @return The supported integrity algorithms, empty set if none.
-	 */
-	public Set<JWSAlgorithm> supportedIntegrityAlgorithms();
-	
-	
-	/**
-	 * Returns the names of the supported key derivation functions. These
-	 * correspond to the optional {@code kdf} header parameter.
-	 *
-	 * @return The supported key derivation functions, empty set if none.
-	 */
-	public Set<KeyDerivationFunction> supportedKeyDerivationFunctions();
 }
