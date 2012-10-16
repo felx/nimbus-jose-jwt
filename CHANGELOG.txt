@@ -90,4 +90,4 @@ version 2.1.1 (2012-10-09)
 	* Removes stale RSASSAVerifier.
 
 version 2.2 (2012-10-16)
-	* Upgrades to JWA/JWS/JWE/JWK/JWT -06 draft suite.
+	* Updates the library to the latest JWA/JWS/JWE/JWK/JWT -06 draft suite.
