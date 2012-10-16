@@ -120,34 +120,33 @@ public abstract class JOSEObject {
 		// Third dot for JWE only
 		final int dot3 = s.indexOf(".", dot2 + 1);
 		
-		if (dot3 == -1)
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing third delimiter", 0);
-		
-		// Fourth final dot for JWE
-		final int dot4 = s.indexOf(".", dot3 + 1);
-		
-		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1)
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
-		
-		
 		if (dot3 == -1) {
-			// Two dots - > three parts
+		
+			// Two dots only? -> We have a JWS
 			Base64URL[] parts = new Base64URL[3];
 			parts[0] = new Base64URL(s.substring(0, dot1));
 			parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
 			parts[2] = new Base64URL(s.substring(dot2 + 1));
 			return parts;
 		}
-		else {
-			// Four dots -> five parts
-			Base64URL[] parts = new Base64URL[4];
-			parts[0] = new Base64URL(s.substring(0, dot1));
-			parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
-			parts[2] = new Base64URL(s.substring(dot2 + 1, dot3));
-			parts[3] = new Base64URL(s.substring(dot3 + 1, dot2));
-			parts[4] = new Base64URL(s.substring(dot4 + 1));
-			return parts;
-		}
+		
+		// Fourth final dot for JWE
+		final int dot4 = s.indexOf(".", dot3 + 1);
+		
+		if (dot4 == -1)
+			throw new ParseException("Invalid serialized JWE object: Missing fourth delimiter", 0);
+		
+		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1)
+			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
+		
+		// Four dots -> five parts
+		Base64URL[] parts = new Base64URL[5];
+		parts[0] = new Base64URL(s.substring(0, dot1));
+		parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
+		parts[2] = new Base64URL(s.substring(dot2 + 1, dot3));
+		parts[3] = new Base64URL(s.substring(dot3 + 1, dot4));
+		parts[4] = new Base64URL(s.substring(dot4 + 1));
+		return parts;
 	}
 
 
