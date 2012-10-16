@@ -28,9 +28,6 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <ul>
  *     <li>alg
  *     <li>enc
- *     <li>int
- *     <li>kdf
- *     <li>iv
  *     <li>epk
  *     <li>zip
  *     <li>jku
@@ -51,14 +48,12 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <pre>
  * { 
  *   "alg" : "RSA1_5",
- *   "enc" : "A128CBC",
- *   "int" : "HS256",
- *   "iv"  : "AxY8DCtDaGlsbGljb3RoZQ"
+ *   "enc" : "A128CBC+HS256"
  * }
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2012-10-16)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -77,9 +72,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		
 		p.add("alg");
 		p.add("enc");
-		p.add("int");
-		p.add("kdf");
-		p.add("iv");
 		p.add("epk");
 		p.add("zip");
 		p.add("jku");
@@ -99,24 +91,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 * The encryption method ({@code enc}) parameter.
 	 */
 	private EncryptionMethod enc;
-	
-	
-	/**
-	 * The integrity algorithm ({@code int}) parameter.
-	 */
-	private JWSAlgorithm ia;
-	
-	
-	/**
-	 * The key derivation function ({@code kdf}) parameter.
-	 */
-	private KeyDerivationFunction kdf;
-	
-	
-	/**
-	 * The initialisation vector ({@code iv}) parameter.
-	 */
-	private Base64URL iv;
 	
 	
 	/**
@@ -170,63 +144,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	public EncryptionMethod getEncryptionMethod() {
 	
 		return enc;
-	}
-	
-	
-	@Override
-	public JWSAlgorithm getIntegrityAlgorithm() {
-	
-		return ia;
-	}
-	
-	
-	/**
-	 * Sets the integrity algorithm ({@code int}) parameter.
-	 *
-	 * @param ia The integrity algorithm parameter, {@code null} if not 
-	 *           specified.
-	 */
-	public void setIntegrityAlgorithm(final JWSAlgorithm ia) {
-	
-		this.ia = ia;
-	}
-	
-	
-	@Override
-	public KeyDerivationFunction getKeyDerivationFunction() {
-	
-		return kdf;
-	}
-	
-	
-	/**
-	 * Sets the key derivation function ({@code kdf}) parameter.
-	 *
-	 * @param kdf The key derivation function, {@code null} if not 
-	 *            specified.
-	 */
-	public void setKeyDerivationFunction(final KeyDerivationFunction kdf) {
-	
-		this.kdf = kdf;
-	}
-	
-	
-	@Override
-	public Base64URL getInitializationVector() {
-	
-		return iv;
-	}
-	
-	
-	/**
-	 * Sets the initialisation vector ({@code iv}) parameter.
-	 *
-	 * @param iv The initialisation vector parameter, {@code null} if not 
-	 *           specified.
-	 */
-	public void setInitializationVector(final Base64URL iv) {
-	
-		this.iv = iv;
 	}
 	
 	
@@ -291,15 +208,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		includedParameters.add("alg");
 		includedParameters.add("enc");
 		
-		if (getIntegrityAlgorithm() != null)
-			includedParameters.add("int");
-		
-		if (getKeyDerivationFunction() != null)
-			includedParameters.add("kdf");
-		
-		if (getInitializationVector() != null)
-			includedParameters.add("iv");
-		
 		if (getEphemeralPublicKey() != null)
 			includedParameters.add("epk");
 		
@@ -341,15 +249,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	
 		if (enc != null)
 			o.put("enc", enc.toString());
-		
-		if (ia != null)
-			o.put("int", ia.toString());
-			
-		if (kdf != null)
-			o.put("kdf", kdf.toString());
-		
-		if (iv != null)
-			o.put("iv", iv.toString());
 		
 		if (epk != null)
 			o.put("epk", epk.toJSONObject());
@@ -416,15 +315,6 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			
 			else if (name.equals("enc")) 
 				continue; // skip
-			
-			else if (name.equals("int")) 
-				h.setIntegrityAlgorithm(JWSAlgorithm.parse(JSONObjectUtils.getString(json, name)));
-			
-			else if (name.equals("kdf")) 
-				h.setKeyDerivationFunction(KeyDerivationFunction.parse(JSONObjectUtils.getString(json, name)));
-			
-			else if (name.equals("iv")) 
-				h.setInitializationVector(new Base64URL(JSONObjectUtils.getString(json, name)));
 			
 			else if (name.equals("epk")) 
 				h.setEphemeralPublicKey(ECKey.parse(JSONObjectUtils.getJSONObject(json, name)));
