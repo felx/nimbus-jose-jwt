@@ -110,6 +110,11 @@ public class JWEHeaderTest extends TestCase {
 		
 		h.setX509CertChain(certChain);
 		
+		h.setAgreementPartyUInfo(new Base64URL("abc"));
+		h.setAgreementPartyVInfo(new Base64URL("def"));
+		h.setEncryptionPartyUInfo(new Base64URL("ghi"));
+		h.setEncryptionPartyVInfo(new Base64URL("jkl"));
+		
 		
 		String s = h.toString();
 		
@@ -148,6 +153,11 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64("fgh"), certChain[1]);
 		assertEquals(new Base64("jkl"), certChain[2]);
 		
+		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
+		assertEquals(new Base64URL("def"), h.getAgreementPartyVInfo());
+		assertEquals(new Base64URL("ghi"), h.getEncryptionPartyUInfo());
+		assertEquals(new Base64URL("jkl"), h.getEncryptionPartyVInfo());
+		
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
@@ -158,6 +168,10 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5u"));
 		assertTrue(h.getIncludedParameters().contains("x5t"));
 		assertTrue(h.getIncludedParameters().contains("x5c"));
-		assertEquals(10, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("apu"));
+		assertTrue(h.getIncludedParameters().contains("apv"));
+		assertTrue(h.getIncludedParameters().contains("epu"));
+		assertTrue(h.getIncludedParameters().contains("epv"));
+		assertEquals(14, h.getIncludedParameters().size());
 	}
 }
