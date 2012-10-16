@@ -40,11 +40,8 @@ public final class JWECryptoParts {
 	 *                       required by the encryption algorithm.
 	 * @param cipherText     The cipher text. Must not be 
 	 *                       {@code null}.
-	 * @param integrityValue The integrity value according to
-	 *                       {@link JWEHeader#getIntegrityAlgorithm},
-	 *                       {@code null} if the JWE algorithm 
-	 *                       provides built-in integrity check, else
-	 *                       {@code null}.
+	 * @param integrityValue The integrity value, {@code null} if the JWE 
+	 *                       algorithm provides built-in integrity check.
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
 		              final Base64URL cipherText, 

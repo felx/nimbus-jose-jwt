@@ -46,4 +46,40 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public CompressionAlgorithm getCompressionAlgorithm();
+	
+	
+	/**
+	 * Gets the agreement PartyUInfo ({@code apu}) parameter.
+	 *
+	 * @return The agreement PartyUInfo parameter, {@code null} if not
+	 *         specified.
+	 */
+	public Base64URL getAgreementPartyUInfo();
+	
+	
+	/**
+	 * Gets the agreement PartyVInfo ({@code apv}) parameter.
+	 *
+	 * @return The agreement PartyVInfo parameter, {@code null} if not
+	 *         specified.
+	 */
+	public Base64URL getAgreementPartyVInfo();
+	
+	
+	/**
+	 * Gets the encryption PartyUInfo ({@code epu}) parameter.
+	 *
+	 * @return The encryption PartyUInfo parameter, {@code null} if not
+	 *         specified.
+	 */
+	public Base64URL getEncryptionPartyUInfo();
+	
+	
+	/**
+	 * Gets the encryption PartyVInfo ({@code epv}) parameter.
+	 *
+	 * @return The encryption PartyVInfo parameter, {@code null} if not
+	 *         specified.
+	 */
+	public Base64URL getEncryptionPartyVInfo();
 }

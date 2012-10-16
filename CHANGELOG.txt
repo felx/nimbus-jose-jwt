@@ -88,3 +88,6 @@ version 2.1 (2012-10-07)
 version 2.1.1 (2012-10-09)
 	* Upgrades BouncyCastle.org JAR to 1.47.
 	* Removes stale RSASSAVerifier.
+
+version 2.2 (2012-10-16)
+	* Upgrades to JWA/JWS/JWE/JWK/JWT -06 draft suite.

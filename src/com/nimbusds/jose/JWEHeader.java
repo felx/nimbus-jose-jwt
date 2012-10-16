@@ -38,6 +38,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>kid
  *     <li>typ
  *     <li>cty
+ *     <li>apu
+ *     <li>apv
+ *     <li>epu
+ *     <li>epv
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
@@ -82,6 +86,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		p.add("kid");
 		p.add("typ");
 		p.add("cty");
+		p.add("apu");
+		p.add("apv");
+		p.add("epu");
+		p.add("epv");
 		
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -103,6 +111,30 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 * The compression algorithm ({@code zip}) parameter.
 	 */
 	private CompressionAlgorithm zip;
+	
+	
+	/**
+	 * The agreement PartyUInfo ({@code apu}) parameter.
+	 */
+	private Base64URL apu;
+
+
+	/**
+	 * The agreement PartyVInfo ({@code apv}) parameter.
+	 */
+	private Base64URL apv;
+	
+	
+	/**
+	 * The encryption PartyUInfo ({@code epu}) parameter.
+	 */
+	private Base64URL epu;
+	
+	
+	/**
+	 * The encryption PartyUInfo ({@code epv}) parameter.
+	 */
+	private Base64URL epv;
 	
 	
 	/**
@@ -185,6 +217,82 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	}
 	
 	
+	@Override
+	public Base64URL getAgreementPartyUInfo() {
+	
+		return apu;
+	}
+	
+	
+	/**
+	 * Sets the agreement PartyUInfo ({@code apu}) parameter.
+	 *
+	 * @param epu The agreement PartyUInfo parameter, {@code null} if not
+	 *            specified.
+	 */
+	public void setAgreementPartyUInfo(final Base64URL epu) {
+	
+		this.epu = epu;
+	}
+	
+	
+	@Override
+	public Base64URL getAgreementPartyVInfo() {
+	
+		return apv;
+	}
+	
+	
+	/**
+	 * Sets the agreement PartyVInfo ({@code apv}) parameter.
+	 *
+	 * @param apv The agreement PartyVInfo parameter, {@code null} if not
+	 *            specified.
+	 */
+	public void setAgreementPartyVInfo(final Base64URL apv) {
+	
+		this.apv = apv;
+	}
+	
+	
+	@Override
+	public Base64URL getEncryptionPartyUInfo() {
+	
+		return epu;
+	}
+	
+	
+	/**
+	 * Sets the encryption PartyUInfo ({@code epu}) parameter.
+	 *
+	 * @param epu The encryption PartyUInfo parameter, {@code null} if not
+	 *            specified.
+	 */
+	public void setEncryptionPartyUInfo(final Base64URL epu) {
+	
+		this.epu = epu;
+	}
+	
+	
+	@Override
+	public Base64URL getEncryptionPartyVInfo() {
+	
+		return epv;
+	}
+	
+	
+	/**
+	 * Sets the encryption PartyVInfo ({@code epv}) parameter.
+	 *
+	 * @param epv The encryption PartyVInfo parameter, {@code null} if not
+	 *            specified.
+	 */
+	public void setEncryptionPartyVInfo(final Base64URL epv) {
+	
+		this.epv = epv;
+	}
+	
+	
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
 	 *                                  matches a reserved parameter name.
@@ -238,6 +346,18 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		if (getKeyID() != null)
 			includedParameters.add("kid");
 		
+		if (getAgreementPartyUInfo() != null)
+			includedParameters.add("apu");
+		
+		if (getAgreementPartyVInfo() != null)
+			includedParameters.add("apv");
+		
+		if (getEncryptionPartyUInfo() != null)
+			includedParameters.add("epu");
+		
+		if (getEncryptionPartyVInfo() != null)
+			includedParameters.add("epv");
+		
 		return includedParameters;
 	}
 	
@@ -255,6 +375,18 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		
 		if (zip != null)
 			o.put("zip", zip.toString());
+		
+		if (apu != null)
+			o.put("apu", apu.toString());
+		
+		if (apv != null)
+			o.put("apv", apv.toString());
+		
+		if (epu != null)
+			o.put("epu", epu.toString());
+		
+		if (epv != null)
+			o.put("epv", epv.toString());
 		
 		return o;
 	}
@@ -346,7 +478,19 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			else if (name.equals("kid"))
 				h.setKeyID(JSONObjectUtils.getString(json, name));
 			
-			else 
+			else if (name.equals("apu"))
+				h.setAgreementPartyUInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			
+			else if (name.equals("apv"))
+				h.setAgreementPartyVInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			
+			else if (name.equals("epu"))
+				h.setEncryptionPartyUInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			
+			else if (name.equals("epv"))
+				h.setEncryptionPartyVInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			
+			else
 				h.setCustomParameter(name, json.get(name));
 			
 		}
