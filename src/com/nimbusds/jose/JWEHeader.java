@@ -227,12 +227,12 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	/**
 	 * Sets the agreement PartyUInfo ({@code apu}) parameter.
 	 *
-	 * @param epu The agreement PartyUInfo parameter, {@code null} if not
+	 * @param apu The agreement PartyUInfo parameter, {@code null} if not
 	 *            specified.
 	 */
-	public void setAgreementPartyUInfo(final Base64URL epu) {
+	public void setAgreementPartyUInfo(final Base64URL apu) {
 	
-		this.epu = epu;
+		this.apu = apu;
 	}
 	
 	
