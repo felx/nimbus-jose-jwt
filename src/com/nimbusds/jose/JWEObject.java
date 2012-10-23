@@ -3,15 +3,18 @@ package com.nimbusds.jose;
 
 import java.text.ParseException;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * JSON Web Encryption (JWE) object.
+ * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class JWEObject extends JOSEObject {
 
 
@@ -43,7 +46,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private JWEHeader header;
+	private final JWEHeader header;
 	
 	
 	/** 
@@ -345,7 +348,7 @@ public class JWEObject extends JOSEObject {
 	 * @throws JOSEException         If the JWE object couldn't be 
 	 *                               encrypted.
 	 */
-	public void encrypt(final JWEEncrypter encrypter)
+	public synchronized void encrypt(final JWEEncrypter encrypter)
 		throws JOSEException {
 	
 		ensureUnencryptedState();
@@ -375,7 +378,7 @@ public class JWEObject extends JOSEObject {
 	 * @throws JOSEException         If the JWE object couldn't be 
 	 *                               decrypted.
 	 */
-	public void decrypt(final JWEDecrypter decrypter)
+	public synchronized void decrypt(final JWEDecrypter decrypter)
 		throws JOSEException {
 		
 		ensureEncryptedState();

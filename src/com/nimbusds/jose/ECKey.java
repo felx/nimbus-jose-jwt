@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -29,13 +31,14 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class ECKey extends JWK {
 	
 	
 	/**
-	 * Cryptographic curve.
+	 * Cryptographic curve. This class is immutable.
 	 *
 	 * <p>Includes constants for the following standard cryptographic 
 	 * curves:
@@ -49,6 +52,7 @@ public final class ECKey extends JWK {
 	 * <p>See "Digital Signature Standard (DSS)", FIPS PUB 186-3, June 2009,
 	 * National Institute of Standards and Technology (NIST).
 	 */
+	@Immutable
 	public static class Curve {
 	
 	
@@ -73,7 +77,7 @@ public final class ECKey extends JWK {
 		/**
 		 * The curve name.
 		 */
-		private String name;
+		private final String name;
 		
 		
 		/**

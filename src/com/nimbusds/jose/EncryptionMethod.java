@@ -1,6 +1,9 @@
 package com.nimbusds.jose;
 
 
+import net.jcip.annotations.Immutable;
+
+
 /**
  * Encryption method name, represents the {@code enc} header parameter in JSON
  * Web Encryption (JWE) objects. This class is immutable.
@@ -17,8 +20,9 @@ package com.nimbusds.jose;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class EncryptionMethod extends Algorithm {
 
 

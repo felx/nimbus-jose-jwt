@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
  * JOSE object type, represents the {@code typ} header parameter in plain, JSON
@@ -22,6 +24,7 @@ import net.minidev.json.JSONObject;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-17)
  */
+@Immutable
 public final class JOSEObjectType implements JSONAware {
 
 

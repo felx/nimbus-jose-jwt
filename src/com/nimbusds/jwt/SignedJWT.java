@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.JWSHeader;
@@ -17,8 +19,9 @@ import com.nimbusds.jose.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class SignedJWT extends JWSObject implements JWT {
 
 

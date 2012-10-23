@@ -7,15 +7,18 @@ import java.text.ParseException;
 
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * JSON Web Signature (JWS) object.
+ * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class JWSObject extends JOSEObject {
 
 
@@ -47,7 +50,7 @@ public class JWSObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private JWSHeader header;
+	private final JWSHeader header;
 	
 	
 	/**
@@ -307,7 +310,7 @@ public class JWSObject extends JOSEObject {
 	 *                               {@link State#UNSIGNED unsigned state}.
 	 * @throws JOSEException         If the JWS object couldn't be signed.
 	 */
-	public void sign(final JWSSigner signer)
+	public synchronized void sign(final JWSSigner signer)
 		throws JOSEException {
 	
 		ensureUnsignedState();
@@ -334,7 +337,7 @@ public class JWSObject extends JOSEObject {
 	 *                               {@link State#VERIFIED verified state}.
 	 * @throws JOSEException         If the JWS object couldn't be verified.
 	 */
-	public boolean verify(final JWSVerifier verifier)
+	public synchronized boolean verify(final JWSVerifier verifier)
 		throws JOSEException {
 		
 		ensureSignedOrVerifiedState();

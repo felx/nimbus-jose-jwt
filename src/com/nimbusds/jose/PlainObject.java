@@ -3,22 +3,25 @@ package com.nimbusds.jose;
 
 import java.text.ParseException;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Plaintext (unsecured) JOSE object.
+ * Plaintext (unsecured) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class PlainObject extends JOSEObject {
 
 	
 	/**
 	 * The header.
 	 */
-	private PlainHeader header;
+	private final PlainHeader header;
 	
 	
 	/**

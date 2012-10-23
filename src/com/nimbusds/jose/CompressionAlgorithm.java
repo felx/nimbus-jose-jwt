@@ -4,10 +4,12 @@ package com.nimbusds.jose;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
  * Compression algorithm name, represents the {@code zip} header parameter in 
- * JSON Web Encryption (JWE) objects.
+ * JSON Web Encryption (JWE) objects. This class is immutable.
  *
  * <p>Includes a constant for the standard DEFLATE compression algorithm:
  *
@@ -19,8 +21,9 @@ import net.minidev.json.JSONObject;
  * constructor. 
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-25)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class CompressionAlgorithm implements JSONAware {
 	
 	
@@ -34,7 +37,7 @@ public final class CompressionAlgorithm implements JSONAware {
 	/**
 	 * The algorithm name.
 	 */
-	private String name;
+	private final String name;
 	
 	
 	/**

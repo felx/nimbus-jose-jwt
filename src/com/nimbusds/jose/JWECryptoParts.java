@@ -1,42 +1,46 @@
 package com.nimbusds.jose;
 
 
+import net.jcip.annotations.Immutable;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
- * a simple wrapper for returning the cipher text, initialisation vector (IV), 
- * encrypted key and integrity value from {@link JWEEncrypter} implementations.
+ * an immutable simple wrapper for returning the cipher text, initialisation 
+ * vector (IV), encrypted key and integrity value from {@link JWEEncrypter} 
+ * implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class JWECryptoParts {
 
 
 	/**
 	 * The encrypted key (optional).
 	 */
-	final Base64URL encryptedKey;
+	private final Base64URL encryptedKey;
 	
 	
 	/**
 	 * The initialisation vector (optional).
 	 */
-	final Base64URL iv;
+	private final Base64URL iv;
 
 
 	/**
 	 * The cipher text.
 	 */
-	final Base64URL cipherText;
+	private final Base64URL cipherText;
 
 
 	/**
 	 * The integrity value (optional).
 	 */
-	final Base64URL integrityValue;
+	private final Base64URL integrityValue;
 
 
 	/**
@@ -52,8 +56,8 @@ public final class JWECryptoParts {
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
 	                      final Base64URL iv,
-		              final Base64URL cipherText, 
-		              final Base64URL integrityValue) {
+	                      final Base64URL cipherText, 
+	                      final Base64URL integrityValue) {
 
 		this.encryptedKey = encryptedKey;
 		

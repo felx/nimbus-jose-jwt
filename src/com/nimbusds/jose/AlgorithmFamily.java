@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
  * JOSE algorithm family name, represents the {@code alg} parameter in JSON
@@ -21,6 +23,7 @@ import net.minidev.json.JSONObject;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-09-18)
  */
+@Immutable
 public final class AlgorithmFamily implements JSONAware {
 
 

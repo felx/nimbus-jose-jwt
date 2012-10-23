@@ -4,20 +4,23 @@ package com.nimbusds.jose.util;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONValue;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public class Base64 implements JSONAware {
 	
 	
 	/**
 	 * The Base64 value.
 	 */
-	private String value;
+	private final String value;
 	
 	
 	/**

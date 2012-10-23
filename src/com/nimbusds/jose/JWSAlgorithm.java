@@ -1,6 +1,9 @@
 package com.nimbusds.jose;
 
 
+import net.jcip.annotations.Immutable;
+
+
 /**
  * JSON Web Signature (JWS) algorithm name, represents the {@code alg} header
  * parameter in JWS objects. Also used to represent integrity algorithm 
@@ -23,8 +26,9 @@ package com.nimbusds.jose;
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class JWSAlgorithm extends Algorithm {
 
 

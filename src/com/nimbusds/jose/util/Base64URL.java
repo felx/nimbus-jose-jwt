@@ -8,6 +8,8 @@ import org.apache.commons.codec.binary.Base64;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONValue;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
  * Base64URL-encoded object.
@@ -19,8 +21,9 @@ import net.minidev.json.JSONValue;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public class Base64URL implements JSONAware {
 
 
@@ -33,7 +36,7 @@ public class Base64URL implements JSONAware {
 	/**
 	 * The Base64URL value.
 	 */
-	private String value;
+	private final String value;
 	
 	
 	/**

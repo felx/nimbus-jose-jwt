@@ -7,13 +7,16 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
  * Payload with JSON object, string, byte array and Base64URL views. Represents
- * the original object that was signed with JWS or encrypted with JWE.
+ * the original object that was signed with JWS or encrypted with JWE. This 
+ * class is immutable.
  *
  * <p>Non-initial views are created on demand to conserve resources.
  *
@@ -28,8 +31,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public class Payload {
 
 

@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -33,8 +35,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public final class RSAKey extends JWK {
 	
 	

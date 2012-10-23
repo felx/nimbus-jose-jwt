@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.JWEHeader;
@@ -14,11 +16,12 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Encrypted JSON Web Token (JWT).
+ * Encrypted JSON Web Token (JWT). This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class EncryptedJWT extends JWEObject implements JWT {
 
 
@@ -56,9 +59,9 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 */
 	public EncryptedJWT(final Base64URL firstPart, 
 	                    final Base64URL secondPart, 
-			    final Base64URL thirdPart,
-			    final Base64URL fourthPart,
-			    final Base64URL fifthPart)
+	                    final Base64URL thirdPart,
+	                    final Base64URL fourthPart,
+	                    final Base64URL fifthPart)
 		throws ParseException {
 	
 		super(firstPart, secondPart, thirdPart, fourthPart, fifthPart);

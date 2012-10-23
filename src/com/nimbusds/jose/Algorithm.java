@@ -4,9 +4,12 @@ package com.nimbusds.jose;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
- * The base class for algorithm names, with optional implementation requirement.
+ * The base class for algorithm names, with optional implementation 
+ * requirement. This class is immutable.
  *
  * <p>Includes constants for the following standard algorithm names:
  *
@@ -15,8 +18,9 @@ import net.minidev.json.JSONObject;
  * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-09-20)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 public class Algorithm implements JSONAware {
 		 
 		 

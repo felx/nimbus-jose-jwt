@@ -10,6 +10,8 @@ import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
@@ -19,7 +21,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) signer of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
@@ -31,8 +33,9 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 

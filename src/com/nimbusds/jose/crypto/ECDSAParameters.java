@@ -5,13 +5,17 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 
 import org.bouncycastle.crypto.Digest;
 
+import net.jcip.annotations.Immutable;
+
 
 /**
- * Elliptic Curve Digital Signature Algorithm (ECDSA) setup parameters.
+ * Elliptic Curve Digital Signature Algorithm (ECDSA) setup parameters. This
+ * class is immutable.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-23)
  */
+@Immutable
 class ECDSAParameters {
 
 

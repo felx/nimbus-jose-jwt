@@ -94,5 +94,7 @@ version 2.2 (2012-10-16)
 
 version 2.3 (2012-10-23)
 	* Naming changes (validation, verification) according to RFC 4949.
+	* Makes PlainObject, JWSObject and JWEObject thread-safe.
+	* Adds @Immutable and @ThreadSafe annotations (JCIP Annotations JAR).
 	* Adds JOSEObject.getParsedParts() and getParsedString() methods to
 	  get the original parsed Base64URL parts / string representation.

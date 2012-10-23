@@ -10,6 +10,8 @@ import javax.crypto.Mac;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
@@ -21,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * Message Authentication Code (MAC) verifier of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
@@ -42,6 +44,7 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
 
 

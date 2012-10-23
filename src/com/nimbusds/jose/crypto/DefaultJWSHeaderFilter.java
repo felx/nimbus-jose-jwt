@@ -4,16 +4,20 @@ package com.nimbusds.jose.crypto;
 import java.util.Collections;
 import java.util.Set;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeaderFilter;
 
 
 /**
- * JSON Web Signature (JWS) header filter implementation.
+ * JSON Web Signature (JWS) header filter implementation. This class is 
+ * thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
+@ThreadSafe
 class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 
 
