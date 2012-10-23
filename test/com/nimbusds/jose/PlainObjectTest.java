@@ -7,10 +7,10 @@ import junit.framework.TestCase;
 
 
 /**
- * Tests plain JOSE object parsing and serialisation.
+ * Tests plaintext JOSE object parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version $version$ (2012-10-23)
  */
 public class PlainObjectTest extends TestCase {
 	
@@ -29,9 +29,11 @@ public class PlainObjectTest extends TestCase {
 		assertNull(h.getType());
 		assertNull(h.getContentType());
 		assertTrue(h.getCustomParameters().isEmpty());
+
+		String serializedJOSEObject = p.serialize();
 		
 		try {
-			p = PlainObject.parse(p.serialize());
+			p = PlainObject.parse(serializedJOSEObject);
 			
 		} catch (ParseException e) {
 		
@@ -45,5 +47,7 @@ public class PlainObjectTest extends TestCase {
 		assertTrue(h.getCustomParameters().isEmpty());
 		
 		assertEquals("Hello world!", p.getPayload().toString());
+
+		assertEquals(serializedJOSEObject, p.getParsedString());
 	}
 }

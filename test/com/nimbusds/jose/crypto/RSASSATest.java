@@ -28,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests RS256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-05)
+ * @version $version$ (2012-10-23)
  */
 public class RSASSATest extends TestCase {
 
@@ -221,6 +221,8 @@ public class RSASSATest extends TestCase {
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
 		
 		JWSObject jwsObject = JWSObject.parse(s);
+
+		assertEquals(s, jwsObject.getParsedString());
 		
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		

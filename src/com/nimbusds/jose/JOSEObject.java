@@ -10,26 +10,38 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for plain, JWS-secured and JWE-secured objects.
+ * The base abstract class for plaintext, JSON Web Signature (JWS) - secured 
+ * and JSON Web Encryption (JWE) - secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
 public abstract class JOSEObject {
 
 
 	/**
-	 * The payload (message).
+	 * The payload (message), {@code null} if not defined.
 	 */
 	private Payload payload;
+
+
+	/**
+	 * The original parsed Base64URL parts, {@code null} if the JOSE object was 
+	 * created from scratch. The individual parts may be empty or {@code null}
+	 * to indicate a missing part.
+	 */
+	private Base64URL[] parsedParts;
 	
 	
 	/**
-	 * Creates a new JOSE object. The payload is not defined.
+	 * Creates a new JOSE object. The payload and the original parsed Base64URL 
+	 * parts are not not defined.
 	 */
 	protected JOSEObject() {
 	
 		payload = null;
+
+		parsedParts = null;
 	}
 	
 	
@@ -75,6 +87,66 @@ public abstract class JOSEObject {
 	
 		return payload;
 	}
+
+
+	/**
+	 * Sets the original parsed Base64URL parts used to create this JOSE 
+	 * object.
+	 *
+	 * @param parts The original Base64URL parts used to creates this JOSE
+	 *              object, {@code null} if the object was created from
+	 *              scratch. The individual parts may be empty or {@code null}
+	 *              to indicate a missing part.
+	 */
+	protected void setParsedParts(final Base64URL... parts) {
+
+		parsedParts = parts;
+	}
+
+
+	/**
+	 * Gets the original parsed Base64URL parts used to create this JOSE 
+	 * object.
+	 *
+	 * @return The original Base64URL parts used to creates this JOSE object,
+	 *         {@code null} if the object was created from scratch. The 
+	 *         individual parts may be empty or {@code null} to indicate a 
+	 *         missing part.
+	 */
+	public Base64URL[] getParsedParts() {
+
+		return parsedParts;
+	}
+
+
+	/**
+	 * Gets the original parsed string used to create this JOSE object.
+	 *
+	 * @see #getParsedParts
+	 * 
+	 * @return The parsed string used to create this JOSE object, {@code null}
+	 *         if the object was creates from scratch.
+	 */
+	public String getParsedString() {
+
+		if (parsedParts == null)
+			return null;
+
+		StringBuilder sb = new StringBuilder();
+
+		for (Base64URL part: parsedParts) {
+
+			if (sb.length() > 0)
+				sb.append('.');
+
+			if (part == null)
+				continue;
+			else
+				sb.append(part.toString());
+		}
+
+		return sb.toString();
+	}
 	
 	
 	/**
@@ -95,7 +167,7 @@ public abstract class JOSEObject {
 	 * @param s The serialised JOSE object to split. Must not be 
 	 *          {@code null}.
 	 *
-	 * @return The JOSE Base64URL-encoded parts (three for plain and JWS
+	 * @return The JOSE Base64URL-encoded parts (three for plaintext and JWS
 	 *         objects, five for JWE objects).
 	 *
 	 * @throws ParseException If the specified string couldn't be split into
@@ -159,7 +231,7 @@ public abstract class JOSEObject {
 	 *         {@link JWEObject} instance.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                       plain, JWS or JWE object.
+	 *                       plaintext, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
 		throws ParseException {

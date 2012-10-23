@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
 public class JWSObject extends JOSEObject {
 
@@ -143,6 +143,8 @@ public class JWSObject extends JOSEObject {
 		signature = thirdPart;
 		
 		state = State.SIGNED; // but not validated yet!
+
+		setParsedParts(firstPart, secondPart, thirdPart);
 	}
 	
 	
@@ -389,8 +391,8 @@ public class JWSObject extends JOSEObject {
 	 *
 	 * @return The JWS object.
 	 *
-	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                        JWS object.
+	 * @throws ParseException If the string couldn't be parsed to a valid JWS
+	 *                        object.
 	 */
 	public static JWSObject parse(String s)
 		throws ParseException {

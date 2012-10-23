@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2012-10-23)
  */
 public class JWEObject extends JOSEObject {
 
@@ -125,9 +125,9 @@ public class JWEObject extends JOSEObject {
 	 */
 	public JWEObject(final Base64URL firstPart, 
 	                 final Base64URL secondPart, 
-			 final Base64URL thirdPart,
-			 final Base64URL fourthPart,
-			 final Base64URL fifthPart)
+	                 final Base64URL thirdPart,
+	                 final Base64URL fourthPart,
+	                 final Base64URL fifthPart)
 		throws ParseException {
 	
 		if (firstPart == null)
@@ -162,6 +162,8 @@ public class JWEObject extends JOSEObject {
 			integrityValue = fifthPart;
 		
 		state = State.ENCRYPTED; // but not decrypted yet!
+
+		setParsedParts(firstPart, secondPart, thirdPart, fourthPart, fifthPart);
 	}
 	
 	
@@ -444,8 +446,8 @@ public class JWEObject extends JOSEObject {
 	 *
 	 * @return The JWE object.
 	 *
-	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                        JWE object.
+	 * @throws ParseException If the string couldn't be parsed to a valid JWE
+	 *                        object.
 	 */
 	public static JWEObject parse(String s)
 		throws ParseException {
