@@ -93,5 +93,6 @@ version 2.2 (2012-10-16)
 	* Updates the library to the latest JWA/JWS/JWE/JWK/JWT -06 draft suite.
 
 version 2.3 (2012-10-23)
+	* Naming changes (validation, verification) according to RFC 4949.
 	* Adds JOSEObject.getParsedParts() and getParsedString() methods to
 	  get the original parsed Base64URL parts / string representation.

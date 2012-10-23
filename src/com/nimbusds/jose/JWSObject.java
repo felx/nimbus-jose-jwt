@@ -32,15 +32,15 @@ public class JWSObject extends JOSEObject {
 		
 		
 		/**
-		 * The JWS object is signed but not validated yet.
+		 * The JWS object is signed but its signature is not verified.
 		 */
 		SIGNED,
 		
 		
 		/**
-		 * The JWS object is signed and was successfully validated.
+		 * The JWS object is signed and its signature was successfully verified.
 		 */
-		VALIDATED;
+		VERIFIED;
 	}
 	
 	
@@ -63,7 +63,7 @@ public class JWSObject extends JOSEObject {
 	
 	
 	/**
-	 * The signature, {@code null} if unsigned.
+	 * The signature, {@code null} if not signed.
 	 */
 	private Base64URL signature;
 	
@@ -142,7 +142,7 @@ public class JWSObject extends JOSEObject {
 		
 		signature = thirdPart;
 		
-		state = State.SIGNED; // but not validated yet!
+		state = State.SIGNED; // but signature not verified yet!
 
 		setParsedParts(firstPart, secondPart, thirdPart);
 	}
@@ -195,7 +195,7 @@ public class JWSObject extends JOSEObject {
 	 * </pre>
 	 *
 	 * @return The signable content, ready for passing to the signing or
-	 *         validation service.
+	 *         verification service.
 	 */
 	public byte[] getSignableContent() {
 	
@@ -240,15 +240,15 @@ public class JWSObject extends JOSEObject {
 	
 	/**
 	 * Ensures the current state is {@link State#SIGNED signed} or
-	 * {@link State#VALIDATED validated}.
+	 * {@link State#VERIFIED verified}.
 	 *
 	 * @throws IllegalStateException If the current state is not signed or
-	 *                               validated.
+	 *                               verified.
 	 */
-	private void ensureSignedOrValidatedState() {
+	private void ensureSignedOrVerifiedState() {
 	
-		if (state != State.SIGNED && state != State.VALIDATED)
-			throw new IllegalStateException("The JWS object must be in a signed or validated state");
+		if (state != State.SIGNED && state != State.VERIFIED)
+			throw new IllegalStateException("The JWS object must be in a signed or verified state");
 	}
 	
 	
@@ -270,16 +270,15 @@ public class JWSObject extends JOSEObject {
 	
 	
 	/**
-	 * Ensures the specified JWS validator accepts the algorithm and the 
-	 * headers of this JWS object.
+	 * Ensures the specified JWS verifier accepts the algorithm and the headers 
+	 * of this JWS object.
 	 *
-	 * @throws JOSEException If the JWS algorithm or headers are not 
-	 *                       accepted.
+	 * @throws JOSEException If the JWS algorithm or headers are not accepted.
 	 */
-	private void ensureJWSValidatorAcceptance(final JWSValidator validator)
+	private void ensureJWSVerifierAcceptance(final JWSVerifier verifier)
 		throws JOSEException {
 		
-		JWSHeaderFilter filter = validator.getJWSHeaderFilter();
+		JWSHeaderFilter filter = verifier.getJWSHeaderFilter();
 		
 		if (filter == null)
 			return;
@@ -287,13 +286,13 @@ public class JWSObject extends JOSEObject {
 		if (! filter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
 		
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-			                        "\" algorithm is not accepted by the JWS validator");
+			                        "\" algorithm is not accepted by the JWS verifier");
 		}
 			
 		
 		if (! filter.getAcceptedParameters().containsAll(getHeader().getIncludedParameters())) {
 		
-			throw new JOSEException("One or more header parameters not accepted by the JWS validator");
+			throw new JOSEException("One or more header parameters not accepted by the JWS verifier");
 		}
 	}
 	
@@ -322,41 +321,40 @@ public class JWSObject extends JOSEObject {
 		
 	
 	/**
-	 * Checks the signature of this JWS object with the specified validator. 
-	 * The JWS object must be in a {@link State#SIGNED signed} state.
+	 * Checks the signature of this JWS object with the specified verifier. The
+	 * JWS object must be in a {@link State#SIGNED signed} state.
 	 *
-	 * @param validator The JWS validator. Must not be {@code null}.
+	 * @param verifier The JWS verifier. Must not be {@code null}.
 	 *
-	 * @return {@code true} if the signature was successfully validated, 
-         *         else {@code false} if the signature was found to be invalid.
+	 * @return {@code true} if the signature was successfully verified, else
+	 *         {@code false}.
 	 *
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
-	 *                               {@link State#VALIDATED validated 
-	 *                               state}.
-	 * @throws JOSEException         If the JWS object couldn't be validated.
+	 *                               {@link State#VERIFIED verified state}.
+	 * @throws JOSEException         If the JWS object couldn't be verified.
 	 */
-	public boolean validate(final JWSValidator validator)
+	public boolean verify(final JWSVerifier verifier)
 		throws JOSEException {
 		
-		ensureSignedOrValidatedState();
+		ensureSignedOrVerifiedState();
 		
-		ensureJWSValidatorAcceptance(validator);
+		ensureJWSVerifierAcceptance(verifier);
 		
-		boolean valid = validator.validate(getHeader(), getSignableContent(), getSignature());
+		boolean verified = verifier.verify(getHeader(), getSignableContent(), getSignature());
 		
-		if (valid)
-			state = State.VALIDATED;
+		if (verified)
+			state = State.VERIFIED;
 			
-		return valid;
+		return verified;
 	}
 	
 	
 	/**
 	 * Serialises this JWS object to its compact format consisting of 
 	 * Base64URL-encoded parts delimited by period ('.') characters. It must 
-	 * be in a {@link State#SIGNED signed} or 
-	 * {@link State#VALIDATED validated} state.
+	 * be in a {@link State#SIGNED signed} or {@link State#VERIFIED verified} 
+	 * state.
 	 *
 	 * <pre>
 	 * [header-base64url].[payload-base64url].[signature-base64url]
@@ -366,13 +364,12 @@ public class JWSObject extends JOSEObject {
 	 *
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
-	 *                               {@link State#VALIDATED validated 
-	 *                               state}.
+	 *                               {@link State#VERIFIED verified} state.
 	 */
 	@Override
 	public String serialize() {
 	
-		ensureSignedOrValidatedState();
+		ensureSignedOrVerifiedState();
 		
 		StringBuilder sb = new StringBuilder(header.toBase64URL().toString());
 		sb.append('.');

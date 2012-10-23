@@ -6,7 +6,7 @@ import java.util.Set;
 
 /**
  * Common interface for JSON Web Signature (JWS) {@link JWSSigner signers} and
- * {@link JWSValidator validators}.
+ * {@link JWSVerifier verifiers}.
  *
  * <p>Callers can query the JWS provider to determine its algorithm 
  * capabilities.

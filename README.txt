@@ -21,7 +21,7 @@ following JOSE and JWT objects:
 
 
 The JOSE and JWT object representation is decoupled from crypto algorithm (JWA)
-implementations through a set of nimble interfaces for signing, validating, 
+implementations through a set of nimble interfaces for signing, verifying, 
 encrypting and decrypting the objects.
 
 The library currently ships with a ready implementation of the following 
@@ -54,7 +54,7 @@ Dependencies:
 	* JSON Smart for highly efficient parsing and serialisation of JSON. 
 
 	* [optional] The BouncyCastle.org cryptography provider for Java, for 
-	  ECDSA signing and validation.
+	  ECDSA signing and verification.
 
 
 Uses:

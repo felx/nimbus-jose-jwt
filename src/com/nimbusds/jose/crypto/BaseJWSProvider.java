@@ -9,10 +9,10 @@ import com.nimbusds.jose.JWSAlgorithmProvider;
 
 
 /**
- * The base abstract class for JSON Web Signature (JWS) signers and validators.
+ * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
 abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 

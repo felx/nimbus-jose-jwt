@@ -12,7 +12,7 @@ import java.security.interfaces.RSAPublicKey;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
-import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * RSA Signature-Scheme-with-Appendix (RSASSA) validator of 
+ * RSA Signature-Scheme-with-Appendix (RSASSA) verifier of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
@@ -40,9 +40,9 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
-public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
+public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 
 	/**
@@ -78,11 +78,11 @@ public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 	
 	
 	/**
-	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) validator.
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
 	 *
 	 * @param publicKey The public RSA key. Must not be {@code null}.
 	 */
-	public RSASSAValidator(final RSAPublicKey publicKey) {
+	public RSASSAVerifier(final RSAPublicKey publicKey) {
 
 		if (publicKey == null)
 			throw new IllegalArgumentException("The public RSA key must not be null");
@@ -112,17 +112,17 @@ public class RSASSAValidator extends RSASSAProvider implements JWSValidator {
 
 
 	@Override
-	public boolean validate(final ReadOnlyJWSHeader header, 
-	                        final byte[] signedContent, 
-			        final Base64URL signature)
+	public boolean verify(final ReadOnlyJWSHeader header, 
+	                      final byte[] signedContent, 
+	                      final Base64URL signature)
 		throws JOSEException {
 		
-		Signature validator = getRSASignerAndValidator(header.getAlgorithm());
+		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm());
 		
 		try {
-			validator.initVerify(publicKey);
-			validator.update(signedContent);
-			return validator.verify(signature.decode());
+			verifier.initVerify(publicKey);
+			verifier.update(signedContent);
+			return verifier.verify(signature.decode());
 			
 		} catch (InvalidKeyException e) {
 		

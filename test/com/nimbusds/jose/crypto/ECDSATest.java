@@ -10,7 +10,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -73,7 +73,7 @@ public class ECDSATest extends TestCase {
 	
 	
 	
-	public void testSignAndValidate()
+	public void testSignAndVerify()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
@@ -97,19 +97,19 @@ public class ECDSATest extends TestCase {
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
 		
-		ECDSAValidator validator = new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
-		assertEquals("X check", new BigInteger(1, x), validator.getX());
-		assertEquals("Y check", new BigInteger(1, y), validator.getY());
+		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		assertEquals("X check", new BigInteger(1, x), verifier.getX());
+		assertEquals("Y check", new BigInteger(1, y), verifier.getY());
 		assertEquals(3, signer.supportedAlgorithms().size());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
 		
-		boolean valid = jwsObject.validate(validator);
+		boolean verified = jwsObject.verify(verifier);
 		
-		assertTrue("Valid signature check", valid);
+		assertTrue("Verified signature", verified);
 		
-		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
 	
 	
@@ -123,25 +123,25 @@ public class ECDSATest extends TestCase {
 		// instance.  This means that two ECDSA digital signatures using exactly
 		// the same input parameters will output different signature values
 		// because their K values will be different.  A consequence of this is
-		// that one cannot validate an ECDSA signature by recomputing the
-		// signature and comparing the results.
+		// that one cannot verify an ECDSA signature by recomputing the signature
+		// and comparing the results.
 	}
 	
 	
-	public void testValidateWithReadyVector()
+	public void testVerifyWithReadyVector()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
 		
-		JWSValidator validator =  new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
+		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
 		
-		boolean valid = validator.validate(header, signable, b64sig);
+		boolean verified = verifier.verify(header, signable, b64sig);
 		
-		assertTrue("Signature check", valid);
+		assertTrue("Signature check", verified);
 	}
 	
 	
-	public void testParseAndValidate()
+	public void testParseAndVerify()
 		throws Exception {
 	
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
@@ -152,12 +152,12 @@ public class ECDSATest extends TestCase {
 		
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
-		JWSValidator validator =  new ECDSAValidator(new BigInteger(1, x), new BigInteger(1, y));
+		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
 		
-		boolean valid = jwsObject.validate(validator);
+		boolean verified = jwsObject.verify(verifier);
 		
-		assertTrue("Signature check", valid);
+		assertTrue("Signature check", verified);
 		
-		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
 }

@@ -14,7 +14,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 
 /**
  * The base abstract class for Message Authentication Code (MAC) signers and
- * validators of {@link com.nimbusds.jose.JWSObject JWS objects}.
+ * verifiers of {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *

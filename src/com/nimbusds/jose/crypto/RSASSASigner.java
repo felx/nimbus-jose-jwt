@@ -68,7 +68,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
 		throws JOSEException {
 		
-		Signature signer = getRSASignerAndValidator(header.getAlgorithm());
+		Signature signer = getRSASignerAndVerifier(header.getAlgorithm());
 		
 		try {
 			signer.initSign(privateKey);

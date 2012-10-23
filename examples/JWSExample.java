@@ -1,14 +1,14 @@
 import java.text.ParseException;
 
 import com.nimbusds.jose.crypto.MACSigner;
-import com.nimbusds.jose.crypto.MACValidator;
+import com.nimbusds.jose.crypto.MACVerifier;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 
 
@@ -16,7 +16,7 @@ import com.nimbusds.jose.Payload;
  * Example use of JWS objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-07)
+ * @version $version$ (2012-10-23)
  */
 public class JWSExample {
 
@@ -79,24 +79,24 @@ public class JWSExample {
 		
 		System.out.println("JWS object successfully parsed");
 		
-		JWSValidator validator = new MACValidator(sharedKey.getBytes());
+		JWSVerifier verifier = new MACVerifier(sharedKey.getBytes());
 		
-		boolean validSignature = false;
+		boolean verifiedSignature = false;
 		
 		try {
-			validSignature = jwsObject.validate(validator);
+			verifiedSignature = jwsObject.verify(verifier);
 			
 		} catch (JOSEException e) {
 		
-			System.err.println("Couldn't check validity of signature: " + e.getMessage());
+			System.err.println("Couldn't verify signature: " + e.getMessage());
 		}
 		
-		if (validSignature) {
+		if (verifiedSignature) {
 		
-			System.out.println("Valid JWS signature!");
+			System.out.println("Verified JWS signature!");
 		}
 		else {
-			System.out.println("Invalid JWS signature!");
+			System.out.println("Bad JWS signature!");
 			return;
 		}
 		

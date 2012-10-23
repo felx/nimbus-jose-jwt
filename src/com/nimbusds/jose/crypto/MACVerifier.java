@@ -12,7 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
-import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Message Authentication Code (MAC) validator of 
+ * Message Authentication Code (MAC) verifier of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
@@ -40,9 +40,9 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-23)
  */
-public class MACValidator extends MACProvider implements JWSValidator {
+public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
@@ -71,17 +71,17 @@ public class MACValidator extends MACProvider implements JWSValidator {
 	private DefaultJWSHeaderFilter headerFilter;
 	
 	 
-        /**
-         * Creates a new Message Authentication (MAC) validator.
-         *
-         * @param sharedSecret The shared secret. Must not be {@code null}.
-         */
-        public MACValidator(final byte[] sharedSecret) {
+	/**
+	* Creates a new Message Authentication (MAC) verifier.
+	*
+	* @param sharedSecret The shared secret. Must not be {@code null}.
+	*/
+	public MACVerifier(final byte[] sharedSecret) {
 
-                super(sharedSecret);
-		
+		super(sharedSecret);
+
 		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
-        }
+	}
 	
 	
 	@Override
@@ -92,9 +92,9 @@ public class MACValidator extends MACProvider implements JWSValidator {
 
 
         @Override
-        public boolean validate(final ReadOnlyJWSHeader header, 
-                                final byte[] signedContent, 
-                                final Base64URL signature)
+        public boolean verify(final ReadOnlyJWSHeader header, 
+                              final byte[] signedContent, 
+                              final Base64URL signature)
                 throws JOSEException {
                 
                 Mac mac = getMAC(header.getAlgorithm());

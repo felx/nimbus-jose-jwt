@@ -8,7 +8,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSValidator;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -52,7 +52,7 @@ public class MACTest extends TestCase {
 	
 	
 	
-	public void testSignAndValidate()
+	public void testSignAndVerify()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
@@ -77,18 +77,18 @@ public class MACTest extends TestCase {
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
 		
-		MACValidator validator = new MACValidator(sharedSecret);
-		assertEquals("Shared secret check", sharedSecret, validator.getSharedSecret());
+		MACVerifier verifier = new MACVerifier(sharedSecret);
+		assertEquals("Shared secret check", sharedSecret, verifier.getSharedSecret());
 		assertEquals(3, signer.supportedAlgorithms().size());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 		
-		boolean valid = jwsObject.validate(validator);
+		boolean verified = jwsObject.verify(verifier);
 		
-		assertTrue("Valid signature check", valid);
+		assertTrue("Verified signature", verified);
 		
-		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
 	
 	
@@ -105,20 +105,20 @@ public class MACTest extends TestCase {
 	}
 	
 	
-	public void testValidateWithReadyVector()
+	public void testVerifyWithReadyVector()
 		throws Exception {
 	
 		JWSHeader header = JWSHeader.parse(b64header);
 		
-		JWSValidator validator = new MACValidator(sharedSecret);
+		JWSVerifier verifier = new MACVerifier(sharedSecret);
 		
-		boolean valid = validator.validate(header, signable, b64sig);
+		boolean verified = verifier.verify(header, signable, b64sig);
 		
-		assertTrue("Signature check", valid);
+		assertTrue("Signature check", verified);
 	}
 	
 	
-	public void testParseAndValidate()
+	public void testParseAndVerify()
 		throws Exception {
 	
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
@@ -129,12 +129,12 @@ public class MACTest extends TestCase {
 		
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 		
-		JWSValidator validator = new MACValidator(sharedSecret);
+		JWSVerifier verifier = new MACVerifier(sharedSecret);
 		
-		boolean valid = jwsObject.validate(validator);
+		boolean verified = jwsObject.verify(verifier);
 		
-		assertTrue("Signature check", valid);
+		assertTrue("Signature check", verified);
 		
-		assertEquals("State check", JWSObject.State.VALIDATED, jwsObject.getState());
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
 }
