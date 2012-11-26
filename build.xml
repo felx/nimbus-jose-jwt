@@ -1,8 +1,15 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
+    <property name="src.dir"          value="src/main/java"/>
+    <property name="test.src.dir"     value="src/test/java"/>
+    <property name="build.dir"        value="target"/>
+    <property name="compile.dir"      value="${build.dir}/classes"/>
+    <property name="test.compile.dir" value="${build.dir}/test-classes"/>
+    <property name="javadoc.dir"      value="${build.dir}/site/apidocs"/>
+    <property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
 
-	<property name="version" value="2.3"/>
-	<property name="version-date" value="2012-10-23"/>
-	<property name="jarfile" value="nimbus-jose-jwt-${version}.jar"/>
+	<property name="version"          value="2.4-SNAPSHOT"/>
+	<property name="version-date"     value="2012-10-23"/>
+	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
 		<fileset dir="lib">
@@ -14,13 +21,13 @@
 		<fileset dir="lib">
 			<include name="*.jar"/>
 		</fileset>
-		<pathelement location="build"/>
+		<pathelement location="${compile.dir}"/>
 	</path>
 	
 	<target name="clean">
-		<delete dir="procsrc"/>
-		<delete dir="build"/>
-		<delete dir="javadoc"/>
+		<delete dir="${procsrc.dir}"/>
+		<delete dir="${build.dir}"/>
+		<delete dir="${javadoc.dir}"/>
 		<delete file="${jarfile}"/>
 		<delete>
 			<fileset dir="." includes="**/TEST-*"/>
@@ -28,24 +35,24 @@
 	</target>
 	
 	<target name="src">
-		<mkdir dir="procsrc"/>
-		<copy todir="procsrc">
-    			<fileset dir="src"/>
+		<mkdir dir="${procsrc.dir}"/>
+		<copy todir="${procsrc.dir}">
+		    <fileset dir="${src.dir}"/>
   		</copy>
 		
 		<!-- Indicate Nimbus-JOSE-JWT version number and version date -->
-		<replace dir="procsrc" token="$version$" value="${version}">
+		<replace dir="${procsrc.dir}" token="$version$" value="${version}">
 			<include name="**/*.java"/>
 		</replace>
-		<replace dir="procsrc" token="$version-date$" value="${version-date}">
+		<replace dir="${procsrc.dir}" token="$version-date$" value="${version-date}">
 			<include name="**/*.java"/>
 		</replace>
 	</target>
-	
+
 	<target name="compile" depends="src">
-		<mkdir dir="build"/>
-		<javac srcdir="procsrc" 
-		       destdir="build" 
+		<mkdir dir="${compile.dir}"/>
+		<javac srcdir="${procsrc.dir}"
+		       destdir="${compile.dir}"
 		       classpathref="classpath.compile"
 		       includeantruntime="false">
 			<compilerarg value="-Xlint:unchecked"/>
@@ -54,10 +61,10 @@
 	</target>
 	
 	<target name="compile-tests">
-		<mkdir dir="build"/>
-		<javac srcdir="test" 
-		       destdir="build" 
-		       classpathref="classpath.compile"
+		<mkdir dir="${test.compile.dir}"/>
+		<javac srcdir="${test.src.dir}"
+		       destdir="${test.compile.dir}"
+		       classpathref="classpath.runtime"
 		       includeantruntime="false"/>
 	</target>
 	
@@ -84,28 +91,28 @@
 	</target>
 	
 	<target name="javadoc" depends="src">
-		<mkdir dir="javadoc"/>
+		<mkdir dir="${javadoc.dir}"/>
 		<javadoc packagenames="com.nimbusds.jose.*, com.nimbusds.jose.util.*, com.nimbusds.jwt.*, com.nimbusds.jose.crypto.*"
-	        	 sourcepath="procsrc"
+             sourcepath="${procsrc.dir}"
 			 classpathref="classpath.compile"
-			 destdir="javadoc"
+			 destdir="${javadoc.dir}"
 			 author="true"
 			 version="true"
 			 use="true"
 			 linksource="true"
 			 windowtitle="Nimbus JOSE + JWT"
 			 doctitle="Nimbus JOSE + JWT"
-			 overview="doc/overview.html">
+			 overview="src/main/javadoc/overview.html">
 		</javadoc>
 	</target>
 	
 	<target name="jar" depends="compile">
-		<jar destfile="${jarfile}" basedir="build" excludes="**/*Test.class"/>
+		<jar destfile="${jarfile}" basedir="${compile.dir}"/>
 	</target>
 	
 	<target name="dist" depends="clean,src,compile,compile-tests,junit,javadoc,jar">
-		<delete dir="procsrc"/>
-		<delete dir="build"/>
+		<delete dir="${procsrc.dir}"/>
+		<delete dir="${build.dir}"/>
 		<delete>
 			<fileset dir="." includes="**/TEST-*"/>
 		</delete>
