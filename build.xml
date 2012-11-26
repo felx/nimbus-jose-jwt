@@ -1,14 +1,15 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
-    <property name="src.dir"          value="src/main/java"/>
-    <property name="test.src.dir"     value="src/test/java"/>
-    <property name="build.dir"        value="target"/>
-    <property name="compile.dir"      value="${build.dir}/classes"/>
-    <property name="test.compile.dir" value="${build.dir}/test-classes"/>
-    <property name="javadoc.dir"      value="${build.dir}/site/apidocs"/>
-    <property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
 
-	<property name="version"          value="2.4-SNAPSHOT"/>
-	<property name="version-date"     value="2012-10-23"/>
+	<property name="src.dir"          value="src/main/java"/>
+	<property name="test.src.dir"     value="src/test/java"/>
+	<property name="build.dir"        value="target"/>
+	<property name="compile.dir"      value="${build.dir}/classes"/>
+	<property name="test.compile.dir" value="${build.dir}/test-classes"/>
+	<property name="javadoc.dir"      value="${build.dir}/site/apidocs"/>
+	<property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
+
+	<property name="version"          value="2.4"/>
+	<property name="version-date"     value="2012-11-26"/>
 	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
@@ -22,6 +23,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<pathelement location="${compile.dir}"/>
+		<pathelement location="${test.compile.dir}"/>
 	</path>
 	
 	<target name="clean">
