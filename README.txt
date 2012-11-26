@@ -83,6 +83,7 @@ Acknowledgements:
 	* Axel Nennker and the guys behind OpenInfoCard.
 	* Everyone on the JOSE IETF WG list.
 	* CertiVox UK for supporting the development.
+	* Ville Kurkinen for adding Maven POM support.
 
 
 To post bug reports and suggestions: 
