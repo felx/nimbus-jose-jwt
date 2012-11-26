@@ -18,24 +18,23 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>Example JSON:
  *
  * <pre>
- * {
+ * { 
  *   "alg" : "RSA",
- *   "mod" : "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx
- *            4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZC
- *            iFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5
- *            w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZg
- *            nYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt
- *            -bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIq
- *            bw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
- *   "xpo" : "AQAB",
- *   "kid" : "2012-09-18"
+ *   "n"   : "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx
+ *           4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs
+ *           tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2
+ *           QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
+ *           SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
+ *           w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+ *   "e"   : "AQAB",
+ *   "kid" : "2011-04-29"}
  * }
  * </pre>
  *
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2012-11-26)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -44,42 +43,42 @@ public final class RSAKey extends JWK {
 	/**
 	 * The modulus value for the RSA public key.
 	 */
-	private final Base64URL mod;
+	private final Base64URL n;
 	
 	
 	/**
 	 * The exponent value for the RSA public key.
 	 */
-	private final Base64URL xpo;
+	private final Base64URL e;
 	 
 	
 	/**
 	 * Creates a new public RSA JSON Web Key (JWK) with the specified 
 	 * parameters.
 	 *
-	 * @param mod The the modulus value for the RSA public key. It is 
+	 * @param n   The the modulus value for the RSA public key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param xpo The exponent value for the RSA public key. It is 
+	 * @param e   The exponent value for the RSA public key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
 	 * @param kid The key ID. {@code null} if not specified.
 	 */
-	public RSAKey(final Base64URL mod, final Base64URL xpo, 
+	public RSAKey(final Base64URL n, final Base64URL e, 
 	              final Use use, final String kid) {
 	
 		super(AlgorithmFamily.RSA, use, kid);
 		
-		if (mod == null)
+		if (n == null)
 			throw new IllegalArgumentException("The modulus value must not be null");
 		
-		this.mod = mod;
+		this.n = n;
 		
-		if (xpo == null)
+		if (e == null)
 			throw new IllegalArgumentException("The exponent value must not be null");
 		
-		this.xpo = xpo;
+		this.e = e;
 	}
 	
 	
@@ -91,7 +90,7 @@ public final class RSAKey extends JWK {
 	 */
 	public Base64URL getModulus() {
 	
-		return mod;
+		return n;
 	}
 	
 	
@@ -103,7 +102,7 @@ public final class RSAKey extends JWK {
 	 */
 	public Base64URL getExponent() {
 	
-		return xpo;
+		return e;
 	}
 	
 	
@@ -113,8 +112,8 @@ public final class RSAKey extends JWK {
 		JSONObject o = super.toJSONObject();
 		
 		// Append RSA public key specific attributes
-		o.put("mod", mod.toString());
-		o.put("xpo", xpo.toString());
+		o.put("n", n.toString());
+		o.put("e", e.toString());
 	
 		return o;
 	}
@@ -136,8 +135,8 @@ public final class RSAKey extends JWK {
 		
 		// Parse the mandatory parameters first
 		AlgorithmFamily af = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
-		Base64URL mod = new Base64URL(JSONObjectUtils.getString(jsonObject, "mod"));
-		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "xpo"));
+		Base64URL mod = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
+		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "e"));
 		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
