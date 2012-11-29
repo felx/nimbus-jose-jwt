@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-11-26)
+ * @version $version$ (2012-11-29)
  */
 public class JWKSetTest extends TestCase {
 
@@ -117,6 +117,12 @@ public class JWKSetTest extends TestCase {
 		
 		keySet.getKeys().add(ecKey);
 		keySet.getKeys().add(rsaKey);
+
+		assertEquals(0, keySet.getAdditionalMembers().size());
+
+		keySet.getAdditionalMembers().put("setID", "xyz123");
+
+		assertEquals(1, keySet.getAdditionalMembers().size());
 		
 		String s = keySet.toString();
 		
@@ -146,5 +152,8 @@ public class JWKSetTest extends TestCase {
 		assertEquals("def", rsaKey.getExponent().toString());
 		assertEquals(Use.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals("5678", rsaKey.getKeyID());
+
+		assertEquals(1, keySet.getAdditionalMembers().size());
+		assertEquals("xyz123", (String)keySet.getAdditionalMembers().get("setID"));
 	}
 }

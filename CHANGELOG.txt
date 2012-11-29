@@ -104,3 +104,6 @@ version 2.4 (2012-11-26)
 
 version 2.5 (2012-11-26)
 	* Updates the library to the latest JWA/JWS/JWE/JWK -07 draft suite.
+
+version 2.6 (2012-11-19)
+	* Adds support for additional custom JSON Web Key (JWK) set members.

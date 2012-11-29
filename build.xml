@@ -9,7 +9,7 @@
 	<property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
 
 	<property name="version"          value="2.5"/>
-	<property name="version-date"     value="2012-11-26"/>
+	<property name="version-date"     value="2012-11-29"/>
 	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">

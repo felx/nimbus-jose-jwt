@@ -3,9 +3,11 @@ package com.nimbusds.jose;
 
 import java.text.ParseException;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -16,8 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 /**
  * JSON Web Key (JWK) set. Represented by a JSON object that contains an array
  * of {@link JWK JSON Web Keys} (JWKs) as the value of its "keys" member.
- *
- * <p>Additional members of the JWK Set JSON object are not supported.
+ * Additional (custom) members of the JWK Set JSON object are also supported.
  *
  * <p>Example JSON Web Key (JWK) set:
  *
@@ -43,7 +44,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2012-11-29)
  */
 public class JWKSet {
 
@@ -51,7 +52,13 @@ public class JWKSet {
 	/**
 	 * The JWK list.
 	 */
-	private List<JWK> keys = new LinkedList<JWK>();
+	private final List<JWK> keys = new LinkedList<JWK>();
+
+
+	/**
+	 * Additional custom members.
+	 */
+	private final Map<String,Object> customMembers = new HashMap<String,Object>();
 	
 	
 	/**
@@ -80,7 +87,7 @@ public class JWKSet {
 	/**
 	 * Creates a new JSON Web Key (JWK) set with the specified keys.
 	 *
-	 * @param keys The JWK keys. Must not be {@code null}.
+	 * @param keys The JWK list. Must not be {@code null}.
 	 */
 	public JWKSet(final List<JWK> keys) {
 	
@@ -88,6 +95,25 @@ public class JWKSet {
 			throw new IllegalArgumentException("The JWK list must not be null");
 		
 		this.keys.addAll(keys);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) set with the specified keys and
+	 * additional custom members.
+	 *
+	 * @param keys          The JWK list. Must not be {@code null}.
+	 * @param customMembers The additional custom members. Must not be
+	 *                      {@code null}.
+	 */
+	public JWKSet(final List<JWK> keys, final Map<String,Object> customMembers) {
+
+		if (keys == null)
+			throw new IllegalArgumentException("The JWK list must not be null");
+		
+		this.keys.addAll(keys);
+
+		this.customMembers.putAll(customMembers);
 	}
 	
 	
@@ -99,6 +125,17 @@ public class JWKSet {
 	public List<JWK> getKeys() {
 	
 		return keys;
+	}
+
+
+	/**
+	 * Gets the additional custom members of this JSON Web Key (JWK) set.
+	 *
+	 * @return The additional custom members, empty map if none.
+	 */
+	public Map<String,Object> getAdditionalMembers() {
+
+		return customMembers;
 	}
 	
 	
@@ -119,6 +156,8 @@ public class JWKSet {
 		JSONObject o = new JSONObject();
 		
 		o.put("keys", a);
+
+		o.putAll(customMembers);
 		
 		return o;
 	}
@@ -186,7 +225,19 @@ public class JWKSet {
 				throw new ParseException("Invalid JWK at position " + i + ": " + e.getMessage(), 0);
 			}
 		}
+
+		// Parse additional custom members
+		JWKSet jwkSet = new JWKSet(keys);
+
+		for (Map.Entry<String,Object> entry: json.entrySet()) {
+
+			if (entry.getKey() == null || entry.getKey().equals("keys"))
+				continue;
+
+			jwkSet.getAdditionalMembers().put(entry.getKey(), entry.getValue());
+		}
 		
-		return new JWKSet(keys);
+		return jwkSet;
 	}
 }
+
