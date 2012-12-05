@@ -145,14 +145,14 @@ public class JWEObject extends JOSEObject {
 		}
 		
 		if (secondPart == null || secondPart.toString().isEmpty())
-			initializationVector = null;
-		else
-			initializationVector = secondPart;
-		
-		if (thirdPart == null || thirdPart.toString().isEmpty())
 			encryptedKey = null;
 		else
 			encryptedKey = secondPart;
+
+        if (thirdPart == null || thirdPart.toString().isEmpty())
+      			initializationVector = null;
+      		else
+      			initializationVector = thirdPart;
 	
 		if (fourthPart == null)
 			throw new IllegalArgumentException("The fourth part must not be null");
