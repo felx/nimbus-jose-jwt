@@ -6,12 +6,14 @@ import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.util.Base64URL;
+
 
 /**
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2012-12-09)
  */
 public interface ReadOnlyHeader {
 
@@ -77,4 +79,12 @@ public interface ReadOnlyHeader {
 	 * @return The JSON object representation of the header.
 	 */
 	public JSONObject toJSONObject();
+
+
+	/**
+	 * Returns a Base64URL representation of the header.
+	 *
+	 * @return The Base64URL representation of the header.
+	 */
+	public Base64URL toBase64URL();
 }

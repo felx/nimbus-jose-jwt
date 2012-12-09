@@ -21,7 +21,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2012-12-09)
  */
 public abstract class Header implements ReadOnlyHeader {
 	
@@ -180,11 +180,7 @@ public abstract class Header implements ReadOnlyHeader {
 	}
 	
 	
-	/**
-	 * Returns a Base64URL representation of this header.
-	 *
-	 * @return The Base64URL representation of this header.
-	 */
+	@Override
 	public Base64URL toBase64URL() {
 	
 		return Base64URL.encode(toString());
