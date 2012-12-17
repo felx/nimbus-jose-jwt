@@ -8,8 +8,8 @@
 	<property name="javadoc.dir"      value="${build.dir}/site/apidocs"/>
 	<property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
 
-	<property name="version"          value="2.7"/>
-	<property name="version-date"     value="2012-12-09"/>
+	<property name="version"          value="2.8"/>
+	<property name="version-date"     value="2012-12-17"/>
 	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">

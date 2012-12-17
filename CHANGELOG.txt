@@ -111,3 +111,6 @@ version 2.6 (2012-11-19)
 version 2.7 (2012-12-09)
 	* Adds toBaseURL() method to ReadOnlyHeader interface.
 	* Fixes assignment bug in JWEObject Base64URL parts constructor.
+
+version 2.8 (2012-12-17)
+	* Adds getParsedParts() and getParsedString() methods to JWT interface.
