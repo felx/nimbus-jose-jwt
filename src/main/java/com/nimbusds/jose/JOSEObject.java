@@ -26,16 +26,16 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * The original parsed Base64URL parts, {@code null} if the JOSE object was 
-	 * created from scratch. The individual parts may be empty or {@code null}
-	 * to indicate a missing part.
+	 * The original parsed Base64URL parts, {@code null} if the JOSE object 
+	 * was created from scratch. The individual parts may be empty or 
+	 * {@code null} to indicate a missing part.
 	 */
 	private Base64URL[] parsedParts;
 	
 	
 	/**
-	 * Creates a new JOSE object. The payload and the original parsed Base64URL 
-	 * parts are not not defined.
+	 * Creates a new JOSE object. The payload and the original parsed 
+	 * Base64URL parts are not not defined.
 	 */
 	protected JOSEObject() {
 	
@@ -48,8 +48,8 @@ public abstract class JOSEObject {
 	/**
 	 * Creates a new JOSE object with the specified payload.
 	 *
-	 * @param payload The payload, {@code null} if not available (e.g for an
-	 *                encrypted JWE object).
+	 * @param payload The payload, {@code null} if not available (e.g for 
+	 *                an encrypted JWE object).
 	 */
 	protected JOSEObject(final Payload payload) {
 	
@@ -95,8 +95,8 @@ public abstract class JOSEObject {
 	 *
 	 * @param parts The original Base64URL parts used to creates this JOSE
 	 *              object, {@code null} if the object was created from
-	 *              scratch. The individual parts may be empty or {@code null}
-	 *              to indicate a missing part.
+	 *              scratch. The individual parts may be empty or 
+	 *              {@code null} to indicate a missing part.
 	 */
 	protected void setParsedParts(final Base64URL... parts) {
 
@@ -108,10 +108,10 @@ public abstract class JOSEObject {
 	 * Gets the original parsed Base64URL parts used to create this JOSE 
 	 * object.
 	 *
-	 * @return The original Base64URL parts used to creates this JOSE object,
-	 *         {@code null} if the object was created from scratch. The 
-	 *         individual parts may be empty or {@code null} to indicate a 
-	 *         missing part.
+	 * @return The original Base64URL parts used to creates this JOSE 
+	 *         object, {@code null} if the object was created from scratch. 
+	 *         The individual parts may be empty or {@code null} to 
+	 *         indicate a missing part.
 	 */
 	public Base64URL[] getParsedParts() {
 
@@ -124,8 +124,8 @@ public abstract class JOSEObject {
 	 *
 	 * @see #getParsedParts
 	 * 
-	 * @return The parsed string used to create this JOSE object, {@code null}
-	 *         if the object was creates from scratch.
+	 * @return The parsed string used to create this JOSE object, 
+	 *         {@code null} if the object was creates from scratch.
 	 */
 	public String getParsedString() {
 
@@ -167,11 +167,11 @@ public abstract class JOSEObject {
 	 * @param s The serialised JOSE object to split. Must not be 
 	 *          {@code null}.
 	 *
-	 * @return The JOSE Base64URL-encoded parts (three for plaintext and JWS
-	 *         objects, five for JWE objects).
+	 * @return The JOSE Base64URL-encoded parts (three for plaintext and 
+	 *         JWS objects, five for JWE objects).
 	 *
-	 * @throws ParseException If the specified string couldn't be split into
-	 *                        three or five Base64URL-encoded parts.
+	 * @throws ParseException If the specified string couldn't be split 
+	 *                        into three or five Base64URL-encoded parts.
 	 */
 	public static Base64URL[] split(final String s)
 		throws ParseException {
