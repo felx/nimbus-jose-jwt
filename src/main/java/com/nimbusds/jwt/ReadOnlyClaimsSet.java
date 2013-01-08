@@ -16,6 +16,30 @@ public interface ReadOnlyClaimsSet {
 
 
 	/**
+	 * Gets the issuer ({@code iss}) claim.
+	 *
+	 * @return The issuer claim, {@code null} if not specified.
+	 */
+	public String getIssuerClaim();
+
+
+	/**
+	 * Gets the subject ({@code sub}) claim.
+	 *
+	 * @return The subject claim, {@code null} if not specified.
+	 */
+	public String getSubjectClaim();
+	
+	
+	/**
+	 * Gets the audience ({@code aud}) clam.
+	 *
+	 * @return The audience claim, {@code null} if not specified.
+	 */
+	public String getAudienceClaim();
+
+
+	/**
 	 * Gets the expiration time ({@code exp}) claim.
 	 *
 	 * @return The expiration time, -1 if not specified.
@@ -37,30 +61,6 @@ public interface ReadOnlyClaimsSet {
 	 * @return The issued-at claim, -1 if not specified.
 	 */
 	public long getIssuedAtClaim();
-	
-	
-	/**
-	 * Gets the issuer ({@code iss}) claim.
-	 *
-	 * @return The issuer claim, {@code null} if not specified.
-	 */
-	public String getIssuerClaim();
-	
-	
-	/**
-	 * Gets the audience ({@code aud}) clam.
-	 *
-	 * @return The audience claim, {@code null} if not specified.
-	 */
-	public String getAudienceClaim();
-	
-	
-	/**
-	 * Gets the subject ({@code sub}) claim.
-	 *
-	 * @return The subject claim, {@code null} if not specified.
-	 */
-	public String getSubjectClaim();
 	
 	
 	/**

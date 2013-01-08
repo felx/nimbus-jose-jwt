@@ -4,7 +4,6 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,12 +21,12 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * specification:
  *
  * <ul>
+ *     <li>iss - Issuer
+ *     <li>sub - Subject
+ *     <li>aud - Audience
  *     <li>exp - Expiration Time
  *     <li>nbf - Not Before
  *     <li>iat - Issued At
- *     <li>iss - Issuer
- *     <li>aud - Audience
- *     <li>sub - Subject
  *     <li>jti - JWT ID
  *     <li>typ - Type
  * </ul>
@@ -53,17 +52,35 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	static {
 		Set<String> n = new HashSet<String>();
 		
+		n.add("iss");
+		n.add("sub");
+		n.add("aud");
 		n.add("exp");
 		n.add("nbf");
 		n.add("iat");
-		n.add("iss");
-		n.add("aud");
-		n.add("sub");
 		n.add("jti");
 		n.add("typ");
 		
 		RESERVED_CLAIM_NAMES = Collections.unmodifiableSet(n);
 	}
+
+
+	/**
+	 * The issuer claim.
+	 */
+	private String iss = null;
+
+
+	/**
+	 * The subject claim.
+	 */
+	private String sub = null;
+
+
+	/**
+	 * The audience claim.
+	 */
+	private String aud = null;
 	
 	
 	/**
@@ -82,24 +99,6 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	 * The issued-at claim.
 	 */
 	private long iat = -1l;
-	
-	
-	/**
-	 * The issuer claim.
-	 */
-	private String iss = null;
-	
-	
-	/**
-	 * The audience claim.
-	 */
-	private String aud = null;
-	
-	
-	/**
-	 * The subject claim.
-	 */
-	private String sub = null;
 	
 	
 	/**
@@ -137,6 +136,60 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	public static Set<String> getReservedNames() {
 	
 		return RESERVED_CLAIM_NAMES;
+	}
+
+
+	@Override
+	public String getIssuerClaim() {
+	
+		return iss;
+	}
+	
+	
+	/**
+	 * Sets the issuer ({@code iss}) claim.
+	 *
+	 * @param iss The issuer claim, {@code null} if not specified.
+	 */
+	public void setIssuerClaim(final String iss) {
+	
+		this.iss = iss;
+	}
+
+
+	@Override
+	public String getSubjectClaim() {
+	
+		return sub;
+	}
+	
+	
+	/**
+	 * Sets the subject ({@code sub}) claim.
+	 *
+	 * @param sub The subject claim, {@code null} if not specified.
+	 */
+	public void setSubjectClaim(final String sub) {
+	
+		this.sub = sub;
+	}
+	
+	
+	@Override
+	public String getAudienceClaim() {
+	
+		return aud;
+	}
+	
+	
+	/**
+	 * Sets the audience ({@code aud}) clam.
+	 *
+	 * @param aud The audience claim, {@code null} if not specified.
+	 */
+	public void setAudienceClaim(final String aud) {
+	
+		this.aud = aud;
 	}
 	
 	
@@ -191,60 +244,6 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	public void setIssuedAtClaim(final long iat) {
 	
 		this.iat = iat;
-	}
-	
-	
-	@Override
-	public String getIssuerClaim() {
-	
-		return iss;
-	}
-	
-	
-	/**
-	 * Sets the issuer ({@code iss}) claim.
-	 *
-	 * @param iss The issuer claim, {@code null} if not specified.
-	 */
-	public void setIssuerClaim(final String iss) {
-	
-		this.iss = iss;
-	}
-	
-	
-	@Override
-	public String getAudienceClaim() {
-	
-		return aud;
-	}
-	
-	
-	/**
-	 * Sets the audience ({@code aud}) clam.
-	 *
-	 * @param aud The audience claim, {@code null} if not specified.
-	 */
-	public void setAudienceClaim(final String aud) {
-	
-		this.aud = aud;
-	}
-	
-	
-	@Override
-	public String getSubjectClaim() {
-	
-		return sub;
-	}
-	
-	
-	/**
-	 * Sets the subject ({@code sub}) claim.
-	 *
-	 * @param sub The subject claim, {@code null} if not specified.
-	 */
-	public void setSubjectClaim(final String sub) {
-	
-		this.sub = sub;
 	}
 	
 	
@@ -337,6 +336,15 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	public JSONObject toJSONObject() {
 	
 		JSONObject o = new JSONObject(customClaims);
+
+		if (iss != null)
+			o.put("iss", iss);
+
+		if (sub != null)
+			o.put("sub", sub);
+		
+		if (aud != null)
+			o.put("aud", aud);
 		
 		if (exp > -1)
 			o.put("exp", exp);
@@ -346,15 +354,6 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 			
 		if (iat > -1)
 			o.put("iat", iat);
-		
-		if (iss != null)
-			o.put("iss", iss);
-		
-		if (aud != null)
-			o.put("aud", aud);
-		
-		if (sub != null)
-			o.put("sub", sub);
 		
 		if (jti != null)
 			o.put("jti", jti);
@@ -383,14 +382,18 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 		ClaimsSet cs = new ClaimsSet();
 	
 		// Parse reserved + custom params
-		
-		Iterator<String> it = json.keySet().iterator();
-		
-		while (it.hasNext()) {
+		for (final String name: json.keySet()) {
+
+			if (name.equals("iss"))
+				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
+
+			else if (name.equals("sub"))
+				cs.setSubjectClaim(JSONObjectUtils.getString(json, "sub"));
+				
+			else if (name.equals("aud"))
+				cs.setAudienceClaim(JSONObjectUtils.getString(json, "aud"));
 			
-			String name = it.next();
-			
-			if (name.equals("exp"))
+			else if (name.equals("exp"))
 				cs.setExpirationTimeClaim(JSONObjectUtils.getLong(json, "exp"));
 			
 			else if (name.equals("nbf"))
@@ -398,15 +401,6 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 			
 			else if (name.equals("iat"))
 				cs.setIssuedAtClaim(JSONObjectUtils.getLong(json, "iat"));
-				
-			else if (name.equals("iss"))
-				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
-				
-			else if (name.equals("aud"))
-				cs.setAudienceClaim(JSONObjectUtils.getString(json, "aud"));
-				
-			else if (name.equals("sub"))
-				cs.setSubjectClaim(JSONObjectUtils.getString(json, "sub"));
 			
 			else if (name.equals("jti"))
 				cs.setJWTIDClaim(JSONObjectUtils.getString(json, "jti"));

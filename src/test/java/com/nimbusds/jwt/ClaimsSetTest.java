@@ -21,12 +21,12 @@ public class ClaimsSetTest extends TestCase {
 	
 		Set<String> names = ClaimsSet.getReservedNames();
 		
+		assertTrue(names.contains("iss"));
+		assertTrue(names.contains("sub"));
+		assertTrue(names.contains("aud"));
 		assertTrue(names.contains("exp"));
 		assertTrue(names.contains("nbf"));
 		assertTrue(names.contains("iat"));
-		assertTrue(names.contains("iss"));
-		assertTrue(names.contains("aud"));
-		assertTrue(names.contains("sub"));
 		assertTrue(names.contains("jti"));
 		assertTrue(names.contains("typ"));
 		
@@ -36,6 +36,21 @@ public class ClaimsSetTest extends TestCase {
 	public void testRun() {
 
 		ClaimsSet cs = new ClaimsSet();
+
+		// iss
+		assertNull("iss init check", cs.getIssuerClaim());
+		cs.setIssuerClaim("http://issuer.com");
+		assertEquals("iss set check", "http://issuer.com", cs.getIssuerClaim());
+		
+		// sub
+		assertNull("sub init check", cs.getSubjectClaim());
+		cs.setSubjectClaim("http://subject.com");
+		assertEquals("sub set check", "http://subject.com", cs.getSubjectClaim());
+
+		// aud
+		assertNull("aud init check", cs.getAudienceClaim());
+		cs.setAudienceClaim("http://audience.com");
+		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim());
 		
 		// exp
 		assertEquals("exp init check", -1, cs.getExpirationTimeClaim());
@@ -51,21 +66,6 @@ public class ClaimsSetTest extends TestCase {
 		assertEquals("iat init check", -1, cs.getIssuedAtClaim());
 		cs.setIssuedAtClaim(123l);
 		assertEquals("iat set check", 123l, cs.getIssuedAtClaim());
-		
-		// iss
-		assertNull("iss init check", cs.getIssuerClaim());
-		cs.setIssuerClaim("http://issuer.com");
-		assertEquals("iss set check", "http://issuer.com", cs.getIssuerClaim());
-		
-		// aud
-		assertNull("aud init check", cs.getAudienceClaim());
-		cs.setAudienceClaim("http://audience.com");
-		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim());
-		
-		// sub
-		assertNull("sub init check", cs.getSubjectClaim());
-		cs.setSubjectClaim("http://subject.com");
-		assertEquals("sub set check", "http://subject.com", cs.getSubjectClaim());
 		
 		// jti
 		assertNull("jti init check", cs.getJWTIDClaim());
@@ -102,13 +102,12 @@ public class ClaimsSetTest extends TestCase {
 			fail(e.getMessage());
 		}
 		
-		
+		assertEquals("iss parse check", "http://issuer.com", cs.getIssuerClaim());
+		assertEquals("sub parse check", "http://subject.com", cs.getSubjectClaim());
+		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim());
 		assertEquals("exp parse check", 123l, cs.getExpirationTimeClaim());
 		assertEquals("nbf parse check", 123l, cs.getNotBeforeClaim());
 		assertEquals("iat parse check", 123l, cs.getIssuedAtClaim());
-		assertEquals("iss parse check", "http://issuer.com", cs.getIssuerClaim());
-		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim());
-		assertEquals("sub parse check", "http://subject.com", cs.getSubjectClaim());
 		assertEquals("jti parse check", "123", cs.getJWTIDClaim());
 		assertEquals("typ parse check", "JWT", cs.getTypeClaim());
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));
