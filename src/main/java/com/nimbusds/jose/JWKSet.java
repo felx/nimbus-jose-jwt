@@ -4,7 +4,6 @@ package com.nimbusds.jose;
 import java.text.ParseException;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -146,19 +145,17 @@ public class JWKSet {
 	 * @return The JSON object representation.
 	 */
 	public JSONObject toJSONObject() {
-	
+		
+		JSONObject o = new JSONObject(customMembers);
+
 		JSONArray a = new JSONArray();
-		
-		Iterator <JWK> it = keys.iterator();
-		
-		while (it.hasNext())
-			a.add(it.next().toJSONObject());
-		
-		JSONObject o = new JSONObject();
+
+		for (final JWK key: keys) {
+
+			a.add(key.toJSONObject());
+		}
 		
 		o.put("keys", a);
-
-		o.putAll(customMembers);
 		
 		return o;
 	}
