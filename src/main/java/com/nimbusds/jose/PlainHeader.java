@@ -4,10 +4,8 @@ package com.nimbusds.jose;
 import java.text.ParseException;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import net.minidev.json.JSONObject;
@@ -40,7 +38,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2013-01-08)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -150,11 +148,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		
 		
 		// Parse optional + custom parameters
-		Iterator<String> it = json.keySet().iterator();
-		
-		while (it.hasNext()) {
-		
-			String name = it.next();
+		for(final String name: json.keySet()) {
 				
 			if (name.equals("alg"))
 				continue; // skip
@@ -180,8 +174,8 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *
 	 * @return The plain header.
 	 *
-	 * @throws ParseException If the specified JSON string doesn't represent
-	 *                        a valid plain header.
+	 * @throws ParseException If the specified JSON string doesn't 
+	 *                        represent a valid plain header.
 	 */
 	public static PlainHeader parse(final String s)
 		throws ParseException {
