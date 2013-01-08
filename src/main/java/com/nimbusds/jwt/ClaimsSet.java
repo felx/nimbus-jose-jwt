@@ -3,12 +3,14 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -80,7 +82,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	/**
 	 * The audience claim.
 	 */
-	private String aud = null;
+	private String[] aud = null;
 	
 	
 	/**
@@ -176,7 +178,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	
 	
 	@Override
-	public String getAudienceClaim() {
+	public String[] getAudienceClaim() {
 	
 		return aud;
 	}
@@ -187,7 +189,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	 *
 	 * @param aud The audience claim, {@code null} if not specified.
 	 */
-	public void setAudienceClaim(final String aud) {
+	public void setAudienceClaim(final String[] aud) {
 	
 		this.aud = aud;
 	}
@@ -343,8 +345,11 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 		if (sub != null)
 			o.put("sub", sub);
 		
-		if (aud != null)
-			o.put("aud", aud);
+		if (aud != null) {
+			JSONArray audArray = new JSONArray();
+			audArray.addAll(Arrays.asList(aud));
+			o.put("aud", audArray);
+		}
 		
 		if (exp > -1)
 			o.put("exp", exp);
@@ -384,32 +389,49 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 		// Parse reserved + custom params
 		for (final String name: json.keySet()) {
 
-			if (name.equals("iss"))
-				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
+			if (name.equals("iss")) {
 
-			else if (name.equals("sub"))
+				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
+			}
+			else if (name.equals("sub")) {
+
 				cs.setSubjectClaim(JSONObjectUtils.getString(json, "sub"));
+			}
+			else if (name.equals("aud")) {
+
+				Object audValue = json.get("aud");
+
+				if (audValue != null && audValue instanceof String) {
+					String[] singleAud = {JSONObjectUtils.getString(json, "aud")};
+					cs.setAudienceClaim(singleAud);
+				}
+				else {
+					cs.setAudienceClaim(JSONObjectUtils.getStringArray(json, "aud"));
+				}
+			}
+			else if (name.equals("exp")) {
 				
-			else if (name.equals("aud"))
-				cs.setAudienceClaim(JSONObjectUtils.getString(json, "aud"));
-			
-			else if (name.equals("exp"))
 				cs.setExpirationTimeClaim(JSONObjectUtils.getLong(json, "exp"));
-			
-			else if (name.equals("nbf"))
+			}
+			else if (name.equals("nbf")) {
+				
 				cs.setNotBeforeClaim(JSONObjectUtils.getLong(json, "nbf"));
-			
-			else if (name.equals("iat"))
+			}
+			else if (name.equals("iat")) {
+				
 				cs.setIssuedAtClaim(JSONObjectUtils.getLong(json, "iat"));
-			
-			else if (name.equals("jti"))
+			}
+			else if (name.equals("jti")) {
+				
 				cs.setJWTIDClaim(JSONObjectUtils.getString(json, "jti"));
-			
-			else if (name.equals("typ"))
+			}
+			else if (name.equals("typ")) {
+
 				cs.setTypeClaim(JSONObjectUtils.getString(json, "typ"));
-			
-			else
+			}
+			else {
 				cs.setCustomClaim(name, json.get(name));
+			}
 		}
 		
 		return cs;

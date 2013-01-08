@@ -36,7 +36,7 @@ public interface ReadOnlyClaimsSet {
 	 *
 	 * @return The audience claim, {@code null} if not specified.
 	 */
-	public String getAudienceClaim();
+	public String[] getAudienceClaim();
 
 
 	/**

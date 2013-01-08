@@ -49,8 +49,8 @@ public class ClaimsSetTest extends TestCase {
 
 		// aud
 		assertNull("aud init check", cs.getAudienceClaim());
-		cs.setAudienceClaim("http://audience.com");
-		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim());
+		cs.setAudienceClaim(new String[]{"http://audience.com"});
+		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim()[0]);
 		
 		// exp
 		assertEquals("exp init check", -1, cs.getExpirationTimeClaim());
@@ -104,7 +104,7 @@ public class ClaimsSetTest extends TestCase {
 		
 		assertEquals("iss parse check", "http://issuer.com", cs.getIssuerClaim());
 		assertEquals("sub parse check", "http://subject.com", cs.getSubjectClaim());
-		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim());
+		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim()[0]);
 		assertEquals("exp parse check", 123l, cs.getExpirationTimeClaim());
 		assertEquals("nbf parse check", 123l, cs.getNotBeforeClaim());
 		assertEquals("iat parse check", 123l, cs.getIssuedAtClaim());
