@@ -6,10 +6,7 @@ import java.net.URL;
 import java.text.ParseException;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import net.minidev.json.JSONArray;
@@ -50,7 +47,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2013-01-08)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -182,13 +179,8 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 		// Create a minimal header
 		JWSHeader h = new JWSHeader((JWSAlgorithm)alg);
 		
-		
 		// Parse optional + custom parameters
-		Iterator<String> it = json.keySet().iterator();
-		
-		while (it.hasNext()) {
-		
-			String name = it.next();
+		for (final String name: json.keySet()) {
 			
 			if (name.equals("alg"))
 				continue; // Skip
