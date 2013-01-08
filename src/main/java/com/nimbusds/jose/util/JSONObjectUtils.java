@@ -4,6 +4,9 @@ package com.nimbusds.jose.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.util.List;
+import java.util.Map;
+
 import java.text.ParseException;
 
 import net.minidev.json.JSONArray;
@@ -17,7 +20,7 @@ import net.minidev.json.parser.JSONParser;
  * JSON object helper methods for parsing and typed retrieval of member values.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2013-01-08)
  */
 public class JSONObjectUtils {
 	
@@ -231,7 +234,7 @@ public class JSONObjectUtils {
 		
 	
 	/**
-	 * Gets a JSON array member of a JSON object.
+	 * Gets a list member of a JSON object.
 	 *
 	 * @param o   The JSON object. Must not be {@code null}.
 	 * @param key The JSON object member key. Must not be {@code null}.
@@ -241,15 +244,42 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the value is missing, {@code null} or not
 	 *                        of the expected type.
 	 */
-	public static JSONArray getJSONArray(final JSONObject o, final String key)
+	@SuppressWarnings("unchecked")
+	public static List<Object> getList(final JSONObject o, final String key)
 		throws ParseException {
 		
-		return getGeneric(o, key, JSONArray.class);
+		return getGeneric(o, key, List.class);
+	}
+
+
+	/**
+	 * Gets a string array member of a JSON object.
+	 *
+	 * @param o   The JSON object. Must not be {@code null}.
+	 * @param key The JSON object member key. Must not be {@code null}.
+	 *
+	 * @return The member value.
+	 *
+	 * @throws ParseException If the value is missing, {@code null} or not
+	 *                        of the expected type.
+	 */
+	public static String[] getStringArray(final JSONObject o, final String key)
+		throws ParseException {
+
+		List<Object> list = getList(o, key);
+
+		try {
+			return list.toArray(new String[0]);
+
+		} catch (ArrayStoreException e) {
+
+			throw new ParseException("JSON object member with key \"" + key + "\" is not an array of strings", 0);
+		}
 	}
 	
 	
 	/**
-	 * Gets a JSON object member of a JSON object.
+	 * Gets a map member of a JSON object.
 	 *
 	 * @param o   The JSON object. Must not be {@code null}.
 	 * @param key The JSON object member key. Must not be {@code null}.
@@ -259,10 +289,11 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the value is missing, {@code null} or not
 	 *                        of the expected type.
 	 */
-	public static JSONObject getJSONObject(final JSONObject o, final String key)
+	@SuppressWarnings("unchecked")
+	public static Map<String,Object> getJSONObject(final JSONObject o, final String key)
 		throws ParseException {
 		
-		return getGeneric(o, key, JSONObject.class);
+		return getGeneric(o, key, Map.class);
 	}
 	
 
