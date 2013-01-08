@@ -27,19 +27,19 @@ public final class EncryptionMethod extends Algorithm {
 
 
 	/**
-	 * Composite AED algorithm using Advanced Encryption Standard (AES) in 
-	 * Cipher Block Chaining (CBC) mode with PKCS #5 padding (NIST.800-38A) 
-	 * with an integrity calculation using HMAC SHA-256, using a 256 bit CMK
-	 * (and a 128 bit CEK) (required).
+	 * Composite Authenticated Encryption algorithm using Advanced 
+	 * Encryption Standard (AES) in Cipher Block Chaining (CBC) mode with 
+	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
+	 * HMAC SHA-256, using a 256 bit CMK (and a 128 bit CEK) (required).
 	 */
 	public static final EncryptionMethod A128CBC_HS256 = new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED);
 	
 	
 	/**
-	 * Composite AED algorithm using Advanced Encryption Standard (AES) in 
-	 * Cipher Block Chaining (CBC) mode with PKCS #5 padding (NIST.800-38A) 
-	 * with an integrity calculation using HMAC SHA-512, using a 512 bit CMK
-	 * (and a 256 bit CEK) (required).
+	 * Composite Authenticated Encryption algorithm using Advanced 
+	 * Encryption Standard (AES) in Cipher Block Chaining (CBC) mode with 
+	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
+	 * HMAC SHA-512, using a 512 bit CMK (and a 256 bit CEK) (required).
 	 */
 	public static final EncryptionMethod A256CBC_HS512 = new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED);
 	

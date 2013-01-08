@@ -67,12 +67,11 @@ public final class JWEAlgorithm extends Algorithm {
 	
 	
 	/**
-	 * Elliptic Curve Diffie-Hellman Ephemeral Statis (RFC 6090) key 
+	 * Elliptic Curve Diffie-Hellman Ephemeral Static (RFC 6090) key 
 	 * agreement using the Concat KDF, as defined in section 5.8.1 of
-	 * NIST.800-56A, where the Digest Method is SHA-256 and all OtherInfo
-	 * parameters the empty bit string, with the agreed-upon key being used
-	 * directly as the Content Master Key (CMK) (rather than being used to
-	 * wrap the CMK) (recommended).
+	 * NIST.800-56A, with the agreed-upon key being used directly as the 
+	 * Content Master Key (CMK) (rather than being used to wrap the CMK) 
+	 * (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES = new JWEAlgorithm("ECDH-ES", Requirement.RECOMMENDED);
 	
