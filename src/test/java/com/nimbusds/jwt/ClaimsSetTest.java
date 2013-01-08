@@ -12,7 +12,7 @@ import net.minidev.json.JSONObject;
  * Tests JWT claims set serialisation and parsing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2013-01-08)
  */
 public class ClaimsSetTest extends TestCase {
 
@@ -26,7 +26,7 @@ public class ClaimsSetTest extends TestCase {
 		assertTrue(names.contains("iat"));
 		assertTrue(names.contains("iss"));
 		assertTrue(names.contains("aud"));
-		assertTrue(names.contains("prn"));
+		assertTrue(names.contains("sub"));
 		assertTrue(names.contains("jti"));
 		assertTrue(names.contains("typ"));
 		
@@ -62,10 +62,10 @@ public class ClaimsSetTest extends TestCase {
 		cs.setAudienceClaim("http://audience.com");
 		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim());
 		
-		// prn
-		assertNull("prn init check", cs.getPrincipalClaim());
-		cs.setPrincipalClaim("http://principal.com");
-		assertEquals("prn set check", "http://principal.com", cs.getPrincipalClaim());
+		// sub
+		assertNull("sub init check", cs.getSubjectClaim());
+		cs.setSubjectClaim("http://subject.com");
+		assertEquals("sub set check", "http://subject.com", cs.getSubjectClaim());
 		
 		// jti
 		assertNull("jti init check", cs.getJWTIDClaim());
@@ -108,7 +108,7 @@ public class ClaimsSetTest extends TestCase {
 		assertEquals("iat parse check", 123l, cs.getIssuedAtClaim());
 		assertEquals("iss parse check", "http://issuer.com", cs.getIssuerClaim());
 		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim());
-		assertEquals("prn parse check", "http://principal.com", cs.getPrincipalClaim());
+		assertEquals("sub parse check", "http://subject.com", cs.getSubjectClaim());
 		assertEquals("jti parse check", "123", cs.getJWTIDClaim());
 		assertEquals("typ parse check", "JWT", cs.getTypeClaim());
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));

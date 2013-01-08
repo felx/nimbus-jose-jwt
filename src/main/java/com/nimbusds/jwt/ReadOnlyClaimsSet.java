@@ -10,7 +10,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link ClaimsSet}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-24)
+ * @version $version$ (2013-01-08)
  */
 public interface ReadOnlyClaimsSet {
 
@@ -56,11 +56,11 @@ public interface ReadOnlyClaimsSet {
 	
 	
 	/**
-	 * Gets the principal ({@code prn}) claim.
+	 * Gets the subject ({@code sub}) claim.
 	 *
-	 * @return The principal claim, {@code null} if not specified.
+	 * @return The subject claim, {@code null} if not specified.
 	 */
-	public String getPrincipalClaim();
+	public String getSubjectClaim();
 	
 	
 	/**

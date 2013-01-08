@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>iat - Issued At
  *     <li>iss - Issuer
  *     <li>aud - Audience
- *     <li>prn - Principal
+ *     <li>sub - Subject
  *     <li>jti - JWT ID
  *     <li>typ - Type
  * </ul>
@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-27)
+ * @version $version$ (2013-01-08)
  */
 public class ClaimsSet implements ReadOnlyClaimsSet {
 
@@ -58,7 +58,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 		n.add("iat");
 		n.add("iss");
 		n.add("aud");
-		n.add("prn");
+		n.add("sub");
 		n.add("jti");
 		n.add("typ");
 		
@@ -97,9 +97,9 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	
 	
 	/**
-	 * The principal claim.
+	 * The subject claim.
 	 */
-	private String prn = null;
+	private String sub = null;
 	
 	
 	/**
@@ -231,20 +231,20 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	
 	
 	@Override
-	public String getPrincipalClaim() {
+	public String getSubjectClaim() {
 	
-		return prn;
+		return sub;
 	}
 	
 	
 	/**
-	 * Sets the principal ({@code prn}) claim.
+	 * Sets the subject ({@code sub}) claim.
 	 *
-	 * @param prn The principal claim, {@code null} if not specified.
+	 * @param sub The subject claim, {@code null} if not specified.
 	 */
-	public void setPrincipalClaim(final String prn) {
+	public void setSubjectClaim(final String sub) {
 	
-		this.prn = prn;
+		this.sub = sub;
 	}
 	
 	
@@ -353,8 +353,8 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 		if (aud != null)
 			o.put("aud", aud);
 		
-		if (prn != null)
-			o.put("prn", prn);
+		if (sub != null)
+			o.put("sub", sub);
 		
 		if (jti != null)
 			o.put("jti", jti);
@@ -405,8 +405,8 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 			else if (name.equals("aud"))
 				cs.setAudienceClaim(JSONObjectUtils.getString(json, "aud"));
 				
-			else if (name.equals("prn"))
-				cs.setPrincipalClaim(JSONObjectUtils.getString(json, "prn"));
+			else if (name.equals("sub"))
+				cs.setSubjectClaim(JSONObjectUtils.getString(json, "sub"));
 			
 			else if (name.equals("jti"))
 				cs.setJWTIDClaim(JSONObjectUtils.getString(json, "jti"));
@@ -417,7 +417,6 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 			else
 				cs.setCustomClaim(name, json.get(name));
 		}
-		
 		
 		return cs;
 	}
