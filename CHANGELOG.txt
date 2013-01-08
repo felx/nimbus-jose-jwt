@@ -114,3 +114,8 @@ version 2.7 (2012-12-09)
 
 version 2.8 (2012-12-17)
 	* Adds getParsedParts() and getParsedString() methods to JWT interface.
+
+version 2.9 (2013-01-08)
+	* Updates the library to the latest JWA/JWS/JWE/JWK -08 draft suite.
+	* Updates the library to the latest JWT -06 draft.
+	* Minor code refactoring and clean up.

@@ -36,15 +36,15 @@ standard algorithms:
 
 Related IETF drafts:
 
-	* [JWA] draft-ietf-jose-json-web-algorithms-07
+	* [JWA] draft-ietf-jose-json-web-algorithms-08
 
-	* [JWS] draft-ietf-jose-json-web-signature-07
+	* [JWS] draft-ietf-jose-json-web-signature-08
 
-	* [JWE] draft-ietf-jose-json-web-encryption-07
+	* [JWE] draft-ietf-jose-json-web-encryption-08
 
-	* [JWK] draft-ietf-jose-json-web-key-07
+	* [JWK] draft-ietf-jose-json-web-key-08
 
-	* [JWT] draft-ietf-oauth-json-web-token-05
+	* [JWT] draft-ietf-oauth-json-web-token-06
 
 
 Dependencies:
@@ -70,9 +70,9 @@ About us:
 
 The principal maintainer of this library is Nimbus Directory Services 
 [http://NimbusDS.com]. The initial code was based on JWS/JWE/JWT crypto classes
-factored out of the OpenInfoCard project. A rewrite to fully decouple JOSE + JWT
-object representation from crypto algorithm implementation led to the next major 
-2.0 release in October 2012.
+factored out of the OpenInfoCard project. A rewrite to fully decouple JOSE + 
+JWT object representation from crypto algorithm implementation led to the next 
+major 2.0 release in October 2012.
 
 You're welcome to contribute crypto handlers for standard algorithms which have
 not been implemented yet (most JWE algorithms).
