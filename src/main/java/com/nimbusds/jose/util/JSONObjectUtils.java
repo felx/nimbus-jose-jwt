@@ -4,9 +4,6 @@ package com.nimbusds.jose.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import java.util.List;
-import java.util.Map;
-
 import java.text.ParseException;
 
 import net.minidev.json.JSONArray;
@@ -234,7 +231,7 @@ public class JSONObjectUtils {
 		
 	
 	/**
-	 * Gets a list member of a JSON object.
+	 * Gets a JSON array member of a JSON object.
 	 *
 	 * @param o   The JSON object. Must not be {@code null}.
 	 * @param key The JSON object member key. Must not be {@code null}.
@@ -244,11 +241,10 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the value is missing, {@code null} or not
 	 *                        of the expected type.
 	 */
-	@SuppressWarnings("unchecked")
-	public static List<Object> getList(final JSONObject o, final String key)
+	public static JSONArray getJSONArray(final JSONObject o, final String key)
 		throws ParseException {
 		
-		return getGeneric(o, key, List.class);
+		return getGeneric(o, key, JSONArray.class);
 	}
 
 
@@ -266,10 +262,10 @@ public class JSONObjectUtils {
 	public static String[] getStringArray(final JSONObject o, final String key)
 		throws ParseException {
 
-		List<Object> list = getList(o, key);
+		JSONArray jsonArray = getJSONArray(o, key);
 
 		try {
-			return list.toArray(new String[0]);
+			return jsonArray.toArray(new String[0]);
 
 		} catch (ArrayStoreException e) {
 
@@ -279,7 +275,7 @@ public class JSONObjectUtils {
 	
 	
 	/**
-	 * Gets a map member of a JSON object.
+	 * Gets a JSON object member of a JSON object.
 	 *
 	 * @param o   The JSON object. Must not be {@code null}.
 	 * @param key The JSON object member key. Must not be {@code null}.
@@ -289,11 +285,10 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the value is missing, {@code null} or not
 	 *                        of the expected type.
 	 */
-	@SuppressWarnings("unchecked")
-	public static Map<String,Object> getJSONObject(final JSONObject o, final String key)
+	public static JSONObject getJSONObject(final JSONObject o, final String key)
 		throws ParseException {
 		
-		return getGeneric(o, key, Map.class);
+		return getGeneric(o, key, JSONObject.class);
 	}
 	
 
