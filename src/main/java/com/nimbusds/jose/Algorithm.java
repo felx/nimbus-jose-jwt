@@ -25,7 +25,7 @@ public class Algorithm implements JSONAware {
 		 
 		 
 	/**
-	 * No algorithm (plain JOSE object without signature/encryption).
+	 * No algorithm (plain JOSE object without signature / encryption).
 	 */
 	public static final Algorithm NONE = new Algorithm("none", Requirement.REQUIRED);
 	

@@ -26,7 +26,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
 public final class JWSAlgorithm extends Algorithm {
@@ -107,13 +107,6 @@ public final class JWSAlgorithm extends Algorithm {
 	public JWSAlgorithm(final String name) {
 	
 		super(name, null);
-	}
-	
-	
-	@Override
-	public boolean equals(final Object object) {
-	
-		return object instanceof JWSAlgorithm && this.toString().equals(object.toString());
 	}
 	
 	

@@ -20,7 +20,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {
@@ -79,13 +79,6 @@ public final class EncryptionMethod extends Algorithm {
 	public EncryptionMethod(final String name) {
 	
 		super(name, null);
-	}
-	
-	
-	@Override
-	public boolean equals(final Object object) {
-	
-		return object instanceof EncryptionMethod && this.toString().equals(object.toString());
 	}
 	
 	
