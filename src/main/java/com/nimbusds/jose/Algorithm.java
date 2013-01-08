@@ -18,7 +18,7 @@ import net.jcip.annotations.Immutable;
  * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
 public class Algorithm implements JSONAware {
@@ -49,7 +49,7 @@ public class Algorithm implements JSONAware {
 	 * @param req  The implementation requirement, {@code null} if not 
 	 *             known.
 	 */
-	protected Algorithm(final String name, final Requirement req) {
+	public Algorithm(final String name, final Requirement req) {
 	
 		if (name == null)
 			throw new IllegalArgumentException("The algorithm name must not be null");
@@ -65,7 +65,7 @@ public class Algorithm implements JSONAware {
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 */
-	protected Algorithm(final String name) {
+	public Algorithm(final String name) {
 	
 		this(name, null);
 	}
