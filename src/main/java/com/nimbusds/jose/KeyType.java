@@ -8,29 +8,29 @@ import net.jcip.annotations.Immutable;
 
 
 /**
- * JOSE algorithm family name, represents the {@code alg} parameter in JSON
- * Web Keys (JWKs). This class is immutable.
+ * Key type. Used to represent the {@code kty} parameter in JSON Web Keys 
+ * (JWKs). This class is immutable.
  *
- * <p>Includes constants for the following standard algorithm families:
+ * <p>Includes constants for the following standard key types:
  *
  * <ul>
  *     <li>{@link #EC}
  *     <li>{@link #RSA}
  * </ul>
  *
- * <p>Additional algorithm family names can be defined using the constructors.
+ * <p>Additional key types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-18)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
-public final class AlgorithmFamily implements JSONAware {
+public final class KeyType implements JSONAware {
 
 
 	/**
-	 * The JOSE algorithm family name.
+	 * The key type value.
 	 */
-	private final String name;
+	private final String value;
 	
 	
 	/**
@@ -40,51 +40,50 @@ public final class AlgorithmFamily implements JSONAware {
 	
 	
 	/**
-	 * Elliptic Curve (DSS) algorithm family (recommended).
+	 * Elliptic Curve (DSS) key type (recommended).
 	 */
-	public static final AlgorithmFamily EC = new AlgorithmFamily("EC", Requirement.RECOMMENDED);
+	public static final KeyType EC = new KeyType("EC", Requirement.RECOMMENDED);
 	
 	
 	/**
-	 * RSA (RFC 3447) algorithm family (required).
+	 * RSA (RFC 3447) key type (required).
 	 */
-	public static final AlgorithmFamily RSA = new AlgorithmFamily("RSA", Requirement.REQUIRED);
+	public static final KeyType RSA = new KeyType("RSA", Requirement.REQUIRED);
 	
 	
 	/**
-	 * Creates a new JOSE algorithm family with the specified name and 
-	 * implementation requirement.
+	 * Creates a new key type with the specified value and implementation 
+	 * requirement.
 	 *
-	 * @param name The JOSE algorithm family name. Names are case sensitive.
-	 *             Must not be {@code null}.
-	 * @param req  The implementation requirement, {@code null} if not 
-	 *             known.
+	 * @param value The key type value. Values are case sensitive. Must not
+	 *              be {@code null}.
+	 * @param req   The implementation requirement, {@code null} if not 
+	 *              known.
 	 */
-	public AlgorithmFamily(final String name, final Requirement req) {
+	public KeyType(final String value, final Requirement req) {
 	
-		if (name == null)
-			throw new IllegalArgumentException("The algorithm family name must not be null");
+		if (value == null)
+			throw new IllegalArgumentException("The key type value must not be null");
 		
-		this.name = name;
+		this.value = value;
 		
 		requirement = req;
 	}
 	
 	
 	/**
-	 * Gets the name of this JOSE algorithm family. Names are case 
-	 * sensitive.
+	 * Gets the value of this key type. Values are case sensitive.
 	 *
-	 * @return The JOSE algorithm family name.
+	 * @return The key type.
 	 */
-	public String getName() {
+	public String getValue() {
 	
-		return name;
+		return value;
 	}
 	
 	
 	/**
-	 * Gets the implementation requirement of this JOSE algorithm family.
+	 * Gets the implementation requirement of this key type.
 	 *
 	 * @return The implementation requirement, {@code null} if not known.
 	 */
@@ -102,7 +101,7 @@ public final class AlgorithmFamily implements JSONAware {
 	@Override
 	public int hashCode() {
 	
-		return name.hashCode();
+		return value.hashCode();
 	}
 	
 	
@@ -117,26 +116,26 @@ public final class AlgorithmFamily implements JSONAware {
 	@Override
 	public boolean equals(final Object object) {
 	
-		return object instanceof AlgorithmFamily && this.toString().equals(object.toString());
+		return object instanceof KeyType && this.toString().equals(object.toString());
 	}
 	
 	
 	/**
-	 * Returns the string representation of this JOSE algorithm family.
+	 * Returns the string representation of this key type.
 	 *
-	 * @see #getName
+	 * @see #getValue
 	 *
 	 * @return The string representation.
 	 */
 	@Override
 	public String toString() {
 	
-		return name;
+		return value;
 	}
 	
 	
 	/**
-	 * Returns the JSON string representation of this JOSE algorithm family.
+	 * Returns the JSON string representation of this key type.
 	 * 
 	 * @return The JSON string representation.
 	 */
@@ -145,34 +144,34 @@ public final class AlgorithmFamily implements JSONAware {
 	
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');
-		sb.append(JSONObject.escape(name));
+		sb.append(JSONObject.escape(value));
 		sb.append('"');
 		return sb.toString();
 	}
 	
 	
 	/**
-	 * Parses a JOSE algorithm family from the specified string.
+	 * Parses a key type from the specified string.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The JOSE algorithm family (matching standard algorithm 
-	 *         family constant, else a newly created one).
+	 * @return The key type (matching standard key type constant, else a 
+	 *         newly created one).
 	 *
 	 * @throws ParseException If the string couldn't be parsed.
 	 */
-	public static AlgorithmFamily parse(final String s) {
+	public static KeyType parse(final String s) {
 	
 		if (s == null)
-			throw new IllegalArgumentException("The algorithm family string must not be null");
+			throw new IllegalArgumentException("The ket type string must not be null");
 		
-		if (s.equals(EC.getName()))
+		if (s.equals(EC.getValue()))
 			return EC;
 		
-		else if (s.equals(RSA.getName()))
+		else if (s.equals(RSA.getValue()))
 			return RSA;
 		
 		else
-			return new AlgorithmFamily(s, null);
+			return new KeyType(s, null);
 	}
 }

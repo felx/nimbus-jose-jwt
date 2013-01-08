@@ -12,21 +12,21 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Public {@link AlgorithmFamily#RSA RSA} JSON Web Key (JWK). This class is 
- * immutable.
+ * Public {@link KeyType#RSA RSA} JSON Web Key (JWK). This class is immutable.
  *
  * <p>Example JSON:
  *
  * <pre>
  * { 
- *   "alg" : "RSA",
+ *   "kty" : "RSA",
  *   "n"   : "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx
- *           4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs
- *           tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2
- *           QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
- *           SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
- *           w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+ *            4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs
+ *            tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2
+ *            QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI
+ *            SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb
+ *            w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
  *   "e"   : "AQAB",
+ *   "alg" : "RS256"
  *   "kid" : "2011-04-29"}
  * }
  * </pre>
@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-11-26)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -63,12 +63,14 @@ public final class RSAKey extends JWK {
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
-	              final Use use, final String kid) {
+	              final Use use, final Algorithm alg, final String kid) {
 	
-		super(AlgorithmFamily.RSA, use, kid);
+		super(KeyType.RSA, use, alg, kid);
 		
 		if (n == null)
 			throw new IllegalArgumentException("The modulus value must not be null");
@@ -123,7 +125,8 @@ public final class RSAKey extends JWK {
 	 * Parses a public RSA JWK from the specified JSON object 
 	 * representation.
 	 *
-	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   @code null}.
 	 *
 	 * @return The RSA Key.
 	 *
@@ -134,20 +137,23 @@ public final class RSAKey extends JWK {
 		throws ParseException {
 		
 		// Parse the mandatory parameters first
-		AlgorithmFamily af = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Base64URL mod = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
 		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "e"));
 		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
+		// Get optional intended algorithm
+		Algorithm alg = JWK.parseAlgorithm(jsonObject);
+
 		// Get optional key ID
 		String id = JWK.parseKeyID(jsonObject);
 		
-		// Check alg family
-		if (af != AlgorithmFamily.RSA)
-			throw new ParseException("The algorithm family \"alg\" must be RSA", 0);
+		// Check key type
+		if (kty != KeyType.RSA)
+			throw new ParseException("The key type \"kty\" must be RSA", 0);
 		
-		return new RSAKey(mod, exp, use, id);
+		return new RSAKey(mod, exp, use, alg, id);
 	}
 }

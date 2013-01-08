@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>The following JSON object members are common to all JWK types:
  *
  * <ul>
- *     <li>{@link #getAlgorithmFamily alg} (required)
+ *     <li>{@link #getKeyType kty} (required)
  *     <li>{@link #getKeyUse use} (optional)
  *     <li>{@link #getKeyID kid} (optional)
  * </ul>
@@ -24,8 +24,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>Example JWK (of the Elliptic Curve type):
  *
  * <pre>
- * { 
- *   "alg" : "EC",
+ * {
+ *   "kty" : "EC",
  *   "crv" : "P-256",
  *   "x"   : "MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
  *   "y"   : "4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
@@ -35,21 +35,27 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2013-01-08)
  */
 public abstract class JWK implements JSONAware {
 	
 	
 	/**
-	 * The algorithm family, required.
+	 * The key type, required.
 	 */
-	private final AlgorithmFamily alg;
+	private final KeyType kty;
 	
 	
 	/**
-	 * The use, optional.
+	 * The key use, optional.
 	 */
 	private final Use use;
+
+
+	/**
+	 * The intended JOSE algorithm for the key, optional.
+	 */
+	private final Algorithm alg;
 	
 	
 	/**
@@ -59,34 +65,38 @@ public abstract class JWK implements JSONAware {
 	
 	
 	/**
-	 * Creates a new JSON Web Key (JWK) with the specified parameters.
+	 * Creates a new JSON Web Key (JWK).
 	 *
-	 * @param alg The JOSE algorithm family. Must not be {@code null}.
+	 * @param kty The key type. Must not be {@code null}.
 	 * @param use The key use, {@code null} if not specified or if the key 
 	 *            is intended for signing as well as encryption.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
-	public JWK(final AlgorithmFamily alg, final Use use, final String kid) {
+	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid) {
 	
-		if (alg == null)
-			throw new IllegalArgumentException("The algorithm family \"alg\" must not be null");
+		if (kty == null)
+			throw new IllegalArgumentException("The key type \"kty\" must not be null");
 		
-		this.alg = alg;
+		this.kty = kty;
 		
 		this.use = use;
+
+		this.alg = alg;
 		
 		this.kid = kid;
 	}
 	
 	
 	/**
-	 * Gets the JOSE algorithm family ({@code alg}) of this JWK.
+	 * Gets the type ({@code kty}) of this JWK.
 	 *
-	 * @return The JOSE algorithm family.
+	 * @return The key type.
 	 */
-	public AlgorithmFamily getAlgorithmFamily() {
+	public KeyType getKeyType() {
 	
-		return alg;
+		return kty;
 	}
 	
 	
@@ -100,12 +110,23 @@ public abstract class JWK implements JSONAware {
 	
 		return use;
 	}
+
+
+	/**
+	 * Gets the intended JOSE algorithm ({@code alg}) for this JWK.
+	 *
+	 * @return The intended JOSE algorithm, {@code null} if not specified.
+	 */
+	public Algorithm getAlgorithm() {
+
+		return alg;
+	}
 	
 	
 	/**
 	 * Gets the ID ({@code kid}) of this JWK. The key ID can be used to 
-	 * match a specific key. This can be used, for instance, to choose a key
-	 * within a {@link JWKSet} during key rollover. The key ID may also 
+	 * match a specific key. This can be used, for instance, to choose a 
+	 * key within a {@link JWKSet} during key rollover. The key ID may also 
 	 * correspond to a JWS/JWE {@code kid} header parameter value.
 	 *
 	 * @return The key ID, {@code null} if not specified.
@@ -124,7 +145,7 @@ public abstract class JWK implements JSONAware {
 	 *
 	 * <pre>
 	 * {
-	 *   "alg" : "RSA",
+	 *   "kty" : "RSA",
 	 *   "use" : "sig",
 	 *   "kid" : "fd28e025-8d24-48bc-a51a-e2ffc8bc274b"
 	 * }
@@ -136,7 +157,7 @@ public abstract class JWK implements JSONAware {
 	
 		JSONObject o = new JSONObject();
 	
-		o.put("alg", alg.toString());
+		o.put("kty", kty.getValue());
 		
 		if (use != null) {
 		
@@ -146,6 +167,9 @@ public abstract class JWK implements JSONAware {
 			if (use == Use.ENCRYPTION)
 				o.put("use", "enc");
 		}
+
+		if (alg != null)
+			o.put("alg", alg.getName());
 			
 		if (kid != null)
 			o.put("kid", kid);
@@ -198,7 +222,8 @@ public abstract class JWK implements JSONAware {
 	 * Parses a JWK from the specified JSON object representation. The JWK 
 	 * must be an {@link ECKey} or an {@link RSAKey}.
 	 *
-	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   {@code null}.
 	 *
 	 * @return The JWK.
 	 *
@@ -208,16 +233,16 @@ public abstract class JWK implements JSONAware {
 	public static JWK parse(final JSONObject jsonObject)
 		throws ParseException {
 		
-		AlgorithmFamily alg = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		
-		if (alg == AlgorithmFamily.EC)
+		if (kty == KeyType.EC)
 			return ECKey.parse(jsonObject);
 		
-		else if (alg == AlgorithmFamily.RSA)
+		else if (kty == KeyType.RSA)
 			return RSAKey.parse(jsonObject);
 			
 		else
-			throw new ParseException("Unsupported algorithm family \"alg\" parameter: " + alg, 0);
+			throw new ParseException("Unsupported key type \"kty\" parameter: " + kty, 0);
 	}
 	
 	
@@ -225,7 +250,8 @@ public abstract class JWK implements JSONAware {
 	 * Parses a key use ({@code use}) parameter from the specified JSON 
 	 * object representation of a JWK.
 	 *
-	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   {@code null}.
 	 *
 	 * @return The key use, {@code null} if not specified.
 	 *
@@ -248,17 +274,44 @@ public abstract class JWK implements JSONAware {
 		else
 			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"", 0);
 	}
+
+
+	/**
+	 * Parses an algorithm ({@code alg}) parameter from the specified JSON
+	 * object representation of a JWK.
+	 *
+	 * <p>Note that the algorithm requirement level is not inferred.
+	 *
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   {@code null}.
+	 *
+	 * @return The algorithm, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the algorithm parameter couldn't be
+	 *                        parsed.
+	 */
+	protected static Algorithm parseAlgorithm(final JSONObject jsonObject)
+		throws ParseException {
+
+		if (jsonObject.get("alg") == null)
+			return null;
+
+		String algStr = JSONObjectUtils.getString(jsonObject, "alg");
+
+		return new Algorithm(algStr);
+	}
 	
 	
 	/**
 	 * Parses a key ID ({@code kid}) parameter from the specified JSON
 	 * object representation of a JWK.
 	 *
-	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   {@code null}.
 	 *
 	 * @return The key ID, {@code null} if not specified.
 	 *
-	 * @throws ParseException if the key ID parameter couldn't be parsed.
+	 * @throws ParseException If the key ID parameter couldn't be parsed.
 	 */
 	protected static String parseKeyID(final JSONObject jsonObject)
 		throws ParseException {

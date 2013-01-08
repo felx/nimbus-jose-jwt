@@ -12,14 +12,14 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Public {@link AlgorithmFamily#EC Elliptic Curve} JSON Web Key (JWK). This 
- * class is immutable.
+ * Public {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). This class is
+ * immutable.
  *
  * <p>Example JSON:
  * 
  * <pre>
- * { 
- *   "alg" : "EC",
+ * {
+ *   "kty" : "EC",
  *   "crv" : "P-256",
  *   "x"   : "MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
  *   "y"   : "4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
@@ -31,7 +31,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-08)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -191,12 +191,14 @@ public final class ECKey extends JWK {
 	 *            represented as the Base64URL encoding of the coordinate's 
 	 *            big endian representation. Must not be {@code null}.
 	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-	             final Use use, final String kid) {
+	             final Use use, final Algorithm alg, final String kid) {
 	
-		super(AlgorithmFamily.EC, use, kid);
+		super(KeyType.EC, use, alg, kid);
 		
 		if (crv == null)
 			throw new IllegalArgumentException("The curve must not be null");
@@ -218,7 +220,7 @@ public final class ECKey extends JWK {
 	/**
 	 * Gets the cryptographic curve.
 	 *
-	 * @return The cryptograhic curve.
+	 * @return The cryptographic curve.
 	 */
 	public Curve getCurve() {
 	
@@ -270,7 +272,8 @@ public final class ECKey extends JWK {
 	 * Parses an Elliptic Curve JWK from the specified JSON object 
 	 * representation.
 	 *
-	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be 
+	 *                   {@code null}.
 	 *
 	 * @return The Elliptic Curve JWK.
 	 *
@@ -281,7 +284,7 @@ public final class ECKey extends JWK {
 		throws ParseException {
 		
 		// Parse the mandatory parameters first
-		AlgorithmFamily af = AlgorithmFamily.parse(JSONObjectUtils.getString(jsonObject, "alg"));
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Curve crv = Curve.parse(JSONObjectUtils.getString(jsonObject, "crv"));
 		Base64URL x = new Base64URL(JSONObjectUtils.getString(jsonObject, "x"));
 		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
@@ -289,13 +292,16 @@ public final class ECKey extends JWK {
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
+		// Get optional intended algorithm
+		Algorithm alg = JWK.parseAlgorithm(jsonObject);
+
 		// Get optional key ID
 		String id = JWK.parseKeyID(jsonObject);
 		
-		// Check alg family
-		if (af != AlgorithmFamily.EC)
-			throw new ParseException("The algorithm family \"alg\" must be EC", 0);
+		// Check key type
+		if (kty != KeyType.EC)
+			throw new ParseException("The key type \"kty\" must be EC", 0);
 
-		return new ECKey(crv, x, y, use, id);
+		return new ECKey(crv, x, y, use, alg, id);
 	}
 }

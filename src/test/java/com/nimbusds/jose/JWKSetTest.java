@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-11-29)
+ * @version $version$ (2013-01-08)
  */
 public class JWKSetTest extends TestCase {
 
@@ -25,14 +25,14 @@ public class JWKSetTest extends TestCase {
 		String s =
 			"{\"keys\":" +
      			    "[" +
-			       "{\"alg\":\"EC\"," +
+			       "{\"kty\":\"EC\"," +
         			"\"crv\":\"P-256\"," +
         			"\"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\"," +
         			"\"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\"," +
         			"\"use\":\"enc\"," +
         			"\"kid\":\"1\"}," +
                         	" " +
-			       "{\"alg\":\"RSA\"," +
+			       "{\"kty\":\"RSA\"," +
         			"\"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx" +
 			   "4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs" +
 			   "tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2" +
@@ -40,6 +40,7 @@ public class JWKSetTest extends TestCase {
 			   "SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb" +
 			   "w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"," +
         			"\"e\":\"AQAB\"," +
+        			"\"alg\":\"RS256\"," +
         			"\"kid\":\"2011-04-29\"}" +
 			     "]" +
 			   "}";
@@ -84,6 +85,7 @@ public class JWKSetTest extends TestCase {
 		
 		assertEquals("2011-04-29", key.getKeyID());
 		assertNull(key.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 		
 		RSAKey rsaKey = (RSAKey)key;
 		
@@ -106,11 +108,13 @@ public class JWKSetTest extends TestCase {
 		                        new Base64URL("abc"), 
 					new Base64URL("def"),
 					Use.ENCRYPTION,
+					JWEAlgorithm.ECDH_ES,
 					"1234");
 		
 		RSAKey rsaKey = new RSAKey(new Base64URL("abc"),
 		                           new Base64URL("def"),
 					   Use.SIGNATURE,
+					   JWSAlgorithm.RS256,
 					   "5678");
 		
 		JWKSet keySet = new JWKSet();
@@ -144,6 +148,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals("abc", ecKey.getX().toString());
 		assertEquals("def", ecKey.getY().toString());
 		assertEquals(Use.ENCRYPTION, ecKey.getKeyUse());
+		assertEquals(JWEAlgorithm.ECDH_ES, ecKey.getAlgorithm());
 		assertEquals("1234", ecKey.getKeyID());
 		
 		rsaKey = (RSAKey)keySet.getKeys().get(1);
@@ -151,6 +156,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals("abc", rsaKey.getModulus().toString());
 		assertEquals("def", rsaKey.getExponent().toString());
 		assertEquals(Use.SIGNATURE, rsaKey.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, rsaKey.getAlgorithm());
 		assertEquals("5678", rsaKey.getKeyID());
 
 		assertEquals(1, keySet.getAdditionalMembers().size());
