@@ -293,7 +293,7 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	
 	
 	/**
-	 * Sets a custom (public or private) claim.
+	 * Sets a custom (non-reserved) claim.
 	 *
 	 * @param name  The name of the custom claim. Must not be {@code null}.
 	 * @param value The value of the custom claim, should map to a valid 

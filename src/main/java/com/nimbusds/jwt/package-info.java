@@ -13,7 +13,7 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-03
+ *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-06
  * </ul>
  *
  * @author Vladimir Dzhuvinov

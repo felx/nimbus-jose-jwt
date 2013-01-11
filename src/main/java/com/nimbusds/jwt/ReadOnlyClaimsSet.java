@@ -80,7 +80,7 @@ public interface ReadOnlyClaimsSet {
 	
 	
 	/**
-	 * Gets a custom (public or private) claim.
+	 * Gets a custom (non-reserved) claim.
 	 * 
 	 * @param name The name of the custom claim. Must not be {@code null}.
 	 *
