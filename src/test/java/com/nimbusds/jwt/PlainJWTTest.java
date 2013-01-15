@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2013-01-15)
  */
 public class PlainJWTTest extends TestCase {
 
@@ -33,7 +33,7 @@ public class PlainJWTTest extends TestCase {
 		assertNull(jwt.getHeader().getType());
 		assertNull(jwt.getHeader().getContentType());
 		
-		ReadOnlyClaimsSet cs = jwt.getClaimsSet();
+		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 		
 		assertEquals("joe", cs.getIssuerClaim());
 		assertEquals(1300819380, cs.getExpirationTimeClaim());
@@ -58,7 +58,7 @@ public class PlainJWTTest extends TestCase {
 		assertNull(jwt.getHeader().getType());
 		assertNull(jwt.getHeader().getContentType());
 		
-		ReadOnlyClaimsSet cs = jwt.getClaimsSet();
+		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 		
 		assertEquals("joe", cs.getIssuerClaim());
 		assertEquals(1300819380, cs.getExpirationTimeClaim());

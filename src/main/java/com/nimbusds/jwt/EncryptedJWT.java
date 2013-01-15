@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Encrypted JSON Web Token (JWT). This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-15)
  */
 @ThreadSafe
 public class EncryptedJWT extends JWEObject implements JWT {
@@ -31,9 +31,9 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 * {@link com.nimbusds.jose.JWEObject.State#UNENCRYPTED unencrypted}.
 	 *
 	 * @param header    The JWE header. Must not be {@code null}.
-	 * @param claimsSet The claims set. Must not be {@code null}.
+	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public EncryptedJWT(final JWEHeader header, ClaimsSet claimsSet) {
+	public EncryptedJWT(final JWEHeader header, ReadOnlyJWTClaimsSet claimsSet) {
 	
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -69,7 +69,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	
 	
 	@Override
-	public ReadOnlyClaimsSet getClaimsSet()
+	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
 		throws ParseException {
 		
 		Payload payload = getPayload();
@@ -82,7 +82,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 		if (json == null)
 			throw new ParseException("Payload of JWE object is not a valid JSON object", 0);
 		
-		return ClaimsSet.parse(json);
+		return JWTClaimsSet.parse(json);
 	}
 	
 	

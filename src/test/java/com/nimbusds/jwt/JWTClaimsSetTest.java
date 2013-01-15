@@ -12,14 +12,14 @@ import net.minidev.json.JSONObject;
  * Tests JWT claims set serialisation and parsing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
-public class ClaimsSetTest extends TestCase {
+public class JWTClaimsSetTest extends TestCase {
 
 
 	public void testReservedNames() {
 	
-		Set<String> names = ClaimsSet.getReservedNames();
+		Set<String> names = JWTClaimsSet.getReservedNames();
 		
 		assertTrue(names.contains("iss"));
 		assertTrue(names.contains("sub"));
@@ -35,7 +35,7 @@ public class ClaimsSetTest extends TestCase {
 
 	public void testRun() {
 
-		ClaimsSet cs = new ClaimsSet();
+		JWTClaimsSet cs = new JWTClaimsSet();
 
 		// iss
 		assertNull("iss init check", cs.getIssuerClaim());
@@ -95,7 +95,7 @@ public class ClaimsSetTest extends TestCase {
 		// parse back
 		
 		try {
-			cs = ClaimsSet.parse(json);
+			cs = JWTClaimsSet.parse(json);
 			
 		} catch (java.text.ParseException e) {
 		

@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-15)
  */
 @ThreadSafe
 public class SignedJWT extends JWSObject implements JWT {
@@ -31,9 +31,9 @@ public class SignedJWT extends JWSObject implements JWT {
 	 * {@link com.nimbusds.jose.JWSObject.State#UNSIGNED unsigned}.
 	 *
 	 * @param header    The JWS header. Must not be {@code null}.
-	 * @param claimsSet The claims set. Must not be {@code null}.
+	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public SignedJWT(final JWSHeader header, final ClaimsSet claimsSet) {
+	public SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
 	
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -61,7 +61,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	
 	
 	@Override
-	public ReadOnlyClaimsSet getClaimsSet()	
+	public ReadOnlyJWTClaimsSet getJWTClaimsSet()	
 		throws ParseException {
 	
 		JSONObject json = getPayload().toJSONObject();
@@ -69,7 +69,7 @@ public class SignedJWT extends JWSObject implements JWT {
 		if (json == null)
 			throw new ParseException("Payload of JWS object is not a valid JSON object", 0);
 		
-		return ClaimsSet.parse(json);
+		return JWTClaimsSet.parse(json);
 	}
 	
 	

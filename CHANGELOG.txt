@@ -123,3 +123,5 @@ version 2.9 (2013-01-08)
 version 2.10 (2013-01-15)
 	* Fixes incorrect null argument treatment in overridden Object.equals() 
 	  methods.
+	* Renames ReadOnlyClaimsSet to ReadOnlyJWTClaimsSet and ClaimsSet to
+	  JWTClaimsSet.

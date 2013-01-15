@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plain JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-15)
  */
 @ThreadSafe
 public class PlainJWT extends PlainObject implements JWT {
@@ -30,9 +30,9 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * {@link com.nimbusds.jose.PlainHeader} and the specified claims 
 	 * set.
 	 *
-	 * @param claimsSet The claims set. Must not be {@code null}.
+	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final ClaimsSet claimsSet) {
+	public PlainJWT(final JWTClaimsSet claimsSet) {
 		
 		super(new Payload(claimsSet.toJSONObject()));
 	}
@@ -43,9 +43,9 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * and claims set.
 	 *
 	 * @param header    The plain header. Must not be {@code null}.
-	 * @param claimsSet The claims set. Must not be {@code null}.
+	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final PlainHeader header, ClaimsSet claimsSet) {
+	public PlainJWT(final PlainHeader header, ReadOnlyJWTClaimsSet claimsSet) {
 			
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -70,7 +70,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	
 	
 	@Override
-	public ReadOnlyClaimsSet getClaimsSet()
+	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
 		throws ParseException {
 	
 		JSONObject json = getPayload().toJSONObject();
@@ -78,7 +78,7 @@ public class PlainJWT extends PlainObject implements JWT {
 		if (json == null)
 			throw new ParseException("Payload of plain JOSE object is not a valid JSON object", 0);
 		
-		return ClaimsSet.parse(json);
+		return JWTClaimsSet.parse(json);
 	}
 	
 	

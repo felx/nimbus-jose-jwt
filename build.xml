@@ -88,7 +88,7 @@
 			<test name="com.nimbusds.jose.crypto.MACTest"/>
 			<test name="com.nimbusds.jose.crypto.RSASSATest"/>
 			<test name="com.nimbusds.jose.crypto.ECDSATest"/>
-			<test name="com.nimbusds.jwt.ClaimsSetTest"/>
+			<test name="com.nimbusds.jwt.JWTClaimsSetTest"/>
 			<test name="com.nimbusds.jwt.PlainJWTTest"/>
 		</junit>
 	</target>

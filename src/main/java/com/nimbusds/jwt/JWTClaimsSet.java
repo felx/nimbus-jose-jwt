@@ -37,9 +37,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
-public class ClaimsSet implements ReadOnlyClaimsSet {
+public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
@@ -122,16 +122,16 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	
 	
 	/**
-	 * Creates a new empty claims set.
+	 * Creates a new empty JWT claims set.
 	 */
-	public ClaimsSet() {
+	public JWTClaimsSet() {
 	
 		// Nothing to do
 	}
 	
 	
 	/**
-	 * Gets the reserved claim names.
+	 * Gets the reserved JWT claim names.
 	 *
 	 * @return The reserved claim names, as an unmodifiable set.
 	 */
@@ -376,15 +376,15 @@ public class ClaimsSet implements ReadOnlyClaimsSet {
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
-	 * @return The claims set.
+	 * @return The JWT claims set.
 	 *
 	 * @throws ParseException If the specified JSON object doesn't represent
 	 *                        a valid JWT claims set.
 	 */
-	public static ClaimsSet parse(final JSONObject json)
+	public static JWTClaimsSet parse(final JSONObject json)
 		throws ParseException {
 	
-		ClaimsSet cs = new ClaimsSet();
+		JWTClaimsSet cs = new JWTClaimsSet();
 	
 		// Parse reserved + custom params
 		for (final String name: json.keySet()) {

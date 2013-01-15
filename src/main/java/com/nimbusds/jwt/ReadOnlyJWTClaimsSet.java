@@ -7,12 +7,12 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * Read-only view of a {@link ClaimsSet}.
+ * Read-only view of a {@link JWTClaimsSet}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
-public interface ReadOnlyClaimsSet {
+public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
