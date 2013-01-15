@@ -125,3 +125,6 @@ version 2.10 (2013-01-15)
 	  methods.
 	* Renames ReadOnlyClaimsSet to ReadOnlyJWTClaimsSet and ClaimsSet to
 	  JWTClaimsSet.
+
+version 2.10.1 (2013-01-15)
+	* Fixes bug in build.xml script.
