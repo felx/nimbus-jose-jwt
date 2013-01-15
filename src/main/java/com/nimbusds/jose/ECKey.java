@@ -31,7 +31,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -126,8 +126,10 @@ public final class ECKey extends JWK {
 		 */
 		@Override
 		public boolean equals(final Object object) {
-
-			return object instanceof Curve && this.toString().equals(object.toString());
+	
+			return object != null && 
+			       object instanceof Curve && 
+			       this.toString().equals(object.toString());
 		}
 
 		

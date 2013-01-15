@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional key types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public final class KeyType implements JSONAware {
@@ -116,7 +116,9 @@ public final class KeyType implements JSONAware {
 	@Override
 	public boolean equals(final Object object) {
 	
-		return object instanceof KeyType && this.toString().equals(object.toString());
+		return object != null && 
+		       object instanceof KeyType && 
+		       this.toString().equals(object.toString());
 	}
 	
 	

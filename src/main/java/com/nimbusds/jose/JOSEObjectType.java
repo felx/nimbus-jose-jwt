@@ -22,7 +22,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public final class JOSEObjectType implements JSONAware {
@@ -94,7 +94,9 @@ public final class JOSEObjectType implements JSONAware {
 	@Override
 	public boolean equals(final Object object) {
 	
-		return object instanceof JOSEObjectType && this.toString().equals(object.toString());
+		return object != null && 
+		       object instanceof JOSEObjectType && 
+		       this.toString().equals(object.toString());
 	}
 	
 	

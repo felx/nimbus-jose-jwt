@@ -119,3 +119,7 @@ version 2.9 (2013-01-08)
 	* Updates the library to the latest JWA/JWS/JWE/JWK -08 draft suite.
 	* Updates the library to the latest JWT -06 draft.
 	* Minor code refactoring and clean up.
+	
+version 2.10 (2013-01-15)
+	* Fixes incorrect null argument treatment in overridden Object.equals() 
+	  methods.

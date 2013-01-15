@@ -1,5 +1,9 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
+	<property name="version"          value="2.10"/>
+	<property name="version-date"     value="2013-01-15"/>
+	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
+
 	<property name="src.dir"          value="src/main/java"/>
 	<property name="test.src.dir"     value="src/test/java"/>
 	<property name="build.dir"        value="target"/>
@@ -7,10 +11,6 @@
 	<property name="test.compile.dir" value="${build.dir}/test-classes"/>
 	<property name="javadoc.dir"      value="${build.dir}/site/apidocs"/>
 	<property name="procsrc.dir"      value="${build.dir}/generated-classes"/>
-
-	<property name="version"          value="2.9"/>
-	<property name="version-date"     value="2013-01-08"/>
-	<property name="jarfile"          value="${build.dir}/nimbus-jose-jwt-${version}.jar"/>
 	
 	<path id="classpath.compile">
 		<fileset dir="lib">

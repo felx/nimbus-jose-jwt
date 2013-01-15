@@ -18,7 +18,7 @@ import net.jcip.annotations.Immutable;
  * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public class Algorithm implements JSONAware {
@@ -116,7 +116,9 @@ public class Algorithm implements JSONAware {
 	@Override
 	public boolean equals(final Object object) {
 	
-		return object instanceof Algorithm && this.toString().equals(object.toString());
+		return object != null && 
+		       object instanceof Algorithm && 
+		       this.toString().equals(object.toString());
 	}
 	
 	

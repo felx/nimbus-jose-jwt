@@ -11,7 +11,7 @@ import net.jcip.annotations.Immutable;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2012-01-15)
  */
 @Immutable
 public class Base64 implements JSONAware {
@@ -94,8 +94,10 @@ public class Base64 implements JSONAware {
 	 *         {@code false}.
 	 */
 	public boolean equals(final Object object) {
-
-		return object instanceof Base64 && this.toString().equals(object.toString());
+	
+		return object != null && 
+		       object instanceof Base64 && 
+		       this.toString().equals(object.toString());
 	}
 
 	

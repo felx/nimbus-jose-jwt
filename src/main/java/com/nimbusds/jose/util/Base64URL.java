@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public class Base64URL implements JSONAware {
@@ -126,8 +126,10 @@ public class Base64URL implements JSONAware {
 	 *         {@code false}.
 	 */
 	public boolean equals(final Object object) {
-
-		return object instanceof Base64URL && this.toString().equals(object.toString());
+	
+		return object != null && 
+		       object instanceof Base64URL && 
+		       this.toString().equals(object.toString());
 	}
 	
 	

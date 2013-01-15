@@ -21,7 +21,7 @@ import net.jcip.annotations.Immutable;
  * constructor. 
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-01-15)
  */
 @Immutable
 public final class CompressionAlgorithm implements JSONAware {
@@ -88,7 +88,9 @@ public final class CompressionAlgorithm implements JSONAware {
 	@Override
 	public boolean equals(final Object object) {
 	
-		return object instanceof CompressionAlgorithm && this.toString().equals(object.toString());
+		return object != null && 
+		       object instanceof CompressionAlgorithm && 
+		       this.toString().equals(object.toString());
 	}
 	
 	
