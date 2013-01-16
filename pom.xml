@@ -140,6 +140,14 @@
                     <doctitle>Nimbus JOSE + JWT v. ${project.version}</doctitle>
                     <overview>${basedir}/src/main/javadoc/overview.html</overview>
                 </configuration>
+  		<executions>
+    		  <execution>
+		    <id>attach-javadocs</id>
+		    <goals>
+		      <goal>jar</goal>
+		    </goals>
+		  </execution>
+		</executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -148,6 +156,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+  		<executions>
+    		  <execution>
+		    <id>attach-sources</id>
+		    <goals>
+		      <goal>jar</goal>
+		    </goals>
+		  </execution>
+		</executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
