@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.util.Date;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -12,7 +13,7 @@ import net.minidev.json.JSONObject;
  * Tests JWT claims set serialisation and parsing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-01-23)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -37,45 +38,47 @@ public class JWTClaimsSetTest extends TestCase {
 
 		JWTClaimsSet cs = new JWTClaimsSet();
 
+		final Date NOW = new Date();
+
 		// iss
-		assertNull("iss init check", cs.getIssuerClaim());
-		cs.setIssuerClaim("http://issuer.com");
-		assertEquals("iss set check", "http://issuer.com", cs.getIssuerClaim());
+		assertNull("iss init check", cs.getIssuer());
+		cs.setIssuer("http://issuer.com");
+		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
 		
 		// sub
-		assertNull("sub init check", cs.getSubjectClaim());
-		cs.setSubjectClaim("http://subject.com");
-		assertEquals("sub set check", "http://subject.com", cs.getSubjectClaim());
+		assertNull("sub init check", cs.getSubject());
+		cs.setSubject("http://subject.com");
+		assertEquals("sub set check", "http://subject.com", cs.getSubject());
 
 		// aud
-		assertNull("aud init check", cs.getAudienceClaim());
-		cs.setAudienceClaim(new String[]{"http://audience.com"});
-		assertEquals("aud set check", "http://audience.com", cs.getAudienceClaim()[0]);
+		assertNull("aud init check", cs.getAudience());
+		cs.setAudience(new String[]{"http://audience.com"});
+		assertEquals("aud set check", "http://audience.com", cs.getAudience()[0]);
 		
 		// exp
-		assertEquals("exp init check", -1, cs.getExpirationTimeClaim());
-		cs.setExpirationTimeClaim(123l);
-		assertEquals("exp set check", 123l, cs.getExpirationTimeClaim());
+		assertNull("exp init check", cs.getExpirationTime());
+		cs.setExpirationTime(NOW);
+		assertEquals("exp set check", NOW, cs.getExpirationTime());
 		
 		// nbf
-		assertEquals("nbf init check", -1, cs.getNotBeforeClaim());
-		cs.setNotBeforeClaim(123l);
-		assertEquals("nbf set check", 123l, cs.getNotBeforeClaim());
+		assertNull("nbf init check", cs.getNotBeforeTime());
+		cs.setNotBeforeTime(NOW);
+		assertEquals("nbf set check", NOW, cs.getNotBeforeTime());
 		
 		// iat
-		assertEquals("iat init check", -1, cs.getIssuedAtClaim());
-		cs.setIssuedAtClaim(123l);
-		assertEquals("iat set check", 123l, cs.getIssuedAtClaim());
+		assertNull("iat init check", cs.getIssueTime());
+		cs.setIssueTime(NOW);
+		assertEquals("iat set check", NOW, cs.getIssueTime());
 		
 		// jti
-		assertNull("jti init check", cs.getJWTIDClaim());
-		cs.setJWTIDClaim("123");
-		assertEquals("jti set check", "123", cs.getJWTIDClaim());
+		assertNull("jti init check", cs.getJWTID());
+		cs.setJWTID("123");
+		assertEquals("jti set check", "123", cs.getJWTID());
 		
 		// typ
-		assertNull("typ init check", cs.getTypeClaim());
-		cs.setTypeClaim("JWT");
-		assertEquals("typ set check", "JWT", cs.getTypeClaim());
+		assertNull("typ init check", cs.getType());
+		cs.setType("JWT");
+		assertEquals("typ set check", "JWT", cs.getType());
 		
 		// custom claims
 		assertTrue(cs.getCustomClaims().isEmpty());
@@ -102,14 +105,14 @@ public class JWTClaimsSetTest extends TestCase {
 			fail(e.getMessage());
 		}
 		
-		assertEquals("iss parse check", "http://issuer.com", cs.getIssuerClaim());
-		assertEquals("sub parse check", "http://subject.com", cs.getSubjectClaim());
-		assertEquals("aud parse check", "http://audience.com", cs.getAudienceClaim()[0]);
-		assertEquals("exp parse check", 123l, cs.getExpirationTimeClaim());
-		assertEquals("nbf parse check", 123l, cs.getNotBeforeClaim());
-		assertEquals("iat parse check", 123l, cs.getIssuedAtClaim());
-		assertEquals("jti parse check", "123", cs.getJWTIDClaim());
-		assertEquals("typ parse check", "JWT", cs.getTypeClaim());
+		assertEquals("iss parse check", "http://issuer.com", cs.getIssuer());
+		assertEquals("sub parse check", "http://subject.com", cs.getSubject());
+		assertEquals("aud parse check", "http://audience.com", cs.getAudience()[0]);
+		assertEquals("exp parse check", NOW, cs.getExpirationTime());
+		assertEquals("nbf parse check", NOW, cs.getNotBeforeTime());
+		assertEquals("iat parse check", NOW, cs.getIssueTime());
+		assertEquals("jti parse check", "123", cs.getJWTID());
+		assertEquals("typ parse check", "JWT", cs.getType());
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));
 		assertEquals(1, cs.getCustomClaims().size());
 	}

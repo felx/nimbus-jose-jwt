@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.util.Date;
 import java.util.Map;
 
 import net.minidev.json.JSONObject;
@@ -10,7 +11,7 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link JWTClaimsSet}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-01-23)
  */
 public interface ReadOnlyJWTClaimsSet {
 
@@ -20,7 +21,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The issuer claim, {@code null} if not specified.
 	 */
-	public String getIssuerClaim();
+	public String getIssuer();
 
 
 	/**
@@ -28,7 +29,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The subject claim, {@code null} if not specified.
 	 */
-	public String getSubjectClaim();
+	public String getSubject();
 	
 	
 	/**
@@ -36,31 +37,31 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The audience claim, {@code null} if not specified.
 	 */
-	public String[] getAudienceClaim();
+	public String[] getAudience();
 
 
 	/**
 	 * Gets the expiration time ({@code exp}) claim.
 	 *
-	 * @return The expiration time, -1 if not specified.
+	 * @return The expiration time, {@code null} if not specified.
 	 */
-	public long getExpirationTimeClaim();
+	public Date getExpirationTime();
 	
 	
 	/**
 	 * Gets the not-before ({@code nbf}) claim.
 	 *
-	 * @return The not-before claim, -1 if not specified.
+	 * @return The not-before claim, {@code null} if not specified.
 	 */
-	public long getNotBeforeClaim();
+	public Date getNotBeforeTime();
 	
 	
 	/**
 	 * Gets the issued-at ({@code iat}) claim.
 	 *
-	 * @return The issued-at claim, -1 if not specified.
+	 * @return The issued-at claim, {@code null} if not specified.
 	 */
-	public long getIssuedAtClaim();
+	public Date getIssueTime();
 	
 	
 	/**
@@ -68,7 +69,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The JWT ID claim, {@code null} if not specified.
 	 */
-	public String getJWTIDClaim();
+	public String getJWTID();
 	
 	
 	/**
@@ -76,7 +77,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The type claim, {@code null} if not specified.
 	 */
-	public String getTypeClaim();
+	public String getType();
 	
 	
 	/**

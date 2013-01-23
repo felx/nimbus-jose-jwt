@@ -1,6 +1,8 @@
 package com.nimbusds.jwt;
 
 
+import java.util.Date;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
@@ -12,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-01-23)
  */
 public class PlainJWTTest extends TestCase {
 
@@ -35,8 +37,8 @@ public class PlainJWTTest extends TestCase {
 		
 		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 		
-		assertEquals("joe", cs.getIssuerClaim());
-		assertEquals(1300819380, cs.getExpirationTimeClaim());
+		assertEquals("joe", cs.getIssuer());
+		assertEquals(new Date(1300819380l), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
 	}
 	
@@ -60,8 +62,8 @@ public class PlainJWTTest extends TestCase {
 		
 		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
 		
-		assertEquals("joe", cs.getIssuerClaim());
-		assertEquals(1300819380, cs.getExpirationTimeClaim());
+		assertEquals("joe", cs.getIssuer());
+		assertEquals(new Date(1300819380l), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
 	}
 }

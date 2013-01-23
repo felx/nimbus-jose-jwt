@@ -5,6 +5,7 @@ import java.text.ParseException;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,7 +38,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-01-23)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -88,19 +89,19 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * The expiration time claim.
 	 */
-	private long exp = -1l;
+	private Date exp = null;
 	
 	
 	/**
 	 * The not-before claim.
 	 */
-	private long nbf = -1l;
+	private Date nbf = null;
 	
 	
 	/**
 	 * The issued-at claim.
 	 */
-	private long iat = -1l;
+	private Date iat = null;
 	
 	
 	/**
@@ -142,7 +143,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	@Override
-	public String getIssuerClaim() {
+	public String getIssuer() {
 	
 		return iss;
 	}
@@ -153,14 +154,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param iss The issuer claim, {@code null} if not specified.
 	 */
-	public void setIssuerClaim(final String iss) {
+	public void setIssuer(final String iss) {
 	
 		this.iss = iss;
 	}
 
 
 	@Override
-	public String getSubjectClaim() {
+	public String getSubject() {
 	
 		return sub;
 	}
@@ -171,14 +172,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param sub The subject claim, {@code null} if not specified.
 	 */
-	public void setSubjectClaim(final String sub) {
+	public void setSubject(final String sub) {
 	
 		this.sub = sub;
 	}
 	
 	
 	@Override
-	public String[] getAudienceClaim() {
+	public String[] getAudience() {
 	
 		return aud;
 	}
@@ -189,14 +190,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param aud The audience claim, {@code null} if not specified.
 	 */
-	public void setAudienceClaim(final String[] aud) {
+	public void setAudience(final String[] aud) {
 	
 		this.aud = aud;
 	}
 	
 	
 	@Override
-	public long getExpirationTimeClaim() {
+	public Date getExpirationTime() {
 	
 		return exp;
 	}
@@ -205,16 +206,16 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Sets the expiration time ({@code exp}) claim.
 	 *
-	 * @param exp The expiration time, -1 if not specified.
+	 * @param exp The expiration time, {@code null} if not specified.
 	 */
-	public void setExpirationTimeClaim(final long exp) {
+	public void setExpirationTime(final Date exp) {
 	
 		this.exp = exp;
 	}
 	
 	
 	@Override
-	public long getNotBeforeClaim() {
+	public Date getNotBeforeTime() {
 	
 		return nbf;
 	}
@@ -223,16 +224,16 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Sets the not-before ({@code nbf}) claim.
 	 *
-	 * @param nbf The not-before claim, -1 if not specified.
+	 * @param nbf The not-before claim, {@code null} if not specified.
 	 */
-	public void setNotBeforeClaim(final long nbf) {
+	public void setNotBeforeTime(final Date nbf) {
 	
 		this.nbf = nbf;
 	}
 	
 	
 	@Override
-	public long getIssuedAtClaim() {
+	public Date getIssueTime() {
 	
 		return iat;
 	}
@@ -241,16 +242,16 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Sets the issued-at ({@code iat}) claim.
 	 *
-	 * @param iat The issued-at claim, -1 if not specified.
+	 * @param iat The issued-at claim, {@code null} if not specified.
 	 */
-	public void setIssuedAtClaim(final long iat) {
+	public void setIssueTime(final Date iat) {
 	
 		this.iat = iat;
 	}
 	
 	
 	@Override
-	public String getJWTIDClaim() {
+	public String getJWTID() {
 	
 		return jti;
 	}
@@ -261,14 +262,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param jti The JWT ID claim, {@code null} if not specified.
 	 */
-	public void setJWTIDClaim(final String jti) {
+	public void setJWTID(final String jti) {
 	
 		this.jti = jti;
 	}
 	
 	
 	@Override
-	public String getTypeClaim() {
+	public String getType() {
 	
 		return typ;
 	}
@@ -279,7 +280,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param typ The type claim, {@code null} if not specified.
 	 */
-	public void setTypeClaim(final String typ) {
+	public void setType(final String typ) {
 	
 		this.typ = typ;
 	}
@@ -351,14 +352,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			o.put("aud", audArray);
 		}
 		
-		if (exp > -1)
-			o.put("exp", exp);
+		if (exp != null)
+			o.put("exp", exp.getTime());
 		
-		if (nbf > -1)
-			o.put("nbf", nbf);
+		if (nbf != null)
+			o.put("nbf", nbf.getTime());
 			
-		if (iat > -1)
-			o.put("iat", iat);
+		if (iat != null)
+			o.put("iat", iat.getTime());
 		
 		if (jti != null)
 			o.put("jti", jti);
@@ -391,11 +392,11 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 			if (name.equals("iss")) {
 
-				cs.setIssuerClaim(JSONObjectUtils.getString(json, "iss"));
+				cs.setIssuer(JSONObjectUtils.getString(json, "iss"));
 			}
 			else if (name.equals("sub")) {
 
-				cs.setSubjectClaim(JSONObjectUtils.getString(json, "sub"));
+				cs.setSubject(JSONObjectUtils.getString(json, "sub"));
 			}
 			else if (name.equals("aud")) {
 
@@ -403,31 +404,31 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 				if (audValue != null && audValue instanceof String) {
 					String[] singleAud = {JSONObjectUtils.getString(json, "aud")};
-					cs.setAudienceClaim(singleAud);
+					cs.setAudience(singleAud);
 				}
 				else {
-					cs.setAudienceClaim(JSONObjectUtils.getStringArray(json, "aud"));
+					cs.setAudience(JSONObjectUtils.getStringArray(json, "aud"));
 				}
 			}
 			else if (name.equals("exp")) {
 				
-				cs.setExpirationTimeClaim(JSONObjectUtils.getLong(json, "exp"));
+				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, "exp")));
 			}
 			else if (name.equals("nbf")) {
 				
-				cs.setNotBeforeClaim(JSONObjectUtils.getLong(json, "nbf"));
+				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, "nbf")));
 			}
 			else if (name.equals("iat")) {
 				
-				cs.setIssuedAtClaim(JSONObjectUtils.getLong(json, "iat"));
+				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, "iat")));
 			}
 			else if (name.equals("jti")) {
 				
-				cs.setJWTIDClaim(JSONObjectUtils.getString(json, "jti"));
+				cs.setJWTID(JSONObjectUtils.getString(json, "jti"));
 			}
 			else if (name.equals("typ")) {
 
-				cs.setTypeClaim(JSONObjectUtils.getString(json, "typ"));
+				cs.setType(JSONObjectUtils.getString(json, "typ"));
 			}
 			else {
 				cs.setCustomClaim(name, json.get(name));
