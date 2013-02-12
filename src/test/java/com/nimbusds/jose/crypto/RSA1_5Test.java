@@ -136,9 +136,13 @@ public class RSA1_5Test extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
 		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		String jweString = jweObject.serialize();
 
@@ -148,8 +152,42 @@ public class RSA1_5Test extends TestCase {
 
 		jweObject.decrypt(decrypter);
 
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
 		payload = jweObject.getPayload();
 
 		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithA256GCM()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
+		Payload payload = new Payload("I think therefore I am.");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("I think therefore I am.", payload.toString());
 	}
 }
