@@ -1,7 +1,7 @@
 <project name="JSON Web Token (JWT) / NimbusDS" default="dist" basedir=".">
 
 	<property name="version"          value="2.10.1"/>
-	<property name="version-date"     value="2013-01-15"/>
+	<property name="version-date"     value="2013-02-12"/>
 
 	<property name="src.dir"          value="src/main/java"/>
 	<property name="test.src.dir"     value="src/test/java"/>
@@ -89,6 +89,7 @@
 			<test name="com.nimbusds.jose.crypto.MACTest"/>
 			<test name="com.nimbusds.jose.crypto.RSASSATest"/>
 			<test name="com.nimbusds.jose.crypto.ECDSATest"/>
+			<test name="com.nimbusds.jose.crypto.RSA1_5Test"/>
 			<test name="com.nimbusds.jwt.JWTClaimsSetTest"/>
 			<test name="com.nimbusds.jwt.PlainJWTTest"/>
 		</junit>
