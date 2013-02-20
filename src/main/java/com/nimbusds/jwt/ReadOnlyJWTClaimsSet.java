@@ -2,6 +2,7 @@ package com.nimbusds.jwt;
 
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import net.minidev.json.JSONObject;
@@ -37,7 +38,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The audience claim, {@code null} if not specified.
 	 */
-	public String[] getAudience();
+	public List<String> getAudience();
 
 
 	/**

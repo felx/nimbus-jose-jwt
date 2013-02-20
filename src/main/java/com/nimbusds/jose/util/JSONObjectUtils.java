@@ -5,6 +5,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -273,6 +275,24 @@ public class JSONObjectUtils {
 		}
 	}
 	
+	/**
+	 * Gets a string list member of a JSON object
+	 * 
+	 * @param o   The JSON object. Must not be {@code null}.
+	 * @param key The JSON object member key. Must not be {@code null}.
+	 *
+	 * @return The member value.
+	 *
+	 * @throws ParseException If the value is missing, {@code null} or not
+	 *                        of the expected type.
+	 */
+	public static List<String> getStringList(final JSONObject o, final String key) throws ParseException {
+		
+		String[] array = getStringArray(o, key);
+		
+		return Arrays.asList(array);
+		
+	}
 	
 	/**
 	 * Gets a JSON object member of a JSON object.

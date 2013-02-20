@@ -2,12 +2,13 @@ package com.nimbusds.jwt;
 
 
 import java.text.ParseException;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -83,7 +84,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * The audience claim.
 	 */
-	private String[] aud = null;
+	private List<String> aud = null;
 	
 	
 	/**
@@ -179,7 +180,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	
 	
 	@Override
-	public String[] getAudience() {
+	public List<String> getAudience() {
 	
 		return aud;
 	}
@@ -190,7 +191,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param aud The audience claim, {@code null} if not specified.
 	 */
-	public void setAudience(final String[] aud) {
+	public void setAudience(final List<String> aud) {
 	
 		this.aud = aud;
 	}
@@ -348,7 +349,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		
 		if (aud != null) {
 			JSONArray audArray = new JSONArray();
-			audArray.addAll(Arrays.asList(aud));
+			audArray.addAll(aud);
 			o.put("aud", audArray);
 		}
 		
@@ -403,11 +404,12 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 				Object audValue = json.get("aud");
 
 				if (audValue != null && audValue instanceof String) {
-					String[] singleAud = {JSONObjectUtils.getString(json, "aud")};
+					List<String> singleAud = new ArrayList<String>();
+					singleAud.add(JSONObjectUtils.getString(json, "aud"));
 					cs.setAudience(singleAud);
 				}
 				else {
-					cs.setAudience(JSONObjectUtils.getStringArray(json, "aud"));
+					cs.setAudience(JSONObjectUtils.getStringList(json, "aud"));
 				}
 			}
 			else if (name.equals("exp")) {

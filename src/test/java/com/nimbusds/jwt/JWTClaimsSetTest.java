@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
@@ -51,9 +52,9 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("sub set check", "http://subject.com", cs.getSubject());
 
 		// aud
-		assertNull("aud init check", cs.getAudience());
-		cs.setAudience(new String[]{"http://audience.com"});
-		assertEquals("aud set check", "http://audience.com", cs.getAudience()[0]);
+		assertNull("aud init check", cs.getAudience());		
+		cs.setAudience(Arrays.asList("http://audience.com"));
+		assertEquals("aud set check", "http://audience.com", cs.getAudience().get(0));
 		
 		// exp
 		assertNull("exp init check", cs.getExpirationTime());
@@ -107,7 +108,7 @@ public class JWTClaimsSetTest extends TestCase {
 		
 		assertEquals("iss parse check", "http://issuer.com", cs.getIssuer());
 		assertEquals("sub parse check", "http://subject.com", cs.getSubject());
-		assertEquals("aud parse check", "http://audience.com", cs.getAudience()[0]);
+		assertEquals("aud parse check", "http://audience.com", cs.getAudience().get(0));
 		assertEquals("exp parse check", NOW, cs.getExpirationTime());
 		assertEquals("nbf parse check", NOW, cs.getNotBeforeTime());
 		assertEquals("iat parse check", NOW, cs.getIssueTime());
