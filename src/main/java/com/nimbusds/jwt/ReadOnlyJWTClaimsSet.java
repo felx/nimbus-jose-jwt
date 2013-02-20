@@ -98,7 +98,22 @@ public interface ReadOnlyJWTClaimsSet {
 	 */
 	public Map<String,Object> getCustomClaims();
 	 
-	 
+	/**
+	 * Gets a single claim by name, whether reserved or custom.
+	 * 
+	 * @param name The name of the claim to get. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 */
+	public Object getClaim(final String name);
+	
+	/**
+	 * Gets all claims, both reserved and custom, and returns them as a single Map.
+	 * 
+	 * @return All claims as an unmodifiable map, empty map if none.
+	 */
+	public Map<String, Object> getAllClaims();
+	
 	/**
 	 * Returns the JSON object representation of the claims set.
 	 *

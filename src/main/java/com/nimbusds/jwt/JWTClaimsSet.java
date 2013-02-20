@@ -47,6 +47,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * The reserved claim names.
 	 */
+    private static final String TYPE_CLAIM = "typ";
+    private static final String JWT_ID_CLAIM = "jti";
+    private static final String ISSUED_AT_CLAIM = "iat";
+    private static final String NOT_BEFORE_CLAIM = "nbf";
+    private static final String EXPIRATION_TIME_CLAIM = "exp";
+    private static final String AUDIENCE_CLAIM = "aud";
+    private static final String SUBJECT_CLAIM = "sub";
+    private static final String ISSUER_CLAIM = "iss";
+
 	private static final Set<String> RESERVED_CLAIM_NAMES;
 	
 	
@@ -56,14 +65,14 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	static {
 		Set<String> n = new HashSet<String>();
 		
-		n.add("iss");
-		n.add("sub");
-		n.add("aud");
-		n.add("exp");
-		n.add("nbf");
-		n.add("iat");
-		n.add("jti");
-		n.add("typ");
+		n.add(ISSUER_CLAIM);
+		n.add(SUBJECT_CLAIM);
+		n.add(AUDIENCE_CLAIM);
+		n.add(EXPIRATION_TIME_CLAIM);
+		n.add(NOT_BEFORE_CLAIM);
+		n.add(ISSUED_AT_CLAIM);
+		n.add(JWT_ID_CLAIM);
+		n.add(TYPE_CLAIM);
 		
 		RESERVED_CLAIM_NAMES = Collections.unmodifiableSet(n);
 	}
@@ -131,7 +140,23 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		// Nothing to do
 	}
 	
-	
+	/**
+	 * Creates a copy of the given JWT claims set
+	 */
+	public JWTClaimsSet(JWTClaimsSet old) {
+		super();
+		setAllClaims(old.getAllClaims());
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+	    // TODO Auto-generated method stub
+	    return super.clone();
+    }
+
 	/**
 	 * Gets the reserved JWT claim names.
 	 *
@@ -335,38 +360,153 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		this.customClaims = customClaims;
 	}
 	
-	
+    @Override
+    public Object getClaim(String name) {
+	    if (!getReservedNames().contains(name)) {
+	    	return getCustomClaim(name);
+	    } else {
+	    	// it's a reserved name, find out which one
+	    	if (ISSUER_CLAIM.equals(name)) {
+	    		return getIssuer();
+	    	} else if (SUBJECT_CLAIM.equals(name)) {
+	    		return getSubject();
+	    	} else if (AUDIENCE_CLAIM.equals(name)) {
+	    		return getAudience();
+	    	} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
+	    		return getExpirationTime();
+	    	} else if (NOT_BEFORE_CLAIM.equals(name)) {
+	    		return getNotBeforeTime();
+	    	} else if (ISSUED_AT_CLAIM.equals(name)) {
+	    		return getIssueTime();
+	    	} else if (JWT_ID_CLAIM.equals(name)) {
+	    		return getJWTID();
+	    	} else if (TYPE_CLAIM.equals(name)) {
+	    		return getType();
+	    	} else {
+	    		// if we fall through down to here, something is wrong
+	    		throw new IllegalArgumentException("Couldn't find reserved claim: " + name);
+	    	}
+	    }
+	    
+    }
+
+
+    /**
+     * Set the given claim, whether reserved or custom.
+     * @param name The name of the claim to set.
+     * @param value The value of the claim to set.
+     */
+    public void setClaim(String name, Object value) {
+	    if (!getReservedNames().contains(name)) {
+	    	setCustomClaim(name, value);
+	    } else {
+	    	// it's a reserved name, find out which one
+	    	if (ISSUER_CLAIM.equals(name)) {
+	    		if (value instanceof String) {
+	    			setIssuer((String)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Issuer claim must be a String");
+	    		}
+	    	} else if (SUBJECT_CLAIM.equals(name)) {
+	    		if (value instanceof String) {
+	    			setSubject((String)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Subject claim must be a String");
+	    		}
+	    	} else if (AUDIENCE_CLAIM.equals(name)) {
+	    		if (value instanceof List<?>) {
+	    			setAudience((List<String>)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Audience claim must be a List<String>");
+	    		}
+	    	} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
+	    		if (value instanceof Date) {
+	    			setExpirationTime((Date)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Expiration claim must be a Date");
+	    		}
+	    	} else if (NOT_BEFORE_CLAIM.equals(name)) {
+	    		if (value instanceof Date) {
+	    			setNotBeforeTime((Date)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Not-before claim must be a Date");
+	    		}
+	    	} else if (ISSUED_AT_CLAIM.equals(name)) {
+	    		if (value instanceof Date) {
+	    			setIssueTime((Date)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Issued-at claim must be a Date");
+	    		}
+	    	} else if (JWT_ID_CLAIM.equals(name)) {
+	    		if (value instanceof String) {
+	    			setJWTID((String)value);
+	    		} else {
+	    			throw new IllegalArgumentException("JWT-ID claim must be a String");
+	    		}
+	    	} else if (TYPE_CLAIM.equals(name)) {
+	    		if (value instanceof String) {
+	    			setType((String)value);
+	    		} else {
+	    			throw new IllegalArgumentException("Type claim must be a String");
+	    		}
+	    	} else {
+	    		// if we fall through down to here, something is wrong
+	    		throw new IllegalArgumentException("Couldn't find reserved claim: " + name);
+	    	}
+	    }
+    }
+    
+    @Override
+    public Map<String, Object> getAllClaims() {
+    	Map<String, Object> allClaims = new HashMap<String, Object>();
+    	
+    	allClaims.putAll(customClaims);
+    	
+    	for (String reservedClaim : RESERVED_CLAIM_NAMES) {
+	        allClaims.put(reservedClaim, getClaim(reservedClaim));
+        }
+    	
+	    return Collections.unmodifiableMap(allClaims);
+    }
+
+    public void setAllClaims(Map<String, Object> newClaims) {
+    	for (String name : newClaims.keySet()) {
+	        setClaim(name, newClaims.get(name));
+        }
+    }
+    
+    
 	@Override
 	public JSONObject toJSONObject() {
 	
 		JSONObject o = new JSONObject(customClaims);
 
 		if (iss != null)
-			o.put("iss", iss);
+			o.put(ISSUER_CLAIM, iss);
 
 		if (sub != null)
-			o.put("sub", sub);
+			o.put(SUBJECT_CLAIM, sub);
 		
 		if (aud != null) {
 			JSONArray audArray = new JSONArray();
 			audArray.addAll(aud);
-			o.put("aud", audArray);
+			o.put(AUDIENCE_CLAIM, audArray);
 		}
 		
 		if (exp != null)
-			o.put("exp", exp.getTime());
+			o.put(EXPIRATION_TIME_CLAIM, exp.getTime());
 		
 		if (nbf != null)
-			o.put("nbf", nbf.getTime());
+			o.put(NOT_BEFORE_CLAIM, nbf.getTime());
 			
 		if (iat != null)
-			o.put("iat", iat.getTime());
+			o.put(ISSUED_AT_CLAIM, iat.getTime());
 		
 		if (jti != null)
-			o.put("jti", jti);
+			o.put(JWT_ID_CLAIM, jti);
 		
 		if (typ != null)
-			o.put("typ", typ);
+			o.put(TYPE_CLAIM, typ);
 		
 		return o;
 	}
@@ -391,46 +531,46 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		// Parse reserved + custom params
 		for (final String name: json.keySet()) {
 
-			if (name.equals("iss")) {
+			if (name.equals(ISSUER_CLAIM)) {
 
-				cs.setIssuer(JSONObjectUtils.getString(json, "iss"));
+				cs.setIssuer(JSONObjectUtils.getString(json, ISSUER_CLAIM));
 			}
-			else if (name.equals("sub")) {
+			else if (name.equals(SUBJECT_CLAIM)) {
 
-				cs.setSubject(JSONObjectUtils.getString(json, "sub"));
+				cs.setSubject(JSONObjectUtils.getString(json, SUBJECT_CLAIM));
 			}
-			else if (name.equals("aud")) {
+			else if (name.equals(AUDIENCE_CLAIM)) {
 
-				Object audValue = json.get("aud");
+				Object audValue = json.get(AUDIENCE_CLAIM);
 
 				if (audValue != null && audValue instanceof String) {
 					List<String> singleAud = new ArrayList<String>();
-					singleAud.add(JSONObjectUtils.getString(json, "aud"));
+					singleAud.add(JSONObjectUtils.getString(json, AUDIENCE_CLAIM));
 					cs.setAudience(singleAud);
 				}
 				else {
-					cs.setAudience(JSONObjectUtils.getStringList(json, "aud"));
+					cs.setAudience(JSONObjectUtils.getStringList(json, AUDIENCE_CLAIM));
 				}
 			}
-			else if (name.equals("exp")) {
+			else if (name.equals(EXPIRATION_TIME_CLAIM)) {
 				
-				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, "exp")));
+				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM)));
 			}
-			else if (name.equals("nbf")) {
+			else if (name.equals(NOT_BEFORE_CLAIM)) {
 				
-				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, "nbf")));
+				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM)));
 			}
-			else if (name.equals("iat")) {
+			else if (name.equals(ISSUED_AT_CLAIM)) {
 				
-				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, "iat")));
+				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM)));
 			}
-			else if (name.equals("jti")) {
+			else if (name.equals(JWT_ID_CLAIM)) {
 				
-				cs.setJWTID(JSONObjectUtils.getString(json, "jti"));
+				cs.setJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
 			}
-			else if (name.equals("typ")) {
+			else if (name.equals(TYPE_CLAIM)) {
 
-				cs.setType(JSONObjectUtils.getString(json, "typ"));
+				cs.setType(JSONObjectUtils.getString(json, TYPE_CLAIM));
 			}
 			else {
 				cs.setCustomClaim(name, json.get(name));
@@ -439,4 +579,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		
 		return cs;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+    @Override
+    public String toString() {
+	    return "JWTClaimsSet [iss=" + iss + ", sub=" + sub + ", aud=" + aud + ", exp=" + exp + ", nbf=" + nbf + ", iat=" + iat + ", jti=" + jti + ", typ=" + typ + ", customClaims=" + customClaims + "]";
+    }
+	
+	
+	
 }
