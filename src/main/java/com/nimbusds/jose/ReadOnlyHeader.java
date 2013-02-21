@@ -17,31 +17,31 @@ import com.nimbusds.jose.util.Base64URL;
  */
 public interface ReadOnlyHeader {
 
-	
+
 	/**
 	 * Gets the algorithm ({@code alg}) parameter.
 	 *
 	 * @return The algorithm parameter.
 	 */
 	public Algorithm getAlgorithm();
-	
-	
+
+
 	/**
 	 * Gets the type ({@code typ}) parameter.
 	 *
 	 * @return The type parameter, {@code null} if not specified.
 	 */
 	public JOSEObjectType getType();
-	
-	
+
+
 	/**
 	 * Gets the content type ({@code cty}) parameter.
 	 *
 	 * @return The content type parameter, {@code null} if not specified.
 	 */
 	public String getContentType();
-	
-	
+
+
 	/**
 	 * Gets a custom (non-reserved) parameter.
 	 *
@@ -51,8 +51,8 @@ public interface ReadOnlyHeader {
 	 * @return The custom parameter, {@code null} if not specified.
 	 */
 	public Object getCustomParameter(final String name);
-	
-	
+
+
 	/**
 	 * Gets the custom (non-reserved) parameters.
 	 *
@@ -60,8 +60,8 @@ public interface ReadOnlyHeader {
 	 *         none.
 	 */
 	public Map<String,Object> getCustomParameters();
-	
-	
+
+
 	/**
 	 * Gets the names of all included parameters (reserved and custom) in 
 	 * the header instance.
@@ -69,8 +69,8 @@ public interface ReadOnlyHeader {
 	 * @return The included parameters.
 	 */
 	public Set<String> getIncludedParameters();
-	
-	
+
+
 	/**
 	 * Returns a JSON object representation of the header. All custom
 	 * parameters are included if they serialise to a JSON entity and 

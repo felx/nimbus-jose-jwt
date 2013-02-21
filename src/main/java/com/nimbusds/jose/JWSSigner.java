@@ -13,8 +13,8 @@ import com.nimbusds.jose.util.Base64URL;
  * @version $version$ (2012-10-04)
  */
 public interface JWSSigner extends JWSAlgorithmProvider {
-	
-	
+
+
 	/**
 	 * Signs the specified {@link JWSObject#getSignableContent signable 
 	 * content} of a {@link JWSObject JWS object}.
@@ -30,5 +30,5 @@ public interface JWSSigner extends JWSAlgorithmProvider {
 	 *                       signing failed for some other reason.
 	 */
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
-		throws JOSEException;
+			throws JOSEException;
 }

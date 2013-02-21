@@ -1,9 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.text.ParseException;
 
 import junit.framework.TestCase;
@@ -22,121 +20,121 @@ public class JWEHeaderTest extends TestCase {
 
 
 	public void testParse1() {
-	
+
 		// Example header from JWE spec
 		// {"alg":"RSA-OAEP","enc":"A256GCM"}
 		String s = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ";
-	
+
 		JWEHeader h = null;
-		
+
 		try {
 			h = JWEHeader.parse(new Base64URL(s));
-			
+
 		} catch (ParseException e) {
-		
+
 			fail(e.getMessage());
 		}
-		
+
 		assertNotNull(h);
-		
+
 		assertEquals(JWEAlgorithm.RSA_OAEP, h.getAlgorithm());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
-		
+
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
 		assertEquals(2, h.getIncludedParameters().size());
 	}
-	
-	
+
+
 	public void testParse2() {
-	
+
 		// Example header from JWE spec
 		// {"alg":"RSA1_5","enc":"A128CBC+HS256"}
 		String s = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0";
-	
+
 		JWEHeader h = null;
-		
+
 		try {
 			h = JWEHeader.parse(new Base64URL(s));
-			
+
 		} catch (ParseException e) {
-		
+
 			fail(e.getMessage());
 		}
-		
+
 		assertNotNull(h);
-		
+
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
 		assertEquals(EncryptionMethod.A128CBC_HS256, h.getEncryptionMethod());
-		
+
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
 		assertEquals(2, h.getIncludedParameters().size());
 	}
-	
-	
+
+
 	public void testSerializeAndParse()
-		throws Exception {
-	
+			throws Exception {
+
 		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, 
-		                            EncryptionMethod.A256GCM);
-		
+				EncryptionMethod.A256GCM);
+
 		h.setType(new JOSEObjectType("JWT"));
 		h.setCompressionAlgorithm(CompressionAlgorithm.DEF);
 		h.setJWKURL(new URL("https://example.com/jku.json"));
 		h.setKeyID("1234");
-		
+
 		final Base64URL mod = new Base64URL("abc123");
 		final Base64URL exp = new Base64URL("def456");
 		final Use use = Use.ENCRYPTION;
 		final String kid = "1234";
-		
+
 		RSAKey jwk = new RSAKey(mod, exp, use, JWEAlgorithm.RSA1_5, kid);
-		
+
 		h.setJWK(jwk);
 		h.setX509CertURL(new URL("https://example/cert.b64"));
 		h.setX509CertThumbprint(new Base64URL("789iop"));
-		
+
 		Base64[] certChain = new Base64[3];
 		certChain[0] = new Base64("asd");
 		certChain[1] = new Base64("fgh");
 		certChain[2] = new Base64("jkl");
-		
+
 		h.setX509CertChain(certChain);
-		
+
 		h.setAgreementPartyUInfo(new Base64URL("abc"));
 		h.setAgreementPartyVInfo(new Base64URL("def"));
 		h.setEncryptionPartyUInfo(new Base64URL("ghi"));
 		h.setEncryptionPartyVInfo(new Base64URL("jkl"));
-		
-		
+
+
 		String s = h.toString();
-		
+
 		// Parse back
-		
+
 		try {
 			h = JWEHeader.parse(s);
-			
+
 		} catch (ParseException e) {
-		
+
 			fail(e.getMessage());
 		}
-		
+
 		assertNotNull(h);
-		
+
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
 		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
 		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
-		
+
 		jwk = (RSAKey)h.getJWK();
 		assertNotNull(jwk);
 		assertEquals(new Base64URL("abc123"), jwk.getModulus());
@@ -144,21 +142,21 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(Use.ENCRYPTION, jwk.getKeyUse());
 		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
 		assertEquals("1234", jwk.getKeyID());
-		
+
 		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
-		
+
 		certChain = h.getX509CertChain();
 		assertEquals(3, certChain.length);
 		assertEquals(new Base64("asd"), certChain[0]);
 		assertEquals(new Base64("fgh"), certChain[1]);
 		assertEquals(new Base64("jkl"), certChain[2]);
-		
+
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
 		assertEquals(new Base64URL("def"), h.getAgreementPartyVInfo());
 		assertEquals(new Base64URL("ghi"), h.getEncryptionPartyUInfo());
 		assertEquals(new Base64URL("jkl"), h.getEncryptionPartyVInfo());
-		
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));

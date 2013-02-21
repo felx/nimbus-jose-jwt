@@ -2,7 +2,6 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,82 +45,85 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 * The reserved parameter names.
 	 */
 	private static final Set<String> RESERVED_PARAMETER_NAMES;
-	
-	
+
+
 	/**
 	 * Initialises the reserved parameter name set.
 	 */
 	static {
 		Set<String> p = new HashSet<String>();
-		
+
 		p.add("alg");
 		p.add("typ");
 		p.add("cty");
-		
+
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new plain header with algorithm 
 	 * {@link Algorithm#NONE none}.
 	 */
 	public PlainHeader() {
-	
+
 		super(Algorithm.NONE);
 	}
-	
-	
+
+
 	/**
 	 * Gets the reserved parameter names for plain headers.
 	 *
 	 * @return The reserved parameter names, as an unmodifiable set.
 	 */
 	public static Set<String> getReservedParameterNames() {
-	
+
 		return RESERVED_PARAMETER_NAMES;
 	}
-	
-	
+
+
 	@Override
 	public Algorithm getAlgorithm() {
-	
+
 		return alg;
 	}
-	
-	
+
+
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
 	 *                                  matches a reserved parameter name.
 	 */
 	@Override
 	public void setCustomParameter(final String name, final Object value) {
-	
-		if (getReservedParameterNames().contains(name))
+
+		if (getReservedParameterNames().contains(name)) {
 			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
-		
+		}
+
 		super.setCustomParameter(name, value);
 	}
-	
-	
+
+
 	@Override
 	public Set<String> getIncludedParameters() {
-	
+
 		Set<String> includedParameters = 
-			new HashSet<String>(getCustomParameters().keySet());
-		
+				new HashSet<String>(getCustomParameters().keySet());
+
 		includedParameters.add("alg");
-		
-		if (getType() != null)
+
+		if (getType() != null) {
 			includedParameters.add("typ");
-			
-		if (getContentType() != null)
+		}
+
+		if (getContentType() != null) {
 			includedParameters.add("cty");
-		
+		}
+
 		return includedParameters;
 	}
-	
-	
+
+
 	/**
 	 * Parses a plain header from the specified JSON object.
 	 *
@@ -133,39 +135,38 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        a valid plain header.
 	 */
 	public static PlainHeader parse(final JSONObject json)
-		throws ParseException {
-		
+			throws ParseException {
+
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
-		
-		if (alg != Algorithm.NONE)
+
+		if (alg != Algorithm.NONE) {
 			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"", 0);
-			
-		
+		}
+
+
 		// Create a minimal header, type may be set later
 		PlainHeader h = new PlainHeader();
-		
-		
+
+
 		// Parse optional + custom parameters
 		for(final String name: json.keySet()) {
-				
-			if (name.equals("alg"))
+
+			if (name.equals("alg")) {
 				continue; // skip
-				
-			else if (name.equals("typ"))
+			} else if (name.equals("typ")) {
 				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
-				
-			else if (name.equals("cty"))
+			} else if (name.equals("cty")) {
 				h.setContentType(JSONObjectUtils.getString(json, name));
-				
-			else
+			} else {
 				h.setCustomParameter(name, json.get(name));
+			}
 		}
-		
+
 		return h;
 	}
-	
-	
+
+
 	/**
 	 * Parses a plain header from the specified JSON string.
 	 *
@@ -177,14 +178,14 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        represent a valid plain header.
 	 */
 	public static PlainHeader parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
-		
+
 		return parse(jsonObject);
 	}
-	
-	
+
+
 	/**
 	 * Parses a plain header from the specified Base64URL.
 	 *
@@ -196,11 +197,12 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        valid plain header.
 	 */
 	public static PlainHeader parse(final Base64URL base64URL)
-		throws ParseException {
-		
-		if (base64URL == null)
+			throws ParseException {
+
+		if (base64URL == null) {
 			throw new ParseException("The Base64URL must not be null", 0);
-			
+		}
+
 		return parse(base64URL.decodeToString());
 	}
 }

@@ -60,10 +60,12 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	}
 
 
+	@Override
 	public Set<JWEAlgorithm> supportedAlgorithms() {
 		return SUPPORTED_ALGORITHMS;
 	}
 
+	@Override
 	public Set<EncryptionMethod> supportedEncryptionMethods() {
 		return SUPPORTED_ENCRYPTION_METHODS;
 	}
@@ -79,16 +81,16 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	 * @return The CMK length, in bits.
 	 */
 	protected int keyLengthForMethod(final EncryptionMethod method) {
-		
+
 		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
-		    method.equals(EncryptionMethod.A128GCM)) {
+				method.equals(EncryptionMethod.A128GCM)) {
 
 			return 128;
 		}
 
 		if (method.equals(EncryptionMethod.A256GCM) ||
-		    method.equals(EncryptionMethod.A256CBC_HS512)) {
-	
+				method.equals(EncryptionMethod.A256CBC_HS512)) {
+
 			return 256;
 		}
 
@@ -97,21 +99,21 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 
 
 	protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-		throws JOSEException {
+			throws JOSEException {
 
 		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.DECRYPT_MODE);
 	}
 
 
 	protected byte[] aesgcmEncrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-		throws JOSEException {
-	
+			throws JOSEException {
+
 		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.ENCRYPT_MODE);
 	}
 
 
 	private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) 
-		throws JOSEException {
+			throws JOSEException {
 
 		try {
 			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());

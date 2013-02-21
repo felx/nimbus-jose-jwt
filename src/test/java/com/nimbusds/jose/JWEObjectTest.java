@@ -1,12 +1,11 @@
 package com.nimbusds.jose;
 
 
+import java.text.ParseException;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.util.Base64URL;
-
-
-import java.text.ParseException;
 
 
 /**
@@ -19,10 +18,10 @@ public class JWEObjectTest extends TestCase {
 
 
 	public void testBase64URLConstructor()
-		throws ParseException {
+			throws ParseException {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, 
-			                         EncryptionMethod.A128CBC_HS256);
+				EncryptionMethod.A128CBC_HS256);
 
 		Base64URL firstPart = header.toBase64URL();
 		Base64URL secondPart = new Base64URL("abc");
@@ -31,8 +30,8 @@ public class JWEObjectTest extends TestCase {
 		Base64URL fifthPart = new Base64URL("jkl");
 
 		JWEObject jwe = new JWEObject(firstPart, secondPart,
-			                      thirdPart, fourthPart, 
-			                      fifthPart);
+				thirdPart, fourthPart, 
+				fifthPart);
 
 		assertEquals(firstPart, jwe.getHeader().toBase64URL());
 		assertEquals(secondPart, jwe.getEncryptedKey());

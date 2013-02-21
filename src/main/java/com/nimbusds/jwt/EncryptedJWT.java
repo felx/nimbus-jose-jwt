@@ -3,15 +3,13 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
+import net.jcip.annotations.ThreadSafe;
 import net.minidev.json.JSONObject;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.JOSEObject;
-import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
-
+import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -34,11 +32,11 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
 	public EncryptedJWT(final JWEHeader header, ReadOnlyJWTClaimsSet claimsSet) {
-	
+
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
-	
-	
+
+
 	/**
 	 * Creates a new encrypted JSON Web Token (JWT) with the specified 
 	 * serialised parts. The state will be 
@@ -58,34 +56,36 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public EncryptedJWT(final Base64URL firstPart, 
-	                    final Base64URL secondPart, 
-	                    final Base64URL thirdPart,
-	                    final Base64URL fourthPart,
-	                    final Base64URL fifthPart)
-		throws ParseException {
-	
+			final Base64URL secondPart, 
+			final Base64URL thirdPart,
+			final Base64URL fourthPart,
+			final Base64URL fifthPart)
+					throws ParseException {
+
 		super(firstPart, secondPart, thirdPart, fourthPart, fifthPart);
 	}
-	
-	
+
+
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-		throws ParseException {
-		
+			throws ParseException {
+
 		Payload payload = getPayload();
-		
-		if (payload == null)
+
+		if (payload == null) {
 			return null;
-		
+		}
+
 		JSONObject json = payload.toJSONObject();
-		
-		if (json == null)
+
+		if (json == null) {
 			throw new ParseException("Payload of JWE object is not a valid JSON object", 0);
-		
+		}
+
 		return JWTClaimsSet.parse(json);
 	}
-	
-	
+
+
 	/**
 	 * Parses an encrypted JSON Web Token (JWT) from the specified string in
 	 * compact format. 
@@ -98,13 +98,14 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 *                        encrypted JWT.
 	 */
 	public static EncryptedJWT parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		Base64URL[] parts = JOSEObject.split(s);
-		
-		if (parts.length != 5)
+
+		if (parts.length != 5) {
 			throw new ParseException("Unexpected number of Base64URL parts, must be five", 0);
-		
+		}
+
 		return new EncryptedJWT(parts[0], parts[1], parts[2], parts[3], parts[4]);
 	}
 }

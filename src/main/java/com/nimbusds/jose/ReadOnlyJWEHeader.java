@@ -20,16 +20,16 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 */
 	@Override
 	public JWEAlgorithm getAlgorithm();
-	
-	
+
+
 	/**
 	 * Gets the encryption method ({@code enc}) parameter.
 	 *
 	 * @return The encryption method parameter.
 	 */
 	public EncryptionMethod getEncryptionMethod();
-	
-	
+
+
 	/**
 	 * Gets the Ephemeral Public Key ({@code epk}) parameter.
 	 *
@@ -37,8 +37,8 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public ECKey getEphemeralPublicKey();
-	
-	
+
+
 	/**
 	 * Gets the compression algorithm ({@code zip}) parameter.
 	 *
@@ -46,8 +46,8 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public CompressionAlgorithm getCompressionAlgorithm();
-	
-	
+
+
 	/**
 	 * Gets the agreement PartyUInfo ({@code apu}) parameter.
 	 *
@@ -55,8 +55,8 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public Base64URL getAgreementPartyUInfo();
-	
-	
+
+
 	/**
 	 * Gets the agreement PartyVInfo ({@code apv}) parameter.
 	 *
@@ -64,8 +64,8 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public Base64URL getAgreementPartyVInfo();
-	
-	
+
+
 	/**
 	 * Gets the encryption PartyUInfo ({@code epu}) parameter.
 	 *
@@ -73,8 +73,8 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public Base64URL getEncryptionPartyUInfo();
-	
-	
+
+
 	/**
 	 * Gets the encryption PartyVInfo ({@code epv}) parameter.
 	 *

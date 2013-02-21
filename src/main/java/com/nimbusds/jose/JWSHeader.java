@@ -1,15 +1,11 @@
 package com.nimbusds.jose;
 
 
-import java.net.URL;
-
 import java.text.ParseException;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -56,14 +52,14 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	 * The reserved parameter names.
 	 */
 	private static final Set<String> RESERVED_PARAMETER_NAMES;
-	
-	
+
+
 	/**
 	 * Initialises the reserved parameter name set.
 	 */
 	static {
 		Set<String> p = new HashSet<String>();
-		
+
 		p.add("alg");
 		p.add("jku");
 		p.add("jwk");
@@ -73,90 +69,99 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 		p.add("kid");
 		p.add("typ");
 		p.add("cty");
-		
+
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JSON Web Signature (JWS) header.
 	 *
 	 * @param alg The JWS algorithm. Must not be {@code null}.
 	 */
 	public JWSHeader(final JWSAlgorithm alg) {
-	
+
 		super(alg);
 	}
-	
-	
+
+
 	/**
 	 * Gets the reserved parameter names for JWS headers.
 	 *
 	 * @return The reserved parameter names, as an unmodifiable set.
 	 */
 	public static Set<String> getReservedParameterNames() {
-	
+
 		return RESERVED_PARAMETER_NAMES;
 	}
-	
-	
+
+
 	@Override
 	public JWSAlgorithm getAlgorithm() {
-	
+
 		return (JWSAlgorithm)alg;
 	}
-	
-	
+
+
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
 	 *                                  matches a reserved parameter name.
 	 */
 	@Override
 	public void setCustomParameter(final String name, final Object value) {
-	
-		if (getReservedParameterNames().contains(name))
+
+		if (getReservedParameterNames().contains(name)) {
 			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
-		
+		}
+
 		super.setCustomParameter(name, value);
 	}
-	
-	
+
+
 	@Override
 	public Set<String> getIncludedParameters() {
-	
+
 		Set<String> includedParameters = 
-			new HashSet<String>(getCustomParameters().keySet());
-		
+				new HashSet<String>(getCustomParameters().keySet());
+
 		includedParameters.add("alg");
-		
-		if (getType() != null)
+
+		if (getType() != null) {
 			includedParameters.add("typ");
-			
-		if (getContentType() != null)
+		}
+
+		if (getContentType() != null) {
 			includedParameters.add("cty");
-		
-		if (getJWKURL() != null)
+		}
+
+		if (getJWKURL() != null) {
 			includedParameters.add("jku");
-		
-		if (getJWK() != null)
+		}
+
+		if (getJWK() != null) {
 			includedParameters.add("jwk");
-		
-		if (getX509CertURL() != null)
+		}
+
+		if (getX509CertURL() != null) {
 			includedParameters.add("x5u");
-		
-		if (getX509CertThumbprint() != null)
+		}
+
+		if (getX509CertThumbprint() != null) {
 			includedParameters.add("x5t");
-		
-		if (getX509CertChain() != null)
+		}
+
+		if (getX509CertChain() != null) {
 			includedParameters.add("x5c");
-		
-		if (getKeyID() != null)
+		}
+
+		if (getKeyID() != null) {
 			includedParameters.add("kid");
-		
+		}
+
 		return includedParameters;
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWS header from the specified JSON object.
 	 *
@@ -168,55 +173,48 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	 *                        represent a valid JWS header.
 	 */
 	public static JWSHeader parse(final JSONObject json)
-		throws ParseException {
-	
+			throws ParseException {
+
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
-		
-		if (! (alg instanceof JWSAlgorithm))
+
+		if (! (alg instanceof JWSAlgorithm)) {
 			throw new ParseException("The algorithm \"alg\" header parameter must be for signatures", 0);
-		
+		}
+
 		// Create a minimal header
 		JWSHeader h = new JWSHeader((JWSAlgorithm)alg);
-		
+
 		// Parse optional + custom parameters
 		for (final String name: json.keySet()) {
-			
-			if (name.equals("alg"))
+
+			if (name.equals("alg")) {
 				continue; // Skip
-			
-			else if (name.equals("typ"))
+			} else if (name.equals("typ")) {
 				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
-			
-			else if (name.equals("cty"))
+			} else if (name.equals("cty")) {
 				h.setContentType(JSONObjectUtils.getString(json, name));
-			
-			else if (name.equals("jku"))
+			} else if (name.equals("jku")) {
 				h.setJWKURL(JSONObjectUtils.getURL(json, name));
-			
-			else if (name.equals("jwk"))
+			} else if (name.equals("jwk")) {
 				h.setJWK(JWK.parse(JSONObjectUtils.getJSONObject(json, name)));
-			
-			else if (name.equals("x5u"))
+			} else if (name.equals("x5u")) {
 				h.setX509CertURL(JSONObjectUtils.getURL(json, name));
-			
-			else if (name.equals("x5t"))
+			} else if (name.equals("x5t")) {
 				h.setX509CertThumbprint(new Base64URL(JSONObjectUtils.getString(json, name)));
-			
-			else if (name.equals("x5c"))
+			} else if (name.equals("x5c")) {
 				h.setX509CertChain(CommonSEHeader.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
-			
-			else if (name.equals("kid"))
+			} else if (name.equals("kid")) {
 				h.setKeyID(JSONObjectUtils.getString(json, name));
-			
-			else
+			} else {
 				h.setCustomParameter(name, json.get(name));
+			}
 		}
-		
+
 		return h;
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWS header from the specified JSON string.
 	 *
@@ -228,14 +226,14 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	 *                        represent a valid JWS header.
 	 */
 	public static JWSHeader parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
-		
+
 		return parse(jsonObject);
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWS header from the specified Base64URL.
 	 *
@@ -247,8 +245,8 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	 *                        valid JWS header.
 	 */
 	public static JWSHeader parse(final Base64URL base64URL)
-		throws ParseException {
-			
+			throws ParseException {
+
 		return parse(base64URL.decodeToString());
 	}
 }

@@ -1,7 +1,6 @@
 package com.nimbusds.jose;
 
 
-import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -29,6 +28,6 @@ public interface JWEEncrypter extends JWEAlgorithmProvider {
 	 *                       encryption failed for some other reason.
 	 */
 	public JWECryptoParts encrypt(final ReadOnlyJWEHeader header, 
-	                              final byte[] clearText)
-		throws JOSEException;
+			final byte[] clearText)
+					throws JOSEException;
 }

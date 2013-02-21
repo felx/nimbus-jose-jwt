@@ -2,7 +2,6 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,32 +23,32 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version $version$ (2012-12-09)
  */
 public abstract class Header implements ReadOnlyHeader {
-	
-	
+
+
 	/**
 	 * The algorithm ({@code alg}) parameter.
 	 */
 	final protected Algorithm alg;
-	
-	
+
+
 	/**
 	 * The JOSE object type ({@code typ}) parameter.
 	 */
 	private JOSEObjectType typ;
-	
-	
+
+
 	/**
 	 * The content type ({@code cty}) parameter.
 	 */
 	private String cty;
-	
-	
+
+
 	/**
 	 * Custom header parameters.
 	 */
 	private Map<String,Object> customParameters = new HashMap<String,Object>();
-	
-	
+
+
 	/**
 	 * Creates a new header with the specified algorithm ({@code alg}) 
 	 * parameter.
@@ -57,57 +56,58 @@ public abstract class Header implements ReadOnlyHeader {
 	 * @param alg The algorithm parameter. Must not be {@code null}.
 	 */
 	protected Header(final Algorithm alg) {
-	
-		if (alg == null)
+
+		if (alg == null) {
 			throw new IllegalArgumentException("The algorithm \"alg\" header parameter must not be null");
-		
+		}
+
 		this.alg = alg;
 	}
-	
-	
+
+
 	@Override
 	public JOSEObjectType getType() {
-	
+
 		return typ;
 	}
-	
-	
+
+
 	/**
 	 * Sets the type ({@code typ}) parameter.
 	 *
 	 * @param typ The type parameter, {@code null} if not specified.
 	 */
 	public void setType(final JOSEObjectType typ) {
-	
+
 		this.typ = typ;
 	}
-	
-	
+
+
 	@Override
 	public String getContentType() {
-	
+
 		return cty;
 	}
-	
-	
+
+
 	/**
 	 * Sets the content type ({@code cty}) parameter.
 	 *
 	 * @param cty The content type parameter, {@code null} if not specified.
 	 */
 	public void setContentType(final String cty) {
-	
+
 		this.cty = cty;
 	}
-	
-	
+
+
 	@Override
 	public Object getCustomParameter(final String name) {
-		
+
 		return customParameters.get(name);
 	}
-	
-	
+
+
 	/**
 	 * Sets a custom (non-reserved) parameter. Callers and extending classes
 	 * should ensure the parameter name doesn't match a reserved parameter 
@@ -119,18 +119,18 @@ public abstract class Header implements ReadOnlyHeader {
 	 *              JSON entity, {@code null} if not specified.
 	 */
 	protected void setCustomParameter(final String name, final Object value) {
-	
+
 		customParameters.put(name, value);
 	}
-	
-	
+
+
 	@Override
 	public Map<String,Object> getCustomParameters() {
-	
+
 		return Collections.unmodifiableMap(customParameters);
 	}
-	
-	
+
+
 	/**
 	 * Sets the custom (non-reserved) parameters. The values must be 
 	 * serialisable to a JSON entity, otherwise will be ignored.
@@ -139,34 +139,37 @@ public abstract class Header implements ReadOnlyHeader {
 	 *                         {@code null} if none.
 	 */
 	public void setCustomParameters(final Map<String,Object> customParameters) {
-	
-		if (customParameters == null)
+
+		if (customParameters == null) {
 			return;
-			
+		}
+
 		this.customParameters = customParameters;
 	}
-	
-	
+
+
 	@Override
 	public JSONObject toJSONObject() {
-	
+
 		// Include custom parameters, they will be overwritten if their
 		// names match specified reserved ones
 		JSONObject o = new JSONObject(customParameters);
-	
+
 		// Alg is always defined
 		o.put("alg", alg.toString());
-	
-		if (typ != null)
+
+		if (typ != null) {
 			o.put("typ", typ.toString());
-		
-		if (cty != null)
+		}
+
+		if (cty != null) {
 			o.put("cty", cty);
-		
+		}
+
 		return o;
 	}
-	
-	
+
+
 	/**
 	 * Returns a JSON string representation of this header. All custom
 	 * parameters will be included if they serialise to a JSON entity and 
@@ -174,19 +177,20 @@ public abstract class Header implements ReadOnlyHeader {
 	 *
 	 * @return The JSON string representation of this header.
 	 */
+	@Override
 	public String toString() {
-	
+
 		return toJSONObject().toString();
 	}
-	
-	
+
+
 	@Override
 	public Base64URL toBase64URL() {
-	
+
 		return Base64URL.encode(toString());
 	}
-	
-	
+
+
 	/**
 	 * Parses an algorithm ({@code alg}) parameter from the specified 
 	 * header JSON object. Intended for initial parsing of plain, JWS and 
@@ -204,26 +208,25 @@ public abstract class Header implements ReadOnlyHeader {
 	 *                        parsed.
 	 */
 	public static Algorithm parseAlgorithm(final JSONObject json)
-		throws ParseException {
-		
+			throws ParseException {
+
 		String algName = JSONObjectUtils.getString(json, "alg");
-		
+
 		// Infer algorithm type
-		
-		// Plain
-		if (algName.equals(Algorithm.NONE.getName()))
+
+		if (algName.equals(Algorithm.NONE.getName())) {
+			// Plain
 			return Algorithm.NONE;
-		
-		// JWE
-		else if (json.containsKey("enc"))
+		} else if (json.containsKey("enc")) {
+			// JWE
 			return JWEAlgorithm.parse(algName);
-		
-		// JWS
-		else
+		} else {
+			// JWS
 			return JWSAlgorithm.parse(algName);
+		}
 	}
-	
-	
+
+
 	/**
 	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader} 
 	 * from the specified JSON object.
@@ -236,20 +239,18 @@ public abstract class Header implements ReadOnlyHeader {
 	 *                        a valid header.
 	 */
 	public static Header parse(final JSONObject json)
-		throws ParseException {
-		
+			throws ParseException {
+
 		Algorithm alg = parseAlgorithm(json);
-		
-		if (alg.equals(Algorithm.NONE))
+
+		if (alg.equals(Algorithm.NONE)) {
 			return PlainHeader.parse(json);
-			
-		else if (alg instanceof JWSAlgorithm)
+		} else if (alg instanceof JWSAlgorithm) {
 			return JWSHeader.parse(json);
-			
-		else if (alg instanceof JWEAlgorithm)
+		} else if (alg instanceof JWEAlgorithm) {
 			return JWEHeader.parse(json);
-		
-		else
+		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
+		}
 	}
 }

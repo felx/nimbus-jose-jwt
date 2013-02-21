@@ -9,13 +9,13 @@ package com.nimbusds.jose;
  */
 public enum Use {
 
-	
+
 	/**
 	 * Signature.
 	 */
 	SIGNATURE,
-	
-	
+
+
 	/**
 	 * Encryption.
 	 */

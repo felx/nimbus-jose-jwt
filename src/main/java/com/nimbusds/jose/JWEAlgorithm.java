@@ -34,38 +34,38 @@ public final class JWEAlgorithm extends Algorithm {
 	 * RSAES-PKCS1-V1_5 (RFC 3447) (required).
 	 */
 	public static final JWEAlgorithm RSA1_5 = new JWEAlgorithm("RSA1_5", Requirement.REQUIRED);
-	
-	
+
+
 	/**
 	 * RSAES using Optimal Assymetric Encryption Padding (OAEP) (RFC 3447),
 	 * with the default parameters specified by RFC 3447 in section A.2.1
 	 * (recommended).
 	 */
 	public static final JWEAlgorithm RSA_OAEP = new JWEAlgorithm("RSA-OAEP", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394) 
 	 * using 256 bit keys (recommended).
 	 */
 	public static final JWEAlgorithm A128KW = new JWEAlgorithm("A128KW", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394) 
 	 * using 256 bit keys (recommended).
 	 */
 	public static final JWEAlgorithm A256KW = new JWEAlgorithm("A256KW", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Direct use of a shared symmetric key as the Content Master Key (CMK)
 	 * for the block encryption step (rather than using the symmetric key to
 	 * wrap the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm DIR = new JWEAlgorithm("dir", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static (RFC 6090) key 
 	 * agreement using the Concat KDF, as defined in section 5.8.1 of
@@ -74,8 +74,8 @@ public final class JWEAlgorithm extends Algorithm {
 	 * (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES = new JWEAlgorithm("ECDH-ES", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
@@ -83,8 +83,8 @@ public final class JWEAlgorithm extends Algorithm {
 	 * directly as the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A128KW = new JWEAlgorithm("ECDH-ES+A128KW", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
@@ -92,8 +92,8 @@ public final class JWEAlgorithm extends Algorithm {
 	 * directly as the CMK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A256KW = new JWEAlgorithm("ECDH-ES+A256KW", Requirement.RECOMMENDED);
-	
-	
+
+
 
 	/**
 	 * Creates a new JSON Web Encryption (JWE) algorithm.
@@ -103,22 +103,22 @@ public final class JWEAlgorithm extends Algorithm {
 	 *             known.
 	 */
 	public JWEAlgorithm(final String name, final Requirement req) {
-	
+
 		super(name, req);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JSON Web Encryption (JWE) algorithm.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 */
 	public JWEAlgorithm(final String name) {
-	
+
 		super(name, null);
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWE algorithm from the specified string.
 	 *
@@ -128,32 +128,25 @@ public final class JWEAlgorithm extends Algorithm {
 	 *         a newly created algorithm).
 	 */
 	public static JWEAlgorithm parse(final String s) {
-	
-		if (s == RSA1_5.getName())
+
+		if (s == RSA1_5.getName()) {
 			return RSA1_5;
-		
-		else if (s == RSA_OAEP.getName())
+		} else if (s == RSA_OAEP.getName()) {
 			return RSA_OAEP;
-		
-		else if (s == A128KW.getName())
+		} else if (s == A128KW.getName()) {
 			return A128KW;
-		
-		else if (s == A256KW.getName())
+		} else if (s == A256KW.getName()) {
 			return A256KW;
-		
-		else if (s == DIR.getName())
+		} else if (s == DIR.getName()) {
 			return DIR;
-		
-		else if (s == ECDH_ES.getName())
+		} else if (s == ECDH_ES.getName()) {
 			return ECDH_ES;
-		
-		else if (s == ECDH_ES_A128KW.getName())
+		} else if (s == ECDH_ES_A128KW.getName()) {
 			return ECDH_ES_A128KW;
-		
-		else if (s == ECDH_ES_A256KW.getName())
+		} else if (s == ECDH_ES_A256KW.getName()) {
 			return ECDH_ES_A256KW;
-		
-		else
+		} else {
 			return new JWEAlgorithm(s);
+		}
 	}
 }

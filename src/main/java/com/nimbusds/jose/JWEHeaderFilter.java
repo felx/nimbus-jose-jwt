@@ -22,8 +22,8 @@ public interface JWEHeaderFilter extends HeaderFilter {
 	 *         none.
 	 */
 	public Set<JWEAlgorithm> getAcceptedAlgorithms();
-	
-	
+
+
 	/**
 	 * Sets the names of the accepted JWE algorithms. These correspond to 
 	 * the {@code alg} JWE header parameter. 
@@ -32,8 +32,8 @@ public interface JWEHeaderFilter extends HeaderFilter {
 	 *                     the supported algorithms and not {@code null}.
 	 */
 	public void setAcceptedAlgorithms(Set<JWEAlgorithm> acceptedAlgs);
-	
-	
+
+
 	/**
 	 * Gets the names of the accepted encryption methods. These correspond 
 	 * to the {@code enc} JWE header parameter.
@@ -42,9 +42,9 @@ public interface JWEHeaderFilter extends HeaderFilter {
 	 *         if none.
 	 */
 	public Set<EncryptionMethod> getAcceptedEncryptionMethods();
-	
-	
-	
+
+
+
 	/**
 	 * Sets the names of the accepted encryption methods. These correspond 
 	 * to the {@code enc} JWE header parameter.

@@ -1,10 +1,9 @@
 package com.nimbusds.jose;
 
 
+import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
-
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -32,45 +31,46 @@ public final class JOSEObjectType implements JSONAware {
 	 * JWS object type.
 	 */
 	public static final JOSEObjectType JWS = new JOSEObjectType("JWS");
-	
-	
+
+
 	/**
 	 * JWE object type.
 	 */
 	public static final JOSEObjectType JWE = new JOSEObjectType("JWE");
-	
-	
+
+
 	/**
 	 * The object type.
 	 */
 	private final String type;
-	
-	
+
+
 	/**
 	 * Creates a new JOSE object type.
 	 *
 	 * @param type The object type. Must not be {@code null}.
 	 */
 	public JOSEObjectType(final String type) {
-	
-		if (type == null)
+
+		if (type == null) {
 			throw new IllegalArgumentException("The object type must not be null");
-		
+		}
+
 		this.type = type;
 	}
-	
-	
+
+
 	/**
 	 * Gets the JOSE object type.
 	 *
 	 * @return The JOSE object type.
 	 */
 	public String getType() {
-	
+
 		return type;
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.hashCode()}.
 	 *
@@ -78,11 +78,11 @@ public final class JOSEObjectType implements JSONAware {
 	 */
 	@Override
 	public int hashCode() {
-	
+
 		return type.hashCode();
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.equals()}.
 	 *
@@ -93,13 +93,13 @@ public final class JOSEObjectType implements JSONAware {
 	 */
 	@Override
 	public boolean equals(final Object object) {
-	
+
 		return object != null && 
-		       object instanceof JOSEObjectType && 
-		       this.toString().equals(object.toString());
+				object instanceof JOSEObjectType && 
+				this.toString().equals(object.toString());
 	}
-	
-	
+
+
 	/**
 	 * Returns the string representation of this JOSE object type.
 	 *
@@ -109,11 +109,11 @@ public final class JOSEObjectType implements JSONAware {
 	 */
 	@Override
 	public String toString() {
-	
+
 		return type;
 	}
-	
-	
+
+
 	/**
 	 * Returns the JSON string representation of this JOSE object type.
 	 * 
@@ -121,7 +121,7 @@ public final class JOSEObjectType implements JSONAware {
 	 */
 	@Override
 	public String toJSONString() {
-	
+
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');
 		sb.append(JSONObject.escape(type));

@@ -26,20 +26,20 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	 * ones.
 	 */
 	private final Set<JWSAlgorithm> algs;
-	
-	
+
+
 	/**
 	 * The accepted algorithms.
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs;
-	
-	
+
+
 	/**
 	 * The accepted header parameters.
 	 */
 	private final Set<String> acceptedParams;
-	
-	 
+
+
 	/**
 	 * Creates a new JWS header filter. The accepted algorithms are set to
 	 * equal the specified supported ones.
@@ -52,26 +52,29 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	 *                       must not be {@code null}.
 	 */
 	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs,
-	                              final Set<String> acceptedParams) {
-	
-		if (algs == null)
+			final Set<String> acceptedParams) {
+
+		if (algs == null) {
 			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
-	
+		}
+
 		this.algs = Collections.unmodifiableSet(algs);
-		
+
 		acceptedAlgs = this.algs;
-		
-		
-		if (acceptedParams == null)
+
+
+		if (acceptedParams == null) {
 			throw new IllegalArgumentException("The accepted JWS header parameter set must not be null");
-		
-		if (! acceptedParams.contains("alg"))
+		}
+
+		if (! acceptedParams.contains("alg")) {
 			throw new IllegalArgumentException("The accepted JWE header parameter set must include at least the \"alg\" parameter");
-		
+		}
+
 		this.acceptedParams = Collections.unmodifiableSet(acceptedParams);
 	}
-	
-	
+
+
 	/**
 	 * Returns the names of the supported JWS algorithms. Used to bound the 
 	 * {@link #setAcceptedAlgorithms accepted algorithms}.
@@ -80,34 +83,36 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	 *         none.
 	 */
 	public Set<JWSAlgorithm> supportedAlgorithms() {
-	
+
 		return algs;
 	}
-	
-	
+
+
 	@Override
 	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
-		
+
 		return acceptedAlgs;
 	}
-		
-	
+
+
 	@Override
 	public void setAcceptedAlgorithms(Set<JWSAlgorithm> acceptedAlgs) {
-	
-		if (acceptedAlgs == null)
+
+		if (acceptedAlgs == null) {
 			throw new IllegalArgumentException("The accepted JWS algorithm set must not be null");
-	
-		if (! supportedAlgorithms().containsAll(acceptedAlgs))
+		}
+
+		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
 			throw new IllegalArgumentException("One or more of the algorithms is not in the supported JWS algorithm set");
-		
+		}
+
 		this.acceptedAlgs = Collections.unmodifiableSet(acceptedAlgs);
 	}
-	
-	
+
+
 	@Override
 	public Set<String> getAcceptedParameters() {
-	
+
 		return acceptedParams;
 	}
 }

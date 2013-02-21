@@ -1,10 +1,9 @@
 package com.nimbusds.jose;
 
 
+import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
-
-import net.jcip.annotations.Immutable;
 
 
 /**
@@ -22,26 +21,26 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public class Algorithm implements JSONAware {
-		 
-		 
+
+
 	/**
 	 * No algorithm (plain JOSE object without signature / encryption).
 	 */
 	public static final Algorithm NONE = new Algorithm("none", Requirement.REQUIRED);
-	
-	
+
+
 	/**
 	 * The algorithm name.
 	 */
 	private final String name;
-	
-	
+
+
 	/**
 	 * The implementation requirement, {@code null} if not known.
 	 */
 	private final Requirement requirement;
-	
-	
+
+
 	/**
 	 * Creates a new JOSE algorithm name.
 	 *
@@ -50,49 +49,50 @@ public class Algorithm implements JSONAware {
 	 *             known.
 	 */
 	public Algorithm(final String name, final Requirement req) {
-	
-		if (name == null)
+
+		if (name == null) {
 			throw new IllegalArgumentException("The algorithm name must not be null");
-		
+		}
+
 		this.name = name;
-		
+
 		requirement = req;
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JOSE algorithm name.
 	 *
 	 * @param name The algorithm name. Must not be {@code null}.
 	 */
 	public Algorithm(final String name) {
-	
+
 		this(name, null);
 	}
-	
-	
+
+
 	/**
 	 * Gets the name of this algorithm.
 	 *
 	 * @return The algorithm name.
 	 */
 	public String getName() {
-	
+
 		return name;
 	}
-	
-	
+
+
 	/**
 	 * Gets the implementation requirement of this algorithm.
 	 *
 	 * @return The implementation requirement, {@code null} if not known.
 	 */
 	public Requirement getRequirement() {
-	
+
 		return requirement;
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.hashCode()}.
 	 *
@@ -100,11 +100,11 @@ public class Algorithm implements JSONAware {
 	 */
 	@Override
 	public int hashCode() {
-	
+
 		return name.hashCode();
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.equals()}.
 	 *
@@ -115,13 +115,13 @@ public class Algorithm implements JSONAware {
 	 */
 	@Override
 	public boolean equals(final Object object) {
-	
+
 		return object != null && 
-		       object instanceof Algorithm && 
-		       this.toString().equals(object.toString());
+				object instanceof Algorithm && 
+				this.toString().equals(object.toString());
 	}
-	
-	
+
+
 	/**
 	 * Returns the string representation of this algorithm.
 	 *
@@ -131,11 +131,11 @@ public class Algorithm implements JSONAware {
 	 */
 	@Override
 	public String toString() {
-	
+
 		return name;
 	}
-	
-	
+
+
 	/**
 	 * Returns the JSON string representation of this algorithm.
 	 * 
@@ -143,7 +143,7 @@ public class Algorithm implements JSONAware {
 	 */
 	@Override
 	public String toJSONString() {
-	
+
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');
 		sb.append(JSONObject.escape(name));

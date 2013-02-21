@@ -38,14 +38,14 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version $version$ (2013-01-08)
  */
 public abstract class JWK implements JSONAware {
-	
-	
+
+
 	/**
 	 * The key type, required.
 	 */
 	private final KeyType kty;
-	
-	
+
+
 	/**
 	 * The key use, optional.
 	 */
@@ -56,14 +56,14 @@ public abstract class JWK implements JSONAware {
 	 * The intended JOSE algorithm for the key, optional.
 	 */
 	private final Algorithm alg;
-	
-	
+
+
 	/**
 	 * The key ID, optional.
 	 */
 	private final String kid;
-	
-	
+
+
 	/**
 	 * Creates a new JSON Web Key (JWK).
 	 *
@@ -75,31 +75,32 @@ public abstract class JWK implements JSONAware {
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid) {
-	
-		if (kty == null)
+
+		if (kty == null) {
 			throw new IllegalArgumentException("The key type \"kty\" must not be null");
-		
+		}
+
 		this.kty = kty;
-		
+
 		this.use = use;
 
 		this.alg = alg;
-		
+
 		this.kid = kid;
 	}
-	
-	
+
+
 	/**
 	 * Gets the type ({@code kty}) of this JWK.
 	 *
 	 * @return The key type.
 	 */
 	public KeyType getKeyType() {
-	
+
 		return kty;
 	}
-	
-	
+
+
 	/**
 	 * Gets the use ({@code use}) of this JWK.
 	 *
@@ -107,7 +108,7 @@ public abstract class JWK implements JSONAware {
 	 *         intended for signing as well as encryption.
 	 */
 	public Use getKeyUse() {
-	
+
 		return use;
 	}
 
@@ -121,8 +122,8 @@ public abstract class JWK implements JSONAware {
 
 		return alg;
 	}
-	
-	
+
+
 	/**
 	 * Gets the ID ({@code kid}) of this JWK. The key ID can be used to 
 	 * match a specific key. This can be used, for instance, to choose a 
@@ -132,11 +133,11 @@ public abstract class JWK implements JSONAware {
 	 * @return The key ID, {@code null} if not specified.
 	 */
 	public String getKeyID() {
-	
+
 		return kid;
 	}
-	
-	
+
+
 	/**
 	 * Returns a JSON object representation of this JWK. This method is 
 	 * intended to be called from extending classes.
@@ -154,30 +155,34 @@ public abstract class JWK implements JSONAware {
 	 * @return The JSON object representation.
 	 */
 	public JSONObject toJSONObject() {
-	
+
 		JSONObject o = new JSONObject();
-	
+
 		o.put("kty", kty.getValue());
-		
+
 		if (use != null) {
-		
-			if (use == Use.SIGNATURE)
+
+			if (use == Use.SIGNATURE) {
 				o.put("use", "sig");
-			
-			if (use == Use.ENCRYPTION)
+			}
+
+			if (use == Use.ENCRYPTION) {
 				o.put("use", "enc");
+			}
 		}
 
-		if (alg != null)
+		if (alg != null) {
 			o.put("alg", alg.getName());
-			
-		if (kid != null)
+		}
+
+		if (kid != null) {
 			o.put("kid", kid);
-	
+		}
+
 		return o;
 	}
-	
-	
+
+
 	/**
 	 * Returns the JSON object string representation of this JWK.
 	 *
@@ -185,21 +190,21 @@ public abstract class JWK implements JSONAware {
 	 */
 	@Override
 	public String toJSONString() {
-	
+
 		return toJSONObject().toString();
 	}
-	
-	
+
+
 	/**
 	 * @see #toJSONString
 	 */
 	@Override
 	public String toString() {
-	
+
 		return toJSONObject().toString();
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 
 	 * The JWK must be an {@link ECKey} or an {@link RSAKey}.
@@ -212,12 +217,12 @@ public abstract class JWK implements JSONAware {
 	 *                        supported JWK.
 	 */
 	public static JWK parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
-	
-	
+
+
 	/**
 	 * Parses a JWK from the specified JSON object representation. The JWK 
 	 * must be an {@link ECKey} or an {@link RSAKey}.
@@ -231,21 +236,20 @@ public abstract class JWK implements JSONAware {
 	 *                        valid and supported JWK.
 	 */
 	public static JWK parse(final JSONObject jsonObject)
-		throws ParseException {
-		
+			throws ParseException {
+
 		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
-		
-		if (kty == KeyType.EC)
+
+		if (kty == KeyType.EC) {
 			return ECKey.parse(jsonObject);
-		
-		else if (kty == KeyType.RSA)
+		} else if (kty == KeyType.RSA) {
 			return RSAKey.parse(jsonObject);
-			
-		else
+		} else {
 			throw new ParseException("Unsupported key type \"kty\" parameter: " + kty, 0);
+		}
 	}
-	
-	
+
+
 	/**
 	 * Parses a key use ({@code use}) parameter from the specified JSON 
 	 * object representation of a JWK.
@@ -258,21 +262,21 @@ public abstract class JWK implements JSONAware {
 	 * @throws ParseException If the key use parameter couldn't be parsed.
 	 */
 	protected static Use parseKeyUse(final JSONObject jsonObject)
-		throws ParseException {
-		
-		if (jsonObject.get("use") == null)
+			throws ParseException {
+
+		if (jsonObject.get("use") == null) {
 			return null;
+		}
 
 		String useStr = JSONObjectUtils.getString(jsonObject, "use");
 
-		if (useStr.equals("sig"))
+		if (useStr.equals("sig")) {
 			return Use.SIGNATURE;
-			
-		else if (useStr.equals("enc"))
+		} else if (useStr.equals("enc")) {
 			return Use.ENCRYPTION;
-		
-		else
+		} else {
 			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"", 0);
+		}
 	}
 
 
@@ -291,17 +295,18 @@ public abstract class JWK implements JSONAware {
 	 *                        parsed.
 	 */
 	protected static Algorithm parseAlgorithm(final JSONObject jsonObject)
-		throws ParseException {
+			throws ParseException {
 
-		if (jsonObject.get("alg") == null)
+		if (jsonObject.get("alg") == null) {
 			return null;
+		}
 
 		String algStr = JSONObjectUtils.getString(jsonObject, "alg");
 
 		return new Algorithm(algStr);
 	}
-	
-	
+
+
 	/**
 	 * Parses a key ID ({@code kid}) parameter from the specified JSON
 	 * object representation of a JWK.
@@ -314,10 +319,11 @@ public abstract class JWK implements JSONAware {
 	 * @throws ParseException If the key ID parameter couldn't be parsed.
 	 */
 	protected static String parseKeyID(final JSONObject jsonObject)
-		throws ParseException {
-		
-		if (jsonObject.get("kid") == null)
+			throws ParseException {
+
+		if (jsonObject.get("kid") == null) {
 			return null;
+		}
 
 		return JSONObjectUtils.getString(jsonObject, "kid");
 	}

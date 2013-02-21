@@ -1,10 +1,11 @@
 package com.nimbusds.jose;
 
 
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
+import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -31,26 +32,26 @@ public final class KeyType implements JSONAware {
 	 * The key type value.
 	 */
 	private final String value;
-	
-	
+
+
 	/**
 	 * The implementation requirement, {@code null} if not known.
 	 */
 	private final Requirement requirement;
-	
-	
+
+
 	/**
 	 * Elliptic Curve (DSS) key type (recommended).
 	 */
 	public static final KeyType EC = new KeyType("EC", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * RSA (RFC 3447) key type (required).
 	 */
 	public static final KeyType RSA = new KeyType("RSA", Requirement.REQUIRED);
-	
-	
+
+
 	/**
 	 * Creates a new key type with the specified value and implementation 
 	 * requirement.
@@ -61,38 +62,39 @@ public final class KeyType implements JSONAware {
 	 *              known.
 	 */
 	public KeyType(final String value, final Requirement req) {
-	
-		if (value == null)
+
+		if (value == null) {
 			throw new IllegalArgumentException("The key type value must not be null");
-		
+		}
+
 		this.value = value;
-		
+
 		requirement = req;
 	}
-	
-	
+
+
 	/**
 	 * Gets the value of this key type. Values are case sensitive.
 	 *
 	 * @return The key type.
 	 */
 	public String getValue() {
-	
+
 		return value;
 	}
-	
-	
+
+
 	/**
 	 * Gets the implementation requirement of this key type.
 	 *
 	 * @return The implementation requirement, {@code null} if not known.
 	 */
 	public Requirement getRequirement() {
-	
+
 		return requirement;
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.hashCode()}.
 	 *
@@ -100,11 +102,11 @@ public final class KeyType implements JSONAware {
 	 */
 	@Override
 	public int hashCode() {
-	
+
 		return value.hashCode();
 	}
-	
-	
+
+
 	/**
 	 * Overrides {@code Object.equals()}.
 	 *
@@ -115,13 +117,13 @@ public final class KeyType implements JSONAware {
 	 */
 	@Override
 	public boolean equals(final Object object) {
-	
+
 		return object != null && 
-		       object instanceof KeyType && 
-		       this.toString().equals(object.toString());
+				object instanceof KeyType && 
+				this.toString().equals(object.toString());
 	}
-	
-	
+
+
 	/**
 	 * Returns the string representation of this key type.
 	 *
@@ -131,11 +133,11 @@ public final class KeyType implements JSONAware {
 	 */
 	@Override
 	public String toString() {
-	
+
 		return value;
 	}
-	
-	
+
+
 	/**
 	 * Returns the JSON string representation of this key type.
 	 * 
@@ -143,15 +145,15 @@ public final class KeyType implements JSONAware {
 	 */
 	@Override
 	public String toJSONString() {
-	
+
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');
 		sb.append(JSONObject.escape(value));
 		sb.append('"');
 		return sb.toString();
 	}
-	
-	
+
+
 	/**
 	 * Parses a key type from the specified string.
 	 *
@@ -163,17 +165,17 @@ public final class KeyType implements JSONAware {
 	 * @throws ParseException If the string couldn't be parsed.
 	 */
 	public static KeyType parse(final String s) {
-	
-		if (s == null)
+
+		if (s == null) {
 			throw new IllegalArgumentException("The ket type string must not be null");
-		
-		if (s.equals(EC.getValue()))
+		}
+
+		if (s.equals(EC.getValue())) {
 			return EC;
-		
-		else if (s.equals(RSA.getValue()))
+		} else if (s.equals(RSA.getValue())) {
 			return RSA;
-		
-		else
+		} else {
 			return new KeyType(s, null);
+		}
 	}
 }

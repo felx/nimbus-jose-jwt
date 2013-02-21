@@ -23,8 +23,8 @@ public final class JWECryptoParts {
 	 * The encrypted key (optional).
 	 */
 	private final Base64URL encryptedKey;
-	
-	
+
+
 	/**
 	 * The initialisation vector (optional).
 	 */
@@ -55,19 +55,20 @@ public final class JWECryptoParts {
 	 *                       algorithm provides built-in integrity check.
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
-	                      final Base64URL iv,
-	                      final Base64URL cipherText, 
-	                      final Base64URL integrityValue) {
+			final Base64URL iv,
+			final Base64URL cipherText, 
+			final Base64URL integrityValue) {
 
 		this.encryptedKey = encryptedKey;
-		
+
 		this.iv = iv;
-		
-		if (cipherText == null)
+
+		if (cipherText == null) {
 			throw new IllegalArgumentException("The cipher text must not be null");
-		
+		}
+
 		this.cipherText = cipherText;
-		
+
 		this.integrityValue = integrityValue;
 	}
 
@@ -82,8 +83,8 @@ public final class JWECryptoParts {
 
 		return encryptedKey;
 	}
-	
-	
+
+
 	/**
 	 * Gets the initialisation vector (IV).
 	 *
@@ -91,7 +92,7 @@ public final class JWECryptoParts {
 	 *         by the JWE algorithm.
 	 */
 	public Base64URL getInitializationVector() {
-	
+
 		return iv;
 	}
 
@@ -113,7 +114,7 @@ public final class JWECryptoParts {
 	 * @return The integrity value, {@code null} if the encryption
 	 *         algorithm provides built-in integrity checking.
 	 */
-	 public Base64URL getIntegrityValue() {
+	public Base64URL getIntegrityValue() {
 
 		return integrityValue;
 	}

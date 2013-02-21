@@ -1,11 +1,10 @@
 package com.nimbusds.jose.crypto;
 
 
-import org.bouncycastle.asn1.x9.X9ECParameters;
-
-import org.bouncycastle.crypto.Digest;
-
 import net.jcip.annotations.Immutable;
+
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.Digest;
 
 
 /**

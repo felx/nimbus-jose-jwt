@@ -3,7 +3,6 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
-	
+
 	private static final String TYPE_CLAIM = "typ";
 	private static final String JWT_ID_CLAIM = "jti";
 	private static final String ISSUED_AT_CLAIM = "iat";
@@ -55,18 +54,18 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	private static final String ISSUER_CLAIM = "iss";
 
 
-    	/**
+	/**
 	 * The reserved claim names.
 	 */
 	private static final Set<String> RESERVED_CLAIM_NAMES;
-	
-	
+
+
 	/**
 	 * Initialises the reserved claim name set.
 	 */
 	static {
 		Set<String> n = new HashSet<String>();
-		
+
 		n.add(ISSUER_CLAIM);
 		n.add(SUBJECT_CLAIM);
 		n.add(AUDIENCE_CLAIM);
@@ -75,7 +74,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		n.add(ISSUED_AT_CLAIM);
 		n.add(JWT_ID_CLAIM);
 		n.add(TYPE_CLAIM);
-		
+
 		RESERVED_CLAIM_NAMES = Collections.unmodifiableSet(n);
 	}
 
@@ -96,52 +95,52 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * The audience claim.
 	 */
 	private List<String> aud = null;
-	
-	
+
+
 	/**
 	 * The expiration time claim.
 	 */
 	private Date exp = null;
-	
-	
+
+
 	/**
 	 * The not-before claim.
 	 */
 	private Date nbf = null;
-	
-	
+
+
 	/**
 	 * The issued-at claim.
 	 */
 	private Date iat = null;
-	
-	
+
+
 	/**
 	 * The JWT ID claim.
 	 */
 	private String jti = null;
-	
-	
+
+
 	/**
 	 * The type claim.
 	 */
 	private String typ = null;
-	
-	
+
+
 	/**
 	 * Custom claims.
 	 */
 	private Map<String,Object> customClaims = new HashMap<String,Object>();
-	
-	
+
+
 	/**
 	 * Creates a new empty JWT claims set.
 	 */
 	public JWTClaimsSet() {
-	
+
 		// Nothing to do
 	}
-	
+
 
 	/**
 	 * Creates a copy of the specified JWT claims set.
@@ -149,7 +148,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * @param old The JWT claims set to copy. Must not be {@code null}.
 	 */
 	public JWTClaimsSet(final JWTClaimsSet old) {
-		
+
 		super();
 		setAllClaims(old.getAllClaims());
 	}
@@ -160,7 +159,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-	
+
 		// TODO Auto-generated method stub
 		return super.clone();
 	}
@@ -172,162 +171,162 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * @return The reserved claim names, as an unmodifiable set.
 	 */
 	public static Set<String> getReservedNames() {
-	
+
 		return RESERVED_CLAIM_NAMES;
 	}
 
 
 	@Override
 	public String getIssuer() {
-	
+
 		return iss;
 	}
-	
-	
+
+
 	/**
 	 * Sets the issuer ({@code iss}) claim.
 	 *
 	 * @param iss The issuer claim, {@code null} if not specified.
 	 */
 	public void setIssuer(final String iss) {
-	
+
 		this.iss = iss;
 	}
 
 
 	@Override
 	public String getSubject() {
-	
+
 		return sub;
 	}
-	
-	
+
+
 	/**
 	 * Sets the subject ({@code sub}) claim.
 	 *
 	 * @param sub The subject claim, {@code null} if not specified.
 	 */
 	public void setSubject(final String sub) {
-	
+
 		this.sub = sub;
 	}
-	
-	
+
+
 	@Override
 	public List<String> getAudience() {
-	
+
 		return aud;
 	}
-	
-	
+
+
 	/**
 	 * Sets the audience ({@code aud}) clam.
 	 *
 	 * @param aud The audience claim, {@code null} if not specified.
 	 */
 	public void setAudience(final List<String> aud) {
-	
+
 		this.aud = aud;
 	}
-	
-	
+
+
 	@Override
 	public Date getExpirationTime() {
-	
+
 		return exp;
 	}
-	
-	
+
+
 	/**
 	 * Sets the expiration time ({@code exp}) claim.
 	 *
 	 * @param exp The expiration time, {@code null} if not specified.
 	 */
 	public void setExpirationTime(final Date exp) {
-	
+
 		this.exp = exp;
 	}
-	
-	
+
+
 	@Override
 	public Date getNotBeforeTime() {
-	
+
 		return nbf;
 	}
-	
-	
+
+
 	/**
 	 * Sets the not-before ({@code nbf}) claim.
 	 *
 	 * @param nbf The not-before claim, {@code null} if not specified.
 	 */
 	public void setNotBeforeTime(final Date nbf) {
-	
+
 		this.nbf = nbf;
 	}
-	
-	
+
+
 	@Override
 	public Date getIssueTime() {
-	
+
 		return iat;
 	}
-	
-	
+
+
 	/**
 	 * Sets the issued-at ({@code iat}) claim.
 	 *
 	 * @param iat The issued-at claim, {@code null} if not specified.
 	 */
 	public void setIssueTime(final Date iat) {
-	
+
 		this.iat = iat;
 	}
-	
-	
+
+
 	@Override
 	public String getJWTID() {
-	
+
 		return jti;
 	}
-	
-	
+
+
 	/**
 	 * Sets the JWT ID ({@code jti}) claim.
 	 *
 	 * @param jti The JWT ID claim, {@code null} if not specified.
 	 */
 	public void setJWTID(final String jti) {
-	
+
 		this.jti = jti;
 	}
-	
-	
+
+
 	@Override
 	public String getType() {
-	
+
 		return typ;
 	}
-	
-	
+
+
 	/**
 	 * Sets the type ({@code typ}) claim.
 	 *
 	 * @param typ The type claim, {@code null} if not specified.
 	 */
 	public void setType(final String typ) {
-	
+
 		this.typ = typ;
 	}
-	
-	
+
+
 	@Override
 	public Object getCustomClaim(final String name) {
-	
+
 		return customClaims.get(name);
 	}
-	
-	
+
+
 	/**
 	 * Sets a custom (non-reserved) claim.
 	 *
@@ -339,21 +338,22 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *                                  matches a reserved claim name.
 	 */
 	public void setCustomClaim(final String name, final Object value) {
-	
-		if (getReservedNames().contains(name))
+
+		if (getReservedNames().contains(name)) {
 			throw new IllegalArgumentException("The claim name \"" + name + "\" matches a reserved name");
-		
+		}
+
 		customClaims.put(name, value);
 	}
-	
-	
+
+
 	@Override 
 	public Map<String,Object> getCustomClaims() {
-	
+
 		return Collections.unmodifiableMap(customClaims);
 	}
-	
-	
+
+
 	/**
 	 * Sets the custom (non-reserved) claims. The values must be 
 	 * serialisable to a JSON entity, otherwise will be ignored.
@@ -362,14 +362,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *                     none.
 	 */
 	public void setCustomClaims(final Map<String,Object> customClaims) {
-	
-		if (customClaims == null)
+
+		if (customClaims == null) {
 			return;
-		
+		}
+
 		this.customClaims = customClaims;
 	}
 
-	
+
 	@Override
 	public Object getClaim(String name) {
 
@@ -472,20 +473,20 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			}
 		}
 	}
-    
+
 
 	@Override
 	public Map<String, Object> getAllClaims() {
 
 		Map<String, Object> allClaims = new HashMap<String, Object>();
-		
+
 		allClaims.putAll(customClaims);
-		
+
 		for (String reservedClaim : RESERVED_CLAIM_NAMES) {
 
 			allClaims.put(reservedClaim, getClaim(reservedClaim));
 		}
-		
+
 		return Collections.unmodifiableMap(allClaims);
 	}
 
@@ -496,49 +497,56 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * @param newClaims The JWT claims. Must not be {@code null}.
 	 */
 	public void setAllClaims(Map<String, Object> newClaims) {
-		
+
 		for (String name : newClaims.keySet()) {
-	        	setClaim(name, newClaims.get(name));
+			setClaim(name, newClaims.get(name));
 		}
 	}
-    
-    
+
+
 	@Override
 	public JSONObject toJSONObject() {
-	
+
 		JSONObject o = new JSONObject(customClaims);
 
-		if (iss != null)
+		if (iss != null) {
 			o.put(ISSUER_CLAIM, iss);
+		}
 
-		if (sub != null)
+		if (sub != null) {
 			o.put(SUBJECT_CLAIM, sub);
-		
+		}
+
 		if (aud != null) {
 			JSONArray audArray = new JSONArray();
 			audArray.addAll(aud);
 			o.put(AUDIENCE_CLAIM, audArray);
 		}
-		
-		if (exp != null)
+
+		if (exp != null) {
 			o.put(EXPIRATION_TIME_CLAIM, exp.getTime());
-		
-		if (nbf != null)
+		}
+
+		if (nbf != null) {
 			o.put(NOT_BEFORE_CLAIM, nbf.getTime());
-			
-		if (iat != null)
+		}
+
+		if (iat != null) {
 			o.put(ISSUED_AT_CLAIM, iat.getTime());
-		
-		if (jti != null)
+		}
+
+		if (jti != null) {
 			o.put(JWT_ID_CLAIM, jti);
-		
-		if (typ != null)
+		}
+
+		if (typ != null) {
 			o.put(TYPE_CLAIM, typ);
-		
+		}
+
 		return o;
 	}
-	
-	
+
+
 	/**
 	 * Parses a JSON Web Token (JWT) claims set from the specified
 	 * JSON object representation.
@@ -551,10 +559,10 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *                        a valid JWT claims set.
 	 */
 	public static JWTClaimsSet parse(final JSONObject json)
-		throws ParseException {
-	
+			throws ParseException {
+
 		JWTClaimsSet cs = new JWTClaimsSet();
-	
+
 		// Parse reserved + custom params
 		for (final String name: json.keySet()) {
 
@@ -580,19 +588,19 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 				}
 			}
 			else if (name.equals(EXPIRATION_TIME_CLAIM)) {
-				
+
 				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM)));
 			}
 			else if (name.equals(NOT_BEFORE_CLAIM)) {
-				
+
 				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM)));
 			}
 			else if (name.equals(ISSUED_AT_CLAIM)) {
-				
+
 				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM)));
 			}
 			else if (name.equals(JWT_ID_CLAIM)) {
-				
+
 				cs.setJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
 			}
 			else if (name.equals(TYPE_CLAIM)) {
@@ -603,7 +611,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 				cs.setCustomClaim(name, json.get(name));
 			}
 		}
-		
+
 		return cs;
 	}
 
