@@ -3,6 +3,8 @@ package com.nimbusds.jwt;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -14,7 +16,8 @@ import net.minidev.json.JSONObject;
  * Tests JWT claims set serialisation and parsing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-23)
+ * @author Justin Richer
+ * @version $version$ (2013-02-21)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -116,9 +119,23 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("typ parse check", "JWT", cs.getType());
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));
 		assertEquals(1, cs.getCustomClaims().size());
+
+
+		Map<String,Object> all = cs.getAllClaims();
+
+		assertEquals("iss parse check map", "http://issuer.com", (String)all.get("iss"));
+		assertEquals("sub parse check map", "http://subject.com", (String)all.get("sub"));
+		assertEquals("aud parse check map", "http://audience.com", (String)((List)all.get("aud")).get(0));
+		assertEquals("exp parse check map", NOW, (Date)all.get("exp"));
+		assertEquals("nbf parse check map", NOW, (Date)all.get("nbf"));
+		assertEquals("iat parse check map", NOW, (Date)all.get("iat"));
+		assertEquals("jti parse check map", "123", (String)all.get("jti"));
+		assertEquals("typ parse check map", "JWT", (String)all.get("typ"));
+		assertEquals("abc", (String)all.get("x-custom"));
 	}
 	
 	public void testClaimsPassthrough() {
+
 		JWTClaimsSet cs = new JWTClaimsSet();
 
 		// reserved issuer claim
@@ -151,6 +168,5 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("iss set check", "http://issuer.com", cs.getClaim("iss"));
 		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
 		assertEquals("abc", (String)cs.getClaim("x-custom"));
-		
 	}
 }
