@@ -3,7 +3,6 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -148,8 +147,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param old The JWT claims set to copy. Must not be {@code null}.
 	 */
-	public JWTClaimsSet(final JWTClaimsSet old) {
-		
+	public JWTClaimsSet(final ReadOnlyJWTClaimsSet old) {
 		super();
 		setAllClaims(old.getAllClaims());
 	}
