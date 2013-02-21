@@ -117,4 +117,40 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));
 		assertEquals(1, cs.getCustomClaims().size());
 	}
+	
+	public void testClaimsPassthrough() {
+		JWTClaimsSet cs = new JWTClaimsSet();
+
+		// reserved issuer claim
+		// iss
+		assertNull("iss init check", cs.getIssuer());
+		cs.setClaim("iss", "http://issuer.com");
+		assertEquals("iss set check", "http://issuer.com", cs.getClaim("iss"));
+		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
+		
+		// custom claim
+		assertNull("x-custom init check", cs.getClaim("x-custom"));
+		cs.setClaim("x-custom", "abc");
+		assertEquals("abc", (String)cs.getClaim("x-custom"));
+
+		// serialise
+		JSONObject json = cs.toJSONObject();
+		
+		assertEquals(2, json.size());
+		
+		// parse back
+		
+		try {
+			cs = JWTClaimsSet.parse(json);
+			
+		} catch (java.text.ParseException e) {
+		
+			fail(e.getMessage());
+		}
+		
+		assertEquals("iss set check", "http://issuer.com", cs.getClaim("iss"));
+		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
+		assertEquals("abc", (String)cs.getClaim("x-custom"));
+		
+	}
 }
