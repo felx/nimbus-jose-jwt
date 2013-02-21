@@ -78,7 +78,7 @@ public class RSADecrypter extends RSAProvider implements JWEDecrypter {
 
         JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
         EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
-        int keyLength = this.keyLengthFromMethod(method);
+        int keyLength = this.keyLengthForMethod(method);
         SecretKeySpec keySpec;
 
 
@@ -112,7 +112,7 @@ public class RSADecrypter extends RSAProvider implements JWEDecrypter {
 
     private SecretKeySpec getKeySpec(final JWEAlgorithm alg, final EncryptionMethod method, final byte[] cipherText,
                                      final PrivateKey inputKey) throws JOSEException {
-        int keyLength = keyLengthFromMethod(method);
+        int keyLength = keyLengthForMethod(method);
 
 
         try {

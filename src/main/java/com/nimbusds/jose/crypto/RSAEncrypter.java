@@ -69,15 +69,23 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	public JWECryptoParts encrypt(ReadOnlyJWEHeader readOnlyJWEHeader, byte[] bytes)
 		throws JOSEException {
 
-		EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
+		// The alg parameter
 		JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
+
+		// The enc parameter
+		EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
+		
+		// The second JWE part
 		Base64URL encryptedKey = null;
+
+		// The fourth JWE part
 		Base64URL cipherText = null;
 
 
 		try {
-			int keyLength = keyLengthFromMethod(method);
-			SecretKey contentEncryptionKey = genAesKey(keyLength);
+			final int keyLength = keyLengthForMethod(method);
+
+			SecretKey contentEncryptionKey = generateAESCMK(keyLength);
 
 			if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
 
@@ -89,6 +97,8 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 
 				try {
 					AsymmetricBlockCipher engine = new RSAEngine();
+
+					// JCA identifier RSA/ECB/OAEPWithSHA-1AndMGF1Padding ?
 					OAEPEncoding cipher = new OAEPEncoding(engine);
 
 					BigInteger mod = pubKey.getModulus();
@@ -149,10 +159,22 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	}
 
 
-	protected static SecretKey genAesKey(final int bitSize) throws NoSuchAlgorithmException {
+	/**
+	 * Generates an AES Content Master Key (CMK) of the specified length.
+	 *
+	 * @param keyLength The key length, in bits.
+	 *
+	 * @return The AES CMK.
+	 *
+	 * @throws NoSuchAlgorithmException If AES key generation is not
+	 *                                  supported.
+	 */
+	protected static SecretKey generateAESCMK(final int keyLength) 
+		throws NoSuchAlgorithmException {
+
 		KeyGenerator keygen;
 		keygen = KeyGenerator.getInstance("AES");
-		keygen.init(bitSize);
+		keygen.init(keyLength);
 		return keygen.generateKey();
 	}
 

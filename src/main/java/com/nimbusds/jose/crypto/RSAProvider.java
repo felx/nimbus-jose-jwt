@@ -1,81 +1,126 @@
 package com.nimbusds.jose.crypto;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEAlgorithmProvider;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.util.HashSet;
-import java.util.Set;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEAlgorithmProvider;
 
 
-
-public class RSAProvider implements JWEAlgorithmProvider {
-
-    public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
-
-    public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
-
-
-    static {
-        Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
-        algs.add(JWEAlgorithm.RSA_OAEP);
-        algs.add(JWEAlgorithm.RSA1_5);
-        SUPPORTED_ALGORITHMS = algs;
-
-        Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
-        methods.add(EncryptionMethod.A256GCM);
-        methods.add(EncryptionMethod.A128GCM);
-        SUPPORTED_ENCRYPTION_METHODS = methods;
-    }
-
-
-    public Set<JWEAlgorithm> supportedAlgorithms() {
-        return SUPPORTED_ALGORITHMS;
-    }
-
-    public Set<EncryptionMethod> supportedEncryptionMethods() {
-        return SUPPORTED_ENCRYPTION_METHODS;
-    }
-
-    protected int keyLengthFromMethod(EncryptionMethod method) {
-        if (method.equals(EncryptionMethod.A128CBC_HS256) ||
-                method.equals(EncryptionMethod.A128GCM)) {
-            return 128;
-        } else if (method.equals(EncryptionMethod.A256GCM) ||
-                method.equals(EncryptionMethod.A256CBC_HS512)) {
-            return 256;
-        } else {
-            throw new RuntimeException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
-        }
-    }
+/**
+ * The base abstract class for RSA encrypters and decrypters of
+ * {@link com.nimbusds.jose.JWEObject JWE objects}.
+ *
+ * <p>Supports the following JSON Web Algorithms (JWAs):
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
+ * </ul>
+ *
+ * <p>Supports the following encryption methods:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ * </ul>
+ * 
+ * @author David Ortiz
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2013-02-21)
+ */
+abstract class RSAProvider implements JWEAlgorithmProvider {
 
 
-    protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-            throws JOSEException {
-        return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.DECRYPT_MODE);
-    }
+	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
 
-    protected byte[] aesgcmEncrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-            throws JOSEException {
-        return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.ENCRYPT_MODE);
-    }
 
-    private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) throws JOSEException {
-        try {
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());
-            cipher.init(encryptMode, secretKey, ivParamSpec);
-            return cipher.doFinal(cipherText);
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
 
-        } catch (Exception e) {
 
-            throw new JOSEException(e.getMessage());
-        }
+	static {
+		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
+		algs.add(JWEAlgorithm.RSA_OAEP);
+		algs.add(JWEAlgorithm.RSA1_5);
+		SUPPORTED_ALGORITHMS = algs;
 
-    }
+		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
+		methods.add(EncryptionMethod.A256GCM);
+		methods.add(EncryptionMethod.A128GCM);
+		SUPPORTED_ENCRYPTION_METHODS = methods;
+	}
 
+
+	public Set<JWEAlgorithm> supportedAlgorithms() {
+		return SUPPORTED_ALGORITHMS;
+	}
+
+	public Set<EncryptionMethod> supportedEncryptionMethods() {
+		return SUPPORTED_ENCRYPTION_METHODS;
+	}
+
+
+	/**
+	 * Gets the Content Master Key (CMK) length for the specified 
+	 * encryption method.
+	 *
+	 * @param method The encryption method. Must be supported by this RSA
+	 *               provider. Must not be {@code null}.
+	 *
+	 * @return The CMK length, in bits.
+	 */
+	protected int keyLengthForMethod(final EncryptionMethod method) {
+		
+		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
+		    method.equals(EncryptionMethod.A128GCM)) {
+
+			return 128;
+		}
+
+		if (method.equals(EncryptionMethod.A256GCM) ||
+		    method.equals(EncryptionMethod.A256CBC_HS512)) {
+	
+			return 256;
+		}
+
+		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
+	}
+
+
+	protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
+		throws JOSEException {
+
+		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.DECRYPT_MODE);
+	}
+
+
+	protected byte[] aesgcmEncrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
+		throws JOSEException {
+	
+		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.ENCRYPT_MODE);
+	}
+
+
+	private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) 
+		throws JOSEException {
+
+		try {
+			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());
+			cipher.init(encryptMode, secretKey, ivParamSpec);
+			return cipher.doFinal(cipherText);
+
+		} catch (Exception e) {
+
+			throw new JOSEException(e.getMessage());
+		}
+	}
 }
