@@ -8,7 +8,17 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.crypto.BlockCipher;
+
+import org.bouncycastle.crypto.engines.AESEngine;
+
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -110,8 +120,47 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	}
 
 
+	protected AEADParameters generateAEADParameters(final SecretKey secretKey, 
+		                                        final byte[] authData) {
+
+		final int authTagLength = 128;
+		byte[] nonce = new byte[16];
+
+		return new AEADParameters(new KeyParameter(secretKey.getEncoded()), authTagLength, nonce, authData);
+	}
+
+
+	protected byte[] encryptGCMAES(final SecretKey secretKey, final byte[] plainText, final byte[] authData)
+		throws Exception {
+
+
+		AEADParameters aeadParams = generateAEADParameters(secretKey, authData);
+
+		GCMBlockCipher gcm = new GCMBlockCipher(new AESEngine());
+
+		gcm.init(true, aeadParams);
+
+		int outsize = gcm.getOutputSize(plainText.length);
+
+		byte[] cipherText = new byte[outsize];
+
+		int offOut = gcm.processBytes(plainText, 0, plainText.length, cipherText, 0);
+
+		try {
+			gcm.doFinal(cipherText, offOut); // appends the AEAD data
+
+		} catch (org.bouncycastle.crypto.InvalidCipherTextException e) {
+
+			// TBD
+		}
+
+		return cipherText;
+	}
+
+
 	private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) 
 		throws JOSEException {
+
 
 		try {
 			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());
