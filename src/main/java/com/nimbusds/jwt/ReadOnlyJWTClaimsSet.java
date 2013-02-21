@@ -111,6 +111,10 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	/**
 	 * Gets all claims, both reserved and custom, as a single map.
+	 *
+	 * <p>Note that the reserved claims Expiration-Time ({@code exp}),
+	 * Not-Before-Time ({@code nbf}) and Issued-At ({@code iat}) will be
+	 * returned as {@code java.util.Date} instances.
 	 * 
 	 * @return All claims, as an unmodifiable map, empty map if none.
 	 */
