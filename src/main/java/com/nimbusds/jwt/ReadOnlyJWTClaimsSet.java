@@ -12,7 +12,8 @@ import net.minidev.json.JSONObject;
  * Read-only view of a {@link JWTClaimsSet}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-23)
+ * @author Justin Richer
+ * @version $version$ (2013-02-21)
  */
 public interface ReadOnlyJWTClaimsSet {
 
@@ -106,13 +107,15 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @return The value of the claim, {@code null} if not specified.
 	 */
 	public Object getClaim(final String name);
+
 	
 	/**
-	 * Gets all claims, both reserved and custom, and returns them as a single Map.
+	 * Gets all claims, both reserved and custom, as a single map.
 	 * 
-	 * @return All claims as an unmodifiable map, empty map if none.
+	 * @return All claims, as an unmodifiable map, empty map if none.
 	 */
 	public Map<String, Object> getAllClaims();
+
 	
 	/**
 	 * Returns the JSON object representation of the claims set.
