@@ -1,7 +1,10 @@
 package com.nimbusds.jose.crypto;
 
+
 import com.nimbusds.jose.*;
+
 import com.nimbusds.jose.util.Base64URL;
+
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.encodings.OAEPEncoding;
@@ -9,8 +12,11 @@ import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import javax.crypto.*;
+
 import javax.crypto.spec.IvParameterSpec;
+
 import java.math.BigInteger;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
@@ -18,123 +24,153 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 
 
+/**
+ * RSA encrypter.
+ *
+ * @author David Ortiz
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2013-02-21)
+ */
 public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 
-    private SecureRandom r;
-    private RSAPublicKey pubKey;
+
+	/**
+	 * Random byte generator.
+	 */
+	private final SecureRandom randomGen;
 
 
-    public RSAEncrypter(RSAPublicKey key) {
-        pubKey = key;
-        try {
-             r = SecureRandom.getInstance("SHA1PRNG");
-         } catch(NoSuchAlgorithmException e) {
-
-             throw new ProviderException("Java Security provideer doesn't support SHA1PRNG");
-         }
-    }
-
-    public JWECryptoParts encrypt(ReadOnlyJWEHeader readOnlyJWEHeader, byte[] bytes)
-            throws JOSEException {
-
-        EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
-        JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
-        Base64URL encryptedKey = null;
-        Base64URL cipherText = null;
+	/**
+	 * The public RSA key.
+	 */
+	private final RSAPublicKey pubKey;
 
 
-        try {
-            int keyLength = keyLengthFromMethod(method);
-            SecretKey contentEncryptionKey = genAesKey(keyLength);
+	/**
+	 * Creates a new RSA encrypter.
+	 *
+	 * @param pubKey The public RSA key. Must not be {@code null}.
+	 */
+	public RSAEncrypter(final RSAPublicKey pubKey) {
+		
+		this.pubKey = pubKey;
 
-            if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
-                Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, pubKey);
-                encryptedKey = Base64URL.encode(cipher.doFinal(contentEncryptionKey.getEncoded()));
+		try {
+			randomGen = SecureRandom.getInstance("SHA1PRNG");
 
-            } else if (algorithm.equals(JWEAlgorithm.RSA_OAEP)) {
-                try {
+		} catch(NoSuchAlgorithmException e) {
 
-                    AsymmetricBlockCipher engine = new RSAEngine();
-                    OAEPEncoding cipher = new OAEPEncoding(engine);
-
-                    BigInteger mod = pubKey.getModulus();
-                    BigInteger exp = pubKey.getPublicExponent();
-                    RSAKeyParameters keyParams = new RSAKeyParameters(false, mod, exp);
-                    cipher.init(true, keyParams);
-
-                    int inputBlockSize = cipher.getInputBlockSize();
-                    int outputBlockSize = cipher.getOutputBlockSize();
-
-                    byte[] keyBytes = contentEncryptionKey.getEncoded();
-
-                    encryptedKey = Base64URL.encode(cipher.processBlock(keyBytes, 0, keyBytes.length));
-
-                } catch (InvalidCipherTextException e) {
-
-                    throw new JOSEException(e.getMessage(), e);
-                }
-
-            } else {
-                throw new JOSEException("Algorithm must be RSA1_5 or RSA_OAEP");
-            }
+			 throw new ProviderException("Java Security provider doesn't support SHA1PRNG");
+		}
+	}
 
 
-            if (encryptedKey == null ) {
-                throw new JOSEException("Error generating encrypted key");
-            }
+	@Override
+	public JWECryptoParts encrypt(ReadOnlyJWEHeader readOnlyJWEHeader, byte[] bytes)
+		throws JOSEException {
 
-            JWECryptoParts parts;
-
-            if (method.equals(EncryptionMethod.A128GCM) || method.equals(EncryptionMethod.A256GCM)) {
-                Base64URL iv = generateJWEIV();
-
-                if (iv == null)
-                    throw new JOSEException("Missing initialization vector \"iv\" header");
-
-                byte[] ivBytes = iv.decode();
-
-                IvParameterSpec ivParamSpec = new IvParameterSpec(ivBytes);
-                cipherText = Base64URL.encode(aesgcmEncrypt(ivParamSpec, contentEncryptionKey, bytes));
-                parts = new JWECryptoParts(encryptedKey,  Base64URL.encode(ivBytes), cipherText , null);
-                return parts;
-
-            }
-            else{
-                throw new JOSEException("Unsupported encryption method");
-            }
+		EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
+		JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
+		Base64URL encryptedKey = null;
+		Base64URL cipherText = null;
 
 
-        } catch (InvalidKeyException e) {
-            throw new JOSEException("Invalid Key Exception", e);
-        } catch (NoSuchAlgorithmException e) {
-            throw new JOSEException("Java Security Provider doesn't support the algorithm specified", e);
+		try {
+			int keyLength = keyLengthFromMethod(method);
+			SecretKey contentEncryptionKey = genAesKey(keyLength);
 
-        } catch (BadPaddingException e) {
-            throw new JOSEException("Bad padding exception", e);
-        } catch (NoSuchPaddingException e) {
-            throw new JOSEException("No such padding Exception", e);
-        } catch (IllegalBlockSizeException e) {
-            throw new JOSEException("Illegal Block Size exception", e);
-        }
-    }
+			if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
+
+				Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+				cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+				encryptedKey = Base64URL.encode(cipher.doFinal(contentEncryptionKey.getEncoded()));
+
+			} else if (algorithm.equals(JWEAlgorithm.RSA_OAEP)) {
+
+				try {
+					AsymmetricBlockCipher engine = new RSAEngine();
+					OAEPEncoding cipher = new OAEPEncoding(engine);
+
+					BigInteger mod = pubKey.getModulus();
+					BigInteger exp = pubKey.getPublicExponent();
+					RSAKeyParameters keyParams = new RSAKeyParameters(false, mod, exp);
+					cipher.init(true, keyParams);
+
+					int inputBlockSize = cipher.getInputBlockSize();
+					int outputBlockSize = cipher.getOutputBlockSize();
+
+					byte[] keyBytes = contentEncryptionKey.getEncoded();
+
+					encryptedKey = Base64URL.encode(cipher.processBlock(keyBytes, 0, keyBytes.length));
+
+				} catch (InvalidCipherTextException e) {
+
+					throw new JOSEException(e.getMessage(), e);
+				}
+
+			} else {
+				throw new JOSEException("Algorithm must be RSA1_5 or RSA_OAEP");
+			}
 
 
-    protected static SecretKey genAesKey(final int bitSize) throws NoSuchAlgorithmException {
-        KeyGenerator keygen;
-        keygen = KeyGenerator.getInstance("AES");
-        keygen.init(bitSize);
-        return keygen.generateKey();
-    }
+			if (encryptedKey == null )
+				throw new JOSEException("Couldn't generate encrypted key");
 
 
-    //Generate a unique Initialization Vector for the JWE message
-    protected Base64URL generateJWEIV() {
-        byte[] bytes = new byte[8];
-        r.nextBytes(bytes);
-        return Base64URL.encode(bytes);
+			JWECryptoParts parts;
 
-    }
+			if (method.equals(EncryptionMethod.A128GCM) || method.equals(EncryptionMethod.A256GCM)) {
+
+				byte[] iv = generateAESGCMIV();
+
+				IvParameterSpec ivParamSpec = new IvParameterSpec(iv);
+				cipherText = Base64URL.encode(aesgcmEncrypt(ivParamSpec, contentEncryptionKey, bytes));
+				parts = new JWECryptoParts(encryptedKey,  Base64URL.encode(iv), cipherText , null);
+				return parts;
+
+			}
+			else{
+				throw new JOSEException("Unsupported encryption method");
+			}
 
 
+		} catch (InvalidKeyException e) {
+			throw new JOSEException("Invalid Key Exception", e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Java Security Provider doesn't support the algorithm specified", e);
+
+		} catch (BadPaddingException e) {
+			throw new JOSEException("Bad padding exception", e);
+		} catch (NoSuchPaddingException e) {
+			throw new JOSEException("No such padding Exception", e);
+		} catch (IllegalBlockSizeException e) {
+			throw new JOSEException("Illegal Block Size exception", e);
+		}
+	}
+
+
+	protected static SecretKey genAesKey(final int bitSize) throws NoSuchAlgorithmException {
+		KeyGenerator keygen;
+		keygen = KeyGenerator.getInstance("AES");
+		keygen.init(bitSize);
+		return keygen.generateKey();
+	}
+
+
+	/**
+	 * Generates a random 96 bit (12 byte) Initialisation Vector(IV) for
+	 * use in AES-GCM encryption.
+	 *
+	 * <p>See http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-08#section-4.9
+	 *
+	 * @return The random 96 bit IV.
+	 */
+	protected byte[] generateAESGCMIV() {
+		
+		byte[] bytes = new byte[12];
+
+		randomGen.nextBytes(bytes);
+
+		return bytes;
+	}
 }
