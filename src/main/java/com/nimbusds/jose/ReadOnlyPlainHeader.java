@@ -8,8 +8,8 @@ package com.nimbusds.jose;
  * @version $version$ (2012-09-28)
  */
 public interface ReadOnlyPlainHeader extends ReadOnlyHeader {
-	
-	
+
+
 	/**
 	 * Gets the algorithm ({@code alg}) parameter.
 	 *

@@ -2,7 +2,6 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,41 +58,43 @@ public class JWKSet {
 	 * Additional custom members.
 	 */
 	private final Map<String,Object> customMembers = new HashMap<String,Object>();
-	
-	
+
+
 	/**
 	 * Creates a new empty JSON Web Key (JWK) set.
 	 */
 	public JWKSet() {
-	
+
 		// Nothing to do
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JSON Web Key (JWK) set with a single key.
 	 *
 	 * @param key The JWK. Must not be {@code null}.
 	 */
 	public JWKSet(final JWK key) {
-	
-		if (key == null)
+
+		if (key == null) {
 			throw new IllegalArgumentException("The JWK must not be null");
-		
+		}
+
 		keys.add(key);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JSON Web Key (JWK) set with the specified keys.
 	 *
 	 * @param keys The JWK list. Must not be {@code null}.
 	 */
 	public JWKSet(final List<JWK> keys) {
-	
-		if (keys == null)
+
+		if (keys == null) {
 			throw new IllegalArgumentException("The JWK list must not be null");
-		
+		}
+
 		this.keys.addAll(keys);
 	}
 
@@ -108,22 +109,23 @@ public class JWKSet {
 	 */
 	public JWKSet(final List<JWK> keys, final Map<String,Object> customMembers) {
 
-		if (keys == null)
+		if (keys == null) {
 			throw new IllegalArgumentException("The JWK list must not be null");
-		
+		}
+
 		this.keys.addAll(keys);
 
 		this.customMembers.putAll(customMembers);
 	}
-	
-	
+
+
 	/**
 	 * Gets the keys (ordered) of this JSON Web Key (JWK) set.
 	 *
 	 * @return The keys, empty list if none.
 	 */
 	public List<JWK> getKeys() {
-	
+
 		return keys;
 	}
 
@@ -137,15 +139,15 @@ public class JWKSet {
 
 		return customMembers;
 	}
-	
-	
+
+
 	/**
 	 * Returns a JSON object representation of this JSON Web Key (JWK) set.
 	 *
 	 * @return The JSON object representation.
 	 */
 	public JSONObject toJSONObject() {
-		
+
 		JSONObject o = new JSONObject(customMembers);
 
 		JSONArray a = new JSONArray();
@@ -154,12 +156,12 @@ public class JWKSet {
 
 			a.add(key.toJSONObject());
 		}
-		
+
 		o.put("keys", a);
-		
+
 		return o;
 	}
-	
+
 
 	/**
 	 * Returns the JSON object string representation of this JSON Web Key
@@ -167,12 +169,13 @@ public class JWKSet {
 	 *
 	 * @return The JSON object string representation.
 	 */
+	@Override
 	public String toString() {
-	
+
 		return toJSONObject().toString();
 	}
-	
-	
+
+
 	/**
 	 * Parses the specified string representing a JSON Web Key (JWK) set.
 	 *
@@ -184,12 +187,12 @@ public class JWKSet {
 	 *                        JSON Web Key (JWK) set.
 	 */
 	public static JWKSet parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
-	
-	
+
+
 	/**
 	 * Parses the specified JSON object representing a JSON Web Key (JWK) 
 	 * set.
@@ -202,24 +205,25 @@ public class JWKSet {
 	 *                        JSON Web Key (JWK) set.
 	 */
 	public static JWKSet parse(final JSONObject json)
-		throws ParseException {
-		
+			throws ParseException {
+
 		JSONArray keyArray = JSONObjectUtils.getJSONArray(json, "keys");
-		
+
 		List<JWK> keys = new LinkedList<JWK>();
-		
+
 		for (int i=0; i < keyArray.size(); i++) {
-		
-			if (! (keyArray.get(i) instanceof JSONObject))
+
+			if (! (keyArray.get(i) instanceof JSONObject)) {
 				throw new ParseException("The \"keys\" JSON array must contain JSON objects only", 0);
-			
+			}
+
 			JSONObject keyJSON = (JSONObject)keyArray.get(i);
-			
+
 			try {
 				keys.add(JWK.parse(keyJSON));
-				
+
 			} catch (ParseException e) {
-			
+
 				throw new ParseException("Invalid JWK at position " + i + ": " + e.getMessage(), 0);
 			}
 		}
@@ -229,12 +233,13 @@ public class JWKSet {
 
 		for (Map.Entry<String,Object> entry: json.entrySet()) {
 
-			if (entry.getKey() == null || entry.getKey().equals("keys"))
+			if (entry.getKey() == null || entry.getKey().equals("keys")) {
 				continue;
+			}
 
 			jwkSet.getAdditionalMembers().put(entry.getKey(), entry.getValue());
 		}
-		
+
 		return jwkSet;
 	}
 }

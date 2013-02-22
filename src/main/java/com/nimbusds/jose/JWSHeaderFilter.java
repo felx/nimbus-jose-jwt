@@ -22,8 +22,8 @@ public interface JWSHeaderFilter extends HeaderFilter {
 	 *         none.
 	 */
 	public Set<JWSAlgorithm> getAcceptedAlgorithms();
-	
-	
+
+
 	/**
 	 * Sets the names of the accepted JWS algorithms. These correspond to 
 	 * the {@code alg} JWS header parameter. 

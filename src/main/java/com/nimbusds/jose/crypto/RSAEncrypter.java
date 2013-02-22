@@ -1,9 +1,20 @@
 package com.nimbusds.jose.crypto;
 
 
-import com.nimbusds.jose.*;
+import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.ProviderException;
+import java.security.SecureRandom;
+import java.security.interfaces.RSAPublicKey;
 
-import com.nimbusds.jose.util.Base64URL;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
@@ -11,17 +22,13 @@ import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 
-import javax.crypto.*;
-
-import javax.crypto.spec.IvParameterSpec;
-
-import java.math.BigInteger;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.ProviderException;
-import java.security.SecureRandom;
-import java.security.interfaces.RSAPublicKey;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWECryptoParts;
+import com.nimbusds.jose.JWEEncrypter;
+import com.nimbusds.jose.ReadOnlyJWEHeader;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -52,7 +59,7 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	 * @param pubKey The public RSA key. Must not be {@code null}.
 	 */
 	public RSAEncrypter(final RSAPublicKey pubKey) {
-		
+
 		this.pubKey = pubKey;
 
 		try {
@@ -60,21 +67,21 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 
 		} catch(NoSuchAlgorithmException e) {
 
-			 throw new ProviderException("Java Security provider doesn't support SHA1PRNG");
+			throw new ProviderException("Java Security provider doesn't support SHA1PRNG");
 		}
 	}
 
 
 	@Override
 	public JWECryptoParts encrypt(ReadOnlyJWEHeader readOnlyJWEHeader, byte[] bytes)
-		throws JOSEException {
+			throws JOSEException {
 
 		// The alg parameter
 		JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
 
 		// The enc parameter
 		EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
-		
+
 		// The second JWE part
 		Base64URL encryptedKey = null;
 
@@ -123,8 +130,9 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 			}
 
 
-			if (encryptedKey == null )
+			if (encryptedKey == null ) {
 				throw new JOSEException("Couldn't generate encrypted key");
+			}
 
 
 			JWECryptoParts parts;
@@ -170,7 +178,7 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	 *                                  supported.
 	 */
 	protected static SecretKey generateAESCMK(final int keyLength) 
-		throws NoSuchAlgorithmException {
+			throws NoSuchAlgorithmException {
 
 		KeyGenerator keygen;
 		keygen = KeyGenerator.getInstance("AES");
@@ -188,7 +196,7 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	 * @return The random 96 bit IV.
 	 */
 	protected byte[] generateAESGCMIV() {
-		
+
 		byte[] bytes = new byte[12];
 
 		randomGen.nextBytes(bytes);

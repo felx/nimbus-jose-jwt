@@ -3,15 +3,12 @@ package com.nimbusds.jose.util;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
-
 import net.minidev.json.parser.JSONParser;
 
 
@@ -22,8 +19,8 @@ import net.minidev.json.parser.JSONParser;
  * @version $version$ (2013-01-08)
  */
 public class JSONObjectUtils {
-	
-	
+
+
 	/**
 	 * Parses a JSON object.
 	 *
@@ -49,25 +46,26 @@ public class JSONObjectUtils {
 	 *                        object.
 	 */
 	public static JSONObject parseJSONObject(final String s) 
-		throws ParseException {
-		
+			throws ParseException {
+
 		Object o = null;
-		
+
 		try {
 			o = new JSONParser(JSONParser.USE_HI_PRECISION_FLOAT).parse(s);
-			
+
 		} catch (net.minidev.json.parser.ParseException e) {
-			
+
 			throw new ParseException("Invalid JSON: " + e.getMessage(), 0);
 		}
-		
-		if (o instanceof JSONObject)
+
+		if (o instanceof JSONObject) {
 			return (JSONObject)o;
-		else
+		} else {
 			throw new ParseException("JSON entity is not an object", 0);
+		}
 	}
-	
-	
+
+
 	/**
 	 * Gets a generic member of a JSON object.
 	 *
@@ -83,19 +81,22 @@ public class JSONObjectUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	private static <T> T getGeneric(final JSONObject o, final String key, final Class<T> clazz)
-		throws ParseException {
-	
-		if (! o.containsKey(key))
+			throws ParseException {
+
+		if (! o.containsKey(key)) {
 			throw new ParseException("Missing JSON object member with key \"" + key + "\"", 0);
-		
-		if (o.get(key) == null)
+		}
+
+		if (o.get(key) == null) {
 			throw new ParseException("JSON object member with key \"" + key + "\" has null value", 0);
-		
+		}
+
 		Object value = o.get(key);
-		
-		if (! clazz.isAssignableFrom(value.getClass()))
+
+		if (! clazz.isAssignableFrom(value.getClass())) {
 			throw new ParseException("Unexpected type of JSON object member with key \"" + key + "\"", 0);
-		
+		}
+
 		return (T)value;
 	}
 
@@ -112,12 +113,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static boolean getBoolean(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, Boolean.class);
 	}
-	
-	
+
+
 	/**
 	 * Gets an number member of a JSON object as {@code int}.
 	 *
@@ -130,12 +131,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static int getInt(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, Number.class).intValue();	
 	}
-	
-	
+
+
 	/**
 	 * Gets a number member of a JSON object as {@code long}.
 	 *
@@ -148,12 +149,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static long getLong(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, Number.class).longValue();
 	}
-	
-	
+
+
 	/**
 	 * Gets a number member of a JSON object {@code float}.
 	 *
@@ -166,12 +167,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static float getFloat(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, Number.class).floatValue();
 	}
-	
-	
+
+
 	/**
 	 * Gets a number member of a JSON object as {@code double}.
 	 *
@@ -184,12 +185,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static double getDouble(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, Number.class).doubleValue();
 	}
-	
-	
+
+
 	/**
 	 * Gets a string member of a JSON object.
 	 *
@@ -202,12 +203,12 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static String getString(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, String.class);
 	}
-	
-	
+
+
 	/**
 	 * Gets a string member of a JSON object as {@code java.net.URL}.
 	 *
@@ -220,18 +221,18 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static URL getURL(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		try {
 			return new URL(getGeneric(o, key, String.class));
-			
+
 		} catch (MalformedURLException e) {
-		
+
 			throw new ParseException(e.getMessage(), 0);
 		}
 	}
-		
-	
+
+
 	/**
 	 * Gets a JSON array member of a JSON object.
 	 *
@@ -244,8 +245,8 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static JSONArray getJSONArray(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, JSONArray.class);
 	}
 
@@ -262,7 +263,7 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static String[] getStringArray(final JSONObject o, final String key)
-		throws ParseException {
+			throws ParseException {
 
 		JSONArray jsonArray = getJSONArray(o, key);
 
@@ -274,7 +275,7 @@ public class JSONObjectUtils {
 			throw new ParseException("JSON object member with key \"" + key + "\" is not an array of strings", 0);
 		}
 	}
-	
+
 	/**
 	 * Gets a string list member of a JSON object
 	 * 
@@ -287,13 +288,13 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static List<String> getStringList(final JSONObject o, final String key) throws ParseException {
-		
+
 		String[] array = getStringArray(o, key);
-		
+
 		return Arrays.asList(array);
-		
+
 	}
-	
+
 	/**
 	 * Gets a JSON object member of a JSON object.
 	 *
@@ -306,17 +307,17 @@ public class JSONObjectUtils {
 	 *                        of the expected type.
 	 */
 	public static JSONObject getJSONObject(final JSONObject o, final String key)
-		throws ParseException {
-		
+			throws ParseException {
+
 		return getGeneric(o, key, JSONObject.class);
 	}
-	
+
 
 	/**
 	 * Prevents instantiation.
 	 */
 	private JSONObjectUtils() {
-	
+
 		// Nothing to do
 	}
 }

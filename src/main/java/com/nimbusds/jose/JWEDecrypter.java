@@ -1,8 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.util.Set;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -18,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
-	
+
 	/**
 	 * Gets the JWE header filter associated with the decrypter. Specifies 
 	 * the names of those {@link #supportedAlgorithms supported JWE 
@@ -32,8 +30,8 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 * @return The JWE header filter.
 	 */
 	public JWEHeaderFilter getJWEHeaderFilter();
-	
-	
+
+
 	/**
 	 * Decrypts the specified cipher text of a {@link JWEObject JWE Object}.
 	 *
@@ -57,9 +55,9 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                       decryption failed for some other reason.
 	 */
 	public byte[] decrypt(final ReadOnlyJWEHeader header, 
-	                      final Base64URL encryptedKey,
-			      final Base64URL iv,
-			      final Base64URL cipherText,
-			      final Base64URL integrityValue)
-		throws JOSEException;
+			final Base64URL encryptedKey,
+			final Base64URL iv,
+			final Base64URL cipherText,
+			final Base64URL integrityValue)
+					throws JOSEException;
 }

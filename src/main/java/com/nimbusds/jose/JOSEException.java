@@ -16,11 +16,11 @@ public class JOSEException extends Exception {
 	 * @param message The exception message.
 	 */
 	public JOSEException(final String message) {
-		
+
 		super(message);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JOSE exception with the specified message and cause.
 	 *
@@ -28,7 +28,7 @@ public class JOSEException extends Exception {
 	 * @param cause   The exception cause.
 	 */
 	public JOSEException(final String message, final Throwable cause) {
-		
+
 		super(message, cause);
 	}
 }

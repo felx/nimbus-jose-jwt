@@ -33,8 +33,8 @@ public final class EncryptionMethod extends Algorithm {
 	 * HMAC SHA-256, using a 256 bit CMK (and a 128 bit CEK) (required).
 	 */
 	public static final EncryptionMethod A128CBC_HS256 = new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED);
-	
-	
+
+
 	/**
 	 * Composite Authenticated Encryption algorithm using Advanced 
 	 * Encryption Standard (AES) in Cipher Block Chaining (CBC) mode with 
@@ -42,22 +42,22 @@ public final class EncryptionMethod extends Algorithm {
 	 * HMAC SHA-512, using a 512 bit CMK (and a 256 bit CEK) (required).
 	 */
 	public static final EncryptionMethod A256CBC_HS512 = new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED);
-	
-	
+
+
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
 	 * (NIST.800-38D) using 128 bit keys (recommended).
 	 */
 	public static final EncryptionMethod A128GCM = new EncryptionMethod("A128GCM", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
 	 * (NIST.800-38D) using 256 bit keys (recommended).
 	 */
 	public static final EncryptionMethod A256GCM = new EncryptionMethod("A256GCM", Requirement.RECOMMENDED);
-	
-	
+
+
 	/**
 	 * Creates a new encryption method.
 	 *
@@ -66,22 +66,22 @@ public final class EncryptionMethod extends Algorithm {
 	 *             known.
 	 */
 	public EncryptionMethod(final String name, final Requirement req) {
-	
+
 		super(name, req);
 	}
-	
-	
+
+
 	/**
 	 * Creates a new encryption method.
 	 *
 	 * @param name The encryption method name. Must not be {@code null}.
 	 */
 	public EncryptionMethod(final String name) {
-	
+
 		super(name, null);
 	}
-	
-	
+
+
 	/**
 	 * Parses an encryption method from the specified string.
 	 *
@@ -91,20 +91,17 @@ public final class EncryptionMethod extends Algorithm {
 	 *         else a newly created algorithm).
 	 */
 	public static EncryptionMethod parse(final String s) {
-	
-		if (s == A128CBC_HS256.getName())
+
+		if (s == A128CBC_HS256.getName()) {
 			return A128CBC_HS256;
-		
-		else if (s == A256CBC_HS512.getName())
+		} else if (s == A256CBC_HS512.getName()) {
 			return A256CBC_HS512;
-		
-		else if (s == A128GCM.getName())
+		} else if (s == A128GCM.getName()) {
 			return A128GCM;
-		
-		else if (s == A256GCM.getName())
+		} else if (s == A256GCM.getName()) {
 			return A256GCM;
-		
-		else
+		} else {
 			return new EncryptionMethod(s);
+		}
 	}
 }

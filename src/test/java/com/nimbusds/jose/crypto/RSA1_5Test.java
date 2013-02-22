@@ -2,12 +2,9 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-
 import java.security.KeyFactory;
-
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
@@ -72,10 +69,10 @@ public class RSA1_5Test extends TestCase {
 		(byte) 35, (byte) 66, (byte)144, (byte)  7, (byte) 65, (byte)154, (byte) 13, (byte) 97, 
 		(byte) 75, (byte) 55, (byte)230, (byte)132, (byte)  3, (byte) 13, (byte)239, (byte) 71  };
 
-		  
+
 	private static final byte[] exp= { 1, 0, 1 };
-	
-	
+
+
 	private static final byte[] modPriv = { 
 		(byte) 84, (byte) 80, (byte)150, (byte) 58, (byte)165, (byte)235, (byte)242, (byte)123, 
 		(byte)217, (byte) 55, (byte) 38, (byte)154, (byte) 36, (byte)181, (byte)221, (byte)156, 
@@ -112,36 +109,36 @@ public class RSA1_5Test extends TestCase {
 		(byte)190, (byte) 52, (byte)245, (byte) 74, (byte) 65, (byte)224, (byte) 81, (byte)100, 
 		(byte) 85, (byte) 25, (byte)204, (byte)165, (byte)203, (byte)187, (byte)175, (byte) 84, 
 		(byte)100, (byte) 82, (byte) 15, (byte) 11, (byte) 23, (byte)202, (byte)151, (byte)107, 
-		
+
 		(byte) 54, (byte) 41, (byte)207, (byte)  3, (byte)136, (byte)229, (byte)134, (byte)131, 
 		(byte) 93, (byte)139, (byte) 50, (byte)182, (byte)204, (byte) 93, (byte)130, (byte)89   };
 
 
 	private static RSAPublicKey publicKey;
-	
-	
+
+
 	private static RSAPrivateKey privateKey;
 
 
 	static {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			
+
 			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, mod), new BigInteger(1, exp));
 			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, mod), new BigInteger(1, modPriv));
-	
+
 			publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
 			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
-		
+
 		} catch (Exception e) {
-	
+
 			System.err.println(e);
 		}
 	}
 
 
 	public void testWithA128GCM()
-		throws Exception {
+			throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
@@ -175,7 +172,7 @@ public class RSA1_5Test extends TestCase {
 
 
 	public void testWithA256GCM()
-		throws Exception {
+			throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");

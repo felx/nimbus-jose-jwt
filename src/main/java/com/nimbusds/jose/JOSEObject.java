@@ -31,20 +31,20 @@ public abstract class JOSEObject {
 	 * {@code null} to indicate a missing part.
 	 */
 	private Base64URL[] parsedParts;
-	
-	
+
+
 	/**
 	 * Creates a new JOSE object. The payload and the original parsed 
 	 * Base64URL parts are not not defined.
 	 */
 	protected JOSEObject() {
-	
+
 		payload = null;
 
 		parsedParts = null;
 	}
-	
-	
+
+
 	/**
 	 * Creates a new JOSE object with the specified payload.
 	 *
@@ -52,19 +52,19 @@ public abstract class JOSEObject {
 	 *                an encrypted JWE object).
 	 */
 	protected JOSEObject(final Payload payload) {
-	
+
 		this.payload = payload;
 	}
-	
-	
+
+
 	/**
 	 * Gets the header of this JOSE object.
 	 *
 	 * @return The header.
 	 */
 	public abstract ReadOnlyHeader getHeader();
-	
-	
+
+
 	/**
 	 * Sets the payload of this JOSE object.
 	 *
@@ -72,11 +72,11 @@ public abstract class JOSEObject {
 	 *                an encrypted JWE object).
 	 */
 	protected void setPayload(final Payload payload) {
-	
+
 		this.payload = payload;
 	}
-	
-	
+
+
 	/**
 	 * Gets the payload of this JOSE object.
 	 *
@@ -84,7 +84,7 @@ public abstract class JOSEObject {
 	 *         JWE object that hasn't been decrypted).
 	 */
 	public Payload getPayload() {
-	
+
 		return payload;
 	}
 
@@ -129,26 +129,29 @@ public abstract class JOSEObject {
 	 */
 	public String getParsedString() {
 
-		if (parsedParts == null)
+		if (parsedParts == null) {
 			return null;
+		}
 
 		StringBuilder sb = new StringBuilder();
 
 		for (Base64URL part: parsedParts) {
 
-			if (sb.length() > 0)
+			if (sb.length() > 0) {
 				sb.append('.');
+			}
 
-			if (part == null)
+			if (part == null) {
 				continue;
-			else
+			} else {
 				sb.append(part.toString());
+			}
 		}
 
 		return sb.toString();
 	}
-	
-	
+
+
 	/**
 	 * Serialises this JOSE object to its compact format consisting of 
 	 * Base64URL-encoded parts delimited by period ('.') characters.
@@ -159,8 +162,8 @@ public abstract class JOSEObject {
 	 *                               that permits serialisation.
 	 */
 	public abstract String serialize();
-	
-	
+
+
 	/**
 	 * Splits a serialised JOSE object into its Base64URL-encoded parts.
 	 *
@@ -174,26 +177,28 @@ public abstract class JOSEObject {
 	 *                        into three or five Base64URL-encoded parts.
 	 */
 	public static Base64URL[] split(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		// We must have 2 (JWS) or 4 dots (JWE)
-		
+
 		// String.split() cannot handle empty parts
 		final int dot1 = s.indexOf(".");
-		
-		if (dot1 == -1)
+
+		if (dot1 == -1) {
 			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing part delimiters", 0);
-			
+		}
+
 		final int dot2 = s.indexOf(".", dot1 + 1);
-		
-		if (dot2 == -1)
+
+		if (dot2 == -1) {
 			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing second delimiter", 0);
-		
+		}
+
 		// Third dot for JWE only
 		final int dot3 = s.indexOf(".", dot2 + 1);
-		
+
 		if (dot3 == -1) {
-		
+
 			// Two dots only? -> We have a JWS
 			Base64URL[] parts = new Base64URL[3];
 			parts[0] = new Base64URL(s.substring(0, dot1));
@@ -201,16 +206,18 @@ public abstract class JOSEObject {
 			parts[2] = new Base64URL(s.substring(dot2 + 1));
 			return parts;
 		}
-		
+
 		// Fourth final dot for JWE
 		final int dot4 = s.indexOf(".", dot3 + 1);
-		
-		if (dot4 == -1)
+
+		if (dot4 == -1) {
 			throw new ParseException("Invalid serialized JWE object: Missing fourth delimiter", 0);
-		
-		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1)
+		}
+
+		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1) {
 			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
-		
+		}
+
 		// Four dots -> five parts
 		Base64URL[] parts = new Base64URL[5];
 		parts[0] = new Base64URL(s.substring(0, dot1));
@@ -234,32 +241,30 @@ public abstract class JOSEObject {
 	 *                       plaintext, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
-		throws ParseException {
-		
+			throws ParseException {
+
 		Base64URL[] parts = split(s);
-		
+
 		JSONObject jsonObject = null;
-		
- 		try {
- 			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
- 			
- 		} catch (ParseException e) {
- 		
- 			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
- 		}
-		
+
+		try {
+			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
+
+		} catch (ParseException e) {
+
+			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
+		}
+
 		Algorithm alg = Header.parseAlgorithm(jsonObject);
 
-		if (alg.equals(Algorithm.NONE))
+		if (alg.equals(Algorithm.NONE)) {
 			return PlainObject.parse(s);
-		
-		else if (alg instanceof JWSAlgorithm)
+		} else if (alg instanceof JWSAlgorithm) {
 			return JWSObject.parse(s);
-			
-		else if (alg instanceof JWEAlgorithm)
+		} else if (alg instanceof JWEAlgorithm) {
 			return JWEObject.parse(s);
-			
-		else
+		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
+		}
 	}
 }

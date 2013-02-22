@@ -3,19 +3,16 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.bouncycastle.asn1.x9.X9ECParameters;
-
 import org.bouncycastle.crypto.Digest;
-
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -43,8 +40,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * The private key.
 	 */
 	private final BigInteger privateKey;
-	
-	
+
+
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * signer.
@@ -54,24 +51,25 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 */
 	public ECDSASigner(final BigInteger privateKey) {
 
-		if (privateKey == null)
+		if (privateKey == null) {
 			throw new IllegalArgumentException("The private key must not be null");
-		
+		}
+
 		this.privateKey = privateKey;
 	}
-	
-	
+
+
 	/**
 	 * Gets the private key ('d' parameter).
 	 *
 	 * @return The private key.
 	 */
 	public BigInteger getPrivateKey() {
-	
+
 		return privateKey;
 	}
-	
-	
+
+
 	/**
 	 * Performs the actual ECDSA signing.
 	 *
@@ -83,11 +81,11 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * @return The ECDSA signture.
 	 */
 	private static byte[] doECDSA(final ECPrivateKeyParameters ecPrivateKeyParameters, 
-	                              final byte[] bytes) {
+			final byte[] bytes) {
 
 		org.bouncycastle.crypto.signers.ECDSASigner signer = 
-			new org.bouncycastle.crypto.signers.ECDSASigner();
-		
+				new org.bouncycastle.crypto.signers.ECDSASigner();
+
 		signer.init(true, ecPrivateKeyParameters);
 		BigInteger[] res = signer.generateSignature(bytes);
 		BigInteger r = res[0];
@@ -95,8 +93,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 		return formatSignature(r, s);
 	}
-	
-	
+
+
 	/**
 	 * Converts the specified big integers to byte arrays and returns their
 	 * 64-byte array concatenation.
@@ -107,50 +105,51 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * @return The resulting 64-byte array.
 	 */
 	private static byte[] formatSignature(final BigInteger r, final BigInteger s) {
-		
+
 		byte[] rBytes = r.toByteArray();
 		byte[] sBytes = s.toByteArray();
-		
+
 		byte[] rsBytes = new byte[64];
-		
-		for (int i=0; i<rsBytes.length; i++)
+
+		for (int i=0; i<rsBytes.length; i++) {
 			rsBytes[i] = 0;
-		
-		if (rBytes.length >= 32)
+		}
+
+		if (rBytes.length >= 32) {
 			System.arraycopy(rBytes, rBytes.length - 32, rsBytes, 0, 32);
-		
-		else
+		} else {
 			System.arraycopy(rBytes, 0, rsBytes, 32 - rBytes.length, rBytes.length);
-		
-		
-		if (sBytes.length >= 32)
+		}
+
+
+		if (sBytes.length >= 32) {
 			System.arraycopy(sBytes, sBytes.length - 32, rsBytes, 32, 32);
-		
-		else
+		} else {
 			System.arraycopy(sBytes, 0, rsBytes, 64 - sBytes.length, sBytes.length);
-		
-		
+		}
+
+
 		return rsBytes;
 	}
 
 
 	@Override
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
-		throws JOSEException {
-		
+			throws JOSEException {
+
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
-		
+
 		ECDomainParameters ecParameterSpec = new ECDomainParameters(
-							x9ECParameters.getCurve(), 
-							x9ECParameters.getG(), 
-							x9ECParameters.getN(), 
-							x9ECParameters.getH(), 
-							x9ECParameters.getSeed());
-		
+				x9ECParameters.getCurve(), 
+				x9ECParameters.getG(), 
+				x9ECParameters.getN(), 
+				x9ECParameters.getH(), 
+				x9ECParameters.getSeed());
+
 		ECPrivateKeyParameters ecPrivateKeyParameters = 
-			new ECPrivateKeyParameters(privateKey, ecParameterSpec);
+				new ECPrivateKeyParameters(privateKey, ecParameterSpec);
 
 		digest.update(signableContent, 0, signableContent.length);
 		byte[] out = new byte[digest.getDigestSize()];

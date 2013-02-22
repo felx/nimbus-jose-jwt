@@ -3,15 +3,13 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
-import net.minidev.json.JSONObject;
-
 import net.jcip.annotations.ThreadSafe;
+import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jose.PlainObject;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -33,11 +31,11 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
 	public PlainJWT(final JWTClaimsSet claimsSet) {
-		
+
 		super(new Payload(claimsSet.toJSONObject()));
 	}
-	
-	
+
+
 	/**
 	 * Creates a new plain JSON Web Token (JWT) with the specified header 
 	 * and claims set.
@@ -46,11 +44,11 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
 	public PlainJWT(final PlainHeader header, ReadOnlyJWTClaimsSet claimsSet) {
-			
+
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
-	
-	
+
+
 	/**
 	 * Creates a new plain JSON Web Token (JWT) with the specified 
 	 * Base64URL-encoded parts.
@@ -63,25 +61,26 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public PlainJWT(final Base64URL firstPart, final Base64URL secondPart)
-		throws ParseException {
-		
+			throws ParseException {
+
 		super(firstPart, secondPart);
 	}
-	
-	
+
+
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-		throws ParseException {
-	
+			throws ParseException {
+
 		JSONObject json = getPayload().toJSONObject();
-		
-		if (json == null)
+
+		if (json == null) {
 			throw new ParseException("Payload of plain JOSE object is not a valid JSON object", 0);
-		
+		}
+
 		return JWTClaimsSet.parse(json);
 	}
-	
-	
+
+
 	/**
 	 * Parses a plain JSON Web Token (JWT) from the specified string in 
 	 * compact format. 
@@ -94,13 +93,14 @@ public class PlainJWT extends PlainObject implements JWT {
 	 *                        plain JWT.
 	 */
 	public static PlainJWT parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		Base64URL[] parts = JOSEObject.split(s);
-		
-		if (! parts[2].toString().isEmpty())
+
+		if (! parts[2].toString().isEmpty()) {
 			throw new ParseException("Unexpected third Base64URL part in the plain JWT object", 0);
-		
+		}
+
 		return new PlainJWT(parts[0], parts[1]);
 	}
 }

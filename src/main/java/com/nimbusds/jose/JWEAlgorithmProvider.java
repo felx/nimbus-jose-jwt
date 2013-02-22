@@ -24,8 +24,8 @@ public interface JWEAlgorithmProvider {
 	 * @return The supported JWE algorithms, empty set if none.
 	 */
 	public Set<JWEAlgorithm> supportedAlgorithms();
-	
-	
+
+
 	/**
 	 * Returns the names of the supported encryption methods. These 
 	 * correspond to the {@code enc} JWE header parameter.

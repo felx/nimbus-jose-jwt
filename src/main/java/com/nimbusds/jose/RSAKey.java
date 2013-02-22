@@ -3,9 +3,8 @@ package com.nimbusds.jose;
 
 import java.text.ParseException;
 
-import net.minidev.json.JSONObject;
-
 import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -38,20 +37,20 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  */
 @Immutable
 public final class RSAKey extends JWK {
-	
-	
+
+
 	/**
 	 * The modulus value for the RSA public key.
 	 */
 	private final Base64URL n;
-	
-	
+
+
 	/**
 	 * The exponent value for the RSA public key.
 	 */
 	private final Base64URL e;
-	 
-	
+
+
 	/**
 	 * Creates a new public RSA JSON Web Key (JWK) with the specified 
 	 * parameters.
@@ -68,22 +67,24 @@ public final class RSAKey extends JWK {
 	 * @param kid The key ID. {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
-	              final Use use, final Algorithm alg, final String kid) {
-	
+			final Use use, final Algorithm alg, final String kid) {
+
 		super(KeyType.RSA, use, alg, kid);
-		
-		if (n == null)
+
+		if (n == null) {
 			throw new IllegalArgumentException("The modulus value must not be null");
-		
+		}
+
 		this.n = n;
-		
-		if (e == null)
+
+		if (e == null) {
 			throw new IllegalArgumentException("The exponent value must not be null");
-		
+		}
+
 		this.e = e;
 	}
-	
-	
+
+
 	/**
 	 * Returns the modulus value for this RSA public key. It is represented
 	 * as the Base64URL encoding of the value's big ending representation.
@@ -91,11 +92,11 @@ public final class RSAKey extends JWK {
 	 * @return The RSA public key modulus.
 	 */
 	public Base64URL getModulus() {
-	
+
 		return n;
 	}
-	
-	
+
+
 	/**
 	 * Returns the exponent value for this RSA public key. It is represented
 	 * as the Base64URL encoding of the value's big ending representation.
@@ -103,24 +104,24 @@ public final class RSAKey extends JWK {
 	 * @return The RSA public key exponent.
 	 */
 	public Base64URL getExponent() {
-	
+
 		return e;
 	}
-	
-	
+
+
 	@Override
 	public JSONObject toJSONObject() {
-	
+
 		JSONObject o = super.toJSONObject();
-		
+
 		// Append RSA public key specific attributes
 		o.put("n", n.toString());
 		o.put("e", e.toString());
-	
+
 		return o;
 	}
-	
-	
+
+
 	/**
 	 * Parses a public RSA JWK from the specified JSON object 
 	 * representation.
@@ -134,13 +135,13 @@ public final class RSAKey extends JWK {
 	 *                        RSA JWK.
 	 */
 	public static RSAKey parse(final JSONObject jsonObject)
-		throws ParseException {
-		
+			throws ParseException {
+
 		// Parse the mandatory parameters first
 		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Base64URL mod = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
 		Base64URL exp = new Base64URL(JSONObjectUtils.getString(jsonObject, "e"));
-		
+
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
@@ -149,11 +150,12 @@ public final class RSAKey extends JWK {
 
 		// Get optional key ID
 		String id = JWK.parseKeyID(jsonObject);
-		
+
 		// Check key type
-		if (kty != KeyType.RSA)
+		if (kty != KeyType.RSA) {
 			throw new ParseException("The key type \"kty\" must be RSA", 0);
-		
+		}
+
 		return new RSAKey(mod, exp, use, alg, id);
 	}
 }

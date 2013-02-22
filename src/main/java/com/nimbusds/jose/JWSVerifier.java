@@ -29,8 +29,8 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 * @return The JWS header filter.
 	 */
 	public JWSHeaderFilter getJWSHeaderFilter();
-	
-	
+
+
 	/**
 	 * Verifies the specified {@link JWSObject#getSignature signature} of a
 	 * {@link JWSObject JWS object}.
@@ -51,7 +51,7 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 *                       verification failed for some other reason.
 	 */
 	public boolean verify(final ReadOnlyJWSHeader header, 
-	                      final byte[] signedContent, 
-	                      final Base64URL signature)
-		throws JOSEException;
+			final byte[] signedContent, 
+			final Base64URL signature)
+					throws JOSEException;
 }

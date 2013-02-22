@@ -3,15 +3,13 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
+import net.jcip.annotations.ThreadSafe;
 import net.minidev.json.JSONObject;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.JOSEObject;
-import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
-
+import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -34,11 +32,11 @@ public class SignedJWT extends JWSObject implements JWT {
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
 	public SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
-	
+
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
-	
-	
+
+
 	/**
 	 * Creates a new signed JSON Web Token (JWT) with the specified 
 	 * serialised parts. The state will be 
@@ -54,25 +52,26 @@ public class SignedJWT extends JWSObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public SignedJWT(final Base64URL firstPart, final Base64URL secondPart, final Base64URL thirdPart)	
-		throws ParseException {
-	
+			throws ParseException {
+
 		super(firstPart, secondPart, thirdPart);
 	}
-	
-	
+
+
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()	
-		throws ParseException {
-	
+			throws ParseException {
+
 		JSONObject json = getPayload().toJSONObject();
-		
-		if (json == null)
+
+		if (json == null) {
 			throw new ParseException("Payload of JWS object is not a valid JSON object", 0);
-		
+		}
+
 		return JWTClaimsSet.parse(json);
 	}
-	
-	
+
+
 	/**
 	 * Parses a signed JSON Web Token (JWT) from the specified string in 
 	 * compact format. 
@@ -85,13 +84,14 @@ public class SignedJWT extends JWSObject implements JWT {
 	 *                        signed JWT.
 	 */
 	public static SignedJWT parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		Base64URL[] parts = JOSEObject.split(s);
-		
-		if (parts.length != 3)
+
+		if (parts.length != 3) {
 			throw new ParseException("Unexpected number of Base64URL parts, must be three", 0);
-		
+		}
+
 		return new SignedJWT(parts[0], parts[1], parts[2]);
 	}
 }

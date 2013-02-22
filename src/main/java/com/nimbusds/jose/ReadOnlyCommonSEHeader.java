@@ -14,8 +14,8 @@ import com.nimbusds.jose.util.Base64URL;
  * @version $version$ (2012-09-19)
  */
 public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
-	
-	
+
+
 	/**
 	 * Gets the JSON Web Key (JWK) Set URL ({@code jku}) parameter.
 	 *
@@ -23,8 +23,8 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 *         specified.
 	 */
 	public URL getJWKURL();
-	
-	
+
+
 	/**
 	 * Gets the JSON Web Key (JWK) ({@code jwk}) parameter.
 	 *
@@ -32,8 +32,8 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 *         specified.
 	 */
 	public JWK getJWK();
-	
-	
+
+
 	/**
 	 * Gets the X.509 certificate URL ({@code x5u}) parameter.
 	 *
@@ -41,8 +41,8 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 *         specified.
 	 */
 	public URL getX509CertURL();
-	
-	
+
+
 	/**
 	 * Gets the X.509 certificate thumbprint ({@code x5t}) parameter.
 	 *
@@ -50,8 +50,8 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 *         not specified.
 	 */
 	public Base64URL getX509CertThumbprint();
-	
-	
+
+
 	/**
 	 * Gets the X.509 certificate chain parameter ({@code x5c}) 
 	 * corresponding to the key used to sign or encrypt the JWS/JWE object.
@@ -60,8 +60,8 @@ public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 	 *         specified.
 	 */
 	public Base64[] getX509CertChain();
-	
-	
+
+
 	/**
 	 * Gets the key ID ({@code kid}) parameter.
 	 *

@@ -2,12 +2,9 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-
 import java.security.KeyFactory;
-
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
@@ -72,10 +69,10 @@ public class RSA_OAEPTest extends TestCase {
 		(byte) 36, (byte) 10, (byte)230, (byte)248, (byte)190, (byte) 82, (byte)182, (byte)140, 
 		(byte) 35, (byte)204, (byte)108, (byte)190, (byte)253, (byte)186, (byte)186, (byte)27  };
 
-		  
+
 	private static final byte[] exp= { 1, 0, 1 };
-	
-	
+
+
 	private static final byte[] modPriv = { 
 		(byte)144, (byte)183, (byte)109, (byte) 34, (byte) 62, (byte)134, (byte)108, (byte) 57, 
 		(byte) 44, (byte)252, (byte) 10, (byte) 66, (byte) 73, (byte) 54, (byte) 16, (byte)181, 
@@ -112,36 +109,36 @@ public class RSA_OAEPTest extends TestCase {
 		(byte)157, (byte)213, (byte) 83, (byte) 35, (byte) 57, (byte)210, (byte)197, (byte)252, 
 		(byte)171, (byte)143, (byte)194, (byte) 11, (byte) 47, (byte)163, (byte)  6, (byte)253, 
 		(byte) 75, (byte)252, (byte) 96, (byte) 11, (byte)187, (byte) 84, (byte)130, (byte)210, 
-		
+
 		(byte)  7, (byte)121, (byte) 78, (byte) 91, (byte) 79, (byte) 57, (byte)251, (byte)138, 
 		(byte)132, (byte)220, (byte) 60, (byte)224, (byte)173, (byte) 56, (byte)224, (byte)201  };
 
 
 	private static RSAPublicKey publicKey;
-	
-	
+
+
 	private static RSAPrivateKey privateKey;
 
 
 	static {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-			
+
 			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, mod), new BigInteger(1, exp));
 			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, mod), new BigInteger(1, modPriv));
-	
+
 			publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
 			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
-		
+
 		} catch (Exception e) {
-	
+
 			System.err.println(e);
 		}
 	}
 
 
 	public void testWithA128GCM()
-		throws Exception {
+			throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
@@ -173,7 +170,7 @@ public class RSA_OAEPTest extends TestCase {
 
 
 	public void testWithA256GCM()
-		throws Exception {
+			throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");
@@ -207,21 +204,21 @@ public class RSA_OAEPTest extends TestCase {
 
 
 	public void testDecryptWith256GCM()
-		throws Exception {
+			throws Exception {
 
 		// JWE object from spec, appendix 1
 
 		String jweString = 
-			"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ." +
-			"M2XxpbORKezKSzzQL_95-GjiudRBTqn_omS8z9xgoRb7L0Jw5UsEbxmtyHn2T71m" +
-			"rZLkjg4Mp8gbhYoltPkEOHvAopz25-vZ8C2e1cOaAo5WPcbSIuFcB4DjBOM3t0UA" +
-			"O6JHkWLuAEYoe58lcxIQneyKdaYSLbV9cKqoUoFQpvKWYRHZbfszIyfsa18rmgTj" +
-			"zrtLDTPnc09DSJE24aQ8w3i8RXEDthW9T1J6LsTH_vwHdwUgkI-tC2PNeGrnM-dN" +
-			"SfzF3Y7-lwcGy0FsdXkPXytvDV7y4pZeeUiQ-0VdibIN2AjjfW60nfrPuOjepMFG" +
-			"6BBBbR37pHcyzext9epOAQ." +
-			"48V1_ALb6US04U3b." +
-			"_e21tGGhac_peEFkLXr2dMPUZiUkrw." +
-			"7V5ZDko0v_mf2PAc4JMiUg";
+				"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ." +
+						"M2XxpbORKezKSzzQL_95-GjiudRBTqn_omS8z9xgoRb7L0Jw5UsEbxmtyHn2T71m" +
+						"rZLkjg4Mp8gbhYoltPkEOHvAopz25-vZ8C2e1cOaAo5WPcbSIuFcB4DjBOM3t0UA" +
+						"O6JHkWLuAEYoe58lcxIQneyKdaYSLbV9cKqoUoFQpvKWYRHZbfszIyfsa18rmgTj" +
+						"zrtLDTPnc09DSJE24aQ8w3i8RXEDthW9T1J6LsTH_vwHdwUgkI-tC2PNeGrnM-dN" +
+						"SfzF3Y7-lwcGy0FsdXkPXytvDV7y4pZeeUiQ-0VdibIN2AjjfW60nfrPuOjepMFG" +
+						"6BBBbR37pHcyzext9epOAQ." +
+						"48V1_ALb6US04U3b." +
+						"_e21tGGhac_peEFkLXr2dMPUZiUkrw." +
+						"7V5ZDko0v_mf2PAc4JMiUg";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 

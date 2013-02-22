@@ -4,7 +4,6 @@ package com.nimbusds.jose.crypto;
 import java.security.InvalidKeyException;
 
 import javax.crypto.Mac;
-
 import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
@@ -12,7 +11,6 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -49,20 +47,20 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 	@Override
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
-		throws JOSEException {
-		
+			throws JOSEException {
+
 		Mac mac = getMAC(header.getAlgorithm());
-		
+
 		try {
 			mac.init(new SecretKeySpec(getSharedSecret(), mac.getAlgorithm()));
-			
+
 		} catch (InvalidKeyException e) {
-		
+
 			throw new JOSEException("Invalid HMAC key: " + e.getMessage(), e);
 		}
-		
+
 		mac.update(signableContent);
-		
+
 		return Base64URL.encode(mac.doFinal());
 	}
 }

@@ -10,7 +10,6 @@ import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -37,8 +36,8 @@ public final class JWTParser {
 	 *                        plain, signed or encrypted JWT.
 	 */
 	public static JWT parse(final String s)
-		throws ParseException {
-		
+			throws ParseException {
+
 		Base64URL[] parts = JOSEObject.split(s);
 
 		JSONObject jsonObject = null;
@@ -53,17 +52,15 @@ public final class JWTParser {
 
 		Algorithm alg = Header.parseAlgorithm(jsonObject);
 
-		if (alg.equals(Algorithm.NONE))
+		if (alg.equals(Algorithm.NONE)) {
 			return PlainJWT.parse(s);
-
-		else if (alg instanceof JWSAlgorithm)
+		} else if (alg instanceof JWSAlgorithm) {
 			return SignedJWT.parse(s);
-
-		else if (alg instanceof JWEAlgorithm)
+		} else if (alg instanceof JWEAlgorithm) {
 			return EncryptedJWT.parse(s);
-
-		else
+		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
+		}
 	}
 
 
@@ -71,7 +68,7 @@ public final class JWTParser {
 	 * Prevents instantiation.
 	 */
 	private JWTParser() {
-	
+
 		// Nothing to do
 	}
 }

@@ -4,7 +4,6 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 
 import com.nimbusds.jose.ReadOnlyHeader;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -23,8 +22,8 @@ public interface JWT {
 	 * @return The header.
 	 */
 	public ReadOnlyHeader getHeader();
-	
-	 
+
+
 	/**
 	 * Gets the claims set of the JSON Web Token (JWT).
 	 *
@@ -35,7 +34,7 @@ public interface JWT {
 	 *                        valid JSON object and a JWT claims set.
 	 */
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-		throws ParseException;
+			throws ParseException;
 
 
 	/**
@@ -60,8 +59,8 @@ public interface JWT {
 	 *         the JWT was created from scratch.
 	 */
 	public String getParsedString();
-	
-	
+
+
 	/**
 	 * Serialises the JSON Web Token (JWT) to its compact format consisting 
 	 * of Base64URL-encoded parts delimited by period ('.') characters.
