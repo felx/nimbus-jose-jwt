@@ -107,36 +107,4 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 
 		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
 	}
-<<<<<<< HEAD
-
-
-	protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-			throws JOSEException {
-
-		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.DECRYPT_MODE);
-	}
-
-
-	protected byte[] aesgcmEncrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-			throws JOSEException {
-
-		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.ENCRYPT_MODE);
-	}
-
-
-	private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) 
-			throws JOSEException {
-
-		try {
-			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());
-			cipher.init(encryptMode, secretKey, ivParamSpec);
-			return cipher.doFinal(cipherText);
-
-		} catch (Exception e) {
-
-			throw new JOSEException(e.getMessage());
-		}
-	}
-=======
->>>>>>> aesgcm
 }

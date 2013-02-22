@@ -1,18 +1,13 @@
 package com.nimbusds.jose.crypto;
 
 
-<<<<<<< HEAD
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
-=======
-import java.io.UnsupportedEncodingException;
-
-import com.nimbusds.jose.*;
->>>>>>> aesgcm
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -219,13 +214,8 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	 * @return The random 96 bit IV.
 	 */
 	protected byte[] generateAESGCMIV() {
-<<<<<<< HEAD
-
-		byte[] bytes = new byte[12];
-=======
 		
 		byte[] bytes = new byte[AESGCM.IV_BIT_LENGTH];
->>>>>>> aesgcm
 
 		randomGen.nextBytes(bytes);
 
