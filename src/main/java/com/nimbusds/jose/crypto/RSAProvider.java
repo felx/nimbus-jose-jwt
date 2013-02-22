@@ -46,7 +46,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-02-22)
  */
 abstract class RSAProvider implements JWEAlgorithmProvider {
 
@@ -130,7 +130,9 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	}
 
 
-	protected byte[] encryptGCMAES(final SecretKey secretKey, final byte[] plainText, final byte[] authData)
+	protected AESGCMResult encryptAESGCM(final SecretKey secretKey, 
+		                             final byte[] plainText, 
+		                             final byte[] authData)
 		throws Exception {
 
 
@@ -140,21 +142,29 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 
 		gcm.init(true, aeadParams);
 
-		int outsize = gcm.getOutputSize(plainText.length);
+		int cipherTextLength = gcm.getOutputSize(plainText.length) - 128;
 
-		byte[] cipherText = new byte[outsize];
 
-		int offOut = gcm.processBytes(plainText, 0, plainText.length, cipherText, 0);
+		// Produce cipher text
+		byte[] cipherText = new byte[cipherTextLength];
+
+		int outputCipherTextLength = gcm.processBytes(plainText, 0, plainText.length, cipherText, 0);
+
+		if (outputCipherTextLength != cipherTextLength)
+			throw new JOSEException("Unexpected output cipher text length");
+
+		// Produce 128 bit authentication tag
+		byte[] authTag = new byte[128];
 
 		try {
-			gcm.doFinal(cipherText, offOut); // appends the AEAD data
+			gcm.doFinal(authData, 0); // appends the AEAD data
 
 		} catch (org.bouncycastle.crypto.InvalidCipherTextException e) {
 
 			// TBD
 		}
 
-		return cipherText;
+		return new AESGCMResult(cipherText, authTag);
 	}
 
 
