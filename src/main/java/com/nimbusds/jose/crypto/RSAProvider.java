@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
 
 import org.bouncycastle.crypto.engines.AESEngine;
 
@@ -103,83 +104,5 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 		}
 
 		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
-	}
-
-
-	protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-		throws JOSEException {
-
-		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.DECRYPT_MODE);
-	}
-
-
-	protected byte[] aesgcmEncrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
-		throws JOSEException {
-	
-		return aesgcm(ivParamSpec, secretKey, cipherText, Cipher.ENCRYPT_MODE);
-	}
-
-
-	protected AEADParameters generateAEADParameters(final SecretKey secretKey, 
-		                                        final byte[] authData) {
-
-		final int authTagLength = 128;
-		byte[] nonce = new byte[16];
-
-		return new AEADParameters(new KeyParameter(secretKey.getEncoded()), authTagLength, nonce, authData);
-	}
-
-
-	protected AESGCMResult encryptAESGCM(final SecretKey secretKey, 
-		                             final byte[] plainText, 
-		                             final byte[] authData)
-		throws Exception {
-
-
-		AEADParameters aeadParams = generateAEADParameters(secretKey, authData);
-
-		GCMBlockCipher gcm = new GCMBlockCipher(new AESEngine());
-
-		gcm.init(true, aeadParams);
-
-		int cipherTextLength = gcm.getOutputSize(plainText.length) - 128;
-
-
-		// Produce cipher text
-		byte[] cipherText = new byte[cipherTextLength];
-
-		int outputCipherTextLength = gcm.processBytes(plainText, 0, plainText.length, cipherText, 0);
-
-		if (outputCipherTextLength != cipherTextLength)
-			throw new JOSEException("Unexpected output cipher text length");
-
-		// Produce 128 bit authentication tag
-		byte[] authTag = new byte[128];
-
-		try {
-			gcm.doFinal(authData, 0); // appends the AEAD data
-
-		} catch (org.bouncycastle.crypto.InvalidCipherTextException e) {
-
-			// TBD
-		}
-
-		return new AESGCMResult(cipherText, authTag);
-	}
-
-
-	private byte[] aesgcm(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText, int encryptMode) 
-		throws JOSEException {
-
-
-		try {
-			Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", new BouncyCastleProvider());
-			cipher.init(encryptMode, secretKey, ivParamSpec);
-			return cipher.doFinal(cipherText);
-
-		} catch (Exception e) {
-
-			throw new JOSEException(e.getMessage());
-		}
 	}
 }
