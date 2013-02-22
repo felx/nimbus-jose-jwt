@@ -24,7 +24,7 @@ import com.nimbusds.jose.Payload;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-12)
+ * @version $version$ (2013-02-22)
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -202,9 +202,7 @@ public class RSA_OAEPTest extends TestCase {
 		assertEquals("I think therefore I am.", payload.toString());
 	}
 
-	/*
-	 * This test doesn't work yet, issue #11
-	 * 
+	
 	public void testDecryptWith256GCM()
 			throws Exception {
 
@@ -239,5 +237,4 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("Live long and prosper.", payload.toString());
 	}
-	 */
 }
