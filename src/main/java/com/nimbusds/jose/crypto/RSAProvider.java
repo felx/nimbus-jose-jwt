@@ -8,7 +8,18 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.bouncycastle.crypto.BlockCipher;
+import org.bouncycastle.crypto.CipherParameters;
+
+import org.bouncycastle.crypto.engines.AESEngine;
+
+import org.bouncycastle.crypto.modes.GCMBlockCipher;
+
+import org.bouncycastle.crypto.params.AEADParameters;
+import org.bouncycastle.crypto.params.KeyParameter;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -36,7 +47,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-02-22)
  */
 abstract class RSAProvider implements JWEAlgorithmProvider {
 
@@ -96,6 +107,7 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 
 		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
 	}
+<<<<<<< HEAD
 
 
 	protected byte[] aesgcmDecrypt(IvParameterSpec ivParamSpec, SecretKey secretKey, byte[] cipherText)
@@ -125,4 +137,6 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 			throw new JOSEException(e.getMessage());
 		}
 	}
+=======
+>>>>>>> aesgcm
 }

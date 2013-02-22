@@ -1,12 +1,18 @@
 package com.nimbusds.jose.crypto;
 
 
+<<<<<<< HEAD
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.ProviderException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
+=======
+import java.io.UnsupportedEncodingException;
+
+import com.nimbusds.jose.*;
+>>>>>>> aesgcm
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -42,7 +48,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-02-22)
  */
 public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 
@@ -147,16 +153,27 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 
 				byte[] iv = generateAESGCMIV();
 
-				IvParameterSpec ivParamSpec = new IvParameterSpec(iv);
-				cipherText = Base64URL.encode(aesgcmEncrypt(ivParamSpec, contentEncryptionKey, bytes));
-				parts = new JWECryptoParts(encryptedKey,  Base64URL.encode(iv), cipherText , null);
-				return parts;
+				String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
+				                        encryptedKey.toString() + "." +
+				                        Base64URL.encode(iv).toString();
 
+
+				byte[] authData = authDataString.getBytes("UTF-8");
+
+				
+				AESGCM.Result result = AESGCM.encrypt(contentEncryptionKey, bytes, authData, iv);
+
+				parts = new JWECryptoParts(encryptedKey,  
+					                   Base64URL.encode(iv), 
+					                   Base64URL.encode(result.getCipherText()),
+					                   Base64URL.encode(result.getAuthenticationTag()));
+				return parts;
 			}
 			else{
 				throw new JOSEException("Unsupported encryption method");
 			}
-
+		} catch (UnsupportedEncodingException e) {
+			throw new JOSEException(e.getMessage(), e);
 
 		} catch (InvalidKeyException e) {
 			throw new JOSEException("Invalid Key Exception", e);
@@ -202,8 +219,13 @@ public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
 	 * @return The random 96 bit IV.
 	 */
 	protected byte[] generateAESGCMIV() {
+<<<<<<< HEAD
 
 		byte[] bytes = new byte[12];
+=======
+		
+		byte[] bytes = new byte[AESGCM.IV_BIT_LENGTH];
+>>>>>>> aesgcm
 
 		randomGen.nextBytes(bytes);
 
