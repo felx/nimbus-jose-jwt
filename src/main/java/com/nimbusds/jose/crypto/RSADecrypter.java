@@ -30,7 +30,17 @@ import com.nimbusds.jose.JWEHeaderFilter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 
-
+/**
+ * 
+ * This class is not fully tested and is provided for documentation and development purposes only.
+ * 
+ * See Issue #11
+ * 
+ * @author David Ortiz
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2013-02-21)
+ *
+ */
 public class RSADecrypter extends RSAProvider implements JWEDecrypter {
 	private final String symmetricAlgorithm = "AES";
 

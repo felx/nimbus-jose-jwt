@@ -32,6 +32,12 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
+ * 
+ * This class is not fully tested and is provided for documentation and development purposes only.
+ * 
+ * See Issue #11
+ * 
+ *
  * RSA encrypter.
  *
  * @author David Ortiz
