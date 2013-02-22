@@ -147,12 +147,8 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param old The JWT claims set to copy. Must not be {@code null}.
 	 */
-<<<<<<< HEAD
 	public JWTClaimsSet(final ReadOnlyJWTClaimsSet old) {
-=======
-	public JWTClaimsSet(final JWTClaimsSet old) {
-
->>>>>>> origin/code-format-cleanup
+		
 		super();
 		setAllClaims(old.getAllClaims());
 	}
