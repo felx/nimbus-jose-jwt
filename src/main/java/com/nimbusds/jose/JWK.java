@@ -225,7 +225,7 @@ public abstract class JWK implements JSONAware {
 
 	/**
 	 * Parses a JWK from the specified JSON object representation. The JWK 
-	 * must be an {@link ECKey} or an {@link RSAKey}.
+	 * must be an {@link ECKey}, an {@link RSAKey}, or an {@link OctetSequenceKey}.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   {@code null}.
@@ -244,6 +244,8 @@ public abstract class JWK implements JSONAware {
 			return ECKey.parse(jsonObject);
 		} else if (kty == KeyType.RSA) {
 			return RSAKey.parse(jsonObject);
+		} else if (kty == KeyType.OCT) {
+			return OctetSequenceKey.parse(jsonObject);
 		} else {
 			throw new ParseException("Unsupported key type \"kty\" parameter: " + kty, 0);
 		}
