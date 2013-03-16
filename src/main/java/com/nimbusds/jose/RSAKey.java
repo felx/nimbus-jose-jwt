@@ -86,8 +86,25 @@ public final class RSAKey extends JWK {
 		 */
 		public OtherRSAPrimesInfo(Base64URL r, Base64URL d, Base64URL t) {
 
+			if (r == null) {
+
+				throw new IllegalArgumentException("The prime factor must not be null");
+			}
+
 			this.r = r;
+
+			if (d == null) {
+
+				throw new IllegalArgumentException("The factor CRT exponent must not be null");
+			}
+
 			this.d = d;
+
+			if (t == null) {
+
+				throw new IllegalArgumentException("The factor CRT coefficient must not be null");
+			}
+			
 			this.t = t;
 		}
        
