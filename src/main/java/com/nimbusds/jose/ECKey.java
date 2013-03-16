@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Public {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). This class is
+ * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). This class is
  * immutable.
  *
  * <p>Example JSON:
@@ -178,6 +178,11 @@ public final class ECKey extends JWK {
 	 * The 'y' EC coordinate.
 	 */
 	private final Base64URL y;
+	
+	/**
+	 * The 'd' EC coordinate
+	 */
+	private final Base64URL d;
 
 
 	/**
@@ -198,6 +203,32 @@ public final class ECKey extends JWK {
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
 			final Use use, final Algorithm alg, final String kid) {
+		this(crv, x, y, use, alg, kid, null);
+	}
+
+	/**
+	 * Creates a new public/private Elliptic Curve JSON Web Key (JWK) with the 
+	 * specified parameters.
+	 *
+	 * @param crv The cryptographic curve. Must not be {@code null}.
+	 * @param x   The 'x' coordinate for the elliptic curve point. It is 
+	 *            represented as the Base64URL encoding of the coordinate's 
+	 *            big endian representation. Must not be {@code null}.
+	 * @param y   The 'y' coordinate for the elliptic curve point. It is 
+	 *            represented as the Base64URL encoding of the coordinate's 
+	 *            big endian representation. Must not be {@code null}.
+	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
+	 * @param kid The key ID, {@code null} if not specified.
+	 * @param d   The 'd' coordinate for the elliptic curve point. It is 
+	 *            represented as the Base64URL encoding of the coordinate's 
+	 *            big endian representation. May be {@code null} if this is
+	 *            a public key
+	 */
+	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
+			final Use use, final Algorithm alg, final String kid, 
+			final Base64URL d) {
 
 		super(KeyType.EC, use, alg, kid);
 
@@ -218,6 +249,8 @@ public final class ECKey extends JWK {
 		}
 
 		this.y = y;
+		
+		this.d = d;
 	}
 
 
@@ -257,6 +290,19 @@ public final class ECKey extends JWK {
 		return y;
 	}
 
+	
+	/**
+	 * Gets the 'd' coordinate for the elliptic curve point. It is 
+	 * represented as the Base64URL encoding of the coordinate's big endian 
+	 * representation.
+	 *
+	 * @return The 'd' coordinate.
+	 */
+	public Base64URL getD() {
+
+		return d;
+	
+	}
 
 	@Override
 	public JSONObject toJSONObject() {
@@ -268,6 +314,10 @@ public final class ECKey extends JWK {
 		o.put("x", x.toString());
 		o.put("y", y.toString());
 
+		if (d != null) {
+			o.put("d", d.toString());
+		}
+		
 		return o;
 	}
 
@@ -293,6 +343,12 @@ public final class ECKey extends JWK {
 		Base64URL x = new Base64URL(JSONObjectUtils.getString(jsonObject, "x"));
 		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
 
+		// optional private key
+		Base64URL d = null;
+		if (jsonObject.get("d") != null) {
+			d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
+		}
+		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
@@ -300,13 +356,13 @@ public final class ECKey extends JWK {
 		Algorithm alg = JWK.parseAlgorithm(jsonObject);
 
 		// Get optional key ID
-		String id = JWK.parseKeyID(jsonObject);
+		String kid = JWK.parseKeyID(jsonObject);
 
 		// Check key type
 		if (kty != KeyType.EC) {
 			throw new ParseException("The key type \"kty\" must be EC", 0);
 		}
 
-		return new ECKey(crv, x, y, use, alg, id);
+		return new ECKey(crv, x, y, use, alg, kid, d);
 	}
 }

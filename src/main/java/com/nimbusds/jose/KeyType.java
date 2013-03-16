@@ -53,6 +53,11 @@ public final class KeyType implements JSONAware {
 
 
 	/**
+	 * Octet sequence key type (optional)
+	 */
+	public static final KeyType OCT = new KeyType("oct", Requirement.OPTIONAL);
+	
+	/**
 	 * Creates a new key type with the specified value and implementation 
 	 * requirement.
 	 *
