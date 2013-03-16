@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version $version$ (2013-03-15)
  */
 @Immutable
-public class OctetSequenceKey extends JWK {
+public class SymmetricKey extends JWK {
 
 
 	/**
@@ -51,7 +51,7 @@ public class OctetSequenceKey extends JWK {
 	 *            encoding of value's big endian representation. Must not 
 	 *            be {@code null}.
 	 */
-	public OctetSequenceKey(final Use use, final Algorithm alg, final String kid, final Base64URL k) {
+	public SymmetricKey(final Use use, final Algorithm alg, final String kid, final Base64URL k) {
 	
 		super(KeyType.OCT, use, alg, kid);
 
@@ -98,7 +98,7 @@ public class OctetSequenceKey extends JWK {
 	 * @throws ParseException If the JSON object couldn't be parsed to 
 	 *                        valid symmetric JWK.
 	 */
-	public static OctetSequenceKey parse(final JSONObject jsonObject) 
+	public static SymmetricKey parse(final JSONObject jsonObject) 
 		throws ParseException {
 
 		// Parse the mandatory parameters first
@@ -120,6 +120,6 @@ public class OctetSequenceKey extends JWK {
 			throw new ParseException("The key type \"kty\" must be oct", 0);
 		}
 
-		return new OctetSequenceKey(use, alg, kid, k);
+		return new SymmetricKey(use, alg, kid, k);
 	}
 }
