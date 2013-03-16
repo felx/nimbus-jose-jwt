@@ -35,7 +35,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @author Justin Richer
+ * @version $version$ (2013-03-15)
  */
 public abstract class JWK implements JSONAware {
 

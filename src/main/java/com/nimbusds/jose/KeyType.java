@@ -9,20 +9,22 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * Key type. Used to represent the {@code kty} parameter in JSON Web Keys 
- * (JWKs). This class is immutable.
+ * Key type. Used to represent the {@code kty} parameter in a JSON Web Key
+ * (JWK). This class is immutable.
  *
  * <p>Includes constants for the following standard key types:
  *
  * <ul>
  *     <li>{@link #EC}
  *     <li>{@link #RSA}
+ *     <li>{@link #OCT}
  * </ul>
  *
  * <p>Additional key types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @author Justin Richer
+ * @version $version$ (2013-03-15)
  */
 @Immutable
 public final class KeyType implements JSONAware {
@@ -57,6 +59,7 @@ public final class KeyType implements JSONAware {
 	 */
 	public static final KeyType OCT = new KeyType("oct", Requirement.OPTIONAL);
 	
+
 	/**
 	 * Creates a new key type with the specified value and implementation 
 	 * requirement.

@@ -4,6 +4,7 @@ package com.nimbusds.jose;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -11,10 +12,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). This class is
- * immutable.
+ * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). 
+ * This class is immutable.
  *
- * <p>Example JSON:
+ * <p>Example JSON object representation of a public EC JWK:
  * 
  * <pre>
  * {
@@ -30,7 +31,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @author Justin Richer
+ * @version $version$ (2013-03-15)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -48,8 +50,8 @@ public final class ECKey extends JWK {
 	 *     <li>{@link #P_521}
 	 * </ul>
 	 *
-	 * <p>See "Digital Signature Standard (DSS)", FIPS PUB 186-3, June 2009,
-	 * National Institute of Standards and Technology (NIST).
+	 * <p>See "Digital Signature Standard (DSS)", FIPS PUB 186-3, June 
+	 * 2009, National Institute of Standards and Technology (NIST).
 	 */
 	@Immutable
 	public static class Curve {
@@ -169,18 +171,19 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * The 'x' EC coordinate.
+	 * The public 'x' EC coordinate.
 	 */
 	private final Base64URL x;
 
 
 	/**
-	 * The 'y' EC coordinate.
+	 * The public 'y' EC coordinate.
 	 */
 	private final Base64URL y;
 	
+
 	/**
-	 * The 'd' EC coordinate
+	 * The private 'd' EC coordinate
 	 */
 	private final Base64URL d;
 
@@ -202,13 +205,15 @@ public final class ECKey extends JWK {
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-			final Use use, final Algorithm alg, final String kid) {
+		     final Use use, final Algorithm alg, final String kid) {
+
 		this(crv, x, y, use, alg, kid, null);
 	}
 
+
 	/**
-	 * Creates a new public/private Elliptic Curve JSON Web Key (JWK) with the 
-	 * specified parameters.
+	 * Creates a new public / private Elliptic Curve JSON Web Key (JWK) 
+	 * with the specified parameters.
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
 	 * @param x   The 'x' coordinate for the elliptic curve point. It is 
@@ -224,11 +229,11 @@ public final class ECKey extends JWK {
 	 * @param d   The 'd' coordinate for the elliptic curve point. It is 
 	 *            represented as the Base64URL encoding of the coordinate's 
 	 *            big endian representation. May be {@code null} if this is
-	 *            a public key
+	 *            a public key.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-			final Use use, final Algorithm alg, final String kid, 
-			final Base64URL d) {
+		     final Use use, final Algorithm alg, final String kid, 
+		     final Base64URL d) {
 
 		super(KeyType.EC, use, alg, kid);
 
@@ -266,7 +271,7 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Gets the 'x' coordinate for the elliptic curve point. It is 
+	 * Gets the public 'x' coordinate for the elliptic curve point. It is 
 	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
@@ -279,7 +284,7 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Gets the 'y' coordinate for the elliptic curve point. It is 
+	 * Gets the public 'y' coordinate for the elliptic curve point. It is 
 	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
@@ -292,17 +297,18 @@ public final class ECKey extends JWK {
 
 	
 	/**
-	 * Gets the 'd' coordinate for the elliptic curve point. It is 
+	 * Gets the private 'd' coordinate for the elliptic curve point. It is 
 	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
-	 * @return The 'd' coordinate.
+	 * @return The 'd' coordinate, {@code null} if not specified (for a 
+	 *         public key).
 	 */
 	public Base64URL getD() {
 
 		return d;
-	
 	}
+
 
 	@Override
 	public JSONObject toJSONObject() {
@@ -323,19 +329,19 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Parses an Elliptic Curve JWK from the specified JSON object 
-	 * representation.
+	 * Parses a public / private Elliptic Curve JWK from the specified JSON
+	 * object representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   {@code null}.
 	 *
-	 * @return The Elliptic Curve JWK.
+	 * @return The public / private Elliptic Curve JWK.
 	 *
 	 * @throws ParseException If the JSON object couldn't be parsed to a 
 	 *                        valid Elliptic Curve JWK.
 	 */
 	public static ECKey parse(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		// Parse the mandatory parameters first
 		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
