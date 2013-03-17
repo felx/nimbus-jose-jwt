@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-17)
  */
 public abstract class JWK implements JSONAware {
 
@@ -208,7 +208,7 @@ public abstract class JWK implements JSONAware {
 
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 
-	 * The JWK must be an {@link ECKey} or an {@link RSAKey}.
+	 * The JWK must be an {@link ECPublicKey} or an {@link RSAPublicKey}.
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
@@ -226,7 +226,7 @@ public abstract class JWK implements JSONAware {
 
 	/**
 	 * Parses a JWK from the specified JSON object representation. The JWK 
-	 * must be an {@link ECKey}, an {@link RSAKey}, or a 
+	 * must be an {@link ECPublicKey}, an {@link RSAPublicKey}, or a 
 	 * {@link SymmetricKey}.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
@@ -244,11 +244,11 @@ public abstract class JWK implements JSONAware {
 
 		if (kty == KeyType.EC) {
 			
-			return ECKey.parse(jsonObject);
+			return ECPublicKey.parse(jsonObject);
 
 		} else if (kty == KeyType.RSA) {
 			
-			return RSAKey.parse(jsonObject);
+			return RSAPublicKey.parse(jsonObject);
 
 		} else if (kty == KeyType.OCT) {
 			

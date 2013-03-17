@@ -8,7 +8,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2013-03-17)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
@@ -36,7 +36,7 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 * @return The Ephemeral Public Key parameter, {@code null} if not 
 	 *         specified.
 	 */
-	public ECKey getEphemeralPublicKey();
+	public ECPublicKey getEphemeralPublicKey();
 
 
 	/**

@@ -50,7 +50,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-03-17)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -97,7 +97,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	/**
 	 * The ephemeral public key ({@code epk}) parameter.
 	 */
-	private ECKey epk;
+	private ECPublicKey epk;
 
 
 	/**
@@ -174,7 +174,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 
 	@Override
-	public ECKey getEphemeralPublicKey() {
+	public ECPublicKey getEphemeralPublicKey() {
 
 		return epk;
 	}
@@ -186,7 +186,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 * @param epk The Ephemeral Public Key parameter, {@code null} if not 
 	 *            specified.
 	 */
-	public void setEphemeralPublicKey(final ECKey epk) {
+	public void setEphemeralPublicKey(final ECPublicKey epk) {
 
 		this.epk = epk;
 	}
@@ -460,7 +460,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			} else if (name.equals("enc")) {
 				continue; // skip
 			} else if (name.equals("epk")) {
-				h.setEphemeralPublicKey(ECKey.parse(JSONObjectUtils.getJSONObject(json, name)));
+				h.setEphemeralPublicKey(ECPublicKey.parse(JSONObjectUtils.getJSONObject(json, name)));
 			} else if (name.equals("zip")) {
 				h.setCompressionAlgorithm(new CompressionAlgorithm(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("typ")) {
