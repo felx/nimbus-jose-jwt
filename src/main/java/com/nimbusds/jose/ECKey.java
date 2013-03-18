@@ -1,6 +1,10 @@
 package com.nimbusds.jose;
 
 
+import java.security.KeyPair;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECPublicKeySpec;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
@@ -309,6 +313,35 @@ public final class ECKey extends JWK {
 		return d;
 	}
 
+	/**
+	 * Gets a copy of the public key represented by this JWK.
+	 * 
+	 * @throws UnsupportedOperationException - not yet implemented
+	 */
+	public ECPublicKey toECPublicKey() {
+		// TODO
+		throw new UnsupportedOperationException("Not yet implemented.");
+	}
+	
+	/**
+	 * Gets a copy of the public key represented by this JWK.
+	 * 
+	 * @throws UnsupportedOperationException - not yet implemented
+	 */
+	public ECPrivateKey toECprivateKey() {
+		// TODO
+		throw new UnsupportedOperationException("Not yet implemented.");
+	}
+	
+	/**
+	 * Returns the EC public and private keys represented by this object.
+	 * 
+	 * @return the EC key pair
+	 */
+	public KeyPair toKeyPair() {
+		return new KeyPair(toECPublicKey(), toECprivateKey());		
+	}
+	
 
 	@Override
 	public JSONObject toJSONObject() {
@@ -344,11 +377,16 @@ public final class ECKey extends JWK {
 		throws ParseException {
 
 		// Parse the mandatory parameters first
-		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Curve crv = Curve.parse(JSONObjectUtils.getString(jsonObject, "crv"));
 		Base64URL x = new Base64URL(JSONObjectUtils.getString(jsonObject, "x"));
 		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
 
+		// Check key type
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+		if (kty != KeyType.EC) {
+			throw new ParseException("The key type \"kty\" must be EC", 0);
+		}
+		
 		// optional private key
 		Base64URL d = null;
 		if (jsonObject.get("d") != null) {
@@ -363,11 +401,6 @@ public final class ECKey extends JWK {
 
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
-
-		// Check key type
-		if (kty != KeyType.EC) {
-			throw new ParseException("The key type \"kty\" must be EC", 0);
-		}
 
 		return new ECKey(crv, x, y, use, alg, kid, d);
 	}

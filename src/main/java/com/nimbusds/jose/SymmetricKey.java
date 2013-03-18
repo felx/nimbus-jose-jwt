@@ -73,6 +73,16 @@ public class SymmetricKey extends JWK {
 
 		return k;
 	}
+	
+	
+	/**
+	 * Returns a copy of the symmetric key value as a byte array.
+	 * 
+	 * @return the key value
+	 */
+	public byte[] toByteArray() {
+		return getKeyValue().decode();
+	}
 
 
 	@Override
@@ -102,10 +112,14 @@ public class SymmetricKey extends JWK {
 		throws ParseException {
 
 		// Parse the mandatory parameters first
-		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Base64URL k = new Base64URL(JSONObjectUtils.getString(jsonObject, "k"));
-		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
 
+		// Check key type
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+		if (kty != KeyType.OCT) {
+			throw new ParseException("The key type \"kty\" must be oct", 0);
+		}
+		
 		// Get optional key use
 		Use use = JWK.parseKeyUse(jsonObject);
 
@@ -115,10 +129,6 @@ public class SymmetricKey extends JWK {
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
 
-		// Check key type
-		if (kty != KeyType.OCT) {
-			throw new ParseException("The key type \"kty\" must be oct", 0);
-		}
 
 		return new SymmetricKey(use, alg, kid, k);
 	}

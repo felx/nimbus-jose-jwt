@@ -208,7 +208,8 @@ public abstract class JWK implements JSONAware {
 
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 
-	 * The JWK must be an {@link ECKey} or an {@link RSAKey}.
+	 * The JWK must be an {@link ECKey}, an {@link RSAKey}, or a 
+	 * {@link SymmetricKey}.
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *

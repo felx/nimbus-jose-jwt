@@ -1,13 +1,21 @@
 package com.nimbusds.jose;
 
 
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import net.jcip.annotations.Immutable;
-
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -224,14 +232,16 @@ public final class RSAKey extends JWK {
 	public RSAKey(final Base64URL n, final Base64URL e, final Use use, 
 		      final Algorithm alg, final String kid) {
 
-		// call the full constructor, but null out all private key parts
-		this(n, e, use, alg, kid, null, null, null, null, null, null, null);
+		// call the full constructor
+		// all private key parameters are null
+		this(n, e, null, null, null, null, null, null, null, use, alg, kid);
 	}
 
 
 	/**
 	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
-	 * specified parameters.
+	 * specified parameters. The private RSA key is specified by its first
+	 * representation (see RFC 3447, section 3.2).
 	 * 
 	 * @param n   The the modulus value for the RSA public key. It is
 	 *            represented as the Base64URL encoding of value's big 
@@ -239,41 +249,140 @@ public final class RSAKey extends JWK {
 	 * @param e   The exponent value for the RSA public key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
+	 * @param d   The private exponent. It is represented as the Base64URL 
+	 *            encoding of the value's big endian representation. Must 
+	 *            not be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
 	 *            not specified.
-	 * @param kid The key ID. {@code null} if not specified.
-	 * @param d   The private exponent of the private key. It is 
+	 * @param kid The key ID, {@code null} if not specified.
+	 */
+	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
+		          final Use use, final Algorithm alg, final String kid) {
+	    
+		// call the full constructor
+		// The first second representation parameters are all null
+		this(n, e, d, null, null, null, null, null, null, use, alg, kid);
+
+		if (d == null) {
+			throw new IllegalArgumentException("The private exponent must not be null");
+		}
+			
+	}
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
+	 * specified parameters. The private RSA key is specified by its
+	 * second representation (see RFC 3447, section 3.2).
+	 * 
+	 * @param n   The the modulus value for the RSA public key. It is
+	 *            represented as the Base64URL encoding of value's big 
+	 *            endian representation. Must not be {@code null}.
+	 * @param e   The exponent value for the RSA public key. It is 
+	 *            represented as the Base64URL encoding of value's big 
+	 *            endian representation. Must not be {@code null}.
+	 * @param p   The first prime factor. It is represented as the 
+	 *            Base64URL encoding of the value's big endian 
+	 *            representation. Must not be {@code null}.
+	 * @param q   The second prime factor. It is represented as the 
+	 *            Base64URL encoding of the value's big endian 
+	 *            representation. Must not be {@code null}.
+	 * @param dp  The first factor Chinese Remainder Theorem exponent. It 
+	 *            is represented as the Base64URL encoding of the value's 
+	 *            big endian representation. Must not be {@code null}.
+	 * @param dq  The second factor Chinese Remainder Theorem exponent. It 
+	 *            is represented as the Base64URL encoding of the value's 
+	 *            big endian representation. Must not be {@code null}.
+	 * @param qi  The first Chinese Remainder Theorem coefficient. It is 
 	 *            represented as the Base64URL encoding of the value's big 
-	 *            endian representation. May be {@code null}.
-	 * @param p   The first prime factor of the private key. It is 
-	 *            represented as the Base64URL encoding of the value's big 
-	 *            endian representation. May be {@code null}.
-	 * @param q   The second prime factor of the private key. It is 
-	 *            represented as the Base64URL encoding of the value's big 
-	 *            endian representation. May be {@code null}.
-	 * @param dp  The first factor Chinese Remainder Theorem exponent of 
-	 *            the private key. It is represented as the Base64URL 
-	 *            encoding of the value's big endian representation. May be
-	 *            {@code null}.
-	 * @param dq  The second factor Chinese Remainder Theorem exponent of 
-	 *            the private key. It is represented as the Base64URL 
-	 *            encoding of the value's big endian representation. May be
-	 *            {@code null}.
-	 * @param qi  The first Chinese Remainder Theorem coefficient of the 
-	 *            private key. It is represented as the Base64URL encoding
-	 *            of the value's big endian representation. May be 
-	 *            {@code null}.
-	 * @param oth The other primes information, should they exist. May be
-	 *            {@code null} or an empty list if none exist.
+	 *            endian representation. Must not be {@code null}.
+	 * @param oth The other primes information, should they exist,
+	 *            {@code null} or an empty list if not specified.
+	 * @param use The key use. {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
+	 *            not specified.
+	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
-		      final Use use, final Algorithm alg, final String kid, 
-		      final Base64URL d, final Base64URL p, final Base64URL q, 
-		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
-		      final List<OtherRSAPrimesInfo> oth) {
+		          final Base64URL p, final Base64URL q, 
+		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
+		          final List<OtherRSAPrimesInfo> oth,
+		          final Use use, final Algorithm alg, final String kid) {
+	    
+		// call the full constructor
+		// The first representation d param is null
+		this(n, e, null, p, q, dp, dq, qi, oth, use, alg, kid);
+
+		// catch inconsistencies
+		if (p == null) {
+			throw new IllegalArgumentException("The first prime factor must not be null");
+		}
+
+		if (q == null) {
+			throw new IllegalArgumentException("The second prime factor must not be null");
+		}
+
+		if (dp == null) {
+			throw new IllegalArgumentException("The first factor CRT exponent must not be null");
+		}
+
+		if (dq == null) {
+			throw new IllegalArgumentException("The second factor CRT exponent must not be null");
+		}
+
+		if (qi == null) {
+			throw new IllegalArgumentException("The first CRT coefficient must not be null");
+		}
+	}
+
+
+	/**
+	 * Helper constructor for building all possible variants of the RSA
+	 * Key JWK.
+	 * 
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
+	 * specified parameters. The private RSA key is specified by its first
+	 * and second representations (see RFC 3447, section 3.2).
+	 * 
+	 * @param n   The the modulus value for the RSA public key. It is
+	 *            represented as the Base64URL encoding of value's big 
+	 *            endian representation. Must not be {@code null}.
+	 * @param e   The exponent value for the RSA public key. It is 
+	 *            represented as the Base64URL encoding of value's big 
+	 *            endian representation. Must not be {@code null}.
+	 * @param d   The private exponent. It is represented as the Base64URL 
+	 *            encoding of the value's big endian representation. May 
+	 *            be {@code null}.
+	 * @param p   The first prime factor. It is represented as the 
+	 *            Base64URL encoding of the value's big endian 
+	 *            representation. May be {@code null}.
+	 * @param q   The second prime factor. It is represented as the 
+	 *            Base64URL encoding of the value's big endian 
+	 *            representation. May be {@code null}.
+	 * @param dp  The first factor Chinese Remainder Theorem exponent. It 
+	 *            is represented as the Base64URL encoding of the value's 
+	 *            big endian representation. May be {@code null}.
+	 * @param dq  The second factor Chinese Remainder Theorem exponent. It 
+	 *            is represented as the Base64URL encoding of the value's 
+	 *            big endian representation. May be {@code null}.
+	 * @param qi  The first Chinese Remainder Theorem coefficient. It is 
+	 *            represented as the Base64URL encoding of the value's big 
+	 *            endian representation. May be {@code null}.
+	 * @param oth The other primes information, should they exist,
+	 *            {@code null} or an empty list if not specified.
+	 * @param use The key use. {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
+	 *            not specified.
+	 * @param kid The key ID, {@code null} if not specified.
+	 */
+	private RSAKey(final Base64URL n, final Base64URL e, 
+		          final Base64URL d, final Base64URL p, final Base64URL q, 
+		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
+		          final List<OtherRSAPrimesInfo> oth,
+		          final Use use, final Algorithm alg, final String kid) {
 	    
 		super(KeyType.RSA, use, alg, kid);
+
 
 		if (n == null) {
 			throw new IllegalArgumentException("The modulus value must not be null");
@@ -281,35 +390,28 @@ public final class RSAKey extends JWK {
 
 		this.n = n;
 
+
 		if (e == null) {
 			throw new IllegalArgumentException("The exponent value must not be null");
 		}
 
 		this.e = e;
 
-		// private key components might be null, 
-		// depending on which flavor is used (I think)	    
-
+		// the legality of these parameters are checked by their respective constructors
 		this.d = d;
-
 		this.p = p;
-
 		this.q = q;
-
 		this.dp = dp;
-
 		this.dq = dq;
-
 		this.qi = qi;
-
 		// the other keys are always a valid list, but might be empty
 		if (oth != null) {
 			this.oth = Collections.unmodifiableList(oth);
 		} else {
 			this.oth = Collections.emptyList();
 		}
+		
 	}
-
 
 	/**
 	 * Returns the modulus value of the public RSA key. It is represented
@@ -428,6 +530,140 @@ public final class RSAKey extends JWK {
 		return oth;
 	}
 
+	
+	/**
+	 * Creates a copy of the RSA public key represented by this JWK object as
+	 * a native java.security.PublicKey API object.
+	 * 
+	 * @return The RSA public key.
+	 * @throws NoSuchAlgorithmException
+	 *             If the underlying system cannot create an RSA key factory
+	 * @throws InvalidKeySpecException
+	 *             If the key data represented here cannot be made into a valid
+	 *             RSA key.
+	 */
+	public RSAPublicKey toRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		byte[] modulusByte = getModulus().decode();
+		BigInteger modulus = new BigInteger(1, modulusByte);
+		byte[] exponentByte = getExponent().decode();
+		BigInteger exponent = new BigInteger(1, exponentByte);
+				
+		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
+		KeyFactory factory = KeyFactory.getInstance("RSA");
+		
+		RSAPublicKey pub = (RSAPublicKey) factory.generatePublic(spec);
+		
+		return pub;
+	}
+	
+	/**
+	 * Creates a copy of the RSA private key represented by this JWK object as
+	 * a native java.security.PrivateKey API object.
+	 * 
+	 * @return The RSA private key, or null if no private exponent is defined on this key.
+	 * @throws NoSuchAlgorithmException
+	 *             If the underlying system cannot create an RSA key factory
+	 * @throws InvalidKeySpecException
+	 *             If the key data represented here cannot be made into a valid
+	 *             RSA key.
+	 */
+	public RSAPrivateKey toRSAPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		
+		if (d == null) {
+			// no private key
+			return null;
+		}
+		
+		byte[] modulusByte = getModulus().decode();
+		BigInteger modulus = new BigInteger(1, modulusByte);		
+		byte[] privateExponentByte = getPrivateExponent().decode();
+		BigInteger privateExponent = new BigInteger(1, privateExponentByte);
+		
+		// uses plain private exponent form
+		// TODO: add support for CRT-based parameter form
+		RSAPrivateKeySpec spec = new RSAPrivateKeySpec(modulus, privateExponent);
+		KeyFactory factory = KeyFactory.getInstance("RSA");
+		
+		RSAPrivateKey priv = (RSAPrivateKey) factory.generatePrivate(spec);
+		
+		return priv;
+	}
+
+	
+	/**
+	 * Creates a copy of the RSA public and private keys represented by this JWK object as
+	 * a native java.security.KeyPair API object.
+	 * 
+	 * @return The RSA private key.
+	 * @throws NoSuchAlgorithmException
+	 *             If the underlying system cannot create an RSA key factory
+	 * @throws InvalidKeySpecException
+	 *             If the key data represented here cannot be made into a valid
+	 *             RSA key.
+	 */
+	public KeyPair toKeyPair() throws NoSuchAlgorithmException, InvalidKeySpecException {
+		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
+	}
+
+	/**
+	 * Creates a new public RSA JSON Web Key (JWK) with the specified
+	 * parameters.
+	 * 
+	 * @param pub
+	 *            The RSA Public Key to represent. Must not be {@code null}.
+	 * @param use
+	 *            The key use. {@code null} if not specified.
+	 * @param alg
+	 *            The intended JOSE algorithm for the key, {@code null} if not
+	 *            specified.
+	 * @param kid
+	 *            The key ID. {@code null} if not specified.
+	 */
+	public static RSAKey fromRSAPublicKey(final RSAPublicKey pub,
+		      final Use use, final Algorithm alg, final String kid 
+			) {
+		
+		if (pub == null) {
+			throw new IllegalArgumentException("Public key must not be null.");
+		}
+		
+		return new RSAKey(Base64URL.encode(pub.getModulus().toByteArray()), Base64URL.encode(pub.getPublicExponent().toByteArray()), 
+				use, alg, kid);
+	}
+
+	/**
+	 * Creates a new public/private RSA JSON Web Key (JWK) with the specified
+	 * parameters.
+	 * 
+	 * @param pub
+	 *            The RSA Public Key to represent. Must not be {@code null}.
+	 * @param priv
+	 *            The RSA Private Key to represent. Must not be {@code null}.
+	 * @param use
+	 *            The key use. {@code null} if not specified.
+	 * @param alg
+	 *            The intended JOSE algorithm for the key, {@code null} if not
+	 *            specified.
+	 * @param kid
+	 *            The key ID. {@code null} if not specified.
+	 */
+	public static RSAKey fromRSAPublicPrivateKey(final RSAPublicKey pub, final RSAPrivateKey priv,
+		      final Use use, final Algorithm alg, final String kid 
+			) {
+		
+		if (pub == null) {
+			throw new IllegalArgumentException("Public key must not be null.");
+		}
+		
+		if (priv == null) {
+			throw new IllegalArgumentException("Private key must not be null.");
+		}
+		
+		return new RSAKey(Base64URL.encode(pub.getModulus().toByteArray()), Base64URL.encode(pub.getPublicExponent().toByteArray()), 
+				Base64URL.encode(priv.getPrivateExponent().toByteArray()),
+				use, alg, kid);
+	}
+	
 
 	@Override
 	public JSONObject toJSONObject() {
@@ -492,10 +728,14 @@ public final class RSAKey extends JWK {
 			throws ParseException {
 
 		// Parse the mandatory public key parameters first
-		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 		Base64URL n = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
 		Base64URL e = new Base64URL(JSONObjectUtils.getString(jsonObject, "e"));
 
+		// Check key type
+		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+		if (kty != KeyType.RSA) {
+			throw new ParseException("The key type \"kty\" must be RSA", 0);
+		}
 		
 		// parse the optional private key parameters
 		Base64URL d = null;
@@ -553,11 +793,6 @@ public final class RSAKey extends JWK {
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
 
-		// Check key type
-		if (kty != KeyType.RSA) {
-			throw new ParseException("The key type \"kty\" must be RSA", 0);
-		}
-
-		return new RSAKey(n, e, use, alg, kid, d, p, q, dp, dq, qi, oth);
+		return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, alg, kid);
 	}
 }
