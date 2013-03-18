@@ -343,6 +343,15 @@ public final class ECKey extends JWK {
 		return new KeyPair(toECPublicKey(), toECprivateKey());		
 	}
 	
+	/**
+	 * Creates a copy of this ECKey object with any private values removed.
+	 * @return the copied public EC key
+	 */
+	@Override
+	public ECKey toPublicJWK() {
+		return new ECKey(getCurve(), getX(), getY(), getKeyUse(), getAlgorithm(), getKeyID());
+	}
+	
 
 	@Override
 	public JSONObject toJSONObject() {

@@ -206,6 +206,12 @@ public abstract class JWK implements JSONAware {
 		return toJSONObject().toString();
 	}
 
+	/**
+	 * Create a copy of this JWK with all private or sensitive keys removed.
+	 * 
+	 * @return the newly-created public JWK, or {@code null} if none can be created.
+	 */
+	public abstract JWK toPublicJWK();
 
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 

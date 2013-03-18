@@ -86,6 +86,16 @@ public class SymmetricKey extends JWK {
 	}
 
 
+	/**
+	 * Symmetric keys are never considered public, this function always returns null.
+	 * @return {@code null}
+	 */
+	@Override
+	public SymmetricKey toPublicJWK() {
+		return null;
+	}
+	
+
 	@Override
 	public JSONObject toJSONObject() {
 

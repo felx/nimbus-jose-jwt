@@ -590,7 +590,6 @@ public final class RSAKey extends JWK {
 		return priv;
 	}
 
-	
 	/**
 	 * Creates a copy of the RSA public and private keys represented by this JWK object as
 	 * a native java.security.KeyPair API object.
@@ -606,6 +605,15 @@ public final class RSAKey extends JWK {
 		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
 	}
 
+	/**
+	 * Creates a copy of this RSAKey object with any private values removed.
+	 * @return the copied public RSA key
+	 */
+	@Override
+	public RSAKey toPublicJWK() {
+		return new RSAKey(getModulus(), getExponent(), getKeyUse(), getAlgorithm(), getKeyID());
+	}
+	
 	/**
 	 * Creates a new public RSA JSON Web Key (JWK) with the specified
 	 * parameters.
@@ -665,7 +673,7 @@ public final class RSAKey extends JWK {
 				use, alg, kid);
 	}
 	
-
+	
 	@Override
 	public JSONObject toJSONObject() {
 
