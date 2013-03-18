@@ -61,7 +61,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 @Immutable
 public final class RSAKeyPair extends RSAPublicKey {
@@ -521,6 +521,18 @@ public final class RSAKeyPair extends RSAPublicKey {
 	public List<OtherPrimesInfo> getOtherPrimes() {
 
 		return oth;
+	}
+
+
+	/**
+	 * Gets the public RSA JWK.
+	 *
+	 * @return The public RSA JWK.
+	 */
+	public RSAPublicKey getRSAPublicKey() {
+
+		return new RSAPublicKey(getModulus(), getExponent(),
+			                getKeyUse(), getAlgorithm(), getKeyID());
 	}
 
 

@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 @Immutable
 public final class ECKeyPair extends ECPublicKey {
@@ -89,6 +89,18 @@ public final class ECKeyPair extends ECPublicKey {
 	public Base64URL getD() {
 
 		return d;
+	}
+
+
+	/**
+	 * Gets the public Elliptic Curve JWK.
+	 *
+	 * @return The public Elliptic Curve JWK.
+	 */
+	public ECPublicKey getECPublicKey() {
+
+		return new ECPublicKey(getCurve(), getX(), getY(), 
+			               getKeyUse(), getAlgorithm(), getKeyID());
 	}
 
 
