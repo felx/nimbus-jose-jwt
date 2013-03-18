@@ -38,7 +38,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 public abstract class JWK implements JSONAware {
 
@@ -209,15 +209,22 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Parses a JWK from the specified JSON object string representation. 
-	 * The JWK must be an {@link ECPublicKey} or an {@link RSAPublicKey}.
+	 * Parses a JWK from the specified JSON object string representation.
+	 * 
+	 * <p>The JWK must represent one of the following:
+	 *
+	 * <ul>
+	 *     <li>{@link ECPublicKey} or {@link ECKeyPair}.
+	 *     <li>{@link RSAPublicKey} or {@link RSAKeyPair}.
+	 *     <li>{@link SymmetricKey}.
+	 * </ul>
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
 	 * @return The JWK.
 	 *
-	 * @throws ParseException If the string couldn't be parsed to valid and
-	 *                        supported JWK.
+	 * @throws ParseException If the JSON object string couldn't be parsed 
+	 *                        to a supported JWK.
 	 */
 	public static JWK parse(final String s)
 			throws ParseException {
@@ -227,9 +234,15 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Parses a JWK from the specified JSON object representation. The JWK 
-	 * must be an {@link ECPublicKey}, an {@link RSAPublicKey}, or a 
-	 * {@link SymmetricKey}.
+	 * Parses a JWK from the specified JSON object representation.
+	 * 
+	 * <p>The JWK must represent one of the following:
+	 *
+	 * <ul>
+	 *     <li>{@link ECPublicKey} or {@link ECKeyPair}.
+	 *     <li>{@link RSAPublicKey} or {@link RSAKeyPair}.
+	 *     <li>{@link SymmetricKey}.
+	 * </ul>
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   {@code null}.
@@ -237,7 +250,7 @@ public abstract class JWK implements JSONAware {
 	 * @return The JWK.
 	 *
 	 * @throws ParseException If the JSON object couldn't be parsed to a 
-	 *                        valid and supported JWK.
+	 *                        supported JWK.
 	 */
 	public static JWK parse(final JSONObject jsonObject)
 			throws ParseException {
@@ -246,11 +259,28 @@ public abstract class JWK implements JSONAware {
 
 		if (kty == KeyType.EC) {
 			
-			return ECPublicKey.parse(jsonObject);
+			// Test for private 'd' EC coordinate
+			if (jsonObject.containsKey("d")) {
+
+				return ECKeyPair.parse(jsonObject);
+
+			} else {
+
+				return ECPublicKey.parse(jsonObject);
+			}
 
 		} else if (kty == KeyType.RSA) {
 			
-			return RSAPublicKey.parse(jsonObject);
+			// Test for private exponent (from first private key representation)
+			// or first prime factor (second private key representation)
+			if (jsonObject.containsKey("d") || jsonObject.containsKey("p")) {
+
+				return RSAKeyPair.parse(jsonObject);
+
+			} else {
+
+				return RSAPublicKey.parse(jsonObject);	
+			}
 
 		} else if (kty == KeyType.OCT) {
 			

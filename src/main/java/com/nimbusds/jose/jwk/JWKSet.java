@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-03-18)
  */
 public class JWKSet {
 
@@ -152,7 +152,7 @@ public class JWKSet {
 
 		JSONArray a = new JSONArray();
 
-		for (final JWK key: keys) {
+		for (JWK key: keys) {
 
 			a.add(key.toJSONObject());
 		}

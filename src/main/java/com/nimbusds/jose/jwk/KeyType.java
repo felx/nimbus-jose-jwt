@@ -130,8 +130,8 @@ public final class KeyType implements JSONAware {
 	public boolean equals(final Object object) {
 
 		return object != null && 
-				object instanceof KeyType && 
-				this.toString().equals(object.toString());
+		       object instanceof KeyType && 
+		       this.toString().equals(object.toString());
 	}
 
 
@@ -181,11 +181,17 @@ public final class KeyType implements JSONAware {
 			throw new IllegalArgumentException("The ket type string must not be null");
 		}
 
+
 		if (s.equals(EC.getValue())) {
+
 			return EC;
+
 		} else if (s.equals(RSA.getValue())) {
+
 			return RSA;
+
 		} else {
+			
 			return new KeyType(s, null);
 		}
 	}
