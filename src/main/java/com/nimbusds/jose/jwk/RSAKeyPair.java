@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.jwk;
 
 
 import java.text.ParseException;
@@ -10,6 +10,8 @@ import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
+
+import com.nimbusds.jose.Algorithm;
 
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;

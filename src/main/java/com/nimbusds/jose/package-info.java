@@ -11,7 +11,6 @@
  *         objects}.
  *     <li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) 
  *         objects}.
- *     <li>{@link com.nimbusds.jose.JWK JSON Web Key (JWK) objects}.
  * </ul>
  *
  * <p>References:

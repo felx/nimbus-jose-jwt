@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.jwk;
 
 
 import java.text.ParseException;

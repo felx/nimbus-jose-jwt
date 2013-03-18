@@ -8,6 +8,9 @@ import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.jwk.ECPublicKey;
+import com.nimbusds.jose.jwk.JWK;
+
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -50,7 +53,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 

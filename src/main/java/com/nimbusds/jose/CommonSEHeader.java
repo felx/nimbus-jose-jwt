@@ -8,6 +8,8 @@ import java.util.Arrays;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.jwk.JWK;
+
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -31,7 +33,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2013-03-18)
  */
 public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 

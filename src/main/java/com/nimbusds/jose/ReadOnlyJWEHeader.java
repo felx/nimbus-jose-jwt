@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import com.nimbusds.jose.jwk.ECPublicKey;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -8,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
