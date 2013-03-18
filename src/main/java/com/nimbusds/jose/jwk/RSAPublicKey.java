@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-17)
+ * @version $version$ (2013-03-18)
  */
 @Immutable
 public class RSAPublicKey extends JWK {
@@ -120,7 +120,7 @@ public class RSAPublicKey extends JWK {
 
 
 	@Override
-	public JSONObject toJSONObject() {
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
 
 		JSONObject o = super.toJSONObject();
 

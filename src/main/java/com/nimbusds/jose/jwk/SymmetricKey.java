@@ -77,12 +77,15 @@ public class SymmetricKey extends JWK {
 
 
 	@Override
-	public JSONObject toJSONObject() {
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
 
 		JSONObject o = super.toJSONObject();
 
-		// Append key value
-		o.put("k", k.toString());
+		if (includeNonPublicParams) {
+
+			// Append key value
+			o.put("k", k.toString());
+		}
 		
 		return o;
 	}

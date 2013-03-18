@@ -539,10 +539,16 @@ public final class RSAKeyPair extends RSAPublicKey {
 
 
 	@Override
-	public JSONObject toJSONObject() {
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
 
 		JSONObject o = super.toJSONObject();
 
+		if (! includeNonPublicParams) {
+
+			return o;
+		}
+
+		// Include private params
 		if (d != null) {
 			o.put("d", d.toString());
 		}

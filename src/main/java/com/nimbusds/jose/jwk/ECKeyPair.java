@@ -107,11 +107,15 @@ public final class ECKeyPair extends ECPublicKey {
 
 
 	@Override
-	public JSONObject toJSONObject() {
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
 
 		JSONObject o = super.toJSONObject();
 
-		o.put("d", d.toString());
+		if (includeNonPublicParams) {
+
+			o.put("d", d.toString());	
+		}
+		
 		
 		return o;
 	}

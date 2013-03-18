@@ -77,7 +77,7 @@ public abstract class JWK implements JSONAware {
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
-	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid) {
+	protected JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid) {
 
 		if (kty == null) {
 			throw new IllegalArgumentException("The key type \"kty\" must not be null");
@@ -142,8 +142,11 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Returns a JSON object representation of this JWK. This method is 
-	 * intended to be called from extending classes.
+	 * Returns a JSON object representation of this JWK. Sensitive 
+	 * non-public parameters, such as EC and RSA private key parameters or
+	 * symmetric key values, will not be included in the output JSON 
+	 * object. See the alternative {@link #toJSONObject(boolean)} method if
+	 * you wish to include them.
 	 *
 	 * <p>Example:
 	 *
@@ -159,7 +162,40 @@ public abstract class JWK implements JSONAware {
 	 */
 	public JSONObject toJSONObject() {
 
+		return toJSONObject(false);
+	}
+
+
+	/**
+	 * Returns a JSON object representation of this JWK. This method is 
+	 * intended to be called from extending classes.
+	 *
+	 * <p>Example:
+	 *
+	 * <pre>
+	 * {
+	 *   "kty" : "RSA",
+	 *   "use" : "sig",
+	 *   "kid" : "fd28e025-8d24-48bc-a51a-e2ffc8bc274b"
+	 * }
+	 * </pre>
+	 *
+	 * @param includeNonPublicParams Controls the inclusion of sensitive 
+	 *                               non-public key parameters into the
+	 *                               output JSON object. If {@code true} 
+	 *                               private parameters (for EC and RSA 
+	 *                               keys) and symmetric secret values will
+	 *                               be included in the output JSON object.
+	 *                               If {@code false} only the public key
+	 *                               parameters will be included.
+	 *
+	 * @return The JSON object representation.
+	 */
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
+
 		JSONObject o = new JSONObject();
+
+		// No sensitive JWK params in base object
 
 		o.put("kty", kty.getValue());
 
