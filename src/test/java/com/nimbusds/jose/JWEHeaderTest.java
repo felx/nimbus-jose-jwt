@@ -6,6 +6,8 @@ import java.text.ParseException;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.Use;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 

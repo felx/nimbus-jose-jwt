@@ -3,6 +3,7 @@ package com.nimbusds.jose;
 
 import java.net.URL;
 
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 

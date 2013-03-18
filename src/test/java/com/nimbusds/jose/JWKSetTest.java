@@ -6,6 +6,11 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.Use;
 import com.nimbusds.jose.util.Base64URL;
 
 

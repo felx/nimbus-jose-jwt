@@ -1,7 +1,9 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.jwk;
 
 
 import java.text.ParseException;
+
+import com.nimbusds.jose.Requirement;
 
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONAware;

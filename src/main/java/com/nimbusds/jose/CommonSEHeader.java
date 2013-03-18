@@ -8,6 +8,7 @@ import java.util.Arrays;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 

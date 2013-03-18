@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 
 

@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.jwk;
 
 
 import java.text.ParseException;
@@ -6,6 +6,7 @@ import java.text.ParseException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
