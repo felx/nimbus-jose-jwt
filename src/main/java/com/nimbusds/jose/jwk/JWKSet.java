@@ -152,7 +152,7 @@ public class JWKSet {
 	 */
 	public JSONObject toJSONObject() {
 
-		return toJSONObject(false);
+		return toJSONObject(true);
 	}
 
 
@@ -160,18 +160,17 @@ public class JWKSet {
 	 * Returns the JSON object representation of this JSON Web Key (JWK) 
 	 * set.
 	 *
-	 * @param includeNonPublicParams Controls the inclusion of sensitive 
-	 *                               non-public key parameters into the
-	 *                               output JWK members. If {@code true} 
-	 *                               private parameters (for EC and RSA 
-	 *                               keys) and symmetric secret values will
-	 *                               be included. If {@code false} only the
-	 *                               public key parameters will be 
-	 *                               included.
+	 * @param publicParamsOnly Controls the inclusion of sensitive 
+	 *                         non-public key parameters into the output 
+	 *                         JWK members. If {@code true} sensitive and
+	 *                         private parameters, such as private EC and
+	 *                         RSA key details and symmetric secret values,
+	 *                         will be omitted. If {@code false} all
+	 *                         available key parameters will be included.
 	 *
 	 * @return The JSON object representation.
 	 */
-	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
+	public JSONObject toJSONObject(final boolean publicParamsOnly) {
 
 		JSONObject o = new JSONObject(customMembers);
 
@@ -179,14 +178,14 @@ public class JWKSet {
 
 		for (JWK key: keys) {
 
-			if (includeNonPublicParams) {
-
-				a.add(key.toJSONObject());
-
-			} else {
+			if (publicParamsOnly) {
 
 				// Remove any sensitive params, then serialise
 				a.add(key.toPublicJWK().toJSONObject());
+
+			} else {
+
+				a.add(key.toJSONObject());
 			}
 		}
 
