@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-03-19)
  */
 public class JWKSet {
 
@@ -142,19 +142,52 @@ public class JWKSet {
 
 
 	/**
-	 * Returns a JSON object representation of this JSON Web Key (JWK) set.
+	 * Returns the JSON object representation of this JSON Web Key (JWK) 
+	 * set. Sensitive non-public parameters, such as EC and RSA private key 
+	 * parameters or symmetric key values, will not be included in the 
+	 * output JWK members. Use the alternative 
+	 * {@link #toJSONObject(boolean)} method if you wish to include them.
 	 *
 	 * @return The JSON object representation.
 	 */
 	public JSONObject toJSONObject() {
 
+		return toJSONObject(false);
+	}
+
+
+	/**
+	 * Returns the JSON object representation of this JSON Web Key (JWK) 
+	 * set.
+	 *
+	 * @param includeNonPublicParams Controls the inclusion of sensitive 
+	 *                               non-public key parameters into the
+	 *                               output JWK members. If {@code true} 
+	 *                               private parameters (for EC and RSA 
+	 *                               keys) and symmetric secret values will
+	 *                               be included. If {@code false} only the
+	 *                               public key parameters will be 
+	 *                               included.
+	 *
+	 * @return The JSON object representation.
+	 */
+	public JSONObject toJSONObject(final boolean includeNonPublicParams) {
+
 		JSONObject o = new JSONObject(customMembers);
 
 		JSONArray a = new JSONArray();
 
-		for (final JWK key: keys) {
+		for (JWK key: keys) {
 
-			a.add(key.toJSONObject());
+			if (includeNonPublicParams) {
+
+				a.add(key.toJSONObject());
+
+			} else {
+
+				// Remove any sensitive params, then serialise
+				a.add(key.toPublicJWK().toJSONObject());
+			}
 		}
 
 		o.put("keys", a);
@@ -187,7 +220,7 @@ public class JWKSet {
 	 *                        JSON Web Key (JWK) set.
 	 */
 	public static JWKSet parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
@@ -205,7 +238,7 @@ public class JWKSet {
 	 *                        JSON Web Key (JWK) set.
 	 */
 	public static JWKSet parse(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		JSONArray keyArray = JSONObjectUtils.getJSONArray(json, "keys");
 
