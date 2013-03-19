@@ -220,12 +220,14 @@ public final class ECKey extends JWK {
 	 * specified parameters.
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
-	 * @param x   The 'x' coordinate for the elliptic curve point. It is 
-	 *            represented as the Base64URL encoding of the coordinate's 
-	 *            big endian representation. Must not be {@code null}.
-	 * @param y   The 'y' coordinate for the elliptic curve point. It is 
-	 *            represented as the Base64URL encoding of the coordinate's 
-	 *            big endian representation. Must not be {@code null}.
+	 * @param x   The public 'x' coordinate for the elliptic curve point.
+	 *            It is represented as the Base64URL encoding of the 
+	 *            coordinate's big endian representation. Must not be 
+	 *            {@code null}.
+	 * @param y   The public 'y' coordinate for the elliptic curve point. 
+	 *            It is represented as the Base64URL encoding of the 
+	 *            coordinate's big endian representation. Must not be 
+	 *            {@code null}.
 	 * @param use The key use, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -234,7 +236,7 @@ public final class ECKey extends JWK {
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
 		     final Use use, final Algorithm alg, final String kid) {
 
-		this(crv, x, y, use, alg, kid, null);
+		this(crv, x, y, null, use, alg, kid);
 	}
 
 
@@ -243,24 +245,25 @@ public final class ECKey extends JWK {
 	 * with the specified parameters.
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
-	 * @param x   The 'x' coordinate for the elliptic curve point. It is 
-	 *            represented as the Base64URL encoding of the coordinate's 
-	 *            big endian representation. Must not be {@code null}.
-	 * @param y   The 'y' coordinate for the elliptic curve point. It is 
-	 *            represented as the Base64URL encoding of the coordinate's 
-	 *            big endian representation. Must not be {@code null}.
+	 * @param x   The public 'x' coordinate for the elliptic curve point.
+	 *            It is represented as the Base64URL encoding of the 
+	 *            coordinate's big endian representation. Must not be 
+	 *            {@code null}.
+	 * @param y   The public 'y' coordinate for the elliptic curve point. 
+	 *            It is represented as the Base64URL encoding of the 
+	 *            coordinate's big endian representation. Must not be 
+	 *            {@code null}.
+	 * @param d   The private 'd' coordinate for the elliptic curve point. 
+	 *            It is represented as the Base64URL encoding of the 
+	 *            coordinate's big endian representation. May be 
+	 *            {@code null} if this is a public key.
 	 * @param use The key use, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
-	 * @param d   The 'd' coordinate for the elliptic curve point. It is 
-	 *            represented as the Base64URL encoding of the coordinate's 
-	 *            big endian representation. May be {@code null} if this is
-	 *            a public key.
 	 */
-	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-		     final Use use, final Algorithm alg, final String kid, 
-		     final Base64URL d) {
+	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final Base64URL d,
+		     final Use use, final Algorithm alg, final String kid) {
 
 		super(KeyType.EC, use, alg, kid);
 
@@ -434,6 +437,6 @@ public final class ECKey extends JWK {
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
 
-		return new ECKey(crv, x, y, use, alg, kid, d);
+		return new ECKey(crv, x, y, d, use, alg, kid);
 	}
 }
