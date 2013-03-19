@@ -341,8 +341,9 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Returns the public Elliptic Curve key represented by this JWK.
-	 *
+	 * Returns a standard {@code java.security.interfaces.ECPublicKey} 
+	 * representation of this Elliptic Curve JWK.
+	 * 
 	 * @return The public Elliptic Curve key.
 	 * 
 	 * @throws UnsupportedOperationException Not yet implemented.
@@ -354,10 +355,11 @@ public final class ECKey extends JWK {
 	
 
 	/**
-	 * Returns the private Elliptic Curve key represented by this JWK.
-	 *
-	 * @return The private Elliptic Curve key, {@code null} if not
-	 *         specified.
+	 * Returns a standard {@code java.security.interfaces.ECPrivateKey} 
+	 * representation of this Elliptic Curve JWK.
+	 * 
+	 * @return The private Elliptic Curve key, {@code null} if not 
+	 *         specified by this JWK.
 	 * 
 	 * @throws UnsupportedOperationException Not yet implemented.
 	 */
@@ -368,11 +370,11 @@ public final class ECKey extends JWK {
 	
 
 	/**
-	 * Returns the public and private Elliptic Curve key pair represented 
-	 * by this JWK.
-	 *
-	 * @return The public and private Elliptic Curve pair. The private
-	 *         Elliptic Curve key will be {@code null} if not specified.
+	 * Returns a standard {@code java.security.KeyPair} representation of 
+	 * this Elliptic Curve JWK.
+	 * 
+	 * @return The Elliptic Curve key pair. The private Elliptic Curve key 
+	 *         will be {@code null} if not specified.
 	 */
 	public KeyPair toKeyPair() {
 

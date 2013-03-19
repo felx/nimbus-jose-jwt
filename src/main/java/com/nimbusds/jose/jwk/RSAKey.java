@@ -638,17 +638,20 @@ public final class RSAKey extends JWK {
 
 	
 	/**
-	 * Creates a copy of the public RSA key represented by this JWK object as
-	 * a native java.security.PublicKey API object.
+	 * Returns a standard {@code java.security.interfaces.RSAPublicKey} 
+	 * representation of this RSA JWK.
 	 * 
 	 * @return The public RSA key.
-	 * @throws NoSuchAlgorithmException
-	 *             If the underlying system cannot create an RSA key factory
-	 * @throws InvalidKeySpecException
-	 *             If the key data represented here cannot be made into a valid
-	 *             RSA key.
+	 * 
+	 * @throws NoSuchAlgorithmException If RSA is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a public RSA key.
 	 */
-	public RSAPublicKey toRSAPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	public RSAPublicKey toRSAPublicKey() 
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
+
 		byte[] modulusByte = getModulus().decode();
 		BigInteger modulus = new BigInteger(1, modulusByte);
 		byte[] exponentByte = getExponent().decode();
@@ -662,18 +665,22 @@ public final class RSAKey extends JWK {
 		return pub;
 	}
 	
+
 	/**
-	 * Creates a copy of the private RSA key represented by this JWK object as
-	 * a native java.security.PrivateKey API object.
+	 * Returns a standard {@code java.security.interfaces.RSAPrivateKey} 
+	 * representation of this RSA JWK.
 	 * 
-	 * @return The private RSA key, or null if no private exponent is defined on this key.
-	 * @throws NoSuchAlgorithmException
-	 *             If the underlying system cannot create an RSA key factory
-	 * @throws InvalidKeySpecException
-	 *             If the key data represented here cannot be made into a valid
-	 *             RSA key.
+	 * @return The private RSA key, {@code null} if not specified by this
+	 *         JWK.
+	 * 
+	 * @throws NoSuchAlgorithmException If RSA is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a private RSA key.
 	 */
-	public RSAPrivateKey toRSAPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	public RSAPrivateKey toRSAPrivateKey() 
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
 		
 		if (d == null) {
 			// no private key
@@ -695,29 +702,38 @@ public final class RSAKey extends JWK {
 		return priv;
 	}
 
+
 	/**
-	 * Creates a copy of the public RSA and private keys represented by this JWK object as
-	 * a native java.security.KeyPair API object.
+	 * Returns a standard {@code java.security.KeyPair} representation of 
+	 * this RSA JWK.
 	 * 
-	 * @return The private RSA key.
-	 * @throws NoSuchAlgorithmException
-	 *             If the underlying system cannot create an RSA key factory
-	 * @throws InvalidKeySpecException
-	 *             If the key data represented here cannot be made into a valid
-	 *             RSA key.
+	 * @return The RSA key pair. The private RSA key will be {@code null} 
+	 *         if not specified.
+	 * 
+	 * @throws NoSuchAlgorithmException If RSA is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a private RSA key.
 	 */
-	public KeyPair toKeyPair() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	public KeyPair toKeyPair() 
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
+		
 		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
 	}
 
+
 	/**
-	 * Creates a copy of this RSAKey object with any private values removed.
-	 * @return the copied public RSA key
+	 * Returns a copy of this RSA JWK with any private values removed.
+	 *
+	 * @return The copied public RSA JWK.
 	 */
 	@Override
 	public RSAKey toPublicJWK() {
+
 		return new RSAKey(getModulus(), getExponent(), getKeyUse(), getAlgorithm(), getKeyID());
 	}
+
 	
 	/**
 	 * Creates a new public RSA JSON Web Key (JWK) with the specified
@@ -762,8 +778,7 @@ public final class RSAKey extends JWK {
 	 *            The key ID. {@code null} if not specified.
 	 */
 	public static RSAKey fromRSAPublicPrivateKey(final RSAPublicKey pub, final RSAPrivateKey priv,
-		      final Use use, final Algorithm alg, final String kid 
-			) {
+		      final Use use, final Algorithm alg, final String kid) {
 		
 		if (pub == null) {
 			throw new IllegalArgumentException("Public key must not be null.");
@@ -833,7 +848,7 @@ public final class RSAKey extends JWK {
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   @code null}.
 	 *
-	 * @return The public /private RSA Key.
+	 * @return The public / private RSA Key.
 	 *
 	 * @throws ParseException If the JSON object couldn't be parsed to 
 	 *                        valid RSA JWK.
