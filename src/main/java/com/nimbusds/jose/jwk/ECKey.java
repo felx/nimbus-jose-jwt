@@ -33,6 +33,20 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * }
  * </pre>
  *
+ * <p>Example JSON object representation of a public and private EC JWK:
+ *
+ * <pre>
+ * {
+ *   "kty" : "EC",
+ *   "crv" : "P-256",
+ *   "x"   : "MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4",
+ *   "y"   : "4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM",
+ *   "d"   : "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE",
+ *   "use" : "enc",
+ *   "kid" : "1"
+ * }
+ * </pre>
+ *
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
@@ -154,7 +168,7 @@ public final class ECKey extends JWK {
 
 			if (s == null) {
 
-				throw new IllegalArgumentException("The cryptographic curve sting must not be null");
+				throw new IllegalArgumentException("The cryptographic curve string must not be null");
 			}
 
 			if (s.equals(P_256.getName())) {
