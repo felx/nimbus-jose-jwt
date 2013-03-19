@@ -375,7 +375,7 @@ public final class ECKey extends JWK {
 			return null;
 		}
 
-		BigInteger privateValue = new BigInteger(1, d.decode());
+		BigInteger privateValue = d.decodeToBigInteger();
 
 		// See fips_186-3.pdf, p. 89 for EC curve parameter constants
 

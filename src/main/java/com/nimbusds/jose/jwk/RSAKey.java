@@ -697,8 +697,8 @@ public final class RSAKey extends JWK {
 	public RSAPublicKey toRSAPublicKey() 
 		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-		BigInteger modulus = new BigInteger(1, n.decode());
-		BigInteger exponent = new BigInteger(1, e.decode());
+		BigInteger modulus = n.decodeToBigInteger();
+		BigInteger exponent = e.decodeToBigInteger();
 				
 		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
 		KeyFactory factory = KeyFactory.getInstance("RSA");
@@ -730,8 +730,8 @@ public final class RSAKey extends JWK {
 			return null;
 		}
 		
-		BigInteger modulus = new BigInteger(1, n.decode());
-		BigInteger privateExponent = new BigInteger(1, d.decode());
+		BigInteger modulus = n.decodeToBigInteger();
+		BigInteger privateExponent = d.decodeToBigInteger();
 		
 		RSAPrivateKeySpec spec;
 
@@ -741,12 +741,12 @@ public final class RSAKey extends JWK {
 
 		} else {
 			// Use 2nd (CRT) representation
-			BigInteger publicExponent = new BigInteger(1, e.decode());
-			BigInteger primeP = new BigInteger(1, p.decode());
-			BigInteger primeQ = new BigInteger(1, q.decode());
-			BigInteger primeExponentP = new BigInteger(1, dp.decode());
-			BigInteger primeExponentQ = new BigInteger(1, dq.decode());
-			BigInteger crtCoefficient = new BigInteger(1, qi.decode());
+			BigInteger publicExponent = e.decodeToBigInteger();
+			BigInteger primeP = p.decodeToBigInteger();
+			BigInteger primeQ = q.decodeToBigInteger();
+			BigInteger primeExponentP = dp.decodeToBigInteger();
+			BigInteger primeExponentQ = dq.decodeToBigInteger();
+			BigInteger crtCoefficient = qi.decodeToBigInteger();
 
 			if (oth != null) {
 				// Construct other info spec
@@ -756,9 +756,9 @@ public final class RSAKey extends JWK {
 
 					OtherPrimesInfo opi = oth.get(i);
 
-					BigInteger otherPrime = new BigInteger(1, opi.getPrimeFactor().decode());
-					BigInteger otherPrimeExponent = new BigInteger(1, opi.getFactorCRTExponent().decode());
-					BigInteger otherCrtCoefficient = new BigInteger(1, opi.getFactorCRTCoefficient().decode());
+					BigInteger otherPrime = opi.getPrimeFactor().decodeToBigInteger();
+					BigInteger otherPrimeExponent = opi.getFactorCRTExponent().decodeToBigInteger();
+					BigInteger otherCrtCoefficient = opi.getFactorCRTCoefficient().decodeToBigInteger();
 
 					otherInfo[i] = new RSAOtherPrimeInfo(otherPrime,
 						                             otherPrimeExponent,
