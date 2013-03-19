@@ -11,8 +11,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for public JSON Web Keys (JWKs). It serialises to a 
- * JSON object.
+ * The base abstract class for JSON Web Keys (JWKs). It serialises to a JSON
+ * object.
  *
  * <p>The following JSON object members are common to all JWK types:
  *
@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-19)
  */
 public abstract class JWK implements JSONAware {
 
@@ -207,11 +207,14 @@ public abstract class JWK implements JSONAware {
 	}
 
 	/**
-	 * Create a copy of this JWK with all private or sensitive keys removed.
+	 * Create a copy of this JWK with all private or sensitive keys 
+	 * removed.
 	 * 
-	 * @return the newly-created public JWK, or {@code null} if none can be created.
+	 * @return The newly created public JWK, or {@code null} if none can be
+	 *         created.
 	 */
 	public abstract JWK toPublicJWK();
+
 
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 
@@ -222,7 +225,7 @@ public abstract class JWK implements JSONAware {
 	 *
 	 * @return The JWK.
 	 *
-	 * @throws ParseException If the string couldn't be parsed to valid and
+	 * @throws ParseException If the string couldn't be parsed to a
 	 *                        supported JWK.
 	 */
 	public static JWK parse(final String s)
@@ -243,7 +246,7 @@ public abstract class JWK implements JSONAware {
 	 * @return The JWK.
 	 *
 	 * @throws ParseException If the JSON object couldn't be parsed to a 
-	 *                        valid and supported JWK.
+	 *                        supported JWK.
 	 */
 	public static JWK parse(final JSONObject jsonObject)
 			throws ParseException {
