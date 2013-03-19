@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-19)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -153,16 +153,24 @@ public final class ECKey extends JWK {
 				throws ParseException {
 
 			if (s == null) {
+
 				throw new IllegalArgumentException("The cryptographic curve sting must not be null");
 			}
 
-			if (s == P_256.getName()) {
+			if (s.equals(P_256.getName())) {
+				
 				return P_256;
-			} else if (s == P_384.getName()) {
+
+			} else if (s.equals(P_384.getName())) {
+				
 				return P_384;
-			} else if (s == P_521.getName()) {
+
+			} else if (s.equals(P_521.getName())) {
+
 				return P_521;
+
 			} else {
+
 				return new Curve(s);
 			}
 		}
