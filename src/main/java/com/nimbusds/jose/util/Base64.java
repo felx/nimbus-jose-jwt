@@ -2,6 +2,7 @@ package com.nimbusds.jose.util;
 
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONValue;
 
@@ -10,7 +11,7 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-01-15)
+ * @version $version$ (2013-03-19)
  */
 @Immutable
 public class Base64 implements JSONAware {
@@ -100,10 +101,9 @@ public class Base64 implements JSONAware {
 	public boolean equals(final Object object) {
 
 		return object != null && 
-				object instanceof Base64 && 
-				this.toString().equals(object.toString());
+		       object instanceof Base64 && 
+		       this.toString().equals(object.toString());
 	}
-
 
 
 	/**
@@ -113,8 +113,8 @@ public class Base64 implements JSONAware {
 	 *
 	 * @return The resulting Base64 object.
 	 */
-	public static Base64URL encode(final byte[] bytes) {
+	public static Base64 encode(final byte[] bytes) {
 
-		return new Base64URL(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
+		return new Base64(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
 	}
 }
