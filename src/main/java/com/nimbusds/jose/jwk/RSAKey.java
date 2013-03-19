@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -44,6 +45,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *   "kid" : "2011-04-29"
  * }
  * </pre>
+ *
+ * <p>See RFC 3447.
  *
  * <p>See http://en.wikipedia.org/wiki/RSA_%28algorithm%29
  *
@@ -153,17 +156,21 @@ public final class RSAKey extends JWK {
 	}
 
 
+	// Public RSA params
+
 	/**
-	 * The modulus value for the RSA public key.
+	 * The modulus value for the public RSA key.
 	 */
 	private final Base64URL n;
 
 
 	/**
-	 * The exponent value for the RSA public key.
+	 * The exponent value for the public RSA key.
 	 */
 	private final Base64URL e;
-	
+
+
+	// Private RSA params, 1st representation	
 
 	/**
 	 * The private exponent of the private RSA key.
@@ -171,6 +178,8 @@ public final class RSAKey extends JWK {
 	private final Base64URL d;
 
 	
+	// Private RSA params, 2nd representation
+
 	/**
 	 * The first prime factor of the private RSA key.
 	 */
@@ -219,10 +228,10 @@ public final class RSAKey extends JWK {
 	 * Creates a new public RSA JSON Web Key (JWK) with the specified 
 	 * parameters.
 	 *
-	 * @param n   The the modulus value for the RSA public key. It is 
+	 * @param n   The the modulus value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param e   The exponent value for the RSA public key. It is 
+	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
@@ -233,8 +242,7 @@ public final class RSAKey extends JWK {
 	public RSAKey(final Base64URL n, final Base64URL e, final Use use, 
 		      final Algorithm alg, final String kid) {
 
-		// call the full constructor
-		// all private key parameters are null
+		// Call the full constructor, all private key parameters are null
 		this(n, e, null, null, null, null, null, null, null, use, alg, kid);
 	}
 
@@ -244,10 +252,10 @@ public final class RSAKey extends JWK {
 	 * specified parameters. The private RSA key is specified by its first
 	 * representation (see RFC 3447, section 3.2).
 	 * 
-	 * @param n   The the modulus value for the RSA public key. It is
+	 * @param n   The the modulus value for the public RSA key. It is
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param e   The exponent value for the RSA public key. It is 
+	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param d   The private exponent. It is represented as the Base64URL 
@@ -259,27 +267,27 @@ public final class RSAKey extends JWK {
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
-		          final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid) {
 	    
-		// call the full constructor
-		// The first second representation parameters are all null
+		// Call the full constructor, the second private representation 
+		// parameters are all null
 		this(n, e, d, null, null, null, null, null, null, use, alg, kid);
 
 		if (d == null) {
 			throw new IllegalArgumentException("The private exponent must not be null");
 		}
-			
 	}
+
 
 	/**
 	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
 	 * specified parameters. The private RSA key is specified by its
 	 * second representation (see RFC 3447, section 3.2).
 	 * 
-	 * @param n   The the modulus value for the RSA public key. It is
+	 * @param n   The the modulus value for the public RSA key. It is
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param e   The exponent value for the RSA public key. It is 
+	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param p   The first prime factor. It is represented as the 
@@ -305,16 +313,15 @@ public final class RSAKey extends JWK {
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
-		          final Base64URL p, final Base64URL q, 
-		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
-		          final List<OtherPrimesInfo> oth,
-		          final Use use, final Algorithm alg, final String kid) {
+		      final Base64URL p, final Base64URL q, 
+		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
+		      final List<OtherPrimesInfo> oth,
+		      final Use use, final Algorithm alg, final String kid) {
 	    
-		// call the full constructor
-		// The first representation d param is null
+		// Call the full constructor, the first private representation 
+		// d param is null
 		this(n, e, null, p, q, dp, dq, qi, oth, use, alg, kid);
 
-		// catch inconsistencies
 		if (p == null) {
 			throw new IllegalArgumentException("The first prime factor must not be null");
 		}
@@ -338,17 +345,22 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Helper constructor for building all possible variants of the RSA
-	 * Key JWK.
-	 * 
 	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
-	 * specified parameters. The private RSA key is specified by its first
-	 * and second representations (see RFC 3447, section 3.2).
+	 * specified parameters. The private RSA key is specified by both its
+	 * first and second representations (see RFC 3447, section 3.2).
+	 *
+	 * <p>A valid first private RSA key representation must specify the
+	 * {@code d}.
+	 *
+	 * <p>A valid second private RSA key representation must specify all 
+	 * required Chinese Remained Theorem (CRT) parameters - {@code p}, 
+	 * {@code q}, {@code dp}, {@code dq} and {@code qi}, else an
+	 * {@link java.lang.IllegalArgumentException} will be thrown.
 	 * 
-	 * @param n   The the modulus value for the RSA public key. It is
+	 * @param n   The the modulus value for the public RSA key. It is
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param e   The exponent value for the RSA public key. It is 
+	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
 	 * @param d   The private exponent. It is represented as the Base64URL 
@@ -376,14 +388,17 @@ public final class RSAKey extends JWK {
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
 	 */
-	private RSAKey(final Base64URL n, final Base64URL e, 
-		          final Base64URL d, final Base64URL p, final Base64URL q, 
-		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
-		          final List<OtherPrimesInfo> oth,
-		          final Use use, final Algorithm alg, final String kid) {
+	public RSAKey(final Base64URL n, final Base64URL e,
+		      final Base64URL d, 
+		      final Base64URL p, final Base64URL q, 
+		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
+		      final List<OtherPrimesInfo> oth,
+		      final Use use, final Algorithm alg, final String kid) {
 	    
 		super(KeyType.RSA, use, alg, kid);
 
+
+		// Ensure the public params are defined
 
 		if (n == null) {
 			throw new IllegalArgumentException("The modulus value must not be null");
@@ -393,32 +408,83 @@ public final class RSAKey extends JWK {
 
 
 		if (e == null) {
-			throw new IllegalArgumentException("The exponent value must not be null");
+			throw new IllegalArgumentException("The public exponent value must not be null");
 		}
 
 		this.e = e;
 
-		// the legality of these parameters are checked by their respective constructors
+
+		// Private params, 1st representation
+
 		this.d = d;
-		this.p = p;
-		this.q = q;
-		this.dp = dp;
-		this.dq = dq;
-		this.qi = qi;
-		// the other keys are always a valid list, but might be empty
-		if (oth != null) {
-			this.oth = Collections.unmodifiableList(oth);
-		} else {
+
+
+		// Private params, 2nd representation, check for consistency
+
+		if (p != null && q != null && dp != null && dq != null && qi != null) {
+
+			// CRT params fully specified
+
+			this.p = p;
+			this.q = q;
+			this.dp = dp;
+			this.dq = dq;
+			this.qi = qi;
+
+			// Other RSA primes info optional, default to empty list
+			if (oth != null) {
+
+				this.oth = Collections.unmodifiableList(oth);
+
+			} else {
+
+				this.oth = Collections.emptyList();
+			}
+
+		} else if (p == null && q == null && dp == null && dq == null && qi == null && oth == null) {
+
+			// No CRT params
+			this.p = null;
+			this.q = null;
+			this.dp = null;
+			this.dq = null;
+			this.qi = null;
+
 			this.oth = Collections.emptyList();
+
+		} else {
+
+			if (p == null) {
+				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first prime factor must not be null");
+			}
+
+			if (q == null) {
+				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The second prime factor must not be null");
+			}
+
+			if (dp == null) {
+				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first factor CRT exponent must not be null");
+			}
+
+			if (dq == null) {
+				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The second factor CRT exponent must not be null");
+			}
+
+			if (qi == null) {
+				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first CRT coefficient must not be null");
+			}
+
+			// We shouldn't really fall through
+			throw new IllegalArgumentException("Incomplete second private (CRT) representation");
 		}
-		
 	}
+
 
 	/**
 	 * Returns the modulus value of the public RSA key. It is represented
 	 * as the Base64URL encoding of the value's big endian representation.
 	 *
-	 * @return The RSA public key modulus.
+	 * @return The public RSA key modulus.
 	 */
 	public Base64URL getModulus() {
 
@@ -430,7 +496,7 @@ public final class RSAKey extends JWK {
 	 * Returns the exponent value of the public RSA key. It is represented
 	 * as the Base64URL encoding of the value's big endian representation.
 	 *
-	 * @return The RSA public key exponent.
+	 * @return The public RSA key exponent.
 	 */
 	public Base64URL getExponent() {
 
@@ -533,10 +599,10 @@ public final class RSAKey extends JWK {
 
 	
 	/**
-	 * Creates a copy of the RSA public key represented by this JWK object as
+	 * Creates a copy of the public RSA key represented by this JWK object as
 	 * a native java.security.PublicKey API object.
 	 * 
-	 * @return The RSA public key.
+	 * @return The public RSA key.
 	 * @throws NoSuchAlgorithmException
 	 *             If the underlying system cannot create an RSA key factory
 	 * @throws InvalidKeySpecException
@@ -558,10 +624,10 @@ public final class RSAKey extends JWK {
 	}
 	
 	/**
-	 * Creates a copy of the RSA private key represented by this JWK object as
+	 * Creates a copy of the private RSA key represented by this JWK object as
 	 * a native java.security.PrivateKey API object.
 	 * 
-	 * @return The RSA private key, or null if no private exponent is defined on this key.
+	 * @return The private RSA key, or null if no private exponent is defined on this key.
 	 * @throws NoSuchAlgorithmException
 	 *             If the underlying system cannot create an RSA key factory
 	 * @throws InvalidKeySpecException
@@ -591,10 +657,10 @@ public final class RSAKey extends JWK {
 	}
 
 	/**
-	 * Creates a copy of the RSA public and private keys represented by this JWK object as
+	 * Creates a copy of the public RSA and private keys represented by this JWK object as
 	 * a native java.security.KeyPair API object.
 	 * 
-	 * @return The RSA private key.
+	 * @return The private RSA key.
 	 * @throws NoSuchAlgorithmException
 	 *             If the underlying system cannot create an RSA key factory
 	 * @throws InvalidKeySpecException
@@ -679,7 +745,7 @@ public final class RSAKey extends JWK {
 
 		JSONObject o = super.toJSONObject();
 
-		// Append RSA public key specific attributes
+		// Append public RSA key specific attributes
 		o.put("n", n.toString());
 		o.put("e", e.toString());
 		if (d != null) {
@@ -746,11 +812,15 @@ public final class RSAKey extends JWK {
 			throw new ParseException("The key type \"kty\" must be RSA", 0);
 		}
 		
-		// parse the optional private key parameters
+		// Parse the optional private key parameters
+
+		// 1st private representation
 		Base64URL d = null;
 		if (jsonObject.get("d") != null) {
 			d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
 		}
+
+		// 2nd private (CRT) representation
 		Base64URL p = null;
 		if (jsonObject.get("p") != null) {
 			p = new Base64URL(JSONObjectUtils.getString(jsonObject, "p"));
@@ -802,6 +872,13 @@ public final class RSAKey extends JWK {
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
 
-		return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, alg, kid);
+		try {
+			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, alg, kid);	
+		
+		} catch (IllegalArgumentException ex) {
+
+			// Inconsistent 2nd spec
+			throw new ParseException(ex.getMessage(), 0);
+		}
 	}
 }
