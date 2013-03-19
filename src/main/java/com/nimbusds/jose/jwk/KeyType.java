@@ -3,11 +3,12 @@ package com.nimbusds.jose.jwk;
 
 import java.text.ParseException;
 
-import com.nimbusds.jose.Requirement;
-
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
+
+import com.nimbusds.jose.Requirement;
 
 
 /**
@@ -26,7 +27,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-19)
  */
 @Immutable
 public final class KeyType implements JSONAware {
@@ -129,8 +130,8 @@ public final class KeyType implements JSONAware {
 	public boolean equals(final Object object) {
 
 		return object != null && 
-				object instanceof KeyType && 
-				this.toString().equals(object.toString());
+		       object instanceof KeyType && 
+		       this.toString().equals(object.toString());
 	}
 
 
@@ -181,10 +182,19 @@ public final class KeyType implements JSONAware {
 		}
 
 		if (s.equals(EC.getValue())) {
+
 			return EC;
+
 		} else if (s.equals(RSA.getValue())) {
+
 			return RSA;
+
+		} else if (s.equals(OCT.getValue())) {
+
+			return OCT;
+
 		} else {
+			
 			return new KeyType(s, null);
 		}
 	}
