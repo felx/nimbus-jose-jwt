@@ -339,41 +339,56 @@ public final class ECKey extends JWK {
 		return d;
 	}
 
+
 	/**
-	 * Gets a copy of the public key represented by this JWK.
+	 * Returns the public Elliptic Curve key represented by this JWK.
+	 *
+	 * @return The public Elliptic Curve key.
 	 * 
-	 * @throws UnsupportedOperationException - not yet implemented
+	 * @throws UnsupportedOperationException Not yet implemented.
 	 */
 	public ECPublicKey toECPublicKey() {
 		// TODO
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 	
+
 	/**
-	 * Gets a copy of the public key represented by this JWK.
+	 * Returns the private Elliptic Curve key represented by this JWK.
+	 *
+	 * @return The private Elliptic Curve key, {@code null} if not
+	 *         specified.
 	 * 
-	 * @throws UnsupportedOperationException - not yet implemented
+	 * @throws UnsupportedOperationException Not yet implemented.
 	 */
 	public ECPrivateKey toECPrivateKey() {
 		// TODO
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
 	
+
 	/**
-	 * Returns the EC public and private keys represented by this object.
-	 * 
-	 * @return the EC key pair
+	 * Returns the public and private Elliptic Curve key pair represented 
+	 * by this JWK.
+	 *
+	 * @return The public and private Elliptic Curve pair. The private
+	 *         Elliptic Curve key will be {@code null} if not specified.
 	 */
 	public KeyPair toKeyPair() {
+
 		return new KeyPair(toECPublicKey(), toECPrivateKey());		
 	}
+
 	
 	/**
-	 * Creates a copy of this ECKey object with any private values removed.
-	 * @return the copied public EC key
+	 * Returns a copy of this Elliptic Curve JWK with any private values 
+	 * removed.
+	 *
+	 * @return The copied public Elliptic Curve JWK.
 	 */
 	@Override
 	public ECKey toPublicJWK() {
+
 		return new ECKey(getCurve(), getX(), getY(), getKeyUse(), getAlgorithm(), getKeyID());
 	}
 	
