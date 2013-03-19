@@ -1,6 +1,8 @@
 package com.nimbusds.jose.util;
 
 
+import java.math.BigInteger;
+
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -48,6 +50,19 @@ public class Base64 implements JSONAware {
 	public byte[] decode() {
 
 		return org.apache.commons.codec.binary.Base64.decodeBase64(value);
+	}
+
+
+	/**
+	 * Decodes this Base64 object to an unsigned big integer.
+	 *
+	 * <p>Same as {@code new BigInteger(1, base64.decode())}.
+	 *
+	 * @return The resulting unsigned big integer.
+	 */
+	public BigInteger decodeToBigInteger() {
+
+		return new BigInteger(1, decode());
 	}
 
 
@@ -116,5 +131,18 @@ public class Base64 implements JSONAware {
 	public static Base64 encode(final byte[] bytes) {
 
 		return new Base64(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
+	}
+
+
+	/**
+	 * Base64-encode the specified big integer.
+	 *
+	 * @param bigInt The big integer to encode. Must not be {@code null}.
+	 *
+	 * @return The resulting Base64 object.
+	 */
+	public static Base64 encode(final BigInteger bigInt) {
+
+		return encode(bigInt.toByteArray());
 	}
 }

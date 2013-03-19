@@ -2,8 +2,10 @@ package com.nimbusds.jose.util;
 
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONValue;
 
@@ -63,6 +65,19 @@ public class Base64URL implements JSONAware {
 	public byte[] decode() {
 
 		return Base64.decodeBase64(value);
+	}
+
+
+	/**
+	 * Decodes this Base64URL object to an unsigned big integer.
+	 *
+	 * <p>Same as {@code new BigInteger(1, base64url.decode())}.
+	 *
+	 * @return The resulting unsigned big integer.
+	 */
+	public BigInteger decodeToBigInteger() {
+
+		return new BigInteger(1, decode());
 	}
 
 
@@ -132,8 +147,34 @@ public class Base64URL implements JSONAware {
 	public boolean equals(final Object object) {
 
 		return object != null && 
-				object instanceof Base64URL && 
-				this.toString().equals(object.toString());
+		       object instanceof Base64URL && 
+		       this.toString().equals(object.toString());
+	}
+
+
+	/**
+	 * Base64URL-encode the specified byte array.
+	 *
+	 * @param bytes The byte array to encode. Must not be {@code null}.
+	 *
+	 * @return The resulting Base64URL object.
+	 */
+	public static Base64URL encode(final byte[] bytes) {
+
+		return new Base64URL(Base64.encodeBase64URLSafeString(bytes));
+	}
+
+
+	/**
+	 * Base64URL-encode the specified big integer.
+	 *
+	 * @param bigInt The big integer to encode. Must not be {@code null}.
+	 *
+	 * @return The resulting Base64URL object.
+	 */
+	public static Base64URL encode(final BigInteger bigInt) {
+
+		return encode(bigInt.toByteArray());
 	}
 
 
@@ -155,18 +196,5 @@ public class Base64URL implements JSONAware {
 			// UTF-8 should always be supported
 			return null;
 		}
-	}
-
-
-	/**
-	 * Base64URL-encode the specified byte array.
-	 *
-	 * @param bytes The byte array to encode. Must not be {@code null}.
-	 *
-	 * @return The resulting Base64URL object.
-	 */
-	public static Base64URL encode(final byte[] bytes) {
-
-		return new Base64URL(Base64.encodeBase64URLSafeString(bytes));
 	}
 }
