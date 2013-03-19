@@ -273,7 +273,7 @@ public final class RSAKey extends JWK {
 	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param use The key use. {@code null} if not specified.
+	 * @param use The key use, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
@@ -300,10 +300,10 @@ public final class RSAKey extends JWK {
 	 * @param d   The private exponent. It is represented as the Base64URL 
 	 *            encoding of the value's big endian representation. Must 
 	 *            not be {@code null}.
-	 * @param use The key use. {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
+	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
-	 * @param kid The key ID, {@code null} if not specified.
+	 * @param kid The key ID. {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
 		      final Use use, final Algorithm alg, final String kid) {
@@ -346,10 +346,10 @@ public final class RSAKey extends JWK {
 	 *            endian representation. Must not be {@code null}.
 	 * @param oth The other primes information, should they exist,
 	 *            {@code null} or an empty list if not specified.
-	 * @param use The key use. {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
+	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
-	 * @param kid The key ID, {@code null} if not specified.
+	 * @param kid The key ID. {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
 		      final Base64URL p, final Base64URL q, 
@@ -422,10 +422,10 @@ public final class RSAKey extends JWK {
 	 *            endian representation. May be {@code null}.
 	 * @param oth The other primes information, should they exist,
 	 *            {@code null} or an empty list if not specified.
-	 * @param use The key use. {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if 
+	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
-	 * @param kid The key ID, {@code null} if not specified.
+	 * @param kid The key ID. {@code null} if not specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e,
 		      final Base64URL d, 
@@ -516,6 +516,48 @@ public final class RSAKey extends JWK {
 			// We shouldn't really fall through
 			throw new IllegalArgumentException("Incomplete second private (CRT) representation");
 		}
+	}
+
+
+	/**
+	 * Creates a new public RSA JSON Web Key (JWK) with the specified
+	 * parameters.
+	 * 
+	 * @param pub The public RSA key to represent. Must not be 
+	 *            {@code null}.
+	 * @param use The key use, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
+	 * @param kid The key ID. {@code null} if not specified.
+	 */
+	public RSAKey(final RSAPublicKey pub, final Use use, final Algorithm alg, final String kid) {
+
+		this(Base64URL.encode(pub.getModulus().toByteArray()), 
+		     Base64URL.encode(pub.getPublicExponent().toByteArray()), 
+		     use, alg, kid);
+	}
+
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
+	 * specified parameters.
+	 * 
+	 * @param pub  The public RSA key to represent. Must not be 
+	 *             {@code null}.
+	 * @param priv The private RSA key to represent. Must not be
+	 *             {@code null}.
+	 * @param use  The key use, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID. {@code null} if not specified.
+	 */
+	public RSAKey(final RSAPublicKey pub, final RSAPrivateKey priv,
+		      final Use use, final Algorithm alg, final String kid) {
+		
+		this(Base64URL.encode(pub.getModulus().toByteArray()), 
+		     Base64URL.encode(pub.getPublicExponent().toByteArray()), 
+		     Base64URL.encode(priv.getPrivateExponent().toByteArray()),
+		     use, alg, kid);
 	}
 
 
@@ -732,65 +774,6 @@ public final class RSAKey extends JWK {
 	public RSAKey toPublicJWK() {
 
 		return new RSAKey(getModulus(), getExponent(), getKeyUse(), getAlgorithm(), getKeyID());
-	}
-
-	
-	/**
-	 * Creates a new public RSA JSON Web Key (JWK) with the specified
-	 * parameters.
-	 * 
-	 * @param pub
-	 *            The RSA Public Key to represent. Must not be {@code null}.
-	 * @param use
-	 *            The key use. {@code null} if not specified.
-	 * @param alg
-	 *            The intended JOSE algorithm for the key, {@code null} if not
-	 *            specified.
-	 * @param kid
-	 *            The key ID. {@code null} if not specified.
-	 */
-	public static RSAKey fromRSAPublicKey(final RSAPublicKey pub,
-		      final Use use, final Algorithm alg, final String kid 
-			) {
-		
-		if (pub == null) {
-			throw new IllegalArgumentException("Public key must not be null.");
-		}
-		
-		return new RSAKey(Base64URL.encode(pub.getModulus().toByteArray()), Base64URL.encode(pub.getPublicExponent().toByteArray()), 
-				use, alg, kid);
-	}
-
-	/**
-	 * Creates a new public/private RSA JSON Web Key (JWK) with the specified
-	 * parameters.
-	 * 
-	 * @param pub
-	 *            The RSA Public Key to represent. Must not be {@code null}.
-	 * @param priv
-	 *            The RSA Private Key to represent. Must not be {@code null}.
-	 * @param use
-	 *            The key use. {@code null} if not specified.
-	 * @param alg
-	 *            The intended JOSE algorithm for the key, {@code null} if not
-	 *            specified.
-	 * @param kid
-	 *            The key ID. {@code null} if not specified.
-	 */
-	public static RSAKey fromRSAPublicPrivateKey(final RSAPublicKey pub, final RSAPrivateKey priv,
-		      final Use use, final Algorithm alg, final String kid) {
-		
-		if (pub == null) {
-			throw new IllegalArgumentException("Public key must not be null.");
-		}
-		
-		if (priv == null) {
-			throw new IllegalArgumentException("Private key must not be null.");
-		}
-		
-		return new RSAKey(Base64URL.encode(pub.getModulus().toByteArray()), Base64URL.encode(pub.getPublicExponent().toByteArray()), 
-				Base64URL.encode(priv.getPrivateExponent().toByteArray()),
-				use, alg, kid);
 	}
 	
 	
