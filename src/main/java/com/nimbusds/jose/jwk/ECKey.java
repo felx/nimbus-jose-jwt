@@ -337,7 +337,7 @@ public final class ECKey extends JWK {
 	 * 
 	 * @throws UnsupportedOperationException - not yet implemented
 	 */
-	public ECPrivateKey toECprivateKey() {
+	public ECPrivateKey toECPrivateKey() {
 		// TODO
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}
@@ -348,7 +348,7 @@ public final class ECKey extends JWK {
 	 * @return the EC key pair
 	 */
 	public KeyPair toKeyPair() {
-		return new KeyPair(toECPublicKey(), toECprivateKey());		
+		return new KeyPair(toECPublicKey(), toECPrivateKey());		
 	}
 	
 	/**
