@@ -12,10 +12,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * {@link KeyType#OCT Symmetric} JSON Web Key (JWK), represented by an octet
- * sequence. This class is immutable.
+ * {@link KeyType#OCT Octet sequence} JSON Web Key (JWK), used to represent
+ * symmetric keys. This class is immutable.
  *
- * <p>Example JSON object representation of a symmetric JWK:
+ * <p>Example JSON object representation of an octet sequence JWK:
  *
  * <pre>
  * {
@@ -26,10 +26,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  * 
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-19)
  */
 @Immutable
-public class SymmetricKey extends JWK {
+public class OctetSequenceKey extends JWK {
 
 
 	/**
@@ -39,18 +39,18 @@ public class SymmetricKey extends JWK {
 
 	
 	/**
-	 * Creates a new symmetric JSON Web Key (JWK) with the specified
+	 * Creates a new octet sequence JSON Web Key (JWK) with the specified
 	 * parameters.
 	 *
+	 * @param k   The key value. It is represented as the Base64URL 
+	 *            encoding of value's big endian representation. Must not 
+	 *            be {@code null}.
 	 * @param use The key use. {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
-	 * @param k   The key value. It is represented as the Base64URL 
-	 *            encoding of value's big endian representation. Must not 
-	 *            be {@code null}.
 	 */
-	public SymmetricKey(final Use use, final Algorithm alg, final String kid, final Base64URL k) {
+	public OctetSequenceKey(final Base64URL k, final Use use, final Algorithm alg, final String kid) {
 	
 		super(KeyType.OCT, use, alg, kid);
 
@@ -63,11 +63,12 @@ public class SymmetricKey extends JWK {
     
 
 	/**
-	 * Returns the value of this symmetric key. It is represented as the 
-	 * Base64URL encoding of the coordinate's big endian representation.
+	 * Returns the value of this octet sequence key. It is represented as 
+	 * the Base64URL encoding of the coordinate's big endian 
+	 * representation.
 	 *
 	 * @return The key value. 
-	*/
+	 */
 	public Base64URL getKeyValue() {
 
 		return k;
@@ -75,21 +76,25 @@ public class SymmetricKey extends JWK {
 	
 	
 	/**
-	 * Returns a copy of the symmetric key value as a byte array.
+	 * Returns a copy of this octet sequence key value as a byte array.
 	 * 
-	 * @return the key value
+	 * @return The key value as a byte array.
 	 */
 	public byte[] toByteArray() {
+
 		return getKeyValue().decode();
 	}
 
 
 	/**
-	 * Symmetric keys are never considered public, this function always returns null.
+	 * Octet sequence (symmetric) keys are never considered public, this 
+	 * method always returns {@code null}.
+	 *
 	 * @return {@code null}
 	 */
 	@Override
-	public SymmetricKey toPublicJWK() {
+	public OctetSequenceKey toPublicJWK() {
+
 		return null;
 	}
 	
@@ -106,18 +111,18 @@ public class SymmetricKey extends JWK {
 	}
 	
 	/**
-	 * Parses a symmetric key from the specified JSON object 
+	 * Parses an octet sequnce key from the specified JSON object 
 	 * representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   @code null}.
 	 *
-	 * @return The symmetric Key.
+	 * @return The octet sequence Key.
 	 *
-	 * @throws ParseException If the JSON object couldn't be parsed to 
-	 *                        valid symmetric JWK.
+	 * @throws ParseException If the JSON object couldn't be parsed to an
+	 *                        octet sequence JWK.
 	 */
-	public static SymmetricKey parse(final JSONObject jsonObject) 
+	public static OctetSequenceKey parse(final JSONObject jsonObject) 
 		throws ParseException {
 
 		// Parse the mandatory parameters first
@@ -138,7 +143,6 @@ public class SymmetricKey extends JWK {
 		// Get optional key ID
 		String kid = JWK.parseKeyID(jsonObject);
 
-
-		return new SymmetricKey(use, alg, kid, k);
+		return new OctetSequenceKey(k, use, alg, kid);
 	}
 }

@@ -219,7 +219,7 @@ public abstract class JWK implements JSONAware {
 	/**
 	 * Parses a JWK from the specified JSON object string representation. 
 	 * The JWK must be an {@link ECKey}, an {@link RSAKey}, or a 
-	 * {@link SymmetricKey}.
+	 * {@link OctetSequenceKey}.
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
@@ -238,7 +238,7 @@ public abstract class JWK implements JSONAware {
 	/**
 	 * Parses a JWK from the specified JSON object representation. The JWK 
 	 * must be an {@link ECKey}, an {@link RSAKey}, or a 
-	 * {@link SymmetricKey}.
+	 * {@link OctetSequenceKey}.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   {@code null}.
@@ -263,7 +263,7 @@ public abstract class JWK implements JSONAware {
 
 		} else if (kty == KeyType.OCT) {
 			
-			return SymmetricKey.parse(jsonObject);
+			return OctetSequenceKey.parse(jsonObject);
 
 		} else {
 
