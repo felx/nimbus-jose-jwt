@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-15)
+ * @version $version$ (2013-03-19)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -62,7 +62,7 @@ public final class RSAKey extends JWK {
 	 * @author Justin Richer
 	 */
 	@Immutable
-	public static class OtherRSAPrimesInfo {
+	public static class OtherPrimesInfo {
 
 
 		 /**
@@ -93,7 +93,7 @@ public final class RSAKey extends JWK {
 		 * @param t The factor Chinese Remainder Theorem (CRT) 
 		 *          coefficient. Must not be {@code null}.
 		 */
-		public OtherRSAPrimesInfo(Base64URL r, Base64URL d, Base64URL t) {
+		public OtherPrimesInfo(Base64URL r, Base64URL d, Base64URL t) {
 
 			if (r == null) {
 
@@ -212,7 +212,7 @@ public final class RSAKey extends JWK {
 	 * two. Each array element MUST be an object with the following 
 	 * members:
 	 */
-	private final List<OtherRSAPrimesInfo> oth;
+	private final List<OtherPrimesInfo> oth;
 
 
 	/**
@@ -307,7 +307,7 @@ public final class RSAKey extends JWK {
 	public RSAKey(final Base64URL n, final Base64URL e, 
 		          final Base64URL p, final Base64URL q, 
 		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
-		          final List<OtherRSAPrimesInfo> oth,
+		          final List<OtherPrimesInfo> oth,
 		          final Use use, final Algorithm alg, final String kid) {
 	    
 		// call the full constructor
@@ -379,7 +379,7 @@ public final class RSAKey extends JWK {
 	private RSAKey(final Base64URL n, final Base64URL e, 
 		          final Base64URL d, final Base64URL p, final Base64URL q, 
 		          final Base64URL dp, final Base64URL dq, final Base64URL qi, 
-		          final List<OtherRSAPrimesInfo> oth,
+		          final List<OtherPrimesInfo> oth,
 		          final Use use, final Algorithm alg, final String kid) {
 	    
 		super(KeyType.RSA, use, alg, kid);
@@ -526,7 +526,7 @@ public final class RSAKey extends JWK {
 	 * @return The RSA other primes information, {@code null} or empty list
 	 *         if not specified.
 	 */
-	public List<OtherRSAPrimesInfo> getOtherPrimes() {
+	public List<OtherPrimesInfo> getOtherPrimes() {
 
 		return oth;
 	}
@@ -704,7 +704,7 @@ public final class RSAKey extends JWK {
 
 			JSONArray a = new JSONArray();
 
-			for (OtherRSAPrimesInfo other : oth) {
+			for (OtherPrimesInfo other : oth) {
 
 				JSONObject oo = new JSONObject();
 				oo.put("r", other.r.toString());
@@ -772,11 +772,11 @@ public final class RSAKey extends JWK {
 			qi = new Base64URL(JSONObjectUtils.getString(jsonObject, "qi"));
 		}
 		
-		List<OtherRSAPrimesInfo> oth = null;
+		List<OtherPrimesInfo> oth = null;
 		if (jsonObject.get("oth") != null) {
 
 			JSONArray arr = JSONObjectUtils.getJSONArray(jsonObject, "oth");
-			oth = new ArrayList<RSAKey.OtherRSAPrimesInfo>(arr.size());
+			oth = new ArrayList<RSAKey.OtherPrimesInfo>(arr.size());
 			
 			for (Object o : arr) {
 
@@ -787,7 +787,7 @@ public final class RSAKey extends JWK {
 					Base64URL odq = new Base64URL(JSONObjectUtils.getString(otherJson, "dq"));
 					Base64URL t = new Base64URL(JSONObjectUtils.getString(otherJson, "t"));
 
-					OtherRSAPrimesInfo prime = new OtherRSAPrimesInfo(r, odq, t);
+					OtherPrimesInfo prime = new OtherPrimesInfo(r, odq, t);
 					oth.add(prime);
 				}
 			}
