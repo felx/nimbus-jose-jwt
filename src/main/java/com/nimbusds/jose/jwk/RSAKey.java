@@ -8,6 +8,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAMultiPrimePrivateCrtKeySpec;
+import java.security.spec.RSAOtherPrimeInfo;
+import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.text.ParseException;
@@ -694,10 +697,8 @@ public final class RSAKey extends JWK {
 	public RSAPublicKey toRSAPublicKey() 
 		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-		byte[] modulusByte = getModulus().decode();
-		BigInteger modulus = new BigInteger(1, modulusByte);
-		byte[] exponentByte = getExponent().decode();
-		BigInteger exponent = new BigInteger(1, exponentByte);
+		BigInteger modulus = new BigInteger(1, n.decode());
+		BigInteger exponent = new BigInteger(1, e.decode());
 				
 		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
 		KeyFactory factory = KeyFactory.getInstance("RSA");
@@ -729,14 +730,63 @@ public final class RSAKey extends JWK {
 			return null;
 		}
 		
-		byte[] modulusByte = getModulus().decode();
-		BigInteger modulus = new BigInteger(1, modulusByte);
-		byte[] privateExponentByte = getPrivateExponent().decode();
-		BigInteger privateExponent = new BigInteger(1, privateExponentByte);
+		BigInteger modulus = new BigInteger(1, n.decode());
+		BigInteger privateExponent = new BigInteger(1, d.decode());
 		
-		// uses plain private exponent form
-		// TODO: add support for CRT-based parameter form
-		RSAPrivateKeySpec spec = new RSAPrivateKeySpec(modulus, privateExponent);
+		RSAPrivateKeySpec spec;
+
+		if (p == null) {
+			// Use 1st representation
+			spec = new RSAPrivateKeySpec(modulus, privateExponent);
+
+		} else {
+			// Use 2nd (CRT) representation
+			BigInteger publicExponent = new BigInteger(1, e.decode());
+			BigInteger primeP = new BigInteger(1, p.decode());
+			BigInteger primeQ = new BigInteger(1, q.decode());
+			BigInteger primeExponentP = new BigInteger(1, dp.decode());
+			BigInteger primeExponentQ = new BigInteger(1, dq.decode());
+			BigInteger crtCoefficient = new BigInteger(1, qi.decode());
+
+			if (oth != null) {
+				// Construct other info spec
+				RSAOtherPrimeInfo[] otherInfo = otherInfo = new RSAOtherPrimeInfo[oth.size()];
+
+				for (int i=0; i < oth.size(); i++) {
+
+					OtherPrimesInfo opi = oth.get(i);
+
+					BigInteger otherPrime = new BigInteger(1, opi.getPrimeFactor().decode());
+					BigInteger otherPrimeExponent = new BigInteger(1, opi.getFactorCRTExponent().decode());
+					BigInteger otherCrtCoefficient = new BigInteger(1, opi.getFactorCRTCoefficient().decode());
+
+					otherInfo[i] = new RSAOtherPrimeInfo(otherPrime,
+						                             otherPrimeExponent,
+						                             otherCrtCoefficient);
+				}
+
+				spec = new RSAMultiPrimePrivateCrtKeySpec(modulus,
+	                        	                                  publicExponent,
+	                        	                                  privateExponent,
+	                        	                                  primeP,
+	                        	                                  primeQ,
+	                        	                                  primeExponentP,
+	                        	                                  primeExponentQ,
+	                        	                                  crtCoefficient,
+	                        	                                  otherInfo);
+			} else {
+				// Construct spec with no other info
+				spec = new RSAPrivateCrtKeySpec(modulus,
+	                        	                        publicExponent,
+	                        	                        privateExponent,
+	                        	                        primeP,
+	                        	                        primeQ,
+	                        	                        primeExponentP,
+	                        	                        primeExponentQ,
+	                        	                        crtCoefficient);	
+			} 
+		}
+		
 		KeyFactory factory = KeyFactory.getInstance("RSA");
 		
 		RSAPrivateKey priv = (RSAPrivateKey) factory.generatePrivate(spec);
