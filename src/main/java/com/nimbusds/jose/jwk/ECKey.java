@@ -1,10 +1,14 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
+import java.security.spec.EllipticCurve;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
@@ -364,6 +368,20 @@ public final class ECKey extends JWK {
 	 * @throws UnsupportedOperationException Not yet implemented.
 	 */
 	public ECPrivateKey toECPrivateKey() {
+
+		if (d == null) {
+
+			// No private 'd' param
+			return null;
+		}
+
+		BigInteger privateValue = new BigInteger(1, d.decode());
+
+		// See fips_186-3.pdf, p. 89 for EC curve parameter constants
+
+		ECPrivateKeySpec spec = new ECPrivateKeySpec(privateValue, null);
+
+
 		// TODO
 		throw new UnsupportedOperationException("Not yet implemented.");
 	}

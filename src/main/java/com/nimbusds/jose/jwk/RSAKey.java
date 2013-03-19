@@ -730,7 +730,7 @@ public final class RSAKey extends JWK {
 		}
 		
 		byte[] modulusByte = getModulus().decode();
-		BigInteger modulus = new BigInteger(1, modulusByte);		
+		BigInteger modulus = new BigInteger(1, modulusByte);
 		byte[] privateExponentByte = getPrivateExponent().decode();
 		BigInteger privateExponent = new BigInteger(1, privateExponentByte);
 		
