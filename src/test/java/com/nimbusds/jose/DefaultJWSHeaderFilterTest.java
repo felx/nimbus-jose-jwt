@@ -18,6 +18,25 @@ import com.nimbusds.jose.JWSAlgorithm;
 public class DefaultJWSHeaderFilterTest extends TestCase {
 
 
+	public void testDefaultAcceptedParameters() {
+
+		Set<JWSAlgorithm> supportedAlgs = new HashSet<JWSAlgorithm>();
+		supportedAlgs.add(JWSAlgorithm.HS256);
+		supportedAlgs.add(JWSAlgorithm.HS384);
+		supportedAlgs.add(JWSAlgorithm.HS512);
+
+		DefaultJWSHeaderFilter filter = new DefaultJWSHeaderFilter(supportedAlgs);
+
+		assertEquals(3, filter.supportedAlgorithms().size());
+		assertTrue(filter.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(filter.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(filter.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+
+		assertTrue(filter.getAcceptedParameters().containsAll(JWSHeader.getReservedParameterNames()));
+		assertEquals(filter.getAcceptedParameters().size(), JWSHeader.getReservedParameterNames().size());
+	}
+
+
 	public void testRun() {
 
 		Set<JWSAlgorithm> supportedAlgs = new HashSet<JWSAlgorithm>();
