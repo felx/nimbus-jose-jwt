@@ -752,7 +752,7 @@ public final class RSAKey extends JWK {
 			BigInteger primeExponentQ = dq.decodeToBigInteger();
 			BigInteger crtCoefficient = qi.decodeToBigInteger();
 
-			if (oth != null) {
+			if (oth != null && ! oth.isEmpty()) {
 				// Construct other info spec
 				RSAOtherPrimeInfo[] otherInfo = otherInfo = new RSAOtherPrimeInfo[oth.size()];
 
