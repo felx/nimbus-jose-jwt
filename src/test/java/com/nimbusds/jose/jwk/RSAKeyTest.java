@@ -90,7 +90,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 
 		assertEquals(new Base64URL(n), key.getModulus());
-		assertEquals(new Base64URL(e), key.getExponent());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
 
 		assertEquals(new Base64URL(d), key.getPrivateExponent());
 
@@ -115,7 +115,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 
 		assertEquals(new Base64URL(n), key.getModulus());
-		assertEquals(new Base64URL(e), key.getExponent());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
 
 		assertEquals(new Base64URL(d), key.getPrivateExponent());
 
@@ -138,7 +138,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 
 		assertEquals(new Base64URL(n), key.getModulus());
-		assertEquals(new Base64URL(e), key.getExponent());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
 
 		assertNull(key.getPrivateExponent());
 

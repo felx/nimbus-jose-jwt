@@ -97,7 +97,7 @@ public class JWKSetTest extends TestCase {
 		             "w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw", 
 		             rsaKey.getModulus().toString());
 
-		assertEquals("AQAB", rsaKey.getExponent().toString());
+		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 	}
 
 
@@ -154,7 +154,7 @@ public class JWKSetTest extends TestCase {
 		rsaKey = (RSAKey)keySet.getKeys().get(1);
 		assertNotNull(rsaKey);
 		assertEquals("abc", rsaKey.getModulus().toString());
-		assertEquals("def", rsaKey.getExponent().toString());
+		assertEquals("def", rsaKey.getPublicExponent().toString());
 		assertEquals(Use.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals(JWSAlgorithm.RS256, rsaKey.getAlgorithm());
 		assertEquals("5678", rsaKey.getKeyID());
@@ -304,7 +304,7 @@ public class JWKSetTest extends TestCase {
 		             "w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw", 
 		             rsaKey.getModulus().toString());
 
-		assertEquals("AQAB", rsaKey.getExponent().toString());
+		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 
 
 		assertEquals("X4cTteJY_gn4FYPsXB8rdXix5vwsg1FLN5E3EaG6RJoVH-HLLKD9" +

@@ -203,13 +203,13 @@ public final class RSAKey extends JWK {
 	// Public RSA params
 
 	/**
-	 * The modulus value for the public RSA key.
+	 * The modulus value for the RSA key.
 	 */
 	private final Base64URL n;
 
 
 	/**
-	 * The exponent value for the public RSA key.
+	 * The public exponent of the RSA key.
 	 */
 	private final Base64URL e;
 
@@ -217,7 +217,7 @@ public final class RSAKey extends JWK {
 	// Private RSA params, 1st representation	
 
 	/**
-	 * The private exponent of the private RSA key.
+	 * The private exponent of the RSA key.
 	 */
 	private final Base64URL d;
 
@@ -567,11 +567,11 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the modulus value ({@code n}) of the public RSA key. It is 
+	 * Returns the modulus value ({@code n}) of the RSA key. It is 
 	 * represented as the Base64URL encoding of the value's big endian 
 	 * representation.
 	 *
-	 * @return The public RSA key modulus.
+	 * @return The RSA key modulus.
 	 */
 	public Base64URL getModulus() {
 
@@ -580,24 +580,24 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the exponent value ({@code e}) of the public RSA key. It is 
+	 * Returns the public exponent ({@code e}) of the RSA key. It is
 	 * represented as the Base64URL encoding of the value's big endian 
 	 * representation.
 	 *
 	 * @return The public RSA key exponent.
 	 */
-	public Base64URL getExponent() {
+	public Base64URL getPublicExponent() {
 
 		return e;
 	}
 
 
 	/**
-	 * Returns the private exponent ({@code d}) of the private RSA key. It 
-	 * is represented as the Base64URL encoding of the value's big endian 
+	 * Returns the private exponent ({@code d}) of the RSA key. It is
+	 * represented as the Base64URL encoding of the value's big endian 
 	 * representation.
 	 *
-	 * @return The RSA private exponent, {@code null} if not specified.
+	 * @return The private RSA key exponent, {@code null} if not specified.
 	 */
 	public Base64URL getPrivateExponent() {
 
@@ -827,7 +827,7 @@ public final class RSAKey extends JWK {
 	@Override
 	public RSAKey toPublicJWK() {
 
-		return new RSAKey(getModulus(), getExponent(), getKeyUse(), getAlgorithm(), getKeyID());
+		return new RSAKey(getModulus(), getPublicExponent(), getKeyUse(), getAlgorithm(), getKeyID());
 	}
 	
 	

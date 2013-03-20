@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-03-20)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -140,7 +140,7 @@ public class JWEHeaderTest extends TestCase {
 		jwk = (RSAKey)h.getJWK();
 		assertNotNull(jwk);
 		assertEquals(new Base64URL("abc123"), jwk.getModulus());
-		assertEquals(new Base64URL("def456"), jwk.getExponent());
+		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
 		assertEquals(Use.ENCRYPTION, jwk.getKeyUse());
 		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
 		assertEquals("1234", jwk.getKeyID());
