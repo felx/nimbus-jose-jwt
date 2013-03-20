@@ -43,6 +43,8 @@ public class ECKeyTest extends TestCase {
 		assertEquals(new Base64URL(y), key.getY());
 		assertEquals(new Base64URL(d), key.getD());
 
+		assertTrue(key.isPrivate());
+
 
 		String jwkString = key.toJSONObject().toString();
 
@@ -57,6 +59,8 @@ public class ECKeyTest extends TestCase {
 		assertEquals(new Base64URL(x), key.getX());
 		assertEquals(new Base64URL(y), key.getY());
 		assertEquals(new Base64URL(d), key.getD());
+
+		assertTrue(key.isPrivate());
 		
 
 		// Test conversion to public JWK
@@ -71,5 +75,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(new Base64URL(x), key.getX());
 		assertEquals(new Base64URL(y), key.getY());
 		assertNull(key.getD());
+
+		assertFalse(key.isPrivate());
 	}
 }

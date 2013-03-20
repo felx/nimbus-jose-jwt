@@ -400,6 +400,20 @@ public final class ECKey extends JWK {
 		return new KeyPair(toECPublicKey(), toECPrivateKey());		
 	}
 
+
+	@Override
+	public boolean isPrivate() {
+
+		if (d != null) {
+
+			return true;
+
+		} else {
+
+			return false;
+		}
+	}
+
 	
 	/**
 	 * Returns a copy of this Elliptic Curve JWK with any private values 

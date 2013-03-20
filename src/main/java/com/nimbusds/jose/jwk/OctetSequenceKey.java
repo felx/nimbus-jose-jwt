@@ -89,6 +89,19 @@ public class OctetSequenceKey extends JWK {
 
 	/**
 	 * Octet sequence (symmetric) keys are never considered public, this 
+	 * method always returns {@code true}.
+	 *
+	 * @return {@code true}
+	 */
+	@Override
+	public boolean isPrivate() {
+
+		return true;
+	}
+
+
+	/**
+	 * Octet sequence (symmetric) keys are never considered public, this 
 	 * method always returns {@code null}.
 	 *
 	 * @return {@code null}

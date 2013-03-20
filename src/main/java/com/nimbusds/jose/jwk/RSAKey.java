@@ -819,6 +819,21 @@ public final class RSAKey extends JWK {
 	}
 
 
+	@Override
+	public boolean isPrivate() {
+
+		// Check if 1st or 2nd form params are specified
+		if (d != null || p != null) {
+
+			return true;
+
+		} else {
+
+			return false;
+		}
+	}
+
+
 	/**
 	 * Returns a copy of this RSA JWK with any private values removed.
 	 *

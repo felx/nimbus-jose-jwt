@@ -104,6 +104,8 @@ public class RSAKeyTest extends TestCase {
 
 		assertTrue(key.getOtherPrimes().isEmpty());
 
+		assertTrue(key.isPrivate());
+
 
 		String jwkString = key.toJSONObject().toString();
 
@@ -128,6 +130,8 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(new Base64URL(qi), key.getFirstCRTCoefficient());
 
 		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertTrue(key.isPrivate());
 		
 
 		// Test conversion to public JWK
@@ -151,6 +155,8 @@ public class RSAKeyTest extends TestCase {
 		assertNull(key.getFirstCRTCoefficient());
 
 		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertFalse(key.isPrivate());
 	}
 
 

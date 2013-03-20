@@ -40,6 +40,8 @@ public class OctetSequenceKeyTest extends TestCase {
 
 		assertNull(key.toPublicJWK());
 
+		assertTrue(key.isPrivate());
+
 
 		String jwkString = key.toJSONObject().toString();
 
@@ -62,5 +64,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		}
 
 		assertNull(key.toPublicJWK());
+
+		assertTrue(key.isPrivate());
 	}
 }

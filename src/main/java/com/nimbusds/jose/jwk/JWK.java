@@ -141,6 +141,26 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
+	 * Returns {@code true} if this JWK contains private or sensitive
+	 * (non-public) parameters.
+	 *
+	 * @return {@code true} if this JWK contains private parameters, else
+	 *         {@code false}.
+	 */
+	public abstract boolean isPrivate();
+
+
+	/**
+	 * Creates a copy of this JWK with all private or sensitive parameters 
+	 * removed.
+	 * 
+	 * @return The newly created public JWK, or {@code null} if none can be
+	 *         created.
+	 */
+	public abstract JWK toPublicJWK();
+
+
+	/**
 	 * Returns a JSON object representation of this JWK. This method is 
 	 * intended to be called from extending classes.
 	 *
@@ -205,15 +225,6 @@ public abstract class JWK implements JSONAware {
 
 		return toJSONObject().toString();
 	}
-
-	/**
-	 * Creates a copy of this JWK with all private or sensitive parameters 
-	 * removed.
-	 * 
-	 * @return The newly created public JWK, or {@code null} if none can be
-	 *         created.
-	 */
-	public abstract JWK toPublicJWK();
 
 
 	/**
