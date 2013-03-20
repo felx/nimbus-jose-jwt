@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Tests RSA JWK class.
+ * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-03-20)
