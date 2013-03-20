@@ -14,12 +14,12 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
+import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
-
 
 
 /**
@@ -34,46 +34,23 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES512}
  * </ul>
  *
- * <p>Accepts the following JWS header parameters:
- *
- * <ul>
- *     <li>{@code alg}
- *     <li>{@code typ}
- *     <li>{@code cty}
- * </ul>
+ * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getReservedParameterNames
+ * reserved JWS header parameters}. Modify the {@link #getJWSHeaderFilter
+ * header filter} properties to restrict the acceptable JWS algorithms and
+ * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-20)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	/**
-	 * The accepted JWS header parameters.
-	 */
-	private static final Set<String> ACCEPTED_HEADER_PARAMETERS;
-
-
-	/**
-	 * Initialises the accepted JWS header parameters.
-	 */
-	static {
-
-		Set<String> params = new HashSet<String>();
-		params.add("alg");
-		params.add("typ");
-		params.add("cty");
-
-		ACCEPTED_HEADER_PARAMETERS = params;
-	}
-
-
-	/**
 	 * The JWS header filter.
 	 */
-	private DefaultJWSHeaderFilter headerFilter;
+	private final DefaultJWSHeaderFilter headerFilter;
 
 
 	/**
@@ -93,26 +70,28 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * verifier.
 	 *
-	 * @param x The 'x' coordinate for the elliptic curve point. Must not be
-	 *          {@code null}.
-	 * @param y The 'y' coordinate for the elliptic curve point. Must not be 
-	 *          {@code null}.
+	 * @param x The 'x' coordinate for the elliptic curve point. Must not 
+	 *          be {@code null}.
+	 * @param y The 'y' coordinate for the elliptic curve point. Must not 
+	 *          be {@code null}.
 	 */
 	public ECDSAVerifier(final BigInteger x, final BigInteger y) {
 
 		if (x == null) {
+
 			throw new IllegalArgumentException("The \"x\" EC coordinate must not be null");
 		}
 
 		this.x = x;
 
 		if (y == null) {
+
 			throw new IllegalArgumentException("The \"y\" EC coordinate must not be null");
 		}
 
 		this.y = y;
 
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
@@ -147,9 +126,9 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 	@Override
 	public boolean verify(final ReadOnlyJWSHeader header, 
-			final byte[] signedContent, 
-			final Base64URL signature)
-					throws JOSEException {
+		              final byte[] signedContent, 
+		              final Base64URL signature)
+		throws JOSEException {
 
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
@@ -179,17 +158,17 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 		ECPoint q = new ECPoint.Fp(curve, qB.getX(), qB.getY());
 
 		ECDomainParameters ecDomainParameters = new ECDomainParameters(
-				curve, 
-				x9ECParameters.getG(), 
-				x9ECParameters.getN(), 
-				x9ECParameters.getH(),
-				x9ECParameters.getSeed());
+			curve, 
+			x9ECParameters.getG(), 
+			x9ECParameters.getN(), 
+			x9ECParameters.getH(),
+			x9ECParameters.getSeed());
 
 		ECPublicKeyParameters ecPublicKeyParameters = new ECPublicKeyParameters(
-				q, ecDomainParameters);
+			q, ecDomainParameters);
 
 		org.bouncycastle.crypto.signers.ECDSASigner verifier = 
-				new org.bouncycastle.crypto.signers.ECDSASigner();
+			new org.bouncycastle.crypto.signers.ECDSASigner();
 
 		verifier.init(false, ecPublicKeyParameters);
 

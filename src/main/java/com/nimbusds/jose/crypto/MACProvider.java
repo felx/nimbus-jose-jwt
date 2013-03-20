@@ -24,7 +24,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2013-03-20)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -65,6 +65,7 @@ abstract class MACProvider extends BaseJWSProvider {
 		super(SUPPORTED_ALGORITHMS);
 
 		if (sharedSecret == null) {
+
 			throw new IllegalArgumentException("The shared secret must not be null");
 		}
 
@@ -95,19 +96,26 @@ abstract class MACProvider extends BaseJWSProvider {
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
 	protected static Mac getMAC(final JWSAlgorithm alg)
-			throws JOSEException {
+		throws JOSEException {
 
 		// The internal crypto provider uses different alg names
 
 		String internalAlgName = null;
 
 		if (alg.equals(JWSAlgorithm.HS256)) {
+
 			internalAlgName = "HMACSHA256";
+
 		} else if (alg.equals(JWSAlgorithm.HS384)) {
+
 			internalAlgName = "HMACSHA384";
+
 		} else if (alg.equals(JWSAlgorithm.HS512)) {
+
 			internalAlgName = "HMACSHA512";
+
 		} else {
+			
 			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
 		}
 

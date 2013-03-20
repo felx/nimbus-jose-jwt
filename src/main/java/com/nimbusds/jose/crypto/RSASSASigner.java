@@ -48,6 +48,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	public RSASSASigner(final RSAPrivateKey privateKey) {
 
 		if (privateKey == null) {
+
 			throw new IllegalArgumentException("The private RSA key must not be null");
 		}
 
@@ -68,7 +69,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
 	@Override
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
-			throws JOSEException {
+		throws JOSEException {
 
 		Signature signer = getRSASignerAndVerifier(header.getAlgorithm());
 

@@ -52,6 +52,7 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	public ECDSASigner(final BigInteger privateKey) {
 
 		if (privateKey == null) {
+
 			throw new IllegalArgumentException("The private key must not be null");
 		}
 
@@ -73,18 +74,18 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	/**
 	 * Performs the actual ECDSA signing.
 	 *
-	 * @param ecPrivateKeyParameters The EC private key parameters. Must not
-	 *                               be {@code null}.
+	 * @param ecPrivateKeyParameters The EC private key parameters. Must 
+	 *                               not be {@code null}.
 	 * @param bytes                  The byte array to sign. Must not be 
 	 *                               {@code null}.
 	 *
 	 * @return The ECDSA signture.
 	 */
 	private static byte[] doECDSA(final ECPrivateKeyParameters ecPrivateKeyParameters, 
-			final byte[] bytes) {
+		                      final byte[] bytes) {
 
 		org.bouncycastle.crypto.signers.ECDSASigner signer = 
-				new org.bouncycastle.crypto.signers.ECDSASigner();
+			new org.bouncycastle.crypto.signers.ECDSASigner();
 
 		signer.init(true, ecPrivateKeyParameters);
 		BigInteger[] res = signer.generateSignature(bytes);
@@ -112,19 +113,26 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		byte[] rsBytes = new byte[64];
 
 		for (int i=0; i<rsBytes.length; i++) {
+
 			rsBytes[i] = 0;
 		}
 
 		if (rBytes.length >= 32) {
+
 			System.arraycopy(rBytes, rBytes.length - 32, rsBytes, 0, 32);
+
 		} else {
+
 			System.arraycopy(rBytes, 0, rsBytes, 32 - rBytes.length, rBytes.length);
 		}
 
 
 		if (sBytes.length >= 32) {
+
 			System.arraycopy(sBytes, sBytes.length - 32, rsBytes, 32, 32);
+
 		} else {
+
 			System.arraycopy(sBytes, 0, rsBytes, 64 - sBytes.length, sBytes.length);
 		}
 
@@ -135,21 +143,21 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 	@Override
 	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
-			throws JOSEException {
+		throws JOSEException {
 
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
 
 		ECDomainParameters ecParameterSpec = new ECDomainParameters(
-				x9ECParameters.getCurve(), 
-				x9ECParameters.getG(), 
-				x9ECParameters.getN(), 
-				x9ECParameters.getH(), 
-				x9ECParameters.getSeed());
+			x9ECParameters.getCurve(), 
+			x9ECParameters.getG(), 
+			x9ECParameters.getN(), 
+			x9ECParameters.getH(), 
+			x9ECParameters.getSeed());
 
 		ECPrivateKeyParameters ecPrivateKeyParameters = 
-				new ECPrivateKeyParameters(privateKey, ecParameterSpec);
+			new ECPrivateKeyParameters(privateKey, ecParameterSpec);
 
 		digest.update(signableContent, 0, signableContent.length);
 		byte[] out = new byte[digest.getDigestSize()];

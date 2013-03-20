@@ -31,6 +31,7 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 	public BaseJWSProvider(final Set<JWSAlgorithm> algs) {
 
 		if (algs == null) {
+			
 			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
 		}
 

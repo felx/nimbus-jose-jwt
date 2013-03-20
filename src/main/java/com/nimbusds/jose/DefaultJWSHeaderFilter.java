@@ -1,4 +1,4 @@
-package com.nimbusds.jose.crypto;
+package com.nimbusds.jose;
 
 
 import java.util.Collections;
@@ -6,19 +6,17 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeaderFilter;
-
 
 /**
- * JSON Web Signature (JWS) header filter implementation. This class is 
+ * JSON Web Signature (JWS) header filter implementation. Intended to be
+ * incorporated by {@link JWSVerifier} implementations. This class is 
  * thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-20)
  */
 @ThreadSafe
-class DefaultJWSHeaderFilter implements JWSHeaderFilter {
+public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 
 
 	/**
@@ -37,24 +35,40 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	/**
 	 * The accepted header parameters.
 	 */
-	private final Set<String> acceptedParams;
+	private Set<String> acceptedParams;
+
+
+	/**
+	 * Creates a new JWS header filter. The accepted algorithms are set to
+	 * equal the specified supported ones. The accepted header parameters
+	 * are set to match {@link JWSHeader#getReservedParameterNames}.
+	 *
+	 * @param algs           The supported JWS algorithms. Used to bound 
+	 *                       the {@link #setAcceptedAlgorithms accepted
+	 *                       algorithms}. Must not be {@code null}.
+	 */
+	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs) {
+
+		this(algs, JWSHeader.getReservedParameterNames());
+	}
 
 
 	/**
 	 * Creates a new JWS header filter. The accepted algorithms are set to
 	 * equal the specified supported ones.
 	 *
-	 * @param algs           The supported JWS algorithms. Used to bound the
-	 *                       {@link #setAcceptedAlgorithms accepted
+	 * @param algs           The supported JWS algorithms. Used to bound 
+	 *                       the {@link #setAcceptedAlgorithms accepted
 	 *                       algorithms}. Must not be {@code null}.
 	 * @param acceptedParams The accepted JWS header parameters. Must 
 	 *                       contain at least the {@code alg} parameter and
 	 *                       must not be {@code null}.
 	 */
 	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs,
-			final Set<String> acceptedParams) {
+			              final Set<String> acceptedParams) {
 
 		if (algs == null) {
+
 			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
 		}
 
@@ -99,10 +113,12 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	public void setAcceptedAlgorithms(Set<JWSAlgorithm> acceptedAlgs) {
 
 		if (acceptedAlgs == null) {
+
 			throw new IllegalArgumentException("The accepted JWS algorithm set must not be null");
 		}
 
 		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
+
 			throw new IllegalArgumentException("One or more of the algorithms is not in the supported JWS algorithm set");
 		}
 
@@ -114,5 +130,12 @@ class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	public Set<String> getAcceptedParameters() {
 
 		return acceptedParams;
+	}
+
+
+	@Override
+	public void setAcceptedParameters(final Set<String> params) {
+
+		this.acceptedParams = params;
 	}
 }

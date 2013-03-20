@@ -3,21 +3,16 @@ package com.nimbusds.jose.crypto;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
-
 import org.bouncycastle.crypto.engines.AESEngine;
-
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
-
 import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 

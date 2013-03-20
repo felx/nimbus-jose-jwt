@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-03-20)
  *
  */
 public class RSADecrypter extends RSAProvider implements JWEDecrypter {
@@ -72,6 +72,12 @@ public class RSADecrypter extends RSAProvider implements JWEDecrypter {
 
 
 	    return parameters;
+	}
+
+
+	public void setAcceptedParameters(final Set<String> parameters) {
+
+		// ignore
 	}
     };
 

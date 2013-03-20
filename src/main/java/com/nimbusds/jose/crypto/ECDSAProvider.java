@@ -79,7 +79,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
 	protected static ECDSAParameters getECDSAParameters(final JWSAlgorithm alg)
-			throws JOSEException {
+		throws JOSEException {
 
 		ASN1ObjectIdentifier oid = null;
 		Digest digest = null;

@@ -10,12 +10,12 @@ import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
+import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
-
 
 
 /**
@@ -30,45 +30,22 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS512}
  * </ul>
  *
- * <p>Accepts the following JWS header parameters:
- *
- * <ul>
- *     <li>{@code alg}
- *     <li>{@code typ}
- *     <li>{@code cty}
- * </ul>
+ * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getReservedParameterNames
+ * reserved JWS header parameters}. Modify the {@link #getJWSHeaderFilter
+ * header filter} properties to restrict the acceptable JWS algorithms and
+ * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-20)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 
 	/**
-	 * The accepted JWS header parameters.
-	 */
-	private static final Set<String> ACCEPTED_HEADER_PARAMETERS;
-
-
-	/**
-	 * Initialises the accepted JWS header parameters.
-	 */
-	static {
-
-		Set<String> params = new HashSet<String>();
-		params.add("alg");
-		params.add("typ");
-		params.add("cty");
-
-		ACCEPTED_HEADER_PARAMETERS = params;
-	}
-
-
-	/**
 	 * The JWS header filter.
 	 */
-	private DefaultJWSHeaderFilter headerFilter;
+	private final DefaultJWSHeaderFilter headerFilter;
 
 
 	/**
@@ -85,12 +62,13 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 	public RSASSAVerifier(final RSAPublicKey publicKey) {
 
 		if (publicKey == null) {
+
 			throw new IllegalArgumentException("The public RSA key must not be null");
 		}
 
 		this.publicKey = publicKey;
 
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
@@ -114,9 +92,9 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 	@Override
 	public boolean verify(final ReadOnlyJWSHeader header, 
-			final byte[] signedContent, 
-			final Base64URL signature)
-					throws JOSEException {
+		              final byte[] signedContent, 
+		              final Base64URL signature)
+		throws JOSEException {
 
 		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm());
 

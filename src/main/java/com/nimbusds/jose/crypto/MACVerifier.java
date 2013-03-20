@@ -10,6 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
 
+import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
@@ -30,45 +31,22 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS512}
  * </ul>
  *
- * <p>Accepts the following JWS header parameters:
- *
- * <ul>
- *     <li>{@code alg}
- *     <li>{@code typ}
- *     <li>{@code cty}
- * </ul>
+ * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getReservedParameterNames
+ * reserved JWS header parameters}. Modify the {@link #getJWSHeaderFilter
+ * header filter} properties to restrict the acceptable JWS algorithms and
+ * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-20)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
-	 * The accepted JWS header parameters.
-	 */
-	private static final Set<String> ACCEPTED_HEADER_PARAMETERS;
-
-
-	/**
-	 * Initialises the accepted JWS header parameters.
-	 */
-	static {
-
-		Set<String> params = new HashSet<String>();
-		params.add("alg");
-		params.add("typ");
-		params.add("cty");
-
-		ACCEPTED_HEADER_PARAMETERS = params;
-	}
-
-
-	/**
 	 * The JWS header filter.
 	 */
-	private DefaultJWSHeaderFilter headerFilter;
+	private final DefaultJWSHeaderFilter headerFilter;
 
 
 	/**
@@ -80,7 +58,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 		super(sharedSecret);
 
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms(), ACCEPTED_HEADER_PARAMETERS);
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
@@ -93,9 +71,9 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 	@Override
 	public boolean verify(final ReadOnlyJWSHeader header, 
-			final byte[] signedContent, 
-			final Base64URL signature)
-					throws JOSEException {
+		              final byte[] signedContent, 
+		              final Base64URL signature)
+		throws JOSEException {
 
 		Mac mac = getMAC(header.getAlgorithm());
 
@@ -112,8 +90,11 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		Base64URL expectedSignature = Base64URL.encode(mac.doFinal());
 
 		if (expectedSignature.equals(signature)) {
+
 			return true;
+
 		} else {
+
 			return false;
 		}
 	}

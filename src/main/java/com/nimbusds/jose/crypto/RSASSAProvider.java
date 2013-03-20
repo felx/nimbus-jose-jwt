@@ -58,8 +58,8 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 
 	/**
-	 * Gets an RSA signer and verifier for the specified RSASSA-based JSON Web
-	 * Algorithm (JWA).
+	 * Gets an RSA signer and verifier for the specified RSASSA-based JSON
+	 * Web Algorithm (JWA).
 	 *
 	 * @param alg The JSON Web Algorithm (JWA). Must be supported and not
 	 *            {@code null}.
@@ -69,19 +69,26 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
 	protected static Signature getRSASignerAndVerifier(final JWSAlgorithm alg)
-			throws JOSEException {
+		throws JOSEException {
 
 		// The internal crypto provider uses different alg names
 
 		String internalAlgName = null;
 
 		if (alg.equals(JWSAlgorithm.RS256)) {
+
 			internalAlgName = "SHA256withRSA";
+
 		} else if (alg.equals(JWSAlgorithm.RS384)) {
+
 			internalAlgName = "SHA384withRSA";
+
 		} else if (alg.equals(JWSAlgorithm.RS512)) {
+
 			internalAlgName = "SHA512withRSA";
+
 		} else {
+			
 			throw new JOSEException("Unsupported RSASSA algorithm, must be RS256, RS384 or RS512");
 		}
 

@@ -1,4 +1,4 @@
-package com.nimbusds.jose.crypto;
+package com.nimbusds.jose;
 
 
 import java.util.HashSet;
@@ -13,7 +13,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * Tests the default JWS header filter implementation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-05)
+ * @version $version$ (2013-03-20)
  */
 public class DefaultJWSHeaderFilterTest extends TestCase {
 
