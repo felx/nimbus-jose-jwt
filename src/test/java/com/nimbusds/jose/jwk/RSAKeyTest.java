@@ -160,7 +160,7 @@ public class RSAKeyTest extends TestCase {
 	}
 
 
-	public void testKeyExport()
+	public void testKeyExportAndImport()
 		throws Exception {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
@@ -211,5 +211,30 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(new Base64URL(dp).decodeToBigInteger(), privCrtKey.getPrimeExponentP());
 		assertEquals(new Base64URL(dq).decodeToBigInteger(), privCrtKey.getPrimeExponentQ());
 		assertEquals(new Base64URL(qi).decodeToBigInteger(), privCrtKey.getCrtCoefficient());
+
+
+		// Key pair import, 1st private form
+		key = new RSAKey(pubKey, privKey, Use.SIGNATURE, JWSAlgorithm.RS256, "1");
+		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+
+		assertEquals(new Base64URL(n).toString().length(), key.getModulus().toString().length());
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+
+		assertEquals(new Base64URL(d), key.getPrivateExponent());
+
+		assertNull(key.getFirstPrimeFactor());
+		assertNull(key.getSecondPrimeFactor());
+
+		assertNull(key.getFirstFactorCRTExponent());
+		assertNull(key.getSecondFactorCRTExponent());
+
+		assertNull(key.getFirstCRTCoefficient());
+
+		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertTrue(key.isPrivate());
 	}
 }

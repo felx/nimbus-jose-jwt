@@ -9,8 +9,6 @@ import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONValue;
 
-import org.apache.commons.codec.binary.Base64;
-
 
 /**
  * Base64URL-encoded object.
@@ -22,16 +20,10 @@ import org.apache.commons.codec.binary.Base64;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-03-20)
  */
 @Immutable
 public class Base64URL implements JSONAware {
-
-
-	/**
-	 * UTF-8 is the required charset for all JWTs.
-	 */
-	private static final String CHARSET = "utf-8";
 
 
 	/**
@@ -43,13 +35,14 @@ public class Base64URL implements JSONAware {
 	/**
 	 * Creates a new Base64URL-encoded object.
 	 *
-	 * @param base64URL The Base64URL-encoded object value. The value is not
-	 *                  validated for having characters from a Base64URL 
-	 *                  alphabet. Must not be {@code null}.
+	 * @param base64URL The Base64URL-encoded object value. The value is 
+	 *                  not validated for having characters from the 
+	 *                  Base64URL alphabet. Must not be {@code null}.
 	 */
 	public Base64URL(final String base64URL) {
 
 		if (base64URL == null) {
+
 			throw new IllegalArgumentException("The Base64URL value must not be null");
 		}
 
@@ -64,7 +57,7 @@ public class Base64URL implements JSONAware {
 	 */
 	public byte[] decode() {
 
-		return Base64.decodeBase64(value);
+		return org.apache.commons.codec.binary.Base64.decodeBase64(value);
 	}
 
 
@@ -73,7 +66,7 @@ public class Base64URL implements JSONAware {
 	 *
 	 * <p>Same as {@code new BigInteger(1, base64url.decode())}.
 	 *
-	 * @return The resulting unsigned big integer.
+	 * @return The resulting big integer.
 	 */
 	public BigInteger decodeToBigInteger() {
 
@@ -89,7 +82,7 @@ public class Base64URL implements JSONAware {
 	public String decodeToString() {
 
 		try {
-			return new String(decode(), CHARSET);
+			return new String(decode(), Base64.CHARSET);
 
 		} catch (UnsupportedEncodingException e) {
 
@@ -153,7 +146,7 @@ public class Base64URL implements JSONAware {
 
 
 	/**
-	 * Base64URL-encode the specified byte array.
+	 * Base64URL-encodes the specified byte array.
 	 *
 	 * @param bytes The byte array to encode. Must not be {@code null}.
 	 *
@@ -161,12 +154,12 @@ public class Base64URL implements JSONAware {
 	 */
 	public static Base64URL encode(final byte[] bytes) {
 
-		return new Base64URL(Base64.encodeBase64URLSafeString(bytes));
+		return new Base64URL(org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(bytes));
 	}
 
 
 	/**
-	 * Base64URL-encode the specified big integer.
+	 * Base64URL-encodes the specified big integer, without the sign bit.
 	 *
 	 * @param bigInt The big integer to encode. Must not be {@code null}.
 	 *
@@ -174,12 +167,12 @@ public class Base64URL implements JSONAware {
 	 */
 	public static Base64URL encode(final BigInteger bigInt) {
 
-		return encode(bigInt.toByteArray());
+		return encode(BigIntegerUtils.toBytesUnsigned(bigInt));
 	}
 
 
 	/**
-	 * Base64URL-encode the specified string.
+	 * Base64URL-encodes the specified string.
 	 *
 	 * @param text The string to encode. Must be in the UTF-8 character set
 	 *             and not {@code null}.
@@ -189,7 +182,7 @@ public class Base64URL implements JSONAware {
 	public static Base64URL encode(final String text) {
 
 		try {
-			return encode(text.getBytes(CHARSET));
+			return encode(text.getBytes(Base64.CHARSET));
 
 		} catch (UnsupportedEncodingException e) {
 

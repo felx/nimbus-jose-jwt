@@ -1,6 +1,7 @@
 package com.nimbusds.jose.util;
 
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 
 import net.jcip.annotations.Immutable;
@@ -13,10 +14,16 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-20)
  */
 @Immutable
 public class Base64 implements JSONAware {
+
+
+	/**
+	 * UTF-8 is the required character set for all JOSE + JWT objects.
+	 */
+	public static final String CHARSET = "utf-8";
 
 
 	/**
@@ -58,11 +65,29 @@ public class Base64 implements JSONAware {
 	 *
 	 * <p>Same as {@code new BigInteger(1, base64.decode())}.
 	 *
-	 * @return The resulting unsigned big integer.
+	 * @return The resulting big integer.
 	 */
 	public BigInteger decodeToBigInteger() {
 
 		return new BigInteger(1, decode());
+	}
+
+
+	/**
+	 * Decodes this Base64 object to a string.
+	 *
+	 * @return The resulting string, in the UTF-8 character set.
+	 */
+	public String decodeToString() {
+
+		try {
+			return new String(decode(), CHARSET);
+
+		} catch (UnsupportedEncodingException e) {
+
+			// UTF-8 should always be supported
+			return "";
+		}
 	}
 
 
@@ -122,7 +147,7 @@ public class Base64 implements JSONAware {
 
 
 	/**
-	 * Base64-encode the specified byte array. 
+	 * Base64-encodes the specified byte array. 
 	 *
 	 * @param bytes The byte array to encode. Must not be {@code null}.
 	 *
@@ -135,14 +160,14 @@ public class Base64 implements JSONAware {
 
 
 	/**
-	 * Base64-encode the specified big integer.
+	 * Base64URL-encodes the specified big integer, without the sign bit.
 	 *
 	 * @param bigInt The big integer to encode. Must not be {@code null}.
 	 *
-	 * @return The resulting Base64 object.
+	 * @return The resulting Base64URL object.
 	 */
 	public static Base64 encode(final BigInteger bigInt) {
 
-		return encode(bigInt.toByteArray());
+		return encode(BigIntegerUtils.toBytesUnsigned(bigInt));
 	}
 }

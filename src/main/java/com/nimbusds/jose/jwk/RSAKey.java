@@ -537,8 +537,8 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final RSAPublicKey pub, final Use use, final Algorithm alg, final String kid) {
 
-		this(Base64URL.encode(pub.getModulus().toByteArray()), 
-		     Base64URL.encode(pub.getPublicExponent().toByteArray()), 
+		this(Base64URL.encode(pub.getModulus()), 
+		     Base64URL.encode(pub.getPublicExponent()), 
 		     use, alg, kid);
 	}
 
@@ -559,9 +559,9 @@ public final class RSAKey extends JWK {
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateKey priv,
 		      final Use use, final Algorithm alg, final String kid) {
 		
-		this(Base64URL.encode(pub.getModulus().toByteArray()), 
-		     Base64URL.encode(pub.getPublicExponent().toByteArray()), 
-		     Base64URL.encode(priv.getPrivateExponent().toByteArray()),
+		this(Base64URL.encode(pub.getModulus()), 
+		     Base64URL.encode(pub.getPublicExponent()), 
+		     Base64URL.encode(priv.getPrivateExponent()),
 		     use, alg, kid);
 	}
 
