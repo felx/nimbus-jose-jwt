@@ -2,6 +2,7 @@ package com.nimbusds.jose.util;
 
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 
 import junit.framework.TestCase;
 
@@ -19,13 +20,13 @@ public class Base64URLTest extends TestCase {
 			" \"http://example.com/is_root\":true}";
 
 
-	public void testEncode() {
+	// Test big integer
+	BigInteger bigInt = new BigInteger("9999999999999999999999999999999999");
+
+
+	public void testByteArrayEncodeAndDecode() {
 
 		assertEquals("A-z_4ME", Base64URL.encode(bytes).toString());
-	}
-
-
-	public void testDecode() {
 
 		byte[] decoded = new Base64URL("A-z_4ME").decode();
 
@@ -38,7 +39,7 @@ public class Base64URLTest extends TestCase {
 
 
 	public void testEncodeAndDecode() 
-			throws UnsupportedEncodingException {
+		throws UnsupportedEncodingException {
 
 		byte[] bytes = string.getBytes("utf-8");
 
@@ -46,6 +47,14 @@ public class Base64URLTest extends TestCase {
 
 		String expected = "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ";
 		assertEquals(expected, b64url.toString());
+	}
+
+
+	public void testBigIntegerEncodeAndDecode() {
+		
+		Base64URL b64url = Base64URL.encode(bigInt);
+
+		assertEquals(bigInt, b64url.decodeToBigInteger());
 	}
 }
 
