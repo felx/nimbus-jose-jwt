@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-20)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -85,12 +85,14 @@ public class JWSObject extends JOSEObject {
 	public JWSObject(final JWSHeader header, final Payload payload) {
 
 		if (header == null) {
+
 			throw new IllegalArgumentException("The JWS header must not be null");
 		}
 
 		this.header = header;
 
 		if (payload == null) {
+
 			throw new IllegalArgumentException("The payload must not be null");
 		}
 
@@ -122,6 +124,7 @@ public class JWSObject extends JOSEObject {
 			throws ParseException {
 
 		if (firstPart == null) {
+
 			throw new IllegalArgumentException("The first part must not be null");
 		}
 
@@ -134,6 +137,7 @@ public class JWSObject extends JOSEObject {
 		}
 
 		if (secondPart == null) {
+
 			throw new IllegalArgumentException("The second part must not be null");
 		}
 
@@ -239,6 +243,7 @@ public class JWSObject extends JOSEObject {
 	private void ensureUnsignedState() {
 
 		if (state != State.UNSIGNED) {
+
 			throw new IllegalStateException("The JWS object must be in an unsigned state");
 		}
 	}
@@ -254,6 +259,7 @@ public class JWSObject extends JOSEObject {
 	private void ensureSignedOrVerifiedState() {
 
 		if (state != State.SIGNED && state != State.VERIFIED) {
+
 			throw new IllegalStateException("The JWS object must be in a signed or verified state");
 		}
 	}
@@ -266,12 +272,12 @@ public class JWSObject extends JOSEObject {
 	 * @throws JOSEException If the JWS algorithm is not supported.
 	 */
 	private void ensureJWSSignerSupport(final JWSSigner signer)
-			throws JOSEException {
+		throws JOSEException {
 
 		if (! signer.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-					"\" algorithm is not supported by the JWS signer");
+			                        "\" algorithm is not supported by the JWS signer");
 		}
 	}
 
@@ -283,7 +289,7 @@ public class JWSObject extends JOSEObject {
 	 * @throws JOSEException If the JWS algorithm or headers are not accepted.
 	 */
 	private void ensureJWSVerifierAcceptance(final JWSVerifier verifier)
-			throws JOSEException {
+		throws JOSEException {
 
 		JWSHeaderFilter filter = verifier.getJWSHeaderFilter();
 
@@ -316,26 +322,39 @@ public class JWSObject extends JOSEObject {
 	 * @throws JOSEException         If the JWS object couldn't be signed.
 	 */
 	public synchronized void sign(final JWSSigner signer)
-			throws JOSEException {
+		throws JOSEException {
 
 		ensureUnsignedState();
 
 		ensureJWSSignerSupport(signer);
 
-		signature = signer.sign(getHeader(), getSignableContent());
+		try {
+			signature = signer.sign(getHeader(), getSignableContent());
+
+		} catch (JOSEException e) {
+
+			throw e;
+				
+		} catch (Exception e) {
+
+			// Prevent throwing unchecked exceptions at this point,
+			// see issue #20
+			throw new JOSEException(e.getMessage(), e);
+		}
+		
 
 		state = State.SIGNED;
 	}
 
 
 	/**
-	 * Checks the signature of this JWS object with the specified verifier. The
-	 * JWS object must be in a {@link State#SIGNED signed} state.
+	 * Checks the signature of this JWS object with the specified verifier. 
+	 * The JWS object must be in a {@link State#SIGNED signed} state.
 	 *
 	 * @param verifier The JWS verifier. Must not be {@code null}.
 	 *
-	 * @return {@code true} if the signature was successfully verified, else
-	 *         {@code false}.
+	 * @return {@code true} if the signature was successfully verified, 
+	 *         else {@code false}.
 	 *
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
@@ -343,15 +362,30 @@ public class JWSObject extends JOSEObject {
 	 * @throws JOSEException         If the JWS object couldn't be verified.
 	 */
 	public synchronized boolean verify(final JWSVerifier verifier)
-			throws JOSEException {
+		throws JOSEException {
 
 		ensureSignedOrVerifiedState();
 
 		ensureJWSVerifierAcceptance(verifier);
 
-		boolean verified = verifier.verify(getHeader(), getSignableContent(), getSignature());
+		boolean verified = false;
+
+		try {
+			verified = verifier.verify(getHeader(), getSignableContent(), getSignature());
+
+		} catch (JOSEException e) {
+
+			throw e;
+
+		} catch (Exception e) {
+
+			// Prevent throwing unchecked exceptions at this point,
+			// see issue #20
+			throw new JOSEException(e.getMessage(), e);
+		}
 
 		if (verified) {
+
 			state = State.VERIFIED;
 		}
 
@@ -361,9 +395,9 @@ public class JWSObject extends JOSEObject {
 
 	/**
 	 * Serialises this JWS object to its compact format consisting of 
-	 * Base64URL-encoded parts delimited by period ('.') characters. It must 
-	 * be in a {@link State#SIGNED signed} or {@link State#VERIFIED verified} 
-	 * state.
+	 * Base64URL-encoded parts delimited by period ('.') characters. It 
+	 * must be in a {@link State#SIGNED signed} or 
+	 * {@link State#VERIFIED verified} state.
 	 *
 	 * <pre>
 	 * [header-base64url].[payload-base64url].[signature-base64url]
@@ -397,15 +431,16 @@ public class JWSObject extends JOSEObject {
 	 *
 	 * @return The JWS object.
 	 *
-	 * @throws ParseException If the string couldn't be parsed to a valid JWS
-	 *                        object.
+	 * @throws ParseException If the string couldn't be parsed to a valid 
+	 *                        JWS object.
 	 */
 	public static JWSObject parse(String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 
 		if (parts.length != 3) {
+
 			throw new ParseException("Unexpected number of Base64URL parts, must be three", 0);
 		}
 

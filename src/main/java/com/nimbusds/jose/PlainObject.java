@@ -25,14 +25,15 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Creates a new plaintext JOSE object with a default {@link PlainHeader} 
-	 * and the specified payload.
+	 * Creates a new plaintext JOSE object with a default 
+	 * {@link PlainHeader} and the specified payload.
 	 *
 	 * @param payload The payload. Must not be {@code null}.
 	 */
 	public PlainObject(final Payload payload) {
 
 		if (payload == null) {
+
 			throw new IllegalArgumentException("The payload must not be null");
 		}
 
@@ -52,12 +53,14 @@ public class PlainObject extends JOSEObject {
 	public PlainObject(final PlainHeader header, final Payload payload) {
 
 		if (header == null) {
+
 			throw new IllegalArgumentException("The plain header must not be null");
 		}
 
 		this.header = header;
 
 		if (payload == null) {
+
 			throw new IllegalArgumentException("The payload must not be null");
 		}
 
@@ -66,13 +69,13 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Creates a new plaintext JOSE object with the specified Base64URL-encoded 
-	 * parts.
+	 * Creates a new plaintext JOSE object with the specified 
+	 * Base64URL-encoded parts.
 	 *
-	 * @param firstPart  The first part, corresponding to the plaintext header. 
+	 * @param firstPart  The first part, corresponding to the plaintext 
+	 *                   header. Must not be {@code null}.
+	 * @param secondPart The second part, corresponding to the payload. 
 	 *                   Must not be {@code null}.
-	 * @param secondPart The second part, corresponding to the payload. Must 
-	 *                   not be {@code null}.
 	 *
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
@@ -80,6 +83,7 @@ public class PlainObject extends JOSEObject {
 			throws ParseException {
 
 		if (firstPart == null) {
+
 			throw new IllegalArgumentException("The first part must not be null");
 		}
 
@@ -92,6 +96,7 @@ public class PlainObject extends JOSEObject {
 		}
 
 		if (secondPart == null) {
+
 			throw new IllegalArgumentException("The second part must not be null");
 		}
 
@@ -109,8 +114,9 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Serialises this plaintext JOSE object to its compact format consisting 
-	 * of Base64URL-encoded parts delimited by period ('.') characters.
+	 * Serialises this plaintext JOSE object to its compact format 
+	 * consisting of Base64URL-encoded parts delimited by period ('.') 
+	 * characters.
 	 *
 	 * <pre>
 	 * [header-base64url].[payload-base64url].[]
@@ -146,6 +152,7 @@ public class PlainObject extends JOSEObject {
 		Base64URL[] parts = JOSEObject.split(s);
 
 		if (! parts[2].toString().isEmpty()) {
+			
 			throw new ParseException("Unexpected third Base64URL part", 0);
 		}
 
