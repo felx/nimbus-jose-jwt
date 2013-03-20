@@ -55,7 +55,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-20)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -353,8 +353,9 @@ public final class ECKey extends JWK {
 	 * @throws UnsupportedOperationException Not yet implemented.
 	 */
 	public ECPublicKey toECPublicKey() {
+
 		// TODO
-		throw new UnsupportedOperationException("Not yet implemented.");
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 
@@ -383,7 +384,7 @@ public final class ECKey extends JWK {
 
 
 		// TODO
-		throw new UnsupportedOperationException("Not yet implemented.");
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 
@@ -433,6 +434,24 @@ public final class ECKey extends JWK {
 
 	/**
 	 * Parses a public / private Elliptic Curve JWK from the specified JSON
+	 * object string representation.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The public / private Elliptic Curve JWK.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to an
+	 *                        Elliptic Curve JWK.
+	 */
+	public static ECKey parse(final String s)
+		throws ParseException {
+
+		return parse(JSONObjectUtils.parseJSONObject(s));
+	}
+
+
+	/**
+	 * Parses a public / private Elliptic Curve JWK from the specified JSON
 	 * object representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
@@ -440,8 +459,8 @@ public final class ECKey extends JWK {
 	 *
 	 * @return The public / private Elliptic Curve JWK.
 	 *
-	 * @throws ParseException If the JSON object couldn't be parsed to a 
-	 *                        valid Elliptic Curve JWK.
+	 * @throws ParseException If the JSON object couldn't be parsed to an 
+	 *                        Elliptic Curve JWK.
 	 */
 	public static ECKey parse(final JSONObject jsonObject)
 		throws ParseException {

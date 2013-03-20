@@ -207,7 +207,7 @@ public abstract class JWK implements JSONAware {
 	}
 
 	/**
-	 * Create a copy of this JWK with all private or sensitive keys 
+	 * Creates a copy of this JWK with all private or sensitive parameters 
 	 * removed.
 	 * 
 	 * @return The newly created public JWK, or {@code null} if none can be
@@ -229,7 +229,7 @@ public abstract class JWK implements JSONAware {
 	 *                        supported JWK.
 	 */
 	public static JWK parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		return parse(JSONObjectUtils.parseJSONObject(s));
 	}
@@ -249,7 +249,7 @@ public abstract class JWK implements JSONAware {
 	 *                        supported JWK.
 	 */
 	public static JWK parse(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
 
@@ -284,7 +284,7 @@ public abstract class JWK implements JSONAware {
 	 * @throws ParseException If the key use parameter couldn't be parsed.
 	 */
 	protected static Use parseKeyUse(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		if (jsonObject.get("use") == null) {
 			return null;
@@ -293,10 +293,15 @@ public abstract class JWK implements JSONAware {
 		String useStr = JSONObjectUtils.getString(jsonObject, "use");
 
 		if (useStr.equals("sig")) {
+
 			return Use.SIGNATURE;
+
 		} else if (useStr.equals("enc")) {
+
 			return Use.ENCRYPTION;
+
 		} else {
+			
 			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"", 0);
 		}
 	}
@@ -317,9 +322,10 @@ public abstract class JWK implements JSONAware {
 	 *                        parsed.
 	 */
 	protected static Algorithm parseAlgorithm(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		if (jsonObject.get("alg") == null) {
+
 			return null;
 		}
 
@@ -341,9 +347,10 @@ public abstract class JWK implements JSONAware {
 	 * @throws ParseException If the key ID parameter couldn't be parsed.
 	 */
 	protected static String parseKeyID(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		if (jsonObject.get("kid") == null) {
+
 			return null;
 		}
 

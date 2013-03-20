@@ -94,7 +94,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-20)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -875,6 +875,24 @@ public final class RSAKey extends JWK {
 
 
 	/**
+	 * Parses a public / private RSA Curve JWK from the specified JSON
+	 * object string representation.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The public / private RSA JWK.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to an RSA
+	 *                        JWK.
+	 */
+	public static RSAKey parse(final String s)
+		throws ParseException {
+
+		return parse(JSONObjectUtils.parseJSONObject(s));
+	}
+
+
+	/**
 	 * Parses a public / private RSA JWK from the specified JSON object 
 	 * representation.
 	 *
@@ -883,8 +901,8 @@ public final class RSAKey extends JWK {
 	 *
 	 * @return The public / private RSA Key.
 	 *
-	 * @throws ParseException If the JSON object couldn't be parsed to 
-	 *                        valid RSA JWK.
+	 * @throws ParseException If the JSON object couldn't be parsed to an
+	 *                        RSA JWK.
 	 */
 	public static RSAKey parse(final JSONObject jsonObject)
 			throws ParseException {

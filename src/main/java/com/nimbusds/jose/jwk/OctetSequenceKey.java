@@ -26,7 +26,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  * 
  * @author Justin Richer
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-20)
  */
 @Immutable
 public class OctetSequenceKey extends JWK {
@@ -55,7 +55,8 @@ public class OctetSequenceKey extends JWK {
 		super(KeyType.OCT, use, alg, kid);
 
 		if (k == null) {
-			throw new IllegalArgumentException("Key value must not be null");
+
+			throw new IllegalArgumentException("The key value must not be null");
 		}
 
 		this.k = k;
@@ -109,15 +110,34 @@ public class OctetSequenceKey extends JWK {
 		
 		return o;
 	}
+
+
+	/**
+	 * Parses an octet sequence JWK from the specified JSON object string 
+	 * representation.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The octet sequence JWK.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to an octet
+	 *                        sequence JWK.
+	 */
+	public static OctetSequenceKey parse(final String s)
+		throws ParseException {
+
+		return parse(JSONObjectUtils.parseJSONObject(s));
+	}
+
 	
 	/**
-	 * Parses an octet sequnce key from the specified JSON object 
+	 * Parses an octet sequence JWK from the specified JSON object 
 	 * representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
 	 *                   @code null}.
 	 *
-	 * @return The octet sequence Key.
+	 * @return The octet sequence JWK.
 	 *
 	 * @throws ParseException If the JSON object couldn't be parsed to an
 	 *                        octet sequence JWK.
@@ -130,7 +150,9 @@ public class OctetSequenceKey extends JWK {
 
 		// Check key type
 		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+
 		if (kty != KeyType.OCT) {
+
 			throw new ParseException("The key type \"kty\" must be oct", 0);
 		}
 		
