@@ -164,7 +164,7 @@ public final class RSAKey extends JWK {
        
     	
 		/**
-		 * Gets the prime factor.
+		 * Gets the prime factor ({@code r}).
 		 *
 		 * @return The prime factor.
 		 */
@@ -175,7 +175,8 @@ public final class RSAKey extends JWK {
 
 
 		/**
-		 * Gets factor Chinese Remainder Theorem (CRT) exponent.
+		 * Gets factor Chinese Remainder Theorem (CRT) exponent
+		 * ({@code d}).
 		 *
 		 * @return The factor Chinese Remainder Theorem (CRT) exponent.
 		 */
@@ -186,7 +187,8 @@ public final class RSAKey extends JWK {
 
 
 		/**
-		 * The factor Chinese Remainder Theorem (CRT) coefficient.
+		 * The factor Chinese Remainder Theorem (CRT) coefficient
+		 * ({@code t}).
 		 *
 		 * @return The factor Chinese Remainder Theorem (CRT) 
 		 *         coefficient.
@@ -565,8 +567,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the modulus value of the public RSA key. It is represented
-	 * as the Base64URL encoding of the value's big endian representation.
+	 * Returns the modulus value ({@code n}) of the public RSA key. It is 
+	 * represented as the Base64URL encoding of the value's big endian 
+	 * representation.
 	 *
 	 * @return The public RSA key modulus.
 	 */
@@ -577,8 +580,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the exponent value of the public RSA key. It is represented
-	 * as the Base64URL encoding of the value's big endian representation.
+	 * Returns the exponent value ({@code e}) of the public RSA key. It is 
+	 * represented as the Base64URL encoding of the value's big endian 
+	 * representation.
 	 *
 	 * @return The public RSA key exponent.
 	 */
@@ -589,8 +593,8 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the private exponent of the private RSA key. It is 
-	 * represented as the Base64URL encoding of the value's big endian 
+	 * Returns the private exponent ({@code d}) of the private RSA key. It 
+	 * is represented as the Base64URL encoding of the value's big endian 
 	 * representation.
 	 *
 	 * @return The RSA private exponent, {@code null} if not specified.
@@ -602,9 +606,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first prime factor of the private RSA key. It is 
-	 * represented as the Base64URL encoding of the value's big endian 
-	 * representation.
+	 * Returns the first prime factor ({@code p}) of the private RSA key. 
+	 * It is represented as the Base64URL encoding of the value's big 
+	 * endian representation.
 	 *
 	 * @return The RSA first prime factor, {@code null} if not specified.
 	 */
@@ -615,9 +619,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the second prime factor of the private RSA key. It is 
-	 * represented as the Base64URL encoding of the value's big endian 
-	 * representation.
+	 * Returns the second prime factor ({@code q}) of the private RSA key. 
+	 * It is represented as the Base64URL encoding of the value's big 
+	 * endian representation.
 	 *
 	 * @return The RSA second prime factor, {@code null} if not specified.
 	 */
@@ -628,9 +632,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first factor Chinese Remainder Theorem (CRT) exponent of
-	 * the private RSA key. It is represented as the Base64URL encoding of 
-	 * the value's big endian representation.
+	 * Returns the first factor Chinese Remainder Theorem (CRT) exponent
+	 * ({@code dp}) of the private RSA key. It is represented as the 
+	 * Base64URL encoding of the value's big endian representation.
 	 *
 	 * @return The RSA first factor CRT exponent, {@code null} if not 
 	 *         specified.
@@ -643,8 +647,8 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Returns the second factor Chinese Remainder Theorem (CRT) exponent 
-	 * of the private RSA key. It is represented as the Base64URL encoding
-	 * of the value's big endian representation.
+	 * ({@code dq}) of the private RSA key. It is represented as the 
+	 * Base64URL encoding of the value's big endian representation.
 	 *
 	 * @return The RSA second factor CRT exponent, {@code null} if not
 	 *         specified.
@@ -656,9 +660,9 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first Chinese Remainder Theorem (CRT) coefficient of the
-	 * private RSA key. It is represented as the Base64URL encoding of the 
-	 * value's big endian representation.
+	 * Returns the first Chinese Remainder Theorem (CRT) coefficient
+	 * ({@code qi})} of the private RSA key. It is represented as the 
+	 * Base64URL encoding of the value's big endian representation.
 	 *
 	 * @return The RSA first CRT coefficient, {@code null} if not 
 	 *         specified.
@@ -670,8 +674,8 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the other primes information for the private RSA key, should 
-	 * they exist.
+	 * Returns the other primes information ({@code oth}) for the private 
+	 * RSA key, should they exist.
 	 *
 	 * @return The RSA other primes information, {@code null} or empty list
 	 *         if not specified.
