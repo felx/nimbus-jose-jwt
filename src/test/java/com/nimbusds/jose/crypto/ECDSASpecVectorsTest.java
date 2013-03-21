@@ -14,12 +14,12 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Tests ES256 JWS signing and verfication. Uses test vectors from JWS spec.
+ * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
  */
-public class ECDSATest extends TestCase {
+public class ECDSASpecVectorsTest extends TestCase {
 
 
 	private final static byte[] x = { (byte) 127, (byte) 205, (byte) 206, (byte)  39, 
