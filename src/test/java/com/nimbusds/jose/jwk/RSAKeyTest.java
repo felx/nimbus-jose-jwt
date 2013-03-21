@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-21)
  */
 public class RSAKeyTest extends TestCase {
 
@@ -160,14 +160,12 @@ public class RSAKeyTest extends TestCase {
 	}
 
 
-	public void testKeyExportAndImport()
+	public void testPublicKeyExportAndImport()
 		throws Exception {
 
-		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
-			                new Base64URL(p), new Base64URL(q), 
-			                new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
-			                null,
-			                Use.SIGNATURE, JWSAlgorithm.RS256, "1");
+
+		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e),
+			                null, null, null);
 
 		// Public key export
 		RSAPublicKey pubKey = key.toRSAPublicKey();
@@ -176,7 +174,23 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("RSA", pubKey.getAlgorithm());
 
 
-		// Private key export with CRT
+		// Public key import
+		key = new RSAKey(pubKey, null, null, null);
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+	}
+
+
+	public void testPrivateKeyExportAndImport()
+		throws Exception {
+
+		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
+			                new Base64URL(p), new Base64URL(q), 
+			                new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
+			                null,
+			                Use.SIGNATURE, JWSAlgorithm.RS256, "1");
+
+		// Private key export with CRT (2nd form)
 		RSAPrivateKey privKey = key.toRSAPrivateKey();
 		assertEquals(new Base64URL(n).decodeToBigInteger(), privKey.getModulus());
 		assertEquals(new Base64URL(d).decodeToBigInteger(), privKey.getPrivateExponent());
@@ -194,7 +208,7 @@ public class RSAKeyTest extends TestCase {
 		// Key pair export
 		KeyPair pair = key.toKeyPair();
 
-		pubKey = (RSAPublicKey)pair.getPublic();
+		RSAPublicKey pubKey = (RSAPublicKey)pair.getPublic();
 		assertEquals(new Base64URL(n).decodeToBigInteger(), pubKey.getModulus());
 		assertEquals(new Base64URL(e).decodeToBigInteger(), pubKey.getPublicExponent());
 		assertEquals("RSA", pubKey.getAlgorithm());
@@ -219,7 +233,6 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 
-		assertEquals(new Base64URL(n).toString().length(), key.getModulus().toString().length());
 		assertEquals(new Base64URL(n), key.getModulus());
 		assertEquals(new Base64URL(e), key.getPublicExponent());
 
@@ -232,6 +245,30 @@ public class RSAKeyTest extends TestCase {
 		assertNull(key.getSecondFactorCRTExponent());
 
 		assertNull(key.getFirstCRTCoefficient());
+
+		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertTrue(key.isPrivate());
+
+
+		// Key pair import, 2nd private form
+		key = new RSAKey(pubKey, privCrtKey, Use.SIGNATURE, JWSAlgorithm.RS256, "1");
+		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+
+		assertEquals(new Base64URL(d), key.getPrivateExponent());
+
+		assertEquals(new Base64URL(p), key.getFirstPrimeFactor());
+		assertEquals(new Base64URL(q), key.getSecondPrimeFactor());
+
+		assertEquals(new Base64URL(dp), key.getFirstFactorCRTExponent());
+		assertEquals(new Base64URL(dq), key.getSecondFactorCRTExponent());
+
+		assertEquals(new Base64URL(qi), key.getFirstCRTCoefficient());
 
 		assertTrue(key.getOtherPrimes().isEmpty());
 

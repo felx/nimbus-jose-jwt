@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
+import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -31,6 +33,19 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 /**
  * Public and private {@link KeyType#RSA RSA} JSON Web Key (JWK). This class is
  * immutable.
+ *
+ * <p>Provides RSA JWK import from / export to the following standard Java 
+ * interfaces and classes:
+ *
+ * <ul>
+ *     <li>{@code java.security.interfaces.RSAPublicKey}
+ *     <li>{@code java.security.interfaces.RSAPrivateKey}
+ *         <ul>
+ *             <li>{@code java.security.interfaces.RSAPrivateCrtKey}
+ *             <li>{@code java.security.interfaces.RSAMultiPrimePrivateCrtKey}
+ *         </ul>
+ *     <li>{@code java.security.KeyPair}
+ * </ul>
  *
  * <p>Example JSON object representation of a public RSA JWK:
  *
@@ -94,7 +109,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-21)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -102,7 +117,7 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Other Primes Info, represents the private {@code oth} parameter of a
-	 * RSA key. This class is immutable.
+	 * RSA JWK. This class is immutable.
 	 *
 	 * @author Justin Richer
 	 */
@@ -129,7 +144,7 @@ public final class RSAKey extends JWK {
 
 
 		/**
-		 * Creates a new Other Primes Info with the specified 
+		 * Creates a new JWK Other Primes Info with the specified 
 		 * parameters.
 		 *
 		 * @param r The prime factor. Must not be {@code null}.
@@ -160,6 +175,21 @@ public final class RSAKey extends JWK {
 			}
 			
 			this.t = t;
+		}
+
+
+		/**
+		 * Creates a new JWK Other Primes Info from the specified
+		 * {@code java.security.spec.RSAOtherPrimeInfo} instance.
+		 *
+		 * @param oth The RSA Other Primes Info instance. Must not be 
+		 *            {@code null}.
+		 */
+		public OtherPrimesInfo(final RSAOtherPrimeInfo oth) {
+
+			r = Base64URL.encode(oth.getPrime());
+			d = Base64URL.encode(oth.getExponent());
+			t = Base64URL.encode(oth.getCrtCoefficient());
 		}
        
     	
@@ -196,6 +226,36 @@ public final class RSAKey extends JWK {
 		public Base64URL getFactorCRTCoefficient() {
 
 			return t;
+		}
+
+
+		/**
+		 * Converts the specified array of 
+		 * {@code java.security.spec.RSAOtherPrimeInfo} instances to a
+		 * list of JWK Other Prime Infos.
+		 *
+		 * @param othArray Array of RSA Other Primes Info instances. 
+		 *                 May be be {@code null}.
+		 *
+		 * @return The corresponding list of JWK Other Prime Infos, or
+		 *         empty list of the array was {@code null}.
+		 */
+		public static List<OtherPrimesInfo> toList(final RSAOtherPrimeInfo[] othArray) {
+
+			List<OtherPrimesInfo> list = new ArrayList<OtherPrimesInfo>();
+
+			if (othArray == null) {
+
+				// Return empty list
+				return list;
+			}
+
+			for (RSAOtherPrimeInfo oth: othArray) {
+
+				list.add(new OtherPrimesInfo(oth));
+			}
+
+			return list;
 		}
 	}
 
@@ -545,7 +605,8 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
-	 * specified parameters.
+	 * specified parameters. The private RSA key is specified by its first
+	 * representation (see RFC 3447, section 3.2).
 	 * 
 	 * @param pub  The public RSA key to represent. Must not be 
 	 *             {@code null}.
@@ -562,6 +623,67 @@ public final class RSAKey extends JWK {
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
 		     Base64URL.encode(priv.getPrivateExponent()),
+		     use, alg, kid);
+	}
+
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
+	 * specified parameters. The private RSA key is specified by its second
+	 * representation (see RFC 3447, section 3.2).
+	 * 
+	 * @param pub  The public RSA key to represent. Must not be 
+	 *             {@code null}.
+	 * @param priv The private RSA key to represent. Must not be
+	 *             {@code null}.
+	 * @param use  The key use, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID. {@code null} if not specified.
+	 */
+	public RSAKey(final RSAPublicKey pub, final RSAPrivateCrtKey priv,
+		      final Use use, final Algorithm alg, final String kid) {
+		
+		this(Base64URL.encode(pub.getModulus()), 
+		     Base64URL.encode(pub.getPublicExponent()), 
+		     Base64URL.encode(priv.getPrivateExponent()),
+		     Base64URL.encode(priv.getPrimeP()),
+		     Base64URL.encode(priv.getPrimeQ()),
+		     Base64URL.encode(priv.getPrimeExponentP()),
+		     Base64URL.encode(priv.getPrimeExponentQ()),
+		     Base64URL.encode(priv.getCrtCoefficient()),
+		     null,
+		     use, alg, kid);
+	}
+
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the 
+	 * specified parameters. The private RSA key is specified by its second
+	 * representation, with optional other primes info (see RFC 3447, 
+	 * section 3.2).
+	 * 
+	 * @param pub  The public RSA key to represent. Must not be 
+	 *             {@code null}.
+	 * @param priv The private RSA key to represent. Must not be
+	 *             {@code null}.
+	 * @param use  The key use, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID. {@code null} if not specified.
+	 */
+	public RSAKey(final RSAPublicKey pub, final RSAMultiPrimePrivateCrtKey priv,
+		      final Use use, final Algorithm alg, final String kid) {
+		
+		this(Base64URL.encode(pub.getModulus()), 
+		     Base64URL.encode(pub.getPublicExponent()), 
+		     Base64URL.encode(priv.getPrivateExponent()),
+		     Base64URL.encode(priv.getPrimeP()),
+		     Base64URL.encode(priv.getPrimeQ()),
+		     Base64URL.encode(priv.getPrimeExponentP()),
+		     Base64URL.encode(priv.getPrimeExponentQ()),
+		     Base64URL.encode(priv.getCrtCoefficient()),
+		     OtherPrimesInfo.toList(priv.getOtherPrimeInfo()),
 		     use, alg, kid);
 	}
 
