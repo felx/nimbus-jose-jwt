@@ -14,7 +14,7 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-21)
  */
 @Immutable
 public class Base64 implements JSONAware {
@@ -160,14 +160,35 @@ public class Base64 implements JSONAware {
 
 
 	/**
-	 * Base64URL-encodes the specified big integer, without the sign bit.
+	 * Base64-encodes the specified big integer, without the sign bit.
 	 *
 	 * @param bigInt The big integer to encode. Must not be {@code null}.
 	 *
-	 * @return The resulting Base64URL object.
+	 * @return The resulting Base64 object.
 	 */
 	public static Base64 encode(final BigInteger bigInt) {
 
 		return encode(BigIntegerUtils.toBytesUnsigned(bigInt));
+	}
+
+
+	/**
+	 * Base64-encodes the specified string.
+	 *
+	 * @param text The string to encode. Must be in the UTF-8 character set
+	 *             and not {@code null}.
+	 *
+	 * @return The resulting Base64 object.
+	 */
+	public static Base64 encode(final String text) {
+
+		try {
+			return encode(text.getBytes(CHARSET));
+
+		} catch (UnsupportedEncodingException e) {
+
+			// UTF-8 should always be supported
+			return null;
+		}
 	}
 }
