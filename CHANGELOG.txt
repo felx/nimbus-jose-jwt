@@ -126,5 +126,15 @@ version 2.10 (2013-01-15)
 	* Renames ReadOnlyClaimsSet to ReadOnlyJWTClaimsSet and ClaimsSet to
 	  JWTClaimsSet.
 
-version 2.10.1 (2013-01-15)
+version 2.10.1 (2013-01-16)
+	* Adds Maven support.
 	* Fixes bug in build.xml script.
+
+version 2.11.0 (2013-02-22)
+	* Adds RSA1_5 / RSA OAEP with AES-GCM encryption and decryption.
+	* Refactors JWTClaimsSet.
+	
+version 2.12.0 (2013-03-21)
+	* Adds JSON Private and Symmetric Key (JPSK) support.
+	* Extends HeaderFilter to allow setting of accepted header parameters.
+	* Removes Ant build script.
