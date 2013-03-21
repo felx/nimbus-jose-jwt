@@ -16,6 +16,7 @@ import org.bouncycastle.math.ec.ECPoint;
 
 import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
@@ -41,7 +42,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-21)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
@@ -134,15 +135,17 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
 
-
 		byte[] signatureBytes = signature.decode();
 
-		byte[] rBytes = new byte[32];
-		byte[] sBytes = new byte[32];
+		// Split signature into R and S parts
+		int rsByteArrayLength = ECDSAProvider.getSignatureByteArrayLength(header.getAlgorithm());
+
+		byte[] rBytes = new byte[rsByteArrayLength / 2];
+		byte[] sBytes = new byte[rsByteArrayLength / 2];
 
 		try {
-			System.arraycopy(signatureBytes, 0, rBytes, 0, 32);
-			System.arraycopy(signatureBytes, 32, sBytes, 0, 32);
+			System.arraycopy(signatureBytes, 0, rBytes, 0, rBytes.length);
+			System.arraycopy(signatureBytes, rBytes.length, sBytes, 0, sBytes.length);
 
 		} catch (Exception e) {
 

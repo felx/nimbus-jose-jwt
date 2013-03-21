@@ -11,9 +11,11 @@ import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.BigIntegerUtils;
 
 
 /**
@@ -30,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-21)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -79,63 +81,64 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * @param bytes                  The byte array to sign. Must not be 
 	 *                               {@code null}.
 	 *
-	 * @return The ECDSA signture.
+	 * @return The ECDSA signature parts R and S.
 	 */
-	private static byte[] doECDSA(final ECPrivateKeyParameters ecPrivateKeyParameters, 
-		                      final byte[] bytes) {
+	private static BigInteger[] doECDSA(final ECPrivateKeyParameters ecPrivateKeyParameters, 
+		                            final byte[] bytes) {
 
 		org.bouncycastle.crypto.signers.ECDSASigner signer = 
 			new org.bouncycastle.crypto.signers.ECDSASigner();
 
 		signer.init(true, ecPrivateKeyParameters);
-		BigInteger[] res = signer.generateSignature(bytes);
-		BigInteger r = res[0];
-		BigInteger s = res[1];
-
-		return formatSignature(r, s);
+		
+		return signer.generateSignature(bytes);
 	}
 
 
 	/**
 	 * Converts the specified big integers to byte arrays and returns their
-	 * 64-byte array concatenation.
+	 * array concatenation.
 	 *
-	 * @param r The R parameter. Must not be {@code null}.
-	 * @param s The S parameter. Must not be {@code null}.
+	 * @param r                 The R parameter. Must not be {@code null}.
+	 * @param s                 The S parameter. Must not be {@code null}.
+	 * @param rsByteArrayLength The expected concatenated array length.
 	 *
-	 * @return The resulting 64-byte array.
+	 * @return The resulting concatenated array.
 	 */
-	private static byte[] formatSignature(final BigInteger r, final BigInteger s) {
+	private static byte[] formatSignature(final BigInteger r, 
+		                              final BigInteger s,
+		                              final int rsByteArrayLength) {
 
-		byte[] rBytes = r.toByteArray();
-		byte[] sBytes = s.toByteArray();
+		byte[] rBytes = BigIntegerUtils.toBytesUnsigned(r);
+		byte[] sBytes = BigIntegerUtils.toBytesUnsigned(s);
 
-		byte[] rsBytes = new byte[64];
+		final int outLength = rBytes.length + sBytes.length;
 
-		for (int i=0; i<rsBytes.length; i++) {
+		byte[] rsBytes = new byte[rsByteArrayLength];
 
-			rsBytes[i] = 0;
+		int i = 0;
+
+		// Copy R bytes to first array half, zero pad front
+		int offset = (rsByteArrayLength / 2) - rBytes.length;
+
+		i += offset;
+
+		for (byte rB: rBytes) {
+
+			rsBytes[i++] = rB;
 		}
 
-		if (rBytes.length >= 32) {
+		// Copy S bytes to second array half, zero pad front
+		i = rsByteArrayLength / 2;
 
-			System.arraycopy(rBytes, rBytes.length - 32, rsBytes, 0, 32);
+		offset = (rsByteArrayLength / 2) - sBytes.length;
 
-		} else {
+		i += offset;
 
-			System.arraycopy(rBytes, 0, rsBytes, 32 - rBytes.length, rBytes.length);
+		for (byte sB: sBytes) {
+
+			rsBytes[i++] = sB;
 		}
-
-
-		if (sBytes.length >= 32) {
-
-			System.arraycopy(sBytes, sBytes.length - 32, rsBytes, 32, 32);
-
-		} else {
-
-			System.arraycopy(sBytes, 0, rsBytes, 64 - sBytes.length, sBytes.length);
-		}
-
 
 		return rsBytes;
 	}
@@ -163,8 +166,12 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		byte[] out = new byte[digest.getDigestSize()];
 		digest.doFinal(out, 0);
 
-		byte[] sig = doECDSA(ecPrivateKeyParameters, out);
+		BigInteger[] signatureParts = doECDSA(ecPrivateKeyParameters, out);
 
-		return Base64URL.encode(sig);
+		int rsByteArrayLength = ECDSAProvider.getSignatureByteArrayLength(header.getAlgorithm());
+
+		return Base64URL.encode(formatSignature(signatureParts[0], 
+			                                signatureParts[1], 
+			                                rsByteArrayLength));
 	}
 }

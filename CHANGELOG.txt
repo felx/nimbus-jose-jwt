@@ -137,4 +137,5 @@ version 2.11.0 (2013-02-22)
 version 2.12.0 (2013-03-21)
 	* Adds JSON Private and Symmetric Key (JPSK) support.
 	* Extends HeaderFilter to allow setting of accepted header parameters.
+	* Fixes ECDSA signature R + S part processing for ES384 and ES512.
 	* Removes Ant build script.
