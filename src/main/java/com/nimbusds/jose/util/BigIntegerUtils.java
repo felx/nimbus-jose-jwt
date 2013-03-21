@@ -8,7 +8,7 @@ import java.math.BigInteger;
  * Big integer utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-21)
  */
 public class BigIntegerUtils {
 
@@ -54,5 +54,13 @@ public class BigIntegerUtils {
 		final byte[] resizedBytes = new byte[bitlen / 8];
 		System.arraycopy(bigBytes, startSrc, resizedBytes, startDst, len);
 		return resizedBytes;
+	}
+
+
+	/**
+	 * Prevents public instantiation.
+	 */
+	private BigIntegerUtils() {
+
 	}
 }

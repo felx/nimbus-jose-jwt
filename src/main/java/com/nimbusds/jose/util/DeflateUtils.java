@@ -73,7 +73,7 @@ public class DeflateUtils {
 
 
 	/**
-	 * Prevents instantiation.
+	 * Prevents public instantiation.
 	 */
 	private DeflateUtils() {
 

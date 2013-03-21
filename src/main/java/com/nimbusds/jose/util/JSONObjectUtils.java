@@ -314,7 +314,7 @@ public class JSONObjectUtils {
 
 
 	/**
-	 * Prevents instantiation.
+	 * Prevents public instantiation.
 	 */
 	private JSONObjectUtils() {
 
