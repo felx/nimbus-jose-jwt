@@ -12,7 +12,6 @@ import java.security.interfaces.RSAPublicKey;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -112,7 +111,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		try {
 			final int keyLength = RSACryptoProvider.keyLengthForMethod(method);
 
-			SecretKey contentEncryptionKey = generateAESCMK(keyLength);
+			SecretKey contentEncryptionKey = AES.generateAESCMK(keyLength);
 
 			if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
 
@@ -159,7 +158,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			if (method.equals(EncryptionMethod.A128GCM) || method.equals(EncryptionMethod.A256GCM)) {
 
-				byte[] iv = generateAESGCMIV();
+				byte[] iv = AESGCM.generateIV(randomGen);
 
 				String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
 				                        encryptedKey.toString() + "." +
@@ -195,43 +194,5 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		} catch (IllegalBlockSizeException e) {
 			throw new JOSEException("Illegal Block Size exception", e);
 		}
-	}
-
-
-	/**
-	 * Generates an AES Content Master Key (CMK) of the specified length.
-	 *
-	 * @param keyLength The key length, in bits.
-	 *
-	 * @return The AES CMK.
-	 *
-	 * @throws NoSuchAlgorithmException If AES key generation is not
-	 *                                  supported.
-	 */
-	protected static SecretKey generateAESCMK(final int keyLength) 
-			throws NoSuchAlgorithmException {
-
-		KeyGenerator keygen;
-		keygen = KeyGenerator.getInstance("AES");
-		keygen.init(keyLength);
-		return keygen.generateKey();
-	}
-
-
-	/**
-	 * Generates a random 96 bit (12 byte) Initialisation Vector(IV) for
-	 * use in AES-GCM encryption.
-	 *
-	 * <p>See http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-08#section-4.9
-	 *
-	 * @return The random 96 bit IV.
-	 */
-	protected byte[] generateAESGCMIV() {
-		
-		byte[] bytes = new byte[AESGCM.IV_BIT_LENGTH];
-
-		randomGen.nextBytes(bytes);
-
-		return bytes;
 	}
 }

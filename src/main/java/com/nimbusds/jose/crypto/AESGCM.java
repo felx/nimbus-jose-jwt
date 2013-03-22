@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
 import net.jcip.annotations.Immutable;
@@ -96,6 +97,27 @@ class AESGCM {
 
 			return authTag;
 		}
+	}
+
+
+	/**
+	 * Generates a random 96 bit (12 byte) Initialisation Vector(IV) for
+	 * use in AES-GCM encryption.
+	 *
+	 * <p>See draft-ietf-jose-json-web-algorithms-08, section-4.9.
+	 *
+	 * @param randomGen The secure random generator to use. Must be 
+	 *                  correctly initialised and not {@code null}.
+	 *
+	 * @return The random 96 bit IV.
+	 */
+	public static byte[] generateIV(final SecureRandom randomGen) {
+		
+		byte[] bytes = new byte[AESGCM.IV_BIT_LENGTH];
+
+		randomGen.nextBytes(bytes);
+
+		return bytes;
 	}
 
 

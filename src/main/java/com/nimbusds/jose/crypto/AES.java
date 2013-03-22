@@ -1,6 +1,8 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.bouncycastle.crypto.BlockCipher;
@@ -22,6 +24,26 @@ class AES {
 
 
 	/**
+	 * Generates an AES Content Master Key (CMK) of the specified length.
+	 *
+	 * @param keyLength The key length, in bits.
+	 *
+	 * @return The AES CMK.
+	 *
+	 * @throws NoSuchAlgorithmException If AES key generation is not
+	 *                                  supported.
+	 */
+	public static SecretKey generateAESCMK(final int keyLength) 
+		throws NoSuchAlgorithmException {
+
+		KeyGenerator keygen;
+		keygen = KeyGenerator.getInstance("AES");
+		keygen.init(keyLength);
+		return keygen.generateKey();
+	}
+
+
+	/**
 	 * Creates a new AES cipher.
 	 *
 	 * @param secretKey     The AES key. Must not be {@code null}.
@@ -32,7 +54,7 @@ class AES {
 	 * @return The AES cipher.
 	 */
 	public static AESEngine createAESCipher(final SecretKey secretKey, 
-		                                 final boolean forEncryption) {
+		                                final boolean forEncryption) {
 
 		AESEngine cipher = new AESEngine();
 
