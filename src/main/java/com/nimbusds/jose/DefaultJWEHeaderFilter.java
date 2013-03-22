@@ -49,7 +49,7 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 	 * Validates the specified accepted parameters.
 	 *
 	 * @param acceptedParams The accepted JWE header parameters. Must 
-	 *                       contain at least the {@code alg} and / or
+	 *                       contain at least the {@code alg} and
 	 *                       {@code enc} parameters. Must not be
 	 *                       {@code null}.
 	 *
@@ -58,9 +58,9 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 	 */
 	private static void validateAcceptedParameters(final Set<String> acceptedParams) {
 
-		if (! acceptedParams.contains("alg") && ! acceptedParams.contains("enc")) {
+		if (! acceptedParams.contains("alg") || ! acceptedParams.contains("enc")) {
 
-			throw new IllegalArgumentException("The accepted JWE header parameters set must include at least the \"alg\" or \"enc\" parameters");
+			throw new IllegalArgumentException("The accepted JWE header parameters set must include at least the \"alg\" and \"enc\" parameters");
 		}
 	}
 
@@ -97,7 +97,7 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 	 *                       accepted encryption methods}. Must not be
 	 *                       {@code null}.
 	 * @param acceptedParams The accepted JWE header parameters. Must 
-	 *                       contain at least the {@code alg} and / or
+	 *                       contain at least the {@code alg} and
 	 *                       {@code enc} parameters. Must not be
 	 *                       {@code null}.
 	 */

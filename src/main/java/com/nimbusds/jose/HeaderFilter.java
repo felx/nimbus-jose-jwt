@@ -17,9 +17,9 @@ public interface HeaderFilter {
 	/**
 	 * Gets the names of the accepted header parameters.
 	 *
-	 * @return The accepted header parameters, as a read-only set. Should 
+	 * @return The accepted header parameters, as a read-only set. Must 
 	 *         contain at least the {@code alg} parameter for JWS headers 
-	 *         or the {@code alg} and / or {@code enc} parameters for JWE 
+	 *         or the {@code alg} and {@code enc} parameters for JWE 
 	 *         headers.
 	 */
 	public Set<String> getAcceptedParameters();
@@ -28,11 +28,11 @@ public interface HeaderFilter {
 	/**
 	 * Sets the names of the accepted header parameters.
 	 *
-	 * @param acceptedParams The accepted header parameters. Should contain 
+	 * @param acceptedParams The accepted header parameters. Must contain 
 	 *                       at least the {@code alg} parameter for JWS 
-	 *                       headers or the {@code alg} and / or 
-	 *                       {@code enc} parameters for JWE headers. Must 
-	 *                       not be {@code null}.
+	 *                       headers or the {@code alg} and {@code enc} 
+	 *                       parameters for JWE headers. Must not be 
+	 *                       {@code null}.
 	 */
 	public void setAcceptedParameters(final Set<String> acceptedParams);
 }

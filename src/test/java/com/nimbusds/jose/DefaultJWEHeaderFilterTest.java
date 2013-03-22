@@ -68,15 +68,29 @@ public class DefaultJWEHeaderFilterTest extends TestCase {
 		acceptedParams = new HashSet<String>();
 		acceptedParams.add("alg");
 
-		// ok
-		filter = new DefaultJWEHeaderFilter(supportedAlgs, supportedEncs, acceptedParams);
+		try {
+			filter = new DefaultJWEHeaderFilter(supportedAlgs, supportedEncs, acceptedParams);
+
+			fail("Failed to raise IllegalArgumentException");
+			
+		} catch (IllegalArgumentException e) {
+
+			// ok
+		}
 
 
 		acceptedParams = new HashSet<String>();
 		acceptedParams.add("enc");
 
-		// ok
-		filter = new DefaultJWEHeaderFilter(supportedAlgs, supportedEncs, acceptedParams);
+		try {
+			filter = new DefaultJWEHeaderFilter(supportedAlgs, supportedEncs, acceptedParams);
+
+			fail("Failed to raise IllegalArgumentException");
+			
+		} catch (IllegalArgumentException e) {
+
+			// ok
+		}
 
 
 		acceptedParams = new HashSet<String>();
@@ -100,6 +114,7 @@ public class DefaultJWEHeaderFilterTest extends TestCase {
 
 		Set<String> acceptedParams = new HashSet<String>();
 		acceptedParams.add("alg");
+		acceptedParams.add("enc");
 		acceptedParams.add("typ");
 		acceptedParams.add("cty");
 
@@ -121,8 +136,9 @@ public class DefaultJWEHeaderFilterTest extends TestCase {
 		assertTrue(filter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(filter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
 
-		assertEquals(3, filter.getAcceptedParameters().size());
+		assertEquals(4, filter.getAcceptedParameters().size());
 		assertTrue(filter.getAcceptedParameters().contains("alg"));
+		assertTrue(filter.getAcceptedParameters().contains("enc"));
 		assertTrue(filter.getAcceptedParameters().contains("typ"));
 		assertTrue(filter.getAcceptedParameters().contains("cty"));
 
