@@ -2,18 +2,11 @@ package com.nimbusds.jose.crypto;
 
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.ProviderException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;

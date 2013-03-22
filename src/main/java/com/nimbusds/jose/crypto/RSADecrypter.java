@@ -2,27 +2,10 @@ package com.nimbusds.jose.crypto;
 
 
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.HashSet;
 import java.util.Set;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.encodings.OAEPEncoding;
-import org.bouncycastle.crypto.engines.RSAEngine;
-import org.bouncycastle.crypto.params.RSAKeyParameters;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
