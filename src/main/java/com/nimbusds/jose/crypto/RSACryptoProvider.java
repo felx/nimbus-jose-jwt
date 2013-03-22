@@ -42,18 +42,28 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-22)
+ * @version $version$ (2013-03-22)
  */
-abstract class RSAProvider implements JWEAlgorithmProvider {
+abstract class RSACryptoProvider extends BaseJWEProvider {
 
 
+	/**
+	 * The supported JWE algorithms.
+	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
 
 
+	/**
+	 * The supported encryption methods.
+	 */
 	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
 
 
+	/**
+	 * Initialises the supported algorithms and encryption methods.
+	 */
 	static {
+
 		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
 		algs.add(JWEAlgorithm.RSA_OAEP);
 		algs.add(JWEAlgorithm.RSA1_5);
@@ -66,17 +76,6 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	}
 
 
-	@Override
-	public Set<JWEAlgorithm> supportedAlgorithms() {
-		return SUPPORTED_ALGORITHMS;
-	}
-
-	@Override
-	public Set<EncryptionMethod> supportedEncryptionMethods() {
-		return SUPPORTED_ENCRYPTION_METHODS;
-	}
-
-
 	/**
 	 * Gets the Content Master Key (CMK) length for the specified 
 	 * encryption method.
@@ -86,7 +85,7 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 	 *
 	 * @return The CMK length, in bits.
 	 */
-	protected int keyLengthForMethod(final EncryptionMethod method) {
+	protected static int keyLengthForMethod(final EncryptionMethod method) {
 
 		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
 				method.equals(EncryptionMethod.A128GCM)) {
@@ -101,5 +100,14 @@ abstract class RSAProvider implements JWEAlgorithmProvider {
 		}
 
 		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
+	}
+
+
+	/**
+	 * Creates a new RSA encryption / decryption provider.
+	 */
+	protected RSACryptoProvider() {
+
+		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
 	}
 }

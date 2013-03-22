@@ -34,18 +34,12 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * 
- * This class is not fully tested and is provided for documentation and development purposes only.
- * 
- * See Issue #11
- * 
- *
- * RSA encrypter.
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-22)
+ * @version $version$ (2013-03-22)
  */
-public class RSAEncrypter extends RSAProvider implements JWEEncrypter {
+public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 	/**

@@ -37,10 +37,10 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  *
  */
-public class RSADecrypter extends RSAProvider implements JWEDecrypter {
+public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	private final String symmetricAlgorithm = "AES";
