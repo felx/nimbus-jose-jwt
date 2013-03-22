@@ -33,7 +33,28 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * RSA decrypter.
+ * RSA decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
+ * is thread-safe.
+ *
+ * <p>Supports the following JWE algorithms:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
+ * </ul>
+ *
+ * <p>Supports the following encryption methods:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ * </ul>
+ *
+ * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getReservedParameterNames
+ * reserved JWE header parameters}. Modify the {@link #getJWEHeaderFilter
+ * header filter} properties to restrict the acceptable JWE algorithms, 
+ * encryption methods and header parameters, or to allow custom JWE header 
+ * parameters.
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov

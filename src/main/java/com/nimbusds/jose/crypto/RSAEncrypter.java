@@ -33,7 +33,22 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * 
+ * RSA encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
+ * is thread-safe.
+ *
+ * <p>Supports the following JWE algorithms:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
+ * </ul>
+ *
+ * <p>Supports the following encryption methods:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ * </ul>
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
@@ -58,8 +73,12 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	 * Creates a new RSA encrypter.
 	 *
 	 * @param pubKey The public RSA key. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the underlying secure random generator
+	 *                       couldn't be instantiated.
 	 */
-	public RSAEncrypter(final RSAPublicKey pubKey) {
+	public RSAEncrypter(final RSAPublicKey pubKey)
+		throws JOSEException {
 
 		this.pubKey = pubKey;
 
@@ -68,14 +87,14 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 		} catch(NoSuchAlgorithmException e) {
 
-			throw new ProviderException("Java Security provider doesn't support SHA1PRNG");
+			throw new JOSEException(e.getMessage(), e);
 		}
 	}
 
 
 	@Override
-	public JWECryptoParts encrypt(ReadOnlyJWEHeader readOnlyJWEHeader, byte[] bytes)
-			throws JOSEException {
+	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
+		throws JOSEException {
 
 		// The alg parameter
 		JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
@@ -91,7 +110,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 		try {
-			final int keyLength = keyLengthForMethod(method);
+			final int keyLength = RSACryptoProvider.keyLengthForMethod(method);
 
 			SecretKey contentEncryptionKey = generateAESCMK(keyLength);
 
