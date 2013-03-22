@@ -16,7 +16,7 @@ import org.bouncycastle.crypto.params.KDFParameters;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-03-22)
  */
-public class KDFConcatGenerator implements DerivationFunction {
+class KDFConcatGenerator implements DerivationFunction {
 
     
 	private int counterStart = 1;
