@@ -6,14 +6,12 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.JWSAlgorithm;
-
 
 /**
  * Tests the default JWS header filter implementation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  */
 public class DefaultJWSHeaderFilterTest extends TestCase {
 
@@ -34,6 +32,27 @@ public class DefaultJWSHeaderFilterTest extends TestCase {
 
 		assertTrue(filter.getAcceptedParameters().containsAll(JWSHeader.getReservedParameterNames()));
 		assertEquals(filter.getAcceptedParameters().size(), JWSHeader.getReservedParameterNames().size());
+	}
+
+
+	public void testMinimumAcceptedParameters() {
+
+		Set<JWSAlgorithm> supportedAlgs = new HashSet<JWSAlgorithm>();
+		supportedAlgs.add(JWSAlgorithm.HS256);
+		supportedAlgs.add(JWSAlgorithm.HS384);
+		supportedAlgs.add(JWSAlgorithm.HS512);
+
+		Set<String> acceptedParams = new HashSet<String>();
+
+		try {
+			DefaultJWSHeaderFilter filter = new DefaultJWSHeaderFilter(supportedAlgs, acceptedParams);
+
+			fail("Failed to raise IllegalArgumentException");
+
+		} catch (IllegalArgumentException e) {
+
+			// ok
+		}
 	}
 
 

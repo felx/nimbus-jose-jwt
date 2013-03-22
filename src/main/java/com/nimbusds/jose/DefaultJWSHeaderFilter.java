@@ -13,10 +13,10 @@ import net.jcip.annotations.ThreadSafe;
  * thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  */
 @ThreadSafe
-public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
+public class DefaultJWSHeaderFilter extends DefaultHeaderFilter implements JWSHeaderFilter {
 
 
 	/**
@@ -33,9 +33,22 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 
 
 	/**
-	 * The accepted header parameters.
+	 * Validates the specified accepted parameters.
+	 *
+	 * @param acceptedParams The accepted JWS header parameters. Must 
+	 *                       contain at least the {@code alg} parameter and
+	 *                       must not be {@code null}.
+	 *
+	 * @throws IllegalArgumentException If the parameters didn't meet the
+	 *                                  validation criteria.
 	 */
-	private Set<String> acceptedParams;
+	private static void validateAcceptedParameters(final Set<String> acceptedParams) {
+
+		if (! acceptedParams.contains("alg")) {
+
+			throw new IllegalArgumentException("The accepted JWS header parameters set must include at least the \"alg\" parameter");
+		}
+	}
 
 
 	/**
@@ -43,9 +56,9 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	 * equal the specified supported ones. The accepted header parameters
 	 * are set to match {@link JWSHeader#getReservedParameterNames}.
 	 *
-	 * @param algs           The supported JWS algorithms. Used to bound 
-	 *                       the {@link #setAcceptedAlgorithms accepted
-	 *                       algorithms}. Must not be {@code null}.
+	 * @param algs The supported JWS algorithms. Used to bound the 
+	 *             {@link #setAcceptedAlgorithms accepted algorithms}. Must 
+	 *             not be {@code null}.
 	 */
 	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs) {
 
@@ -67,25 +80,19 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs,
 			              final Set<String> acceptedParams) {
 
+		super(acceptedParams);
+
+		validateAcceptedParameters(acceptedParams);
+
 		if (algs == null) {
 
-			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
+			throw new IllegalArgumentException("The supported JWS algorithms set must not be null");
 		}
 
 		this.algs = Collections.unmodifiableSet(algs);
 
+		// Initially the accepted set equals the supported set
 		acceptedAlgs = this.algs;
-
-
-		if (acceptedParams == null) {
-			throw new IllegalArgumentException("The accepted JWS header parameter set must not be null");
-		}
-
-		if (! acceptedParams.contains("alg")) {
-			throw new IllegalArgumentException("The accepted JWE header parameter set must include at least the \"alg\" parameter");
-		}
-
-		this.acceptedParams = Collections.unmodifiableSet(acceptedParams);
 	}
 
 
@@ -93,8 +100,8 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 	 * Returns the names of the supported JWS algorithms. Used to bound the 
 	 * {@link #setAcceptedAlgorithms accepted algorithms}.
 	 *
-	 * @return The supported JWS algorithms as a read-only set, empty set if
-	 *         none.
+	 * @return The supported JWS algorithms as a read-only set, empty set 
+	 *         if none.
 	 */
 	public Set<JWSAlgorithm> supportedAlgorithms() {
 
@@ -114,12 +121,12 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 
 		if (acceptedAlgs == null) {
 
-			throw new IllegalArgumentException("The accepted JWS algorithm set must not be null");
+			throw new IllegalArgumentException("The accepted JWS algorithms set must not be null");
 		}
 
 		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
 
-			throw new IllegalArgumentException("One or more of the algorithms is not in the supported JWS algorithm set");
+			throw new IllegalArgumentException("One or more of the JWE algorithms is not in the supported set");
 		}
 
 		this.acceptedAlgs = Collections.unmodifiableSet(acceptedAlgs);
@@ -127,15 +134,10 @@ public class DefaultJWSHeaderFilter implements JWSHeaderFilter {
 
 
 	@Override
-	public Set<String> getAcceptedParameters() {
+	public void setAcceptedParameters(final Set<String> acceptedParams) {
 
-		return acceptedParams;
-	}
+		validateAcceptedParameters(acceptedParams);
 
-
-	@Override
-	public void setAcceptedParameters(final Set<String> params) {
-
-		this.acceptedParams = params;
+		super.setAcceptedParameters(acceptedParams);
 	}
 }

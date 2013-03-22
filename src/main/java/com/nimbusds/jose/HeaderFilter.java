@@ -9,7 +9,7 @@ import java.util.Set;
  * names of the accepted header parameters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  */
 public interface HeaderFilter {
 
@@ -17,7 +17,7 @@ public interface HeaderFilter {
 	/**
 	 * Gets the names of the accepted header parameters.
 	 *
-	 * @return The accepted header parameters, as a read-only set. Must 
+	 * @return The accepted header parameters, as a read-only set. Should 
 	 *         contain at least the {@code alg} parameter for JWS headers 
 	 *         or the {@code alg} and / or {@code enc} parameters for JWE 
 	 *         headers.
@@ -28,10 +28,11 @@ public interface HeaderFilter {
 	/**
 	 * Sets the names of the accepted header parameters.
 	 *
-	 * @param params The accepted header parameters. Must contain at least
-	 *               the {@code alg} parameter for JWS headers or the
-	 *               {@code alg} and / or {@code enc} parameters for JWE 
-	 *               headers.
+	 * @param acceptedParams The accepted header parameters. Should contain 
+	 *                       at least the {@code alg} parameter for JWS 
+	 *                       headers or the {@code alg} and / or 
+	 *                       {@code enc} parameters for JWE headers. Must 
+	 *                       not be {@code null}.
 	 */
-	public void setAcceptedParameters(final Set<String> params);
+	public void setAcceptedParameters(final Set<String> acceptedParams);
 }
