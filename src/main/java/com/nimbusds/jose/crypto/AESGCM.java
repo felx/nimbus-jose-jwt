@@ -122,18 +122,17 @@ class AESGCM {
 
 
 	/**
-	 * Creates a new AES / GCM cipher.
+	 * Creates a new AES/GCM/NoPadding cipher.
 	 *
 	 * @param secretKey     The AES key. Must not be {@code null}.
-	 * @param forEncryption If {@code true} creates an AES / GCM encryption
-	 *                      cipher, else creates an AES / GCM decryption 
-	 *                      cipher.
+	 * @param forEncryption If {@code true} creates an encryption cipher,
+	 *                      else creates a decryption cipher.
 	 * @param iv            The initialisation vector (IV). Must not be
 	 *                      {@code null}.
 	 * @param authData      The authenticated data. Must not be 
 	 *                      {@code null}.
 	 *
-	 * @return The AES / GCM cipher.
+	 * @return The AES/GCM/NoPadding cipher.
 	 */
 	private static GCMBlockCipher createAESGCMCipher(final SecretKey secretKey,
 		                                         final boolean forEncryption,
@@ -157,7 +156,7 @@ class AESGCM {
 
 
 	/**
-	 * Encrypts the specified plain text using AES / GCM.
+	 * Encrypts the specified plain text using AES/GCM/NoPadding.
 	 *
 	 * @param secretKey The AES key. Must not be {@code null}.
 	 * @param plainText The plain text. Must not be {@code null}.
@@ -212,7 +211,7 @@ class AESGCM {
 
 
 	/**
-	 * Decrypts the specified cipher text using AES / GCM.
+	 * Decrypts the specified cipher text using AES/GCM/NoPadding.
 	 *
 	 * @param secretKey  The AES key. Must not be {@code null}.
 	 * @param cipherText The cipher text. Must not be {@code null}.
