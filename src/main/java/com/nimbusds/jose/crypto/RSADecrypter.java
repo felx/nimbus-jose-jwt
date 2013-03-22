@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -23,6 +24,7 @@ import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -64,56 +66,55 @@ import com.nimbusds.jose.util.Base64URL;
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
-	private final String symmetricAlgorithm = "AES";
+	/**
+	 * The JWE header filter.
+	 */
+	private final DefaultJWEHeaderFilter headerFilter;
 
 
-    public static final JWEHeaderFilter HEADER_FILTER = new JWEHeaderFilter() {
+	/**
+	 * The private RSA key.
+	 */
+	private RSAPrivateKey privateKey;
 
 
-	public Set<JWEAlgorithm> getAcceptedAlgorithms() {
-	    return SUPPORTED_ALGORITHMS;
+	/**
+	 * Creates a new RSA decrypter.
+	 *
+	 * @param privateKey The private RSA key. Must not be {@code null}.
+	 */
+	public RSADecrypter(final RSAPrivateKey privateKey) {
+
+		if (privateKey == null) {
+
+			throw new IllegalArgumentException("The private RSA key must not be null");
+		}
+
+		this.privateKey = privateKey;
+
+		headerFilter = new DefaultJWEHeaderFilter(supportedAlgorithms(), supportedEncryptionMethods());
 	}
 
-	public void setAcceptedAlgorithms(Set<JWEAlgorithm> jweAlgorithms) {
-	}
 
-	public Set<EncryptionMethod> getAcceptedEncryptionMethods() {
-	    return SUPPORTED_ENCRYPTION_METHODS;
-	}
+	/**
+	 * Gets the private RSA key.
+	 *
+	 * @return The private RSA key.
+	 */
+	public RSAPrivateKey getPrivateKey() {
 
-	public void setAcceptedEncryptionMethods(Set<EncryptionMethod> encryptionMethods) {
-	}
-
-	public Set<String> getAcceptedParameters() {
-	    Set<String> parameters = new HashSet<String>();
-	    parameters.add("alg");
-	    parameters.add("enc");
-	    parameters.add("zip");
-	    parameters.add("typ");
-
-
-	    return parameters;
+		return privateKey;
 	}
 
 
-	public void setAcceptedParameters(final Set<String> parameters) {
+	@Override
+	public JWEHeaderFilter getJWEHeaderFilter() {
 
-		// ignore
+		return headerFilter;
 	}
-    };
-
-    private RSAPrivateKey privateKey;
 
 
-
-    public JWEHeaderFilter getJWEHeaderFilter() {
-	return HEADER_FILTER;
-    }
-
-    public RSADecrypter(RSAPrivateKey privateKey){
-	this.privateKey = privateKey;
-    }
-
+	@Override
 	public byte[] decrypt(final ReadOnlyJWEHeader readOnlyJWEHeader,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
@@ -122,90 +123,109 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		throws JOSEException {
 
 
-	if (encryptedKey == null)
-		throw new JOSEException("Missing encrypted key");
+		// Validate required JWE parts
+		if (encryptedKey == null) {
 
-	if (iv == null)
-		throw new JOSEException("Missing initialization vector");
+			throw new JOSEException("The encrypted key must not be null");
+		}	
 
-	if (integrityValue == null)
-		throw new JOSEException("Missing integrity value");
+		if (iv == null) {
 
-
-	JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
-	EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
-	int keyLength = this.keyLengthForMethod(method);
-	SecretKeySpec keySpec;
-
-
-	keySpec = getKeySpec(algorithm, method, encryptedKey.decode(), privateKey);
-
-
-	String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-				encryptedKey.toString() + "." +
-				iv.toString();
-
-
-	byte[] authData = null;
-
-	try {
-		authData = authDataString.getBytes("UTF-8");
-	
-	} catch (Exception e) {
-
-		throw new JOSEException(e.getMessage(), e);
-	}
-
-	return AESGCM.decrypt(keySpec, cipherText.decode(), authData, integrityValue.decode(), iv.decode());
-
-    }
-
-    private SecretKeySpec getKeySpec(final JWEAlgorithm alg, final EncryptionMethod method, final byte[] cipherText,
-				     final PrivateKey inputKey) throws JOSEException {
-	int keyLength = keyLengthForMethod(method);
-
-
-	try {
-	    if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
-		RSAPrivateKey key = (RSAPrivateKey) inputKey;
-		RSAEngine engine = new RSAEngine();
-		OAEPEncoding cipher = new OAEPEncoding(engine);
-		BigInteger mod = key.getModulus();
-		BigInteger exp = key.getPrivateExponent();
-		RSAKeyParameters keyParams = new RSAKeyParameters(true, mod, exp);
-		cipher.init(false, keyParams);
-		byte[] secretKeyBytes = cipher.processBlock(cipherText, 0, cipherText.length);
-		return new SecretKeySpec(secretKeyBytes, symmetricAlgorithm );
-
-	    } else if (alg.equals(JWEAlgorithm.RSA1_5)) {
-		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-		cipher.init(Cipher.DECRYPT_MODE, privateKey);
-		byte[] secretKeyBytes = cipher.doFinal(cipherText);
-
-		if (8 * secretKeyBytes.length != keyLength) {
-		    throw new Exception("WebToken.decrypt RSA PKCS1Padding symmetric key length mismatch: " + secretKeyBytes.length + " != " + keyLength);
+			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
-		return new SecretKeySpec(secretKeyBytes, symmetricAlgorithm);
+		if (integrityValue == null) {
 
-	    } else {
-		throw new JOSEException("Unsupported JWEAlgorithm");
-	    }
-	} catch (InvalidCipherTextException e) {
-	    throw new JOSEException(e.getMessage(), e);
-	} catch (IllegalBlockSizeException e) {
-	    throw new JOSEException(e.getMessage(), e);
-	} catch (BadPaddingException e) {
-	    throw new JOSEException(e.getMessage(), e);
-	} catch (NoSuchAlgorithmException e) {
-	    throw new JOSEException(e.getMessage(), e);
-	} catch (NoSuchPaddingException e) {
-	    throw new JOSEException(e.getMessage(), e);
-	} catch (Exception e) {
-	    throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("The integrity value must not be null");
+		}
+		
+
+		// Derive the encryption AES key
+		SecretKeySpec keySpec = getKeySpec(readOnlyJWEHeader.getAlgorithm(), 
+			                           readOnlyJWEHeader.getEncryptionMethod(), 
+			                           encryptedKey.decode(), 
+			                           privateKey);
+
+		// Compose the authenticated data (AEAD)
+		String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
+					encryptedKey.toString() + "." +
+					iv.toString();
+		
+		byte[] authData = null;
+
+		try {
+			authData = authDataString.getBytes("UTF-8");
+
+		} catch (UnsupportedEncodingException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+
+		return AESGCM.decrypt(keySpec, cipherText.decode(), authData, integrityValue.decode(), iv.decode());
 	}
 
 
-    }
+	/**
+	 * Obtains the AES key.
+	 *
+	 * @param alg        The JWE algorithm. Must not be {@code null}.
+	 * @param method     The encryption method. Must not be {@code null}.
+	 * @param cipherText The cipher text. Must not be {@code null}.
+	 * @param inputKey   The private RSA key. Must not be {@code null}.
+	 *
+	 * @return The AES key.
+	 *
+	 * @throws JOSEException If the AES key couldn't be obtained.
+	 */
+	private SecretKeySpec getKeySpec(final JWEAlgorithm alg, 
+		                         final EncryptionMethod method, 
+		                         final byte[] cipherText,
+		                         final PrivateKey inputKey) 
+		throws JOSEException {
+
+		int keyLength = keyLengthForMethod(method);
+
+
+		try {
+			if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
+
+				RSAPrivateKey key = (RSAPrivateKey) inputKey;
+				RSAEngine engine = new RSAEngine();
+				OAEPEncoding cipher = new OAEPEncoding(engine);
+				BigInteger mod = key.getModulus();
+				BigInteger exp = key.getPrivateExponent();
+				RSAKeyParameters keyParams = new RSAKeyParameters(true, mod, exp);
+				cipher.init(false, keyParams);
+				byte[] secretKeyBytes = cipher.processBlock(cipherText, 0, cipherText.length);
+				return new SecretKeySpec(secretKeyBytes, "AES");
+
+			} else if (alg.equals(JWEAlgorithm.RSA1_5)) {
+		
+				Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+				cipher.init(Cipher.DECRYPT_MODE, privateKey);
+				byte[] secretKeyBytes = cipher.doFinal(cipherText);
+
+				if (8 * secretKeyBytes.length != keyLength) {
+
+					throw new JOSEException("WebToken.decrypt RSA PKCS1Padding symmetric key length mismatch: " + 
+						                secretKeyBytes.length + " != " + keyLength);
+				}
+
+				return new SecretKeySpec(secretKeyBytes, "AES");
+
+	    		} else {
+		
+				throw new JOSEException("Unsupported JWEAlgorithm");
+	    		}
+
+	    	} catch (JOSEException e) {
+
+	    		throw e;
+
+		} catch (Exception e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+	}
 }
 

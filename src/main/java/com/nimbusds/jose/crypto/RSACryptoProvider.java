@@ -88,13 +88,13 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	protected static int keyLengthForMethod(final EncryptionMethod method) {
 
 		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
-				method.equals(EncryptionMethod.A128GCM)) {
+		    method.equals(EncryptionMethod.A128GCM)) {
 
 			return 128;
 		}
 
 		if (method.equals(EncryptionMethod.A256GCM) ||
-				method.equals(EncryptionMethod.A256CBC_HS512)) {
+		    method.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			return 256;
 		}

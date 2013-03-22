@@ -65,21 +65,27 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	/**
 	 * The public RSA key.
 	 */
-	private final RSAPublicKey pubKey;
+	private final RSAPublicKey publicKey;
 
 
 	/**
 	 * Creates a new RSA encrypter.
 	 *
-	 * @param pubKey The public RSA key. Must not be {@code null}.
+	 * @param publicKey The public RSA key. Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the underlying secure random generator
 	 *                       couldn't be instantiated.
 	 */
-	public RSAEncrypter(final RSAPublicKey pubKey)
+	public RSAEncrypter(final RSAPublicKey publicKey)
 		throws JOSEException {
 
-		this.pubKey = pubKey;
+		if (publicKey == null) {
+
+			throw new IllegalArgumentException("The public RSA key must not be null");
+		}
+
+		this.publicKey = publicKey;
+
 
 		try {
 			randomGen = SecureRandom.getInstance("SHA1PRNG");
@@ -88,6 +94,17 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			throw new JOSEException(e.getMessage(), e);
 		}
+	}
+
+
+	/**
+	 * Gets the public RSA key.
+	 *
+	 * @return The public RSA key.
+	 */
+	public RSAPublicKey getPublicKey() {
+
+		return publicKey;
 	}
 
 
@@ -109,6 +126,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 		try {
+			// Generate the CEK
 			final int keyLength = RSACryptoProvider.keyLengthForMethod(method);
 
 			SecretKey contentEncryptionKey = AES.generateAESCMK(keyLength);
@@ -116,7 +134,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 			if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
 
 				Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-				cipher.init(Cipher.ENCRYPT_MODE, pubKey);
+				cipher.init(Cipher.ENCRYPT_MODE, publicKey);
 				encryptedKey = Base64URL.encode(cipher.doFinal(contentEncryptionKey.getEncoded()));
 
 			} else if (algorithm.equals(JWEAlgorithm.RSA_OAEP)) {
@@ -127,8 +145,8 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 					// JCA identifier RSA/ECB/OAEPWithSHA-1AndMGF1Padding ?
 					OAEPEncoding cipher = new OAEPEncoding(engine);
 
-					BigInteger mod = pubKey.getModulus();
-					BigInteger exp = pubKey.getPublicExponent();
+					BigInteger mod = publicKey.getModulus();
+					BigInteger exp = publicKey.getPublicExponent();
 					RSAKeyParameters keyParams = new RSAKeyParameters(false, mod, exp);
 					cipher.init(true, keyParams);
 
@@ -145,7 +163,8 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 				}
 
 			} else {
-				throw new JOSEException("Algorithm must be RSA1_5 or RSA_OAEP");
+
+				throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
 			}
 
 
@@ -175,24 +194,19 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 					                   Base64URL.encode(result.getCipherText()),
 					                   Base64URL.encode(result.getAuthenticationTag()));
 				return parts;
+
+			} else {
+
+				throw new JOSEException("Unsupported encryption method, must be A128GCM or A128GCM");
 			}
-			else{
-				throw new JOSEException("Unsupported encryption method");
-			}
-		} catch (UnsupportedEncodingException e) {
+
+		} catch (JOSEException e) {
+
+			throw e;
+
+		} catch (Exception e) {
+
 			throw new JOSEException(e.getMessage(), e);
-
-		} catch (InvalidKeyException e) {
-			throw new JOSEException("Invalid Key Exception", e);
-		} catch (NoSuchAlgorithmException e) {
-			throw new JOSEException("Java Security Provider doesn't support the algorithm specified", e);
-
-		} catch (BadPaddingException e) {
-			throw new JOSEException("Bad padding exception", e);
-		} catch (NoSuchPaddingException e) {
-			throw new JOSEException("No such padding Exception", e);
-		} catch (IllegalBlockSizeException e) {
-			throw new JOSEException("Illegal Block Size exception", e);
 		}
 	}
 }
