@@ -29,13 +29,23 @@
 		Algorithm (JWA) implementations through a set of simple interfaces for signing,
 		validating, encrypting and decrypting the objects.</p>
 		
-		<p>The library currently ships a ready {@link com.nimbusds.jose.crypto implementation} 
+		<p>The library currently ships ready {@link com.nimbusds.jose.crypto implementations} 
 		of the following standard algorithms:</p>
 		
 		<ul>
-			<li>HMAC signatures with HS256, HS384 and HS512.</li>
-			<li>RSA signatures with RS256, RS384 and RS512.</li>
-			<li>EC signatures with ES256, ES384 and ES512.</li>
+			<li>JWS:
+				<ul>
+					<li>HMAC signatures with HS256, HS384 and HS512.</li>
+					<li>RSA signatures with RS256, RS384 and RS512.</li>
+					<li>EC signatures with ES256, ES384 and ES512.</li>
+				</ul>
+			</li>
+			<li>JWE:
+				<ul>
+					<li>RSAES-PKCS1-V1_5 encryption with AES/GCM 128 bit keys</li>
+					<li>RSAES OAEP encryption with AES/GCM 256 bit keys</li>
+				</ul>
+			</li>
 		</ul>
 		
 		<p>Related IETF drafts:</p>
