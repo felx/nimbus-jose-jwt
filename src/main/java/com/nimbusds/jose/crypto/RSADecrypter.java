@@ -122,7 +122,6 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		              final Base64URL integrityValue) 
 		throws JOSEException {
 
-
 		// Validate required JWE parts
 		if (encryptedKey == null) {
 
@@ -141,16 +140,30 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		
 
 		// Derive the encryption AES key
-		SecretKeySpec keySpec = getKeySpec(readOnlyJWEHeader.getAlgorithm(), 
-			                           readOnlyJWEHeader.getEncryptionMethod(), 
-			                           encryptedKey.decode(), 
-			                           privateKey);
+		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
+
+		SecretKeySpec keySpec = null;
+
+		if (alg.equals(JWEAlgorithm.RSA1_5)) {
+
+			int keyLength = keyLengthForMethod(readOnlyJWEHeader.getEncryptionMethod());
+
+			keySpec = RSA1_5.decryptCMK(privateKey, encryptedKey.decode(), keyLength);
+		
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
+
+			keySpec = RSA_OAEP.decryptCMK(privateKey, encryptedKey.decode());
+
+		} else {
+		
+			throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
+	    	}
 
 		// Compose the authenticated data (AEAD)
 		String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
 					encryptedKey.toString() + "." +
 					iv.toString();
-		
+
 		byte[] authData = null;
 
 		try {
@@ -162,70 +175,6 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		}
 
 		return AESGCM.decrypt(keySpec, cipherText.decode(), authData, integrityValue.decode(), iv.decode());
-	}
-
-
-	/**
-	 * Obtains the AES key.
-	 *
-	 * @param alg        The JWE algorithm. Must not be {@code null}.
-	 * @param method     The encryption method. Must not be {@code null}.
-	 * @param cipherText The cipher text. Must not be {@code null}.
-	 * @param inputKey   The private RSA key. Must not be {@code null}.
-	 *
-	 * @return The AES key.
-	 *
-	 * @throws JOSEException If the AES key couldn't be obtained.
-	 */
-	private SecretKeySpec getKeySpec(final JWEAlgorithm alg, 
-		                         final EncryptionMethod method, 
-		                         final byte[] cipherText,
-		                         final PrivateKey inputKey) 
-		throws JOSEException {
-
-		int keyLength = keyLengthForMethod(method);
-
-
-		try {
-			if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
-
-				RSAPrivateKey key = (RSAPrivateKey) inputKey;
-				RSAEngine engine = new RSAEngine();
-				OAEPEncoding cipher = new OAEPEncoding(engine);
-				BigInteger mod = key.getModulus();
-				BigInteger exp = key.getPrivateExponent();
-				RSAKeyParameters keyParams = new RSAKeyParameters(true, mod, exp);
-				cipher.init(false, keyParams);
-				byte[] secretKeyBytes = cipher.processBlock(cipherText, 0, cipherText.length);
-				return new SecretKeySpec(secretKeyBytes, "AES");
-
-			} else if (alg.equals(JWEAlgorithm.RSA1_5)) {
-		
-				Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-				cipher.init(Cipher.DECRYPT_MODE, privateKey);
-				byte[] secretKeyBytes = cipher.doFinal(cipherText);
-
-				if (8 * secretKeyBytes.length != keyLength) {
-
-					throw new JOSEException("WebToken.decrypt RSA PKCS1Padding symmetric key length mismatch: " + 
-						                secretKeyBytes.length + " != " + keyLength);
-				}
-
-				return new SecretKeySpec(secretKeyBytes, "AES");
-
-	    		} else {
-		
-				throw new JOSEException("Unsupported JWEAlgorithm");
-	    		}
-
-	    	} catch (JOSEException e) {
-
-	    		throw e;
-
-		} catch (Exception e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
 	}
 }
 
