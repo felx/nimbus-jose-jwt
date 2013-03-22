@@ -1,13 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.InvalidKeyException;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.DefaultJWSHeaderFilter;
@@ -16,7 +9,6 @@ import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
-
 
 
 /**
@@ -37,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -75,19 +67,11 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
-		Mac mac = getMAC(header.getAlgorithm());
+		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
 
-		try {
-			mac.init(new SecretKeySpec(getSharedSecret(), mac.getAlgorithm()));
+		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signedContent);
 
-		} catch (InvalidKeyException e) {
-
-			throw new JOSEException("Invalid HMAC key: " + e.getMessage(), e);
-		}
-
-		mac.update(signedContent);
-
-		Base64URL expectedSignature = Base64URL.encode(mac.doFinal());
+		Base64URL expectedSignature = Base64URL.encode(hmac);
 
 		if (expectedSignature.equals(signature)) {
 

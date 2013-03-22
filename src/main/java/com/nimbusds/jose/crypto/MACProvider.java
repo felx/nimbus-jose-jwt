@@ -24,7 +24,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-22)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -46,6 +46,39 @@ abstract class MACProvider extends BaseJWSProvider {
 		algs.add(JWSAlgorithm.HS512);
 
 		SUPPORTED_ALGORITHMS = algs;
+	}
+
+
+	/**
+	 * Gets the matching Java Cryptography Architecture (JCA) algorithm 
+	 * name for the specified HMAC-based JSON Web Algorithm (JWA).
+	 *
+	 * @param alg The JSON Web Algorithm (JWA). Must be supported and not
+	 *            {@code null}.
+	 *
+	 * @return The matching JCA algorithm name.
+	 *
+	 * @throws JOSEException If the algorithm is not supported.
+	 */
+	protected static String getJCAAlgorithmName(final JWSAlgorithm alg)
+		throws JOSEException {
+
+		if (alg.equals(JWSAlgorithm.HS256)) {
+
+			return "HMACSHA256";
+
+		} else if (alg.equals(JWSAlgorithm.HS384)) {
+
+			return "HMACSHA384";
+
+		} else if (alg.equals(JWSAlgorithm.HS512)) {
+
+			return "HMACSHA512";
+
+		} else {
+			
+			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
+		}
 	}
 
 
@@ -81,50 +114,5 @@ abstract class MACProvider extends BaseJWSProvider {
 	public byte[] getSharedSecret() {
 
 		return sharedSecret;
-	}
-
-
-	/**
-	 * Gets a Message Authentication Code (MAC) service for the specified
-	 * HMAC-based JSON Web Algorithm (JWA).
-	 *
-	 * @param alg The JSON Web Algorithm (JWA). Must be supported and not
-	 *            {@code null}.
-	 *
-	 * @return A MAC service instance.
-	 *
-	 * @throws JOSEException If the algorithm is not supported.
-	 */
-	protected static Mac getMAC(final JWSAlgorithm alg)
-		throws JOSEException {
-
-		// The internal crypto provider uses different alg names
-
-		String internalAlgName = null;
-
-		if (alg.equals(JWSAlgorithm.HS256)) {
-
-			internalAlgName = "HMACSHA256";
-
-		} else if (alg.equals(JWSAlgorithm.HS384)) {
-
-			internalAlgName = "HMACSHA384";
-
-		} else if (alg.equals(JWSAlgorithm.HS512)) {
-
-			internalAlgName = "HMACSHA512";
-
-		} else {
-			
-			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
-		}
-
-		try {
-			return Mac.getInstance(internalAlgName);
-
-		} catch (NoSuchAlgorithmException e) {
-
-			throw new JOSEException("Unsupported HMAC algorithm: " + e.getMessage(), e);
-		}
 	}
 }
