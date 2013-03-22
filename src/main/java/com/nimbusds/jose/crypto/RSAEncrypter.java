@@ -10,17 +10,10 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-
-import org.bouncycastle.crypto.AsymmetricBlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.encodings.OAEPEncoding;
-import org.bouncycastle.crypto.engines.RSAEngine;
-import org.bouncycastle.crypto.params.RSAKeyParameters;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -112,101 +105,68 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
 		throws JOSEException {
 
-		// The alg parameter
-		JWEAlgorithm algorithm = readOnlyJWEHeader.getAlgorithm();
+		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
+		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-		// The enc parameter
-		EncryptionMethod method = readOnlyJWEHeader.getEncryptionMethod();
+		// Generate and encrypt the CMK according to the JWE alg
+		final int keyLength = RSACryptoProvider.keyLengthForMethod(enc);
 
-		// The second JWE part
-		Base64URL encryptedKey = null;
+		SecretKey cmk = AES.generateAESCMK(keyLength);
 
-		// The fourth JWE part
-		Base64URL cipherText = null;
+		Base64URL encryptedKey = null; // The second JWE part
+
+		if (alg.equals(JWEAlgorithm.RSA1_5)) {
+
+			encryptedKey = Base64URL.encode(RSA1_5.encryptCMK(publicKey, cmk));
+
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
+
+			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCMK(publicKey, cmk));
+
+		} else {
+
+			throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
+		}
+
+		if (encryptedKey == null ) {
+
+			throw new JOSEException("Couldn't generate encrypted key");
+		}
+
+		// Encrypt the plain text according to the JWE enc
+		JWECryptoParts parts;
+
+		if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+
+			byte[] iv = AESGCM.generateIV(randomGen);
+
+			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
+			                        encryptedKey.toString() + "." +
+			                        Base64URL.encode(iv).toString();
 
 
-		try {
-			// Generate the CEK
-			final int keyLength = RSACryptoProvider.keyLengthForMethod(method);
+			byte[] authData;
 
-			SecretKey contentEncryptionKey = AES.generateAESCMK(keyLength);
+			try {
+				authData = authDataString.getBytes("UTF-8");
 
-			if (algorithm.equals(JWEAlgorithm.RSA1_5)) {
+			} catch (UnsupportedEncodingException e) {
 
-				Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-				cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-				encryptedKey = Base64URL.encode(cipher.doFinal(contentEncryptionKey.getEncoded()));
-
-			} else if (algorithm.equals(JWEAlgorithm.RSA_OAEP)) {
-
-				try {
-					AsymmetricBlockCipher engine = new RSAEngine();
-
-					// JCA identifier RSA/ECB/OAEPWithSHA-1AndMGF1Padding ?
-					OAEPEncoding cipher = new OAEPEncoding(engine);
-
-					BigInteger mod = publicKey.getModulus();
-					BigInteger exp = publicKey.getPublicExponent();
-					RSAKeyParameters keyParams = new RSAKeyParameters(false, mod, exp);
-					cipher.init(true, keyParams);
-
-					int inputBlockSize = cipher.getInputBlockSize();
-					int outputBlockSize = cipher.getOutputBlockSize();
-
-					byte[] keyBytes = contentEncryptionKey.getEncoded();
-
-					encryptedKey = Base64URL.encode(cipher.processBlock(keyBytes, 0, keyBytes.length));
-
-				} catch (InvalidCipherTextException e) {
-
-					throw new JOSEException(e.getMessage(), e);
-				}
-
-			} else {
-
-				throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
+				throw new JOSEException(e.getMessage(), e);
 			}
 
+			
+			AESGCM.Result result = AESGCM.encrypt(cmk, bytes, authData, iv);
 
-			if (encryptedKey == null ) {
-				throw new JOSEException("Couldn't generate encrypted key");
-			}
+			parts = new JWECryptoParts(encryptedKey,  
+				                   Base64URL.encode(iv), 
+				                   Base64URL.encode(result.getCipherText()),
+				                   Base64URL.encode(result.getAuthenticationTag()));
+			return parts;
 
+		} else {
 
-			JWECryptoParts parts;
-
-			if (method.equals(EncryptionMethod.A128GCM) || method.equals(EncryptionMethod.A256GCM)) {
-
-				byte[] iv = AESGCM.generateIV(randomGen);
-
-				String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-				                        encryptedKey.toString() + "." +
-				                        Base64URL.encode(iv).toString();
-
-
-				byte[] authData = authDataString.getBytes("UTF-8");
-
-				
-				AESGCM.Result result = AESGCM.encrypt(contentEncryptionKey, bytes, authData, iv);
-
-				parts = new JWECryptoParts(encryptedKey,  
-					                   Base64URL.encode(iv), 
-					                   Base64URL.encode(result.getCipherText()),
-					                   Base64URL.encode(result.getAuthenticationTag()));
-				return parts;
-
-			} else {
-
-				throw new JOSEException("Unsupported encryption method, must be A128GCM or A128GCM");
-			}
-
-		} catch (JOSEException e) {
-
-			throw e;
-
-		} catch (Exception e) {
-
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Unsupported encryption method, must be A128GCM or A128GCM");
 		}
 	}
 }

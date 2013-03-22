@@ -14,8 +14,8 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Constants and static methods for AES encryption and decryption. Uses the 
- * BouncyCastle.org provider.
+ * Static methods for AES encryption and decryption. Uses the BouncyCastle.org 
+ * provider.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-03-22)
@@ -30,14 +30,21 @@ class AES {
 	 *
 	 * @return The AES CMK.
 	 *
-	 * @throws NoSuchAlgorithmException If AES key generation is not
-	 *                                  supported.
+	 * @throws JOSEException If AES key generation failed.
 	 */
 	public static SecretKey generateAESCMK(final int keyLength) 
-		throws NoSuchAlgorithmException {
+		throws JOSEException {
 
 		KeyGenerator keygen;
-		keygen = KeyGenerator.getInstance("AES");
+
+		try {
+			keygen = KeyGenerator.getInstance("AES");
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+
 		keygen.init(keyLength);
 		return keygen.generateKey();
 	}
