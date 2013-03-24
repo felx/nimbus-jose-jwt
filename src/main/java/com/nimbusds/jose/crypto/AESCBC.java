@@ -39,11 +39,11 @@ class AESCBC {
 	 * @param randomGen The secure random generator to use. Must be 
 	 *                  correctly initialised and not {@code null}.
 	 *
-	 * @return The random 128 bit IV.
+	 * @return The random 128 bit IV, as 16 byte array.
 	 */
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
-		byte[] bytes = new byte[IV_BIT_LENGTH];
+		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
 
 		randomGen.nextBytes(bytes);
 

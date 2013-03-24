@@ -109,11 +109,11 @@ class AESGCM {
 	 * @param randomGen The secure random generator to use. Must be 
 	 *                  correctly initialised and not {@code null}.
 	 *
-	 * @return The random 96 bit IV.
+	 * @return The random 96 bit IV, as 12 byte array.
 	 */
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
-		byte[] bytes = new byte[IV_BIT_LENGTH];
+		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
 
 		randomGen.nextBytes(bytes);
 

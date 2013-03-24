@@ -24,7 +24,7 @@ import com.nimbusds.jose.Payload;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-12)
+ * @version $version$ (2013-03-24)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -134,6 +134,40 @@ public class RSA1_5Test extends TestCase {
 
 			System.err.println(e);
 		}
+	}
+
+
+	public void testWithA128CBC_HS256()
+			throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
 	}
 
 
