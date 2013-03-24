@@ -151,8 +151,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || 
-	    	    enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
+	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
 
 	    		Digest kdfDigest;
 
@@ -167,16 +166,16 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			SecretKey cek = CEK.generate(cmk.getEncoded(), cekBitLength(enc), kdfDigest, enc.toString());
 
-			byte[] clearText = AESCBC.decrypt(cek, cipherText.decode(), iv.decode());
+			byte[] clearText = AESCBC.decrypt(cek, iv.decode(), cipherText.decode());
 
 			SecretKey cik = CIK.generate(cmk.getEncoded(), cikBitLength(enc), kdfDigest, enc.toString());
 
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                        encryptedKey.toString() + "." +
-			                        iv.toString() + "." +
-			                        cipherText.toString();
+			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
+			                  encryptedKey.toString() + "." +
+			                  iv.toString() + "." +
+			                  cipherText.toString();
 
-			byte[] mac = HMAC.compute(cik, authDataString.getBytes());
+			byte[] mac = HMAC.compute(cik, macInput.getBytes());
 
 			if (! Arrays.constantTimeAreEqual(integrityValue.decode(), mac)) {
 
@@ -185,10 +184,9 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 	    		return clearText;
 
-	    	} else if (enc.equals(EncryptionMethod.A128GCM) || 
-	    		   enc.equals(EncryptionMethod.A256GCM)    ) {
+	    	} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)    ) {
 
-	    		// Compose the authenticated data (AEAD)
+	    		// Compose the additional authenticated data
 			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
 						encryptedKey.toString() + "." +
 						iv.toString();
@@ -203,7 +201,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				throw new JOSEException(e.getMessage(), e);
 			}
 
-			return AESGCM.decrypt(cmk, cipherText.decode(), authData, integrityValue.decode(), iv.decode());
+			return AESGCM.decrypt(cmk, iv.decode(), cipherText.decode(), authData, integrityValue.decode());
 
 	    	} else {
 

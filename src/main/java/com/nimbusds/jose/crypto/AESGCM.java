@@ -25,7 +25,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
 class AESGCM {
 
@@ -113,7 +113,7 @@ class AESGCM {
 	 */
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
-		byte[] bytes = new byte[AESGCM.IV_BIT_LENGTH];
+		byte[] bytes = new byte[IV_BIT_LENGTH];
 
 		randomGen.nextBytes(bytes);
 
@@ -160,9 +160,9 @@ class AESGCM {
 	 *
 	 * @param secretKey The AES key. Must not be {@code null}.
 	 * @param plainText The plain text. Must not be {@code null}.
-	 * @param authData  The authenticated data. Must not be {@code null}.
 	 * @param iv        The initialisation vector (IV). Must not be
 	 *                  {@code null}.
+	 * @param authData  The authenticated data. Must not be {@code null}.
 	 *
 	 * @return The encryption result, consisting of the cipher text and the
 	 *         authentication tag.
@@ -170,9 +170,9 @@ class AESGCM {
 	 * @throws JOSEException If encryption failed.
 	 */
 	public static Result encrypt(final SecretKey secretKey, 
+		                     final byte[] iv,
 		                     final byte[] plainText, 
-		                     final byte[] authData,
-		                     final byte[] iv)
+		                     final byte[] authData)
 		throws JOSEException {
 
 		// Initialise AES/GCM cipher for encryption
@@ -214,21 +214,21 @@ class AESGCM {
 	 * Decrypts the specified cipher text using AES/GCM/NoPadding.
 	 *
 	 * @param secretKey  The AES key. Must not be {@code null}.
+	 * @param iv         The initialisation vector (IV). Must not be
+	 *                   {@code null}.
 	 * @param cipherText The cipher text. Must not be {@code null}.
 	 * @param authData   The authenticated data. Must not be {@code null}.
 	 * @param authTag    The authentication tag. Must not be {@code null}.
-	 * @param iv         The initialisation vector (IV). Must not be
-	 *                   {@code null}.
 	 *
 	 * @return The decrypted plain text.
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
 	public static byte[] decrypt(final SecretKey secretKey, 
+		                     final byte[] iv,
 		                     final byte[] cipherText,
 		                     final byte[] authData,
-		                     final byte[] authTag,
-		                     final byte[] iv)
+		                     final byte[] authTag)
 		throws JOSEException {
 
 		// Initialise AES/GCM cipher for decryption

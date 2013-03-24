@@ -151,16 +151,16 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			byte[] iv = AESCBC.generateIV(randomGen);
 
-			byte[] cipherText = AESCBC.encrypt(cek, bytes, iv);
+			byte[] cipherText = AESCBC.encrypt(cek, iv, bytes);
 
 			SecretKey cik = CIK.generate(encryptedKey.decode(), cikBitLength(enc), kdfDigest, enc.toString());
 
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                        encryptedKey.toString() + "." +
-			                        Base64URL.encode(iv).toString() + "." +
-			                        Base64URL.encode(cipherText);
+			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
+			                  encryptedKey.toString() + "." +
+			                  Base64URL.encode(iv).toString() + "." +
+			                  Base64URL.encode(cipherText);
 
-			byte[] mac = HMAC.compute(cik, authDataString.getBytes());
+			byte[] mac = HMAC.compute(cik, macInput.getBytes());
 
 			return new JWECryptoParts(encryptedKey,  
 				                  Base64URL.encode(iv), 
@@ -171,10 +171,10 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			byte[] iv = AESGCM.generateIV(randomGen);
 
+			// Compose the additional authenticated data
 			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
 			                        encryptedKey.toString() + "." +
 			                        Base64URL.encode(iv).toString();
-
 
 			byte[] authData;
 
@@ -187,7 +187,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 			}
 
 			
-			AESGCM.Result result = AESGCM.encrypt(cmk, bytes, authData, iv);
+			AESGCM.Result result = AESGCM.encrypt(cmk, iv, bytes, authData);
 
 			return new JWECryptoParts(encryptedKey,  
 				                  Base64URL.encode(iv), 

@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.SecureRandom;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
@@ -20,7 +21,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-23)
  */
 class AESCBC {
 
@@ -42,7 +43,7 @@ class AESCBC {
 	 */
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
-		byte[] bytes = new byte[AESCBC.IV_BIT_LENGTH];
+		byte[] bytes = new byte[IV_BIT_LENGTH];
 
 		randomGen.nextBytes(bytes);
 
@@ -97,20 +98,19 @@ class AESCBC {
 	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding.
 	 *
 	 * @param secretKey The AES key. Must not be {@code null}.
-	 * @param plainText The plain text. Must not be {@code null}.
 	 * @param iv        The initialisation vector (IV). Must not be
 	 *                  {@code null}.
+	 * @param plainText The plain text. Must not be {@code null}.
 	 *
 	 * @return The cipher text.
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
 	public static byte[] encrypt(final SecretKey secretKey, 
-		                     final byte[] plainText,
-		                     final byte[] iv)
+		                     final byte[] iv,
+		                     final byte[] plainText)
 		throws JOSEException {
 
-		// Initialise AES/CBC cipher for encryption
 		Cipher cipher = createAESCBCCipher(secretKey, true, iv);
 
 		try {
@@ -120,7 +120,6 @@ class AESCBC {
 
 			throw new JOSEException(e.getMessage(), e);
 		}
-		
 	}
 
 
@@ -128,20 +127,19 @@ class AESCBC {
 	 * Decrypts the specified cipher text using AES/CBC/PKCS5Padding.
 	 *
 	 * @param secretKey  The AES key. Must not be {@code null}.
-	 * @param cipherText The cipher text. Must not be {@code null}.
 	 * @param iv         The initialisation vector (IV). Must not be
 	 *                   {@code null}.
+	 * @param cipherText The cipher text. Must not be {@code null}.
 	 *
 	 * @return The decrypted plain text.
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
 	public static byte[] decrypt(final SecretKey secretKey, 
-		                     final byte[] cipherText,
-		                     final byte[] iv)
+		                     final byte[] iv,
+		                     final byte[] cipherText)
 		throws JOSEException {
 
-		// Initialise AES/CBC cipher for decryption
 		Cipher cipher = createAESCBCCipher(secretKey, false, iv);
 
 		try {
@@ -151,7 +149,6 @@ class AESCBC {
 
 			throw new JOSEException(e.getMessage(), e);
 		}
-		
 	}
 
 
