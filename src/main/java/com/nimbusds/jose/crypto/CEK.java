@@ -16,7 +16,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
 class CEK {
 
@@ -38,7 +38,7 @@ class CEK {
 			baos.write(encryption);
 			byte[] otherInfo = baos.toByteArray();
 
-			KDFConcatGenerator kdfConcatGenerator = new KDFConcatGenerator(kdfDigest, otherInfo);
+			ConcatKDF kdfConcatGenerator = new ConcatKDF(kdfDigest, otherInfo);
 			kdfConcatGenerator.init(new KDFParameters(keyBytes, null));
 			byte[] key = new byte[cekByteLength];
 			kdfConcatGenerator.generateBytes(key, 0, key.length);

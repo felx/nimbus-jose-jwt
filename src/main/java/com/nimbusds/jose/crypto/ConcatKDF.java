@@ -8,15 +8,15 @@ import org.bouncycastle.crypto.params.KDFParameters;
 
 
 /**
- * Basic KDF generator for derived keys and Initialisation Vectors (IV).
+ * Concatenation Key Derivation Function (KDF).
  * 
  * <p>See http://csrc.nist.gov/publications/nistpubs/800-56A/SP800-56A_Revision1_Mar08-2007.pdf
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
-class KDFConcatGenerator implements DerivationFunction {
+class ConcatKDF implements DerivationFunction {
 
     
 	private int counterStart = 1;
@@ -37,7 +37,7 @@ class KDFConcatGenerator implements DerivationFunction {
 	 * @param digest    the digest to be used as the source of derived keys.
 	 * @param otherInfo s
 	 */
-	public KDFConcatGenerator(final Digest digest, final byte[] otherInfo) {
+	public ConcatKDF(final Digest digest, final byte[] otherInfo) {
 
 		this.digest = digest;
 		this.otherInfo = otherInfo;
