@@ -4,6 +4,9 @@ package com.nimbusds.jose.crypto;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.params.KDFParameters;
 
@@ -11,7 +14,7 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Static methods for Content Encryption Key (CEK) generation. Uses the 
+ * Static methods for JOSE Content Encryption Key (CEK) generation. Uses the 
  * BouncyCastle.org provider.
  *
  * @author Axel Nennker
@@ -21,12 +24,12 @@ import com.nimbusds.jose.JOSEException;
 class CEK {
 
 
-	public static byte[] generateCEK(byte[] keyBytes, int cekByteLength, Digest kdfDigest, String encStr)
+	public static SecretKey generate(byte[] keyBytes, int cekBitLength, Digest kdfDigest, String encStr)
 	 	throws JOSEException {
 
 	 	try {
 	 		final byte[] encryption = { 69, 110, 99, 114, 121, 112, 116, 105, 111, 110 };
-			int outputLengthInBits = cekByteLength * 8;
+			int outputLengthInBits = cekBitLength;
 			byte[] encStrBytes = encStr.getBytes();
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4 + encStrBytes.length + encryption.length);
@@ -40,9 +43,10 @@ class CEK {
 
 			ConcatKDF kdfConcatGenerator = new ConcatKDF(kdfDigest, otherInfo);
 			kdfConcatGenerator.init(new KDFParameters(keyBytes, null));
-			byte[] key = new byte[cekByteLength];
+			byte[] key = new byte[cekBitLength / 8];
 			kdfConcatGenerator.generateBytes(key, 0, key.length);
-			return key;
+
+			return new SecretKeySpec(key, "AES");
 
 	 	} catch (IOException e) {
 

@@ -4,6 +4,9 @@ package com.nimbusds.jose.crypto;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.params.KDFParameters;
 
@@ -21,14 +24,14 @@ import com.nimbusds.jose.JOSEException;
 class CIK {
 
 
-	public static byte[] generateCIK(byte[] keyBytes, int cikByteLength, Digest kdfDigest, String encStr) 
+	public static SecretKey generate(byte[] keyBytes, int cikBitLength, Digest kdfDigest, String encStr) 
 		throws JOSEException {
 
 		try {
 			// "Integrity"
 			final byte[] integrity = { 73, 110, 116, 101, 103, 114, 105, 116, 121 };
 
-			int outputLengthInBits = cikByteLength * 8;
+			int outputLengthInBits = cikBitLength;
 			byte[] encStrBytes = encStr.getBytes();
 
 			ByteArrayOutputStream baos = new ByteArrayOutputStream(4 + encStrBytes.length + integrity.length);
@@ -42,9 +45,10 @@ class CIK {
 
 			ConcatKDF kdfConcatGenerator = new ConcatKDF(kdfDigest, otherInfo);
 			kdfConcatGenerator.init(new KDFParameters(keyBytes, null));
-			byte[] key = new byte[cikByteLength];
+			byte[] key = new byte[cikBitLength / 8];
 			kdfConcatGenerator.generateBytes(key, 0, key.length);
-			return key;
+		
+			return new SecretKeySpec(key, "HMACSHA" + cikBitLength);
 
 		} catch (IOException e) {
 			

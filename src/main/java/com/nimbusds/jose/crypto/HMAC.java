@@ -5,6 +5,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Mac;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
@@ -15,7 +16,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-23)
  */
 class HMAC {
 
@@ -37,19 +38,36 @@ class HMAC {
 	public static byte[] compute(final String alg, final byte[] secret, final byte[] message)
 		throws JOSEException {
 
+		return compute(new SecretKeySpec(secret, alg), message);
+	}
+
+
+	/**
+	 * Computes a Hash-based Message Authentication Code (HMAC) for the
+	 * specified (shared) secret key and message.
+	 *
+	 * @param secretKey The (shared) secret key, with the appropriate HMAC
+	 *                  algorithm. Must not be {@code null}.
+	 * @param message   The message. Must not be {@code null}.
+	 *
+	 * @return A MAC service instance.
+	 *
+	 * @throws JOSEException If the algorithm is not supported or the
+	 *                       MAC secret key is invalid.
+	 */
+	public static byte[] compute(final SecretKey secretKey, final byte[] message)
+		throws JOSEException {
+
 		Mac mac;
 
 		try {
-			mac = Mac.getInstance(alg);
+			mac = Mac.getInstance(secretKey.getAlgorithm());
+
+			mac.init(secretKey);
 
 		} catch (NoSuchAlgorithmException e) {
 
 			throw new JOSEException("Unsupported HMAC algorithm: " + e.getMessage(), e);
-		}
-		
-
-		try {
-			mac.init(new SecretKeySpec(secret, mac.getAlgorithm()));
 
 		} catch (InvalidKeyException e) {
 

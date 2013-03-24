@@ -16,6 +16,11 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+
+
 
 /**
  * RSA encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
@@ -129,9 +134,40 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		}
 
 		// Encrypt the plain text according to the JWE enc
-		JWECryptoParts parts;
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-		if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+			Digest kdfDigest;
+
+			if (enc.equals(EncryptionMethod.A128CBC_HS256)) {
+
+				kdfDigest = new SHA256Digest();
+
+			} else {
+
+				kdfDigest = new SHA512Digest();
+			}
+
+			SecretKey cek = CEK.generate(encryptedKey.decode(), cekBitLength(enc), kdfDigest, enc.toString());
+
+			byte[] iv = AESCBC.generateIV(randomGen);
+
+			byte[] cipherText = AESCBC.encrypt(cek, bytes, iv);
+
+			SecretKey cik = CIK.generate(encryptedKey.decode(), cikBitLength(enc), kdfDigest, enc.toString());
+
+			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
+			                        encryptedKey.toString() + "." +
+			                        Base64URL.encode(iv).toString() + "." +
+			                        Base64URL.encode(cipherText);
+
+			byte[] mac = HMAC.compute(cik, authDataString.getBytes());
+
+			return new JWECryptoParts(encryptedKey,  
+				                  Base64URL.encode(iv), 
+				                  Base64URL.encode(cipherText),
+				                  Base64URL.encode(mac));
+
+		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			byte[] iv = AESGCM.generateIV(randomGen);
 
@@ -153,11 +189,10 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 			
 			AESGCM.Result result = AESGCM.encrypt(cmk, bytes, authData, iv);
 
-			parts = new JWECryptoParts(encryptedKey,  
-				                   Base64URL.encode(iv), 
-				                   Base64URL.encode(result.getCipherText()),
-				                   Base64URL.encode(result.getAuthenticationTag()));
-			return parts;
+			return new JWECryptoParts(encryptedKey,  
+				                  Base64URL.encode(iv), 
+				                  Base64URL.encode(result.getCipherText()),
+				                  Base64URL.encode(result.getAuthenticationTag()));
 
 		} else {
 
