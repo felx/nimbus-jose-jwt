@@ -21,7 +21,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. Uses the BouncyCastle.org provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
 class RSA_OAEP {
 
@@ -79,8 +79,8 @@ class RSA_OAEP {
 	 *
 	 * @throws JOSEException If derivation failed.
 	 */
-	public static SecretKeySpec decryptCMK(final RSAPrivateKey privateKey, 
-		                               final byte[] encryptedCMK)
+	public static SecretKey decryptCMK(final RSAPrivateKey privateKey, 
+		                           final byte[] encryptedCMK)
 		throws JOSEException {
 
 		try {

@@ -8,6 +8,10 @@ import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.SecretKey;
 
+import org.bouncycastle.crypto.Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -15,10 +19,6 @@ import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
-
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
 
 
 
@@ -196,7 +196,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 		} else {
 
-			throw new JOSEException("Unsupported encryption method, must be A128GCM or A128GCM");
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
 		}
 	}
 }
