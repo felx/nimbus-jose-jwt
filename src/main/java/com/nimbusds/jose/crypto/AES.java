@@ -18,7 +18,7 @@ import com.nimbusds.jose.JOSEException;
  * provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
 class AES {
 
@@ -26,13 +26,13 @@ class AES {
 	/**
 	 * Generates an AES Content Master Key (CMK) of the specified length.
 	 *
-	 * @param keyLength The key length, in bits.
+	 * @param keyBitLength The key length, in bits.
 	 *
 	 * @return The AES CMK.
 	 *
 	 * @throws JOSEException If AES key generation failed.
 	 */
-	public static SecretKey generateAESCMK(final int keyLength) 
+	public static SecretKey generateAESCMK(final int keyBitLength) 
 		throws JOSEException {
 
 		KeyGenerator keygen;
@@ -45,7 +45,7 @@ class AES {
 			throw new JOSEException(e.getMessage(), e);
 		}
 
-		keygen.init(keyLength);
+		keygen.init(keyBitLength);
 		return keygen.generateKey();
 	}
 

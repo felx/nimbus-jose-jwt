@@ -31,6 +31,8 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Supports the following encryption methods:
  *
  * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
@@ -43,7 +45,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -129,7 +131,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			int keyLength = keyLengthForMethod(readOnlyJWEHeader.getEncryptionMethod());
+			int keyLength = cmkBitLength(readOnlyJWEHeader.getEncryptionMethod());
 
 			keySpec = RSA1_5.decryptCMK(privateKey, encryptedKey.decode(), keyLength);
 		

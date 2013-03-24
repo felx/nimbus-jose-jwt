@@ -36,13 +36,15 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * <p>Supports the following encryption methods:
  *
  * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-24)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -70,6 +72,8 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 		SUPPORTED_ALGORITHMS = algs;
 
 		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
+		methods.add(EncryptionMethod.A128CBC_HS256);
+		methods.add(EncryptionMethod.A256CBC_HS512);
 		methods.add(EncryptionMethod.A128GCM);
 		methods.add(EncryptionMethod.A256GCM);
 		SUPPORTED_ENCRYPTION_METHODS = methods;
@@ -84,22 +88,77 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	 *               provider. Must not be {@code null}.
 	 *
 	 * @return The CMK length, in bits.
+	 *
+	 * @throws JOSEException If the encryption method is not supported.
 	 */
-	protected static int keyLengthForMethod(final EncryptionMethod method) {
+	protected static int cmkBitLength(final EncryptionMethod method)
+		throws JOSEException {
 
 		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
 		    method.equals(EncryptionMethod.A128GCM)) {
 
 			return 128;
-		}
 
-		if (method.equals(EncryptionMethod.A256GCM) ||
-		    method.equals(EncryptionMethod.A256CBC_HS512)) {
+		} else if (method.equals(EncryptionMethod.A256GCM) ||
+		           method.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			return 256;
-		}
 
-		throw new IllegalArgumentException("Unsupported encryption method, must be A128GCM, A256GCM, A128CBC_HS256 or A256CBC_HS512");
+		} else {
+
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A256GCM, ");
+		}
+	}
+
+
+	/**
+	 * Gets the Content Encryption Key (CEK) length for the specified 
+	 * encryption method.
+	 *
+	 * @param method The encryption method. Must be supported by this RSA
+	 *               provider and must employ CEKs. Must not be 
+	 *               {@code null}.
+	 *
+	 * @return The CEK length, in bits.
+	 *
+	 * @throws JOSEException If the encryption method is not supported or
+	 *                       doesn't employ CEKs.
+	 */
+	protected static int cekBitLength(final EncryptionMethod method)
+		throws JOSEException {
+
+		return cmkBitLength(method);
+	}
+
+
+	/**
+	 * Gets the Content Integrity Key (CIK) length for the specified 
+	 * encryption method.
+	 *
+	 * @param method The encryption method. Must be supported by this RSA
+	 *               provider and must employ CIKs. Must not be 
+	 *               {@code null}.
+	 *
+	 * @return The CIK length, in bits.
+	 *
+	 * @throws JOSEException If the encryption method is not supported or
+	 *                       doesn't employ CIKs.
+	 */
+	protected static int cikBitLength(final EncryptionMethod method)
+		throws JOSEException {
+
+		if (method.equals(EncryptionMethod.A128CBC_HS256)) {
+
+			return 256;
+
+		} else if (method.equals(EncryptionMethod.A256CBC_HS512)) {
+
+			return 512;
+
+		} else {
+
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256 or A256CBC_HS512");
+		}
 	}
 
 
