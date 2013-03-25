@@ -29,13 +29,13 @@ class ConcatKDF {
 	/**
 	 * The four byte array (32-byte) representation of 0.
 	 */
-	private static final byte[] ONE_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)0};
+	private static final byte[] ONE_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)1 };
 
 
 	/**
 	 * The four byte array (32-bit) representation of 1.
 	 */
-	private static final byte[] ZERO_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)1};
+	private static final byte[] ZERO_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)0 };
 
 
 	/**
@@ -56,6 +56,17 @@ class ConcatKDF {
 	};
 
 
+	/**
+	 * Generates a Content Encryption Key (CEK) from the specified 
+	 * Content Master Key (CMK) and JOSE encryption method.
+	 *
+	 * @param key The Content Master Key (CMK). Must not be {@code null}.
+	 * @param enc The JOSE encryption method. Must not be {@code null}.
+	 *
+	 * @return The generated AES CEK.
+	 *
+	 * @throws JOSEException If CEK generation failed.
+	 */
 	public static SecretKey generateCEK(final SecretKey key, final EncryptionMethod enc)
 		throws JOSEException {
 
@@ -93,6 +104,7 @@ class ConcatKDF {
 		MessageDigest md;
 
 		try {
+			// SHA-256 or SHA-512
 			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
 
 		} catch (NoSuchAlgorithmException e) {
@@ -109,6 +121,17 @@ class ConcatKDF {
 	}
 
 
+	/**
+	 * Generates a Content Integrity Key (CIK) from the specified 
+	 * Content Master Key (CMK) and JOSE encryption method.
+	 *
+	 * @param key The Content Master Key (CMK). Must not be {@code null}.
+	 * @param enc The JOSE encryption method. Must not be {@code null}.
+	 *
+	 * @return The generated HMAC SHA CIK.
+	 *
+	 * @throws JOSEException If CIK generation failed.
+	 */
 	public static SecretKey generateCIK(final SecretKey key, final EncryptionMethod enc)
 		throws JOSEException {
 
@@ -146,6 +169,7 @@ class ConcatKDF {
 		MessageDigest md;
 
 		try {
+			// SHA-256 or SHA-512
 			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
 
 		} catch (NoSuchAlgorithmException e) {
@@ -157,10 +181,19 @@ class ConcatKDF {
 
 		byte[] cikBytes = hashOutput;
 
+		// HMACSHA256 or HMACSHA512
 		return new SecretKeySpec(cikBytes, "HMACSHA" + cikBitLength);
 	}
 
 
+	/**
+	 * Returns a four byte array (32-bit) representation of the specified
+	 * integer.
+	 *
+	 * @param i The integer.
+	 *
+	 * @return The four byte array representation.
+	 */
 	private static byte[] intToFourBytes(final int i) {
 		
 		byte[] res = new byte[4];

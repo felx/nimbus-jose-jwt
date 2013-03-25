@@ -9,8 +9,6 @@ import junit.framework.TestCase;
 import org.bouncycastle.util.Arrays;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.util.Base64;
-
 
 /**
  * Tests the Concatenation KDF for CEK and CIK generation. Test vectors from
@@ -95,9 +93,6 @@ public class ConcatKDFTest extends TestCase {
 
 		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A128CBC_HS256);
 
-		System.out.println("CEK 128 computed: " + Base64.encode(computedCEK.getEncoded()));
-		System.out.println("CEK 128 expected: " + Base64.encode(cek128));
-
 		assertTrue(Arrays.constantTimeAreEqual(cek128, computedCEK.getEncoded()));
 	}
 
@@ -119,9 +114,6 @@ public class ConcatKDFTest extends TestCase {
 		SecretKey cmk = new SecretKeySpec(cmk512, "AES");
 
 		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A256CBC_HS512);
-
-		System.out.println("CEK 256 computed: " + Base64.encode(computedCEK.getEncoded()));
-		System.out.println("CEK 256 expected: " + Base64.encode(cek256));
 
 		assertTrue(Arrays.constantTimeAreEqual(cek256, computedCEK.getEncoded()));
 	}

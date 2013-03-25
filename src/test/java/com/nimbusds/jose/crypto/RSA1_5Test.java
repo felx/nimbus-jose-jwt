@@ -271,4 +271,37 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("I think therefore I am.", payload.toString());
 	}
+
+
+	public void testExampleDecrypt()
+		throws Exception {
+
+		// From JWE spec draft-ietf-jose-json-web-encryption-08#appendix-A.2
+
+		String jweString = 
+			"eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0." +
+			"ZmnlqWgjXyqwjr7cXHys8F79anIUI6J2UWdAyRQEcGBU-KPHsePM910_RoTDGu1I" +
+			"W40Dn0dvcdVEjpJcPPNIbzWcMxDi131Ejeg-b8ViW5YX5oRdYdiR4gMSDDB3mbkI" +
+			"nMNUFT-PK5CuZRnHB2rUK5fhPuF6XFqLLZCG5Q_rJm6Evex-XLcNQAJNa1-6CIU1" +
+			"2Wj3mPExxw9vbnsQDU7B4BfmhdyiflLA7Ae5ZGoVRl3A__yLPXxRjHFhpOeDp_ad" +
+			"x8NyejF5cz9yDKULugNsDMdlHeJQOMGVLYaSZt3KP6aWNSqFA1PHDg-10ceuTEtq" +
+			"_vPE4-Gtev4N4K4Eudlj4Q." +
+			"AxY8DCtDaGlsbGljb3RoZQ." +
+			"Rxsjg6PIExcmGSF7LnSEkDqWIKfAw1wZz2XpabV5PwQsolKwEauWYZNE9Q1hZJEZ." +
+			"8LXqMd0JLGsxMaB5uoNaMpg7uUW_p40RlaZHCwMIyzk";
+
+		JWEObject jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		Payload payload = jweObject.getPayload();
+
+		assertEquals("No matter where you go, there you are.", payload.toString());
+	}
 }

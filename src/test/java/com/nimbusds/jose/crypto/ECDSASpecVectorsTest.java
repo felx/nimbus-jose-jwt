@@ -17,12 +17,13 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-25)
  */
 public class ECDSASpecVectorsTest extends TestCase {
 
 
-	private final static byte[] x = { (byte) 127, (byte) 205, (byte) 206, (byte)  39, 
+	private final static byte[] x = { 
+		(byte) 127, (byte) 205, (byte) 206, (byte)  39, 
 		(byte) 112, (byte) 246, (byte) 196, (byte)  93, 
 		(byte)  65, (byte) 131, (byte) 203, (byte) 238, 
 		(byte) 111, (byte) 219, (byte)  75, (byte) 123, 
@@ -32,7 +33,8 @@ public class ECDSASpecVectorsTest extends TestCase {
 		(byte) 123, (byte) 209, (byte)  84, (byte)  69 };
 
 
-	private final static byte[] y = { (byte) 199, (byte) 241, (byte)  68, (byte) 205, 
+	private final static byte[] y = { 
+		(byte) 199, (byte) 241, (byte)  68, (byte) 205, 
 		(byte)  27, (byte) 189, (byte) 155, (byte) 126, 
 		(byte) 135, (byte) 44,  (byte) 223, (byte) 237, 
 		(byte) 185, (byte) 238, (byte) 185, (byte) 244, 
@@ -42,7 +44,8 @@ public class ECDSASpecVectorsTest extends TestCase {
 		(byte) 133, (byte) 136, (byte) 229, (byte) 173 };
 
 
-	private final static byte[] d = { (byte) 142, (byte) 155, (byte)  16, (byte) 158, 
+	private final static byte[] d = { 
+		(byte) 142, (byte) 155, (byte)  16, (byte) 158, 
 		(byte) 113, (byte) 144, (byte) 152, (byte) 191, 
 		(byte) 152, (byte)   4, (byte) 135, (byte) 223, 
 		(byte)  31, (byte)  93, (byte) 119, (byte) 233, 
@@ -75,7 +78,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
-		assertEquals("RS256 alg check", JWSAlgorithm.ES256, header.getAlgorithm());
+		assertEquals("ES256 alg check", JWSAlgorithm.ES256, header.getAlgorithm());
 
 		JWSObject jwsObject = new JWSObject(header, payload);
 
