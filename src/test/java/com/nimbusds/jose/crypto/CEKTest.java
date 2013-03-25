@@ -10,6 +10,8 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.util.Arrays;
 
+import com.nimbusds.jose.util.Base64;
+
 
 /**
  * Tests Content Encoding Key (CEK) generation. Test vectors from
@@ -21,6 +23,7 @@ import org.bouncycastle.util.Arrays;
 public class CEKTest extends TestCase {
 
 
+	// The input 256 bit CMK
 	private final static byte[] cmk256 = {
 
 		(byte)  4, (byte)211, (byte) 31, (byte)197, (byte) 84, (byte)157, (byte)252, (byte)254, 
@@ -30,6 +33,7 @@ public class CEKTest extends TestCase {
 	};
 
 
+	// The expected 128 bit CEK
 	private final static byte[] cek128 = {
 
 		(byte)203, (byte)165, (byte)180, (byte)113, (byte) 62, (byte)195, (byte) 22, (byte) 98, 
@@ -37,6 +41,7 @@ public class CEKTest extends TestCase {
 	};
 
 
+	// The input 512 bit CMK
 	private final static byte[] cmk512 = {
 
 		(byte)148, (byte)116, (byte)199, (byte)126, (byte)  2, (byte)117, (byte)233, (byte) 76, 
@@ -50,6 +55,7 @@ public class CEKTest extends TestCase {
 	};
 
 
+	// The expected 256 bit CEK
 	private final static byte[] cek256 = {
 
 		(byte)157, (byte) 19, (byte) 75, (byte)205, (byte) 31, (byte)190, (byte)110, (byte) 46, 
@@ -66,6 +72,8 @@ public class CEKTest extends TestCase {
 
 		SecretKey computedCEK = CEK.generate(cmk256, cekBitLength, new SHA256Digest(), "A128CBC+HS256");
 
+		System.out.println(Base64.encode(cek128));
+
 		assertTrue(Arrays.constantTimeAreEqual(cek128, computedCEK.getEncoded()));
 	}
 
@@ -76,6 +84,8 @@ public class CEKTest extends TestCase {
 		final int cekBitLength = 256;
 
 		SecretKey computedCEK = CEK.generate(cmk512, cekBitLength, new SHA512Digest(), "A256CBC+HS512");
+
+		System.out.println(Base64.encode(cek256));
 
 		assertTrue(Arrays.constantTimeAreEqual(cek256, computedCEK.getEncoded()));
 	}
