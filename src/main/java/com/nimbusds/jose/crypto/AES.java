@@ -9,6 +9,7 @@ import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.nimbusds.jose.JOSEException;
 
@@ -38,7 +39,7 @@ class AES {
 		KeyGenerator keygen;
 
 		try {
-			keygen = KeyGenerator.getInstance("AES");
+			keygen = KeyGenerator.getInstance("AES", new BouncyCastleProvider());
 
 		} catch (NoSuchAlgorithmException e) {
 
