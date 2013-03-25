@@ -135,7 +135,15 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			int keyLength = cmkBitLength(readOnlyJWEHeader.getEncryptionMethod());
 
-			cmk = RSA1_5.decryptCMK(privateKey, encryptedKey.decode(), keyLength);
+			try {
+				cmk = RSA1_5.decryptCMK(privateKey, encryptedKey.decode(), keyLength);	
+			
+			} catch (Exception e) {
+
+				// Protect against MMA attack by generating random CMK on failure, 
+				// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
+				cmk = AES.generateAESCMK(keyLength);
+			}
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
