@@ -150,11 +150,25 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
 
-	    		SecretKey cek = ConcatKDF.generateCEK(cmk, enc);
+	    		byte[] epu = null;
+
+			if (readOnlyJWEHeader.getEncryptionPartyUInfo() != null) {
+
+				epu = readOnlyJWEHeader.getEncryptionPartyUInfo().decode();
+			}
+
+			byte[] epv = null;
+			
+			if (readOnlyJWEHeader.getEncryptionPartyVInfo() != null) {
+
+				epv = readOnlyJWEHeader.getEncryptionPartyVInfo().decode();
+			}
+
+	    		SecretKey cek = ConcatKDF.generateCEK(cmk, enc, epu, epv);
 
 			byte[] clearText = AESCBC.decrypt(cek, iv.decode(), cipherText.decode());
 
-			SecretKey cik = ConcatKDF.generateCIK(cmk, enc);
+			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
 
 			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
 			                  encryptedKey.toString() + "." +

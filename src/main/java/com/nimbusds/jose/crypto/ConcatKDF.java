@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,6 +20,8 @@ import com.nimbusds.jose.JOSEException;
  * {@code A128CBC+HS256} and {@code A256CBC+HS512} encryption.
  *
  * <p>See draft-ietf-jose-json-web-encryption-08, appendices A.4 and A.5.
+ *
+ * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-03-25)
@@ -62,41 +65,71 @@ class ConcatKDF {
 	 *
 	 * @param key The Content Master Key (CMK). Must not be {@code null}.
 	 * @param enc The JOSE encryption method. Must not be {@code null}.
+	 * @param epu The value of the encryption PartyUInfo header parameter,
+	 *            {@code null} if not specified.
+	 * @param epv The value of the encryption PartyVInfo header parameter,
+	 *            {@code null} if not specified.
 	 *
 	 * @return The generated AES CEK.
 	 *
 	 * @throws JOSEException If CEK generation failed.
 	 */
-	public static SecretKey generateCEK(final SecretKey key, final EncryptionMethod enc)
+	public static SecretKey generateCEK(final SecretKey key, 
+		                            final EncryptionMethod enc,
+		                            final byte[] epu,
+		                            final byte[] epv)
 		throws JOSEException {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		// Write [0, 0, 0, 1]
-		baos.write(ONE_BYTES, 0, ONE_BYTES.length);
+		int hashBitLength;
 
-		// Append CMK
-		byte[] cmkBytes = key.getEncoded();
-		baos.write(cmkBytes, 0, cmkBytes.length);
+		try {
+			// Write [0, 0, 0, 1]
+			baos.write(ONE_BYTES);
 
-		// Append [CEK-bit-length...]
-		final int cmkBitLength = cmkBytes.length * 8;
-		final int cekBitLength = cmkBitLength / 2;
-		byte[] cekBitLengthBytes = intToFourBytes(cekBitLength);
-		baos.write(cekBitLengthBytes, 0, cekBitLengthBytes.length);
+			// Append CMK
+			byte[] cmkBytes = key.getEncoded();
+			baos.write(cmkBytes);
 
-		// Append the encryption method value, e.g. "A128CBC+HS256"
-		byte[] encBytes = enc.toString().getBytes();
-		baos.write(encBytes, 0, encBytes.length);
+			// Append [CEK-bit-length...]
+			final int cmkBitLength = cmkBytes.length * 8;
+			hashBitLength = cmkBitLength;
+			final int cekBitLength = cmkBitLength / 2;
+			byte[] cekBitLengthBytes = intToFourBytes(cekBitLength);
+			baos.write(cekBitLengthBytes);
 
-		// Append encryption PartyUInfo [0, 0, 0, 0]
-		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+			// Append the encryption method value, e.g. "A128CBC+HS256"
+			byte[] encBytes = enc.toString().getBytes();
+			baos.write(encBytes);
 
-		// Append encryption PartyVInfo [0, 0, 0, 0]
-		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+			// Append encryption PartyUInfo=Datalen || Data
+			if (epu != null) {
 
-		// Append "Encryption" label
-		baos.write(ENCRYPTION_BYTES, 0, ENCRYPTION_BYTES.length);
+				baos.write(intToFourBytes(epu.length));
+				baos.write(epu);
+
+			} else {
+				baos.write(ZERO_BYTES);
+			}
+
+			// Append encryption PartyVInfo=Datalen || Data
+			if (epv != null) {
+
+				baos.write(intToFourBytes(epv.length));
+				baos.write(epv);
+
+			} else {
+				baos.write(ZERO_BYTES);
+			}
+
+			// Append "Encryption" label
+			baos.write(ENCRYPTION_BYTES);
+
+		} catch (IOException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 
 		// Write out
 		byte[] hashInput = baos.toByteArray();
@@ -105,7 +138,7 @@ class ConcatKDF {
 
 		try {
 			// SHA-256 or SHA-512
-			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
+			md = MessageDigest.getInstance("SHA-" + hashBitLength);
 
 		} catch (NoSuchAlgorithmException e) {
 
@@ -127,41 +160,72 @@ class ConcatKDF {
 	 *
 	 * @param key The Content Master Key (CMK). Must not be {@code null}.
 	 * @param enc The JOSE encryption method. Must not be {@code null}.
+	 * @param epu The value of the encryption PartyUInfo header parameter,
+	 *            {@code null} if not specified.
+	 * @param epv The value of the encryption PartyVInfo header parameter,
+	 *            {@code null} if not specified.
 	 *
 	 * @return The generated HMAC SHA CIK.
 	 *
 	 * @throws JOSEException If CIK generation failed.
 	 */
-	public static SecretKey generateCIK(final SecretKey key, final EncryptionMethod enc)
+	public static SecretKey generateCIK(final SecretKey key, 
+		                            final EncryptionMethod enc,
+		                            final byte[] epu,
+		                            final byte[] epv)
 		throws JOSEException {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		// Write [0, 0, 0, 1]
-		baos.write(ONE_BYTES, 0, ONE_BYTES.length);
+		int hashBitLength;
+		int cikBitLength;
 
-		// Append CMK
-		byte[] cmkBytes = key.getEncoded();
-		baos.write(cmkBytes, 0, cmkBytes.length);
+		try {
+			// Write [0, 0, 0, 1]
+			baos.write(ONE_BYTES);
 
-		// Append [CIK-bit-length...]
-		final int cmkBitLength = cmkBytes.length * 8;	
-		final int cikBitLength = cmkBitLength;
-		byte[] cikBitLengthBytes = intToFourBytes(cikBitLength);
-		baos.write(cikBitLengthBytes, 0, cikBitLengthBytes.length);
+			// Append CMK
+			byte[] cmkBytes = key.getEncoded();
+			baos.write(cmkBytes);
 
-		// Append the encryption method value, e.g. "A128CBC+HS256"
-		byte[] encBytes = enc.toString().getBytes();
-		baos.write(encBytes, 0, encBytes.length);
+			// Append [CIK-bit-length...]
+			final int cmkBitLength = cmkBytes.length * 8;
+			hashBitLength = cmkBitLength;
+			cikBitLength = cmkBitLength;
+			byte[] cikBitLengthBytes = intToFourBytes(cikBitLength);
+			baos.write(cikBitLengthBytes);
 
-		// Append encryption PartyUInfo [0, 0, 0, 0]
-		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+			// Append the encryption method value, e.g. "A128CBC+HS256"
+			byte[] encBytes = enc.toString().getBytes();
+			baos.write(encBytes);
 
-		// Append encryption PartyVInfo [0, 0, 0, 0]
-		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+			// Append encryption PartyUInfo=Datalen || Data
+			if (epu != null) {
 
-		// Append "Encryption" label
-		baos.write(INTEGRITY_BYTES, 0, INTEGRITY_BYTES.length);
+				baos.write(intToFourBytes(epu.length));
+				baos.write(epu);
+
+			} else {
+				baos.write(ZERO_BYTES);
+			}
+
+			// Append encryption PartyVInfo=Datalen || Data
+			if (epv != null) {
+
+				baos.write(intToFourBytes(epv.length));
+				baos.write(epv);
+
+			} else {
+				baos.write(ZERO_BYTES);	
+			}
+
+			// Append "Encryption" label
+			baos.write(INTEGRITY_BYTES);
+
+		} catch (IOException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 
 		// Write out
 		byte[] hashInput = baos.toByteArray();
@@ -170,7 +234,7 @@ class ConcatKDF {
 
 		try {
 			// SHA-256 or SHA-512
-			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
+			md = MessageDigest.getInstance("SHA-" + hashBitLength);
 
 		} catch (NoSuchAlgorithmException e) {
 

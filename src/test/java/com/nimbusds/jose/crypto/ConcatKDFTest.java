@@ -91,7 +91,7 @@ public class ConcatKDFTest extends TestCase {
 
 		SecretKey cmk = new SecretKeySpec(cmk256, "AES");
 
-		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A128CBC_HS256);
+		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A128CBC_HS256, null, null);
 
 		assertTrue(Arrays.constantTimeAreEqual(cek128, computedCEK.getEncoded()));
 	}
@@ -102,7 +102,7 @@ public class ConcatKDFTest extends TestCase {
 
 		SecretKey cmk = new SecretKeySpec(cmk256, "AES");
 
-		SecretKey computedCIK = ConcatKDF.generateCIK(cmk, EncryptionMethod.A128CBC_HS256);
+		SecretKey computedCIK = ConcatKDF.generateCIK(cmk, EncryptionMethod.A128CBC_HS256, null, null);
 
 		assertTrue(Arrays.constantTimeAreEqual(cik256, computedCIK.getEncoded()));
 	}
@@ -113,7 +113,7 @@ public class ConcatKDFTest extends TestCase {
 
 		SecretKey cmk = new SecretKeySpec(cmk512, "AES");
 
-		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A256CBC_HS512);
+		SecretKey computedCEK = ConcatKDF.generateCEK(cmk, EncryptionMethod.A256CBC_HS512, null, null);
 
 		assertTrue(Arrays.constantTimeAreEqual(cek256, computedCEK.getEncoded()));
 	}
@@ -124,7 +124,7 @@ public class ConcatKDFTest extends TestCase {
 
 		SecretKey cmk = new SecretKeySpec(cmk512, "AES");
 
-		SecretKey computedCIK = ConcatKDF.generateCIK(cmk, EncryptionMethod.A256CBC_HS512);
+		SecretKey computedCIK = ConcatKDF.generateCIK(cmk, EncryptionMethod.A256CBC_HS512, null, null);
 
 		assertTrue(Arrays.constantTimeAreEqual(cik512, computedCIK.getEncoded()));
 	}
