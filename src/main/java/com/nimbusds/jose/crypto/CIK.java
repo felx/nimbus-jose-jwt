@@ -24,7 +24,7 @@ import com.nimbusds.jose.JOSEException;
 class CIK {
 
 
-	public static SecretKey generate(byte[] keyBytes, int cikBitLength, Digest kdfDigest, String encStr) 
+	public static SecretKey generate(final byte[] keyBytes, final int cikBitLength, final Digest kdfDigest, final String encStr) 
 		throws JOSEException {
 
 		try {

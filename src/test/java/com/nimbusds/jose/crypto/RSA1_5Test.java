@@ -138,7 +138,7 @@ public class RSA1_5Test extends TestCase {
 
 
 	public void testWithA128CBC_HS256()
-			throws Exception {
+		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
 		Payload payload = new Payload("Hello world!");
@@ -172,7 +172,7 @@ public class RSA1_5Test extends TestCase {
 
 
 	public void testWithA128GCM()
-			throws Exception {
+		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
@@ -206,7 +206,7 @@ public class RSA1_5Test extends TestCase {
 
 
 	public void testWithA256GCM()
-			throws Exception {
+		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");
