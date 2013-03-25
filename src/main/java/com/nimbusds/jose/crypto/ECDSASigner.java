@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-03-25)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -111,8 +111,6 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 		byte[] rBytes = BigIntegerUtils.toBytesUnsigned(r);
 		byte[] sBytes = BigIntegerUtils.toBytesUnsigned(s);
-
-		final int outLength = rBytes.length + sBytes.length;
 
 		byte[] rsBytes = new byte[rsByteArrayLength];
 
