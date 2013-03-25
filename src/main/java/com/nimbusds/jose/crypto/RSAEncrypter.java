@@ -8,10 +8,6 @@ import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -44,7 +40,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-03-25)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -136,24 +132,13 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		// Encrypt the plain text according to the JWE enc
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			Digest kdfDigest;
-
-			if (enc.equals(EncryptionMethod.A128CBC_HS256)) {
-
-				kdfDigest = new SHA256Digest();
-
-			} else {
-
-				kdfDigest = new SHA512Digest();
-			}
-
-			SecretKey cek = CEK.generate(encryptedKey.decode(), cekBitLength(enc), kdfDigest, enc.toString());
+			SecretKey cek = ConcatKDF.generateCEK(cmk, enc);
 
 			byte[] iv = AESCBC.generateIV(randomGen);
 
 			byte[] cipherText = AESCBC.encrypt(cek, iv, bytes);
 
-			SecretKey cik = CIK.generate(encryptedKey.decode(), cikBitLength(enc), kdfDigest, enc.toString());
+			SecretKey cik = ConcatKDF.generateCIK(cmk, enc);
 
 			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
 			                  encryptedKey.toString() + "." +

@@ -1,137 +1,174 @@
 package com.nimbusds.jose.crypto;
 
-import org.bouncycastle.crypto.DataLengthException;
-import org.bouncycastle.crypto.DerivationFunction;
-import org.bouncycastle.crypto.DerivationParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.params.KDFParameters;
+
+import java.io.ByteArrayOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Concatenation Key Derivation Function (KDF).
- * 
- * <p>See http://csrc.nist.gov/publications/nistpubs/800-56A/SP800-56A_Revision1_Mar08-2007.pdf
+ * Concatenation Key Derivation Function (KDF) utilities. Provides static 
+ * methods to generate Content Encryption Keys (CEKs) and Content Integrity 
+ * Keys (CIKs) from a Content Master Key (CMKs), as used in 
+ * {@code A128CBC+HS256} and {@code A256CBC+HS512} encryption.
  *
- * @author Axel Nennker
+ * <p>See draft-ietf-jose-json-web-encryption-08, appendices A.4 and A.5.
+ *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-03-25)
  */
-class ConcatKDF implements DerivationFunction {
+class ConcatKDF {
 
-    
-	private int counterStart = 1;
-
-
-	private Digest digest;
-
-
-	private byte[] shared;
-
-
-	private byte[] otherInfo;
-    
 
 	/**
-	 * Creates a new KDF parameters generator.
-	 * 
-	 * @param digest    the digest to be used as the source of derived keys.
-	 * @param otherInfo s
+	 * The four byte array (32-byte) representation of 0.
 	 */
-	public ConcatKDF(final Digest digest, final byte[] otherInfo) {
-
-		this.digest = digest;
-		this.otherInfo = otherInfo;
-	}
-
-
-	public void init(final DerivationParameters param) {
-
-		if (! (param instanceof KDFParameters)) {
-
-			throw new IllegalArgumentException("KDF parameters required for KDFConcatGenerator");
-		}
-
-		KDFParameters p = (KDFParameters)param;
-		shared = p.getSharedSecret();
-	}
+	private static final byte[] ONE_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)0};
 
 
 	/**
-	 * return the underlying digest.
+	 * The four byte array (32-bit) representation of 1.
 	 */
-	public Digest getDigest() {
-
-		return digest;
-	}
+	private static final byte[] ZERO_BYTES = { (byte)0, (byte)0, (byte)0,  (byte)1};
 
 
 	/**
-	* fill len bytes of the output buffer with bytes generated from
-	* the derivation function.
-	*
-	* @throws IllegalArgumentException if the size of the request will cause an overflow.
-	* @throws DataLengthException if the out buffer is too small.
-	*/
-	public int generateBytes(byte[] out, int outOff, int len)
-		throws DataLengthException, 
-		       IllegalArgumentException {
+	 * The byte array representation of the string "Encryption".
+	 */
+	private static final byte[] ENCRYPTION_BYTES = { 
+	
+		(byte)69, (byte)110, (byte)99, (byte)114, (byte)121, (byte)112, (byte)116, (byte)105, (byte)111, (byte)110
+	};
 
 
-		if ((out.length - len) < outOff) {
+	/**
+	 * The byte array representation of the string "Integrity".
+	 */
+	private static final byte[] INTEGRITY_BYTES = {
+
+		(byte)73, (byte)110, (byte)116, (byte)101, (byte)103, (byte)114, (byte)105, (byte)116, (byte)121
+	};
+
+
+	public static SecretKey generateCEK(final SecretKey key, final EncryptionMethod enc)
+		throws JOSEException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// Write [0, 0, 0, 1]
+		baos.write(ONE_BYTES, 0, ONE_BYTES.length);
+
+		// Append CMK
+		byte[] cmkBytes = key.getEncoded();
+		baos.write(cmkBytes, 0, cmkBytes.length);
+
+		// Append [CEK-bit-length...]
+		final int cmkBitLength = cmkBytes.length * 8;
+		final int cekBitLength = cmkBitLength / 2;
+		byte[] cekBitLengthBytes = intToFourBytes(cekBitLength);
+		baos.write(cekBitLengthBytes, 0, cekBitLengthBytes.length);
+
+		// Append the encryption method value, e.g. "A128CBC+HS256"
+		byte[] encBytes = enc.toString().getBytes();
+		baos.write(encBytes, 0, encBytes.length);
+
+		// Append encryption PartyUInfo [0, 0, 0, 0]
+		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+
+		// Append encryption PartyVInfo [0, 0, 0, 0]
+		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+
+		// Append "Encryption" label
+		baos.write(ENCRYPTION_BYTES, 0, ENCRYPTION_BYTES.length);
+
+		// Write out
+		byte[] hashInput = baos.toByteArray();
+
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+
+		byte[] hashOutput = md.digest(hashInput);
+
+		byte[] cekBytes = new byte[hashOutput.length / 2];
+		System.arraycopy(hashOutput, 0, cekBytes, 0, cekBytes.length);
+
+		return new SecretKeySpec(cekBytes, "AES");
+	}
+
+
+	public static SecretKey generateCIK(final SecretKey key, final EncryptionMethod enc)
+		throws JOSEException {
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		// Write [0, 0, 0, 1]
+		baos.write(ONE_BYTES, 0, ONE_BYTES.length);
+
+		// Append CMK
+		byte[] cmkBytes = key.getEncoded();
+		baos.write(cmkBytes, 0, cmkBytes.length);
+
+		// Append [CIK-bit-length...]
+		final int cmkBitLength = cmkBytes.length * 8;	
+		final int cikBitLength = cmkBitLength;
+		byte[] cikBitLengthBytes = intToFourBytes(cikBitLength);
+		baos.write(cikBitLengthBytes, 0, cikBitLengthBytes.length);
+
+		// Append the encryption method value, e.g. "A128CBC+HS256"
+		byte[] encBytes = enc.toString().getBytes();
+		baos.write(encBytes, 0, encBytes.length);
+
+		// Append encryption PartyUInfo [0, 0, 0, 0]
+		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+
+		// Append encryption PartyVInfo [0, 0, 0, 0]
+		baos.write(ZERO_BYTES, 0, ZERO_BYTES.length);
+
+		// Append "Encryption" label
+		baos.write(INTEGRITY_BYTES, 0, INTEGRITY_BYTES.length);
+
+		// Write out
+		byte[] hashInput = baos.toByteArray();
+
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance("SHA-" + cmkBitLength);
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+
+		byte[] hashOutput = md.digest(hashInput);
+
+		byte[] cikBytes = hashOutput;
+
+		return new SecretKeySpec(cikBytes, "HMACSHA" + cikBitLength);
+	}
+
+
+	private static byte[] intToFourBytes(final int i) {
 		
-			throw new DataLengthException("output buffer too small");
-		}
-
-		long oBytes = len;
-		int  outLen = digest.getDigestSize(); 
-
-		
-		// this is at odds with the standard implementation, the
-		// maximum value should be hBits * (2^32 - 1) where hBits
-		// is the digest output size in bits. We can't have an
-		// array with a long index at the moment...
-		//
-		if (oBytes > ((2L << 32) - 1)) {
-			
-			throw new IllegalArgumentException("Output length too large");
-		}
-
-		int cThreshold = (int)((oBytes + outLen - 1) / outLen);
-
-		byte[] dig = null;
-
-		dig = new byte[digest.getDigestSize()];
-
-		int counter = counterStart;
-
-		for (int i = 0; i < cThreshold; i++) {
-
-			// 5.1 Compute Hash_i = H(counter || Z || OtherInfo). 
-			digest.update((byte)(counter >> 24));
-			digest.update((byte)(counter >> 16));
-			digest.update((byte)(counter >> 8));
-			digest.update((byte)counter);
-			digest.update(shared, 0, shared.length);
-			digest.update(otherInfo, 0, otherInfo.length);
-
-			digest.doFinal(dig, 0);
-
-			if (len > outLen) {
-				System.arraycopy(dig, 0, out, outOff, outLen);
-				outOff += outLen;
-				len -= outLen;
-
-			} else {
-				
-				System.arraycopy(dig, 0, out, outOff, len);
-			}
-
-			counter++;
-		}
-
-		digest.reset();
-
-		return len;
+		byte[] res = new byte[4];
+		res[0] = (byte) (i >>> 24);
+		res[1] = (byte) ((i >>> 16) & 0xFF);
+		res[2] = (byte) ((i >>> 8) & 0xFF);
+		res[3] = (byte) (i & 0xFF);
+		return res;
 	}
 }
 

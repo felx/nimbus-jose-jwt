@@ -7,9 +7,6 @@ import java.util.Set;
 
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
 import org.bouncycastle.util.Arrays;
 
 import com.nimbusds.jose.DefaultJWEHeaderFilter;
@@ -50,7 +47,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-03-25)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -153,22 +150,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
 
-	    		Digest kdfDigest;
-
-			if (enc.equals(EncryptionMethod.A128CBC_HS256)) {
-
-				kdfDigest = new SHA256Digest();
-
-			} else {
-
-				kdfDigest = new SHA512Digest();
-			}
-
-			SecretKey cek = CEK.generate(cmk.getEncoded(), cekBitLength(enc), kdfDigest, enc.toString());
+	    		SecretKey cek = ConcatKDF.generateCEK(cmk, enc);
 
 			byte[] clearText = AESCBC.decrypt(cek, iv.decode(), cipherText.decode());
 
-			SecretKey cik = CIK.generate(cmk.getEncoded(), cikBitLength(enc), kdfDigest, enc.toString());
+			SecretKey cik = ConcatKDF.generateCIK(cmk, enc);
 
 			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
 			                  encryptedKey.toString() + "." +

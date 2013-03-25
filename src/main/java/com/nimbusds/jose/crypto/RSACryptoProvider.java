@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
@@ -44,7 +43,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-03-25)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -94,15 +93,21 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	protected static int cmkBitLength(final EncryptionMethod method)
 		throws JOSEException {
 
-		if (method.equals(EncryptionMethod.A128CBC_HS256) || 
-		    method.equals(EncryptionMethod.A128GCM)) {
+		if (method.equals(EncryptionMethod.A128CBC_HS256)) {
+
+			return 256;
+
+		} else if (method.equals(EncryptionMethod.A256CBC_HS512)) {
+
+			return 512;
+
+		} else if (method.equals(EncryptionMethod.A128GCM)) {
 
 			return 128;
 
-		} else if (method.equals(EncryptionMethod.A256GCM) ||
-		           method.equals(EncryptionMethod.A256CBC_HS512)) {
-
-			return 256;
+		} else if (method.equals(EncryptionMethod.A256GCM)) {
+		        
+		        return 256;
 
 		} else {
 
