@@ -4,15 +4,15 @@ package com.nimbusds.jose.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.zip.DeflaterInputStream;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 
 /**
  * Deflate (RFC 1951) utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version $version$ (2013-03-26)
  */
 public class DeflateUtils {
 
@@ -28,7 +28,7 @@ public class DeflateUtils {
 	 * @throws IOException If compression failed.
 	 */
 	public static byte[] compress(final byte[] bytes)
-			throws IOException {
+		throws IOException {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -51,9 +51,9 @@ public class DeflateUtils {
 	 * @throws IOException If decompression failed.
 	 */
 	public static byte[] decompress(final byte[] bytes)
-			throws IOException {
+		throws IOException {
 
-		DeflaterInputStream def = new DeflaterInputStream(new ByteArrayInputStream(bytes));
+		InflaterInputStream inf = new InflaterInputStream(new ByteArrayInputStream(bytes));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		// Transfer bytes from the compressed array to the output
@@ -61,11 +61,12 @@ public class DeflateUtils {
 
 		int len;
 
-		while ((len = def.read(buf)) > 0) {
+		while ((len = inf.read(buf)) > 0) {
+
 			out.write(buf, 0, len);
 		}
 
-		def.close();
+		inf.close();
 		out.close();
 
 		return out.toByteArray();

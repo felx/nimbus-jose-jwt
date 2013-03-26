@@ -1,22 +1,19 @@
 package com.nimbusds.jose.util;
 
 
-import org.junit.Ignore;
-import org.junit.Test;
+import junit.framework.TestCase;
 
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests DEFLATE compression.
  *
- * @version $version$ (2012-09-29)
+ * @version $version$ (2013-03-26)
  */
-public class DeflateUtilsTest  {
+public class DeflateUtilsTest extends TestCase  {
 
-	@Ignore("Test fails, may due to https://bitbucket.org/nimbusds/nimbus-jose-jwt/issue/2/compressionutils-deflate-bug")
-	@Test
-	public void testRun()
-			throws Exception {
+
+	public void testDeflateAndInflate()
+		throws Exception {
 
 		final String text = "Hello world!";
 		final byte[] textBytes = text.getBytes("UTF-8");
