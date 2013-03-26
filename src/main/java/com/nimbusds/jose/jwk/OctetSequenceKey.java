@@ -26,7 +26,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  * 
  * @author Justin Richer
- * @version $version$ (2013-03-20)
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2013-03-26)
  */
 @Immutable
 public class OctetSequenceKey extends JWK {
@@ -60,6 +61,30 @@ public class OctetSequenceKey extends JWK {
 		}
 
 		this.k = k;
+	}
+
+
+	/**
+	 * Creates a new octet sequence JSON Web Key (JWK) with the specified
+	 * parameters.
+	 *
+	 * @param k   The key value. It is represented as the value's big 
+	 *            endian representation. Must not be {@code null}.
+	 * @param use The key use. {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
+	 * @param kid The key ID. {@code null} if not specified.
+	 */
+	public OctetSequenceKey(final byte[] k, final Use use, final Algorithm alg, final String kid) {
+	
+		super(KeyType.OCT, use, alg, kid);
+
+		if (k == null) {
+
+			throw new IllegalArgumentException("The key value must not be null");
+		}
+
+		this.k = Base64URL.encode(k);
 	}
     
 
