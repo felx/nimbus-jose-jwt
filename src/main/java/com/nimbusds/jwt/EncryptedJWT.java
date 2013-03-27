@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Encrypted JSON Web Token (JWT). This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class EncryptedJWT extends JWEObject implements JWT {
@@ -31,7 +31,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 * @param header    The JWE header. Must not be {@code null}.
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public EncryptedJWT(final JWEHeader header, ReadOnlyJWTClaimsSet claimsSet) {
+	public EncryptedJWT(final JWEHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
 
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -56,11 +56,11 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public EncryptedJWT(final Base64URL firstPart, 
-			final Base64URL secondPart, 
-			final Base64URL thirdPart,
-			final Base64URL fourthPart,
-			final Base64URL fifthPart)
-					throws ParseException {
+			    final Base64URL secondPart, 
+			    final Base64URL thirdPart,
+			    final Base64URL fourthPart,
+			    final Base64URL fifthPart)
+		throws ParseException {
 
 		super(firstPart, secondPart, thirdPart, fourthPart, fifthPart);
 	}
@@ -68,7 +68,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-			throws ParseException {
+		throws ParseException {
 
 		Payload payload = getPayload();
 
@@ -98,7 +98,7 @@ public class EncryptedJWT extends JWEObject implements JWT {
 	 *                        encrypted JWT.
 	 */
 	public static EncryptedJWT parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 

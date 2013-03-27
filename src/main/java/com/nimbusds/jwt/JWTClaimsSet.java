@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-03-27)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -413,7 +413,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * @throws IllegalArgumentException If the claim is reserved and its
 	 *                                  value is not of the expected type.
 	 */
-	public void setClaim(String name, Object value) {
+	public void setClaim(final String name, final Object value) {
 
 		if (!getReservedNames().contains(name)) {
 			setCustomClaim(name, value);
@@ -496,7 +496,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @param newClaims The JWT claims. Must not be {@code null}.
 	 */
-	public void setAllClaims(Map<String, Object> newClaims) {
+	public void setAllClaims(final Map<String, Object> newClaims) {
 
 		for (String name : newClaims.keySet()) {
 			setClaim(name, newClaims.get(name));

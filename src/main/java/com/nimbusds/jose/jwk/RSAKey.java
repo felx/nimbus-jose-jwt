@@ -109,7 +109,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-03-27)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -153,7 +153,7 @@ public final class RSAKey extends JWK {
 		 * @param t The factor Chinese Remainder Theorem (CRT) 
 		 *          coefficient. Must not be {@code null}.
 		 */
-		public OtherPrimesInfo(Base64URL r, Base64URL d, Base64URL t) {
+		public OtherPrimesInfo(final Base64URL r, final Base64URL d, final Base64URL t) {
 
 			if (r == null) {
 

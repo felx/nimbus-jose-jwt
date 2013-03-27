@@ -12,7 +12,7 @@ import org.bouncycastle.crypto.Digest;
  * class is immutable.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-03-27)
  */
 @Immutable
 class ECDSAParameters {
@@ -37,7 +37,7 @@ class ECDSAParameters {
 	 * @param x9ECParams The X9 EC parameters.
 	 * @param digest     The digest method.
 	 */
-	public ECDSAParameters(final X9ECParameters x9ECParams, Digest digest) {
+	public ECDSAParameters(final X9ECParameters x9ECParams, final Digest digest) {
 
 		this.x9ECParams = x9ECParams;
 		this.digest = digest;

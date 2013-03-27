@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plain JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class PlainJWT extends PlainObject implements JWT {
@@ -43,7 +43,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @param header    The plain header. Must not be {@code null}.
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final PlainHeader header, ReadOnlyJWTClaimsSet claimsSet) {
+	public PlainJWT(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
 
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -61,7 +61,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public PlainJWT(final Base64URL firstPart, final Base64URL secondPart)
-			throws ParseException {
+		throws ParseException {
 
 		super(firstPart, secondPart);
 	}
@@ -69,11 +69,12 @@ public class PlainJWT extends PlainObject implements JWT {
 
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-			throws ParseException {
+		throws ParseException {
 
 		JSONObject json = getPayload().toJSONObject();
 
 		if (json == null) {
+			
 			throw new ParseException("Payload of plain JOSE object is not a valid JSON object", 0);
 		}
 
@@ -93,11 +94,12 @@ public class PlainJWT extends PlainObject implements JWT {
 	 *                        plain JWT.
 	 */
 	public static PlainJWT parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 
 		if (! parts[2].toString().isEmpty()) {
+
 			throw new ParseException("Unexpected third Base64URL part in the plain JWT object", 0);
 		}
 
