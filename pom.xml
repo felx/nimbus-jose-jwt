@@ -208,6 +208,31 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.google.code.maven-replacer-plugin</groupId>
+				<artifactId>replacer</artifactId>
+				<version>1.5.2</version>
+				<executions>
+					<execution>
+						<phase>site</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>                   
+					</execution>
+				</executions>
+				<configuration>
+					<includes>
+						<include>target/site/apidocs/**/*.html</include>
+					</includes>
+					<regex>false</regex>
+					<replacements>
+						<replacement>
+							<token>$version$</token>
+							<value>${project.version}</value>
+						</replacement>         
+					</replacements>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -242,6 +267,11 @@
 
 	<reporting>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
