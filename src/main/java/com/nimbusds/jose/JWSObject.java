@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -434,7 +434,7 @@ public class JWSObject extends JOSEObject {
 	 * @throws ParseException If the string couldn't be parsed to a valid 
 	 *                        JWS object.
 	 */
-	public static JWSObject parse(String s)
+	public static JWSObject parse(final String s)
 		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);

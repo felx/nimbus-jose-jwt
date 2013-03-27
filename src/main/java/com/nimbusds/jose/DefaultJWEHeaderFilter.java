@@ -13,7 +13,7 @@ import net.jcip.annotations.ThreadSafe;
  * thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHeaderFilter {
@@ -153,7 +153,7 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 
 
 	@Override
-	public void setAcceptedAlgorithms(Set<JWEAlgorithm> acceptedAlgs) {
+	public void setAcceptedAlgorithms(final Set<JWEAlgorithm> acceptedAlgs) {
 
 		if (acceptedAlgs == null) {
 

@@ -17,7 +17,7 @@ import net.minidev.json.JSONObject;
  * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2013-01-15)
+ * @version $version$ (2013-03-27)
  */
 @Immutable
 public class Algorithm implements JSONAware {
@@ -51,6 +51,7 @@ public class Algorithm implements JSONAware {
 	public Algorithm(final String name, final Requirement req) {
 
 		if (name == null) {
+
 			throw new IllegalArgumentException("The algorithm name must not be null");
 		}
 
@@ -76,7 +77,7 @@ public class Algorithm implements JSONAware {
 	 *
 	 * @return The algorithm name.
 	 */
-	public String getName() {
+	public final String getName() {
 
 		return name;
 	}
@@ -87,7 +88,7 @@ public class Algorithm implements JSONAware {
 	 *
 	 * @return The implementation requirement, {@code null} if not known.
 	 */
-	public Requirement getRequirement() {
+	public final Requirement getRequirement() {
 
 		return requirement;
 	}
@@ -99,7 +100,7 @@ public class Algorithm implements JSONAware {
 	 * @return The object hash code.
 	 */
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 
 		return name.hashCode();
 	}
@@ -117,8 +118,8 @@ public class Algorithm implements JSONAware {
 	public boolean equals(final Object object) {
 
 		return object != null && 
-				object instanceof Algorithm && 
-				this.toString().equals(object.toString());
+		       object instanceof Algorithm && 
+		       this.toString().equals(object.toString());
 	}
 
 
@@ -130,7 +131,7 @@ public class Algorithm implements JSONAware {
 	 * @return The string representation.
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 
 		return name;
 	}
@@ -142,7 +143,7 @@ public class Algorithm implements JSONAware {
 	 * @return The JSON string representation.
 	 */
 	@Override
-	public String toJSONString() {
+	public final String toJSONString() {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');

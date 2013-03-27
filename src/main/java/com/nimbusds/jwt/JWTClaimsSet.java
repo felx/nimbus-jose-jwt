@@ -340,6 +340,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	public void setCustomClaim(final String name, final Object value) {
 
 		if (getReservedNames().contains(name)) {
+
 			throw new IllegalArgumentException("The claim name \"" + name + "\" matches a reserved name");
 		}
 
@@ -372,7 +373,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	@Override
-	public Object getClaim(String name) {
+	public Object getClaim(final String name) {
 
 		if (!getReservedNames().contains(name)) {
 

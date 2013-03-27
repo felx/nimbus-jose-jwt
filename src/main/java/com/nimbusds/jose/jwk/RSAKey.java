@@ -876,7 +876,7 @@ public final class RSAKey extends JWK {
 
 			if (oth != null && ! oth.isEmpty()) {
 				// Construct other info spec
-				RSAOtherPrimeInfo[] otherInfo = otherInfo = new RSAOtherPrimeInfo[oth.size()];
+				RSAOtherPrimeInfo[] otherInfo = new RSAOtherPrimeInfo[oth.size()];
 
 				for (int i=0; i < oth.size(); i++) {
 
