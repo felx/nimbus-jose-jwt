@@ -1,8 +1,6 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.text.ParseException;
-
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -27,7 +25,7 @@ import com.nimbusds.jose.Requirement;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-27)
  */
 @Immutable
 public final class KeyType implements JSONAware {
@@ -75,6 +73,7 @@ public final class KeyType implements JSONAware {
 	public KeyType(final String value, final Requirement req) {
 
 		if (value == null) {
+
 			throw new IllegalArgumentException("The key type value must not be null");
 		}
 
@@ -178,6 +177,7 @@ public final class KeyType implements JSONAware {
 	public static KeyType parse(final String s) {
 
 		if (s == null) {
+
 			throw new IllegalArgumentException("The ket type string must not be null");
 		}
 

@@ -11,7 +11,6 @@ import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
@@ -32,7 +31,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-25)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {

@@ -3,7 +3,6 @@ package com.nimbusds.jose.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.Set;
 
 import javax.crypto.SecretKey;
 
@@ -49,7 +48,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-03-27)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {

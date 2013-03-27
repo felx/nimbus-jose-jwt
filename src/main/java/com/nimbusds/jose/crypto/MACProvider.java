@@ -1,11 +1,8 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.crypto.Mac;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -24,7 +21,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-03-27)
  */
 abstract class MACProvider extends BaseJWSProvider {
 

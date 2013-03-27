@@ -3,22 +3,10 @@ package com.nimbusds.jose.crypto;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.CipherParameters;
-import org.bouncycastle.crypto.engines.AESEngine;
-import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEAlgorithmProvider;
 
 
 /**
@@ -43,7 +31,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-25)
+ * @version $version$ (2013-03-27)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 

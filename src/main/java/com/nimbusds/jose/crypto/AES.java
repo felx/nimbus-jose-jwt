@@ -5,7 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -19,7 +18,7 @@ import com.nimbusds.jose.JOSEException;
  * provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-03-27)
  */
 class AES {
 

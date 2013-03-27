@@ -5,10 +5,7 @@ import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPrivateKeySpec;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.EllipticCurve;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
@@ -55,7 +52,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-27)
  */
 @Immutable
 public final class ECKey extends JWK {

@@ -8,8 +8,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.jcip.annotations.Immutable;
-
 import com.nimbusds.jose.JOSEException;
 
 
@@ -21,7 +19,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-03-23)
+ * @version $version$ (2013-03-27)
  */
 class AESCBC {
 

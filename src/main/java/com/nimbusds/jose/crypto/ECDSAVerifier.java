@@ -2,8 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -16,7 +14,6 @@ import org.bouncycastle.math.ec.ECPoint;
 
 import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeaderFilter;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
@@ -42,7 +39,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {

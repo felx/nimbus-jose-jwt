@@ -5,8 +5,6 @@ import java.security.InvalidKeyException;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -36,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-27)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
