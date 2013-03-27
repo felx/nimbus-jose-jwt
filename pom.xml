@@ -214,15 +214,24 @@
 				<version>1.5.2</version>
 				<executions>
 					<execution>
+						<id>set-version-jar-javadoc</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>replace</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>set-version-site-javadoc</id>
 						<phase>site</phase>
 						<goals>
 							<goal>replace</goal>
-						</goals>                   
+						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<includes>
 						<include>target/site/apidocs/**/*.html</include>
+						<include>target/apidocs/**/*.html</include>
 					</includes>
 					<regex>false</regex>
 					<replacements>
