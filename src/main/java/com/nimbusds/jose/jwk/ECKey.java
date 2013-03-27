@@ -215,7 +215,7 @@ public final class ECKey extends JWK {
 		 * @throws ParseException If the string couldn't be parsed.
 		 */
 		public static Curve parse(final String s) 
-				throws ParseException {
+			throws ParseException {
 
 			if (s == null) {
 
@@ -237,6 +237,36 @@ public final class ECKey extends JWK {
 			} else {
 
 				return new Curve(s);
+			}
+		}
+
+
+		/**
+		 * Gets the cryptographic curve for the specified standard 
+		 * (JCA) name.
+		 *
+		 * @param stdName The standard (JCA) name. Must not be 
+		 *                {@code null}.
+		 *
+		 * @throws IllegalArgumentException If no matching JOSE curve 
+		 *                                  constant could be found.
+		 */
+		public static Curve forStdName(final String stdName) {
+
+			if (stdName.equals("secp256r1")) {
+
+				return P_256;
+			} else if (stdName.equals("secp384r1")) {
+
+				return P_384;
+
+			} else if (stdName.equals("secp521r1")) {
+
+				return P_521;
+
+			} else {
+
+				throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
 			}
 		}
 	}
