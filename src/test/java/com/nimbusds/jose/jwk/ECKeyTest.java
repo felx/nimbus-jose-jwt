@@ -1,7 +1,11 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.util.Enumeration;
+
 import junit.framework.TestCase;
+
+import org.bouncycastle.jce.ECNamedCurveTable;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
@@ -11,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-03-27)
  */
 public class ECKeyTest extends TestCase {
 
@@ -25,6 +29,20 @@ public class ECKeyTest extends TestCase {
 
 
 	private static final String d = "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE";
+
+
+	public void testCurveLookup()
+		throws Exception {
+
+		System.out.print("Named ECC curves: ");
+
+		Enumeration names = ECNamedCurveTable.getNames();
+
+		while (names.hasMoreElements()) {
+
+			System.out.print(names.nextElement() + " ");
+		}
+	}
 
 
 	public void testFullConstructorAndSerialization()

@@ -2,24 +2,37 @@ package com.nimbusds.jose.jwk;
 
 
 import java.math.BigInteger;
+import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
 
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
  * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). 
- * This class is immutable.
+ * Uses the BouncyCastle.org provider for EC key import and export. This class
+ * is immutable.
  *
  * <p>Example JSON object representation of a public EC JWK:
  * 
@@ -80,40 +93,66 @@ public final class ECKey extends JWK {
 		/**
 		 * P-256 curve.
 		 */
-		public static final Curve P_256 = new Curve("P-256");
+		public static final Curve P_256 = new Curve("P-256", "secp256r1");
 
 
 		/**
 		 * P-384 curve.
 		 */
-		public static final Curve P_384 = new Curve("P-384");
+		public static final Curve P_384 = new Curve("P-384", "secp384r1");
 
 
 		/**
 		 * P-521 curve.
 		 */
-		public static final Curve P_521 = new Curve("P-521");
+		public static final Curve P_521 = new Curve("P-521", "secp521r1");
 
 
 		/**
-		 * The curve name.
+		 * The JOSE curve name.
 		 */
 		private final String name;
 
 
 		/**
+		 * The standard (JCA) curve name, {@code null} if not 
+		 * specified.
+		 */
+		private final String stdName;
+
+
+		/**
 		 * Creates a new cryptographic curve with the specified name.
+		 * The standard (JCA) curve name is not unspecified.
 		 *
 		 * @param name The name of the cryptographic curve. Must not be
 		 *             {@code null}.
 		 */
 		public Curve(final String name) {
 
+			this(name, null);
+		}
+
+
+		/**
+		 * Creates a new cryptographic curve with the specified name.
+		 *
+		 * @param name    The JOSE name of the cryptographic curve. 
+		 *                Must not be {@code null}.
+		 * @param stdName The standard (JCA) name of the cryptographic
+		 *                curve, {@code null} if not specified.
+		 */
+		public Curve(final String name, final String stdName) {
+
 			if (name == null) {
+
 				throw new IllegalArgumentException("The cryptographic curve name must not be null");
 			}
 
 			this.name = name;
+
+
+			this.stdName = stdName;
 		}
 
 
@@ -125,6 +164,17 @@ public final class ECKey extends JWK {
 		public String getName() {
 
 			return name;
+		}
+
+
+		/**
+		 * Gets the standard (JCA) name of this cryptographic curve.
+		 *
+		 * @return The standard (JCA) name.
+		 */
+		public String getStdName() {
+
+			return stdName;
 		}
 
 
@@ -150,8 +200,8 @@ public final class ECKey extends JWK {
 		public boolean equals(final Object object) {
 
 			return object != null && 
-					object instanceof Curve && 
-					this.toString().equals(object.toString());
+			       object instanceof Curve && 
+			       this.toString().equals(object.toString());
 		}
 
 
@@ -342,17 +392,86 @@ public final class ECKey extends JWK {
 
 
 	/**
+	 * Gets the EC parameter specification for the specified cryptographic 
+	 * curve.
+	 *
+	 * @param crv The cryptographic curve. Must not be {@code null}.
+	 *
+	 * @return The EC parameter specification.
+	 *
+	 * @throws JOSEException If the cryptographic curve has no standard
+	 *                       (JCA) name specified or if lookup of the EC
+	 *                       parameters failed.
+	 */
+	private static ECParameterSpec getECParameterSpec(final Curve crv)
+		throws JOSEException {
+
+		if (crv.getStdName() == null) {
+
+			throw new JOSEException("EC key curve has no specified standard name");
+		}
+
+		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(crv.getStdName());
+
+		if (curveParams == null) {
+
+			throw new JOSEException("Couldn't get EC parameters for curve " + crv.getStdName());
+		}
+
+		return new ECNamedCurveSpec(curveParams.getName(),
+			                    curveParams.getCurve(),
+			                    curveParams.getG(),
+			                    curveParams.getN());
+	}
+
+
+	/**
+	 * Gets a new BouncyCastle.org EC key factory.
+	 *
+	 * @return The EC key factory.
+	 *
+	 * @throws JOSEException If a JCA provider or algorithm exception was
+	 *                       encountered.
+	 */
+	private static KeyFactory getECKeyFactory()
+		throws JOSEException {
+
+		try {
+			return KeyFactory.getInstance("EC", new BouncyCastleProvider());
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+	}
+
+
+	/**
 	 * Returns a standard {@code java.security.interfaces.ECPublicKey} 
 	 * representation of this Elliptic Curve JWK.
 	 * 
 	 * @return The public Elliptic Curve key.
 	 * 
-	 * @throws UnsupportedOperationException Not yet implemented.
+	 * @throws JOSEException If the export to a public EC key failed.
 	 */
-	public ECPublicKey toECPublicKey() {
+	public ECPublicKey toECPublicKey()
+		throws JOSEException {
 
-		// TODO
-		throw new UnsupportedOperationException("Not yet implemented");
+		ECParameterSpec spec = getECParameterSpec(crv);
+
+		ECPoint w = new ECPoint(x.decodeToBigInteger(), y.decodeToBigInteger());
+
+		ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(w, spec);
+
+		KeyFactory keyFactory = getECKeyFactory();
+
+		try {
+			return (ECPublicKey)keyFactory.generatePublic(publicKeySpec);
+
+		} catch (InvalidKeySpecException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 	}
 	
 
@@ -363,9 +482,10 @@ public final class ECKey extends JWK {
 	 * @return The private Elliptic Curve key, {@code null} if not 
 	 *         specified by this JWK.
 	 * 
-	 * @throws UnsupportedOperationException Not yet implemented.
+	 * @throws JOSEException If the export to a private EC key failed.
 	 */
-	public ECPrivateKey toECPrivateKey() {
+	public ECPrivateKey toECPrivateKey()
+		throws JOSEException {
 
 		if (d == null) {
 
@@ -373,15 +493,19 @@ public final class ECKey extends JWK {
 			return null;
 		}
 
-		BigInteger privateValue = d.decodeToBigInteger();
+		ECParameterSpec spec = getECParameterSpec(crv);
 
-		// See fips_186-3.pdf, p. 89 for EC curve parameter constants
+		ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(d.decodeToBigInteger(), spec);
 
-		ECPrivateKeySpec spec = new ECPrivateKeySpec(privateValue, null);
+		KeyFactory keyFactory = getECKeyFactory();
 
+		try {
+			return (ECPrivateKey)keyFactory.generatePrivate(privateKeySpec);
 
-		// TODO
-		throw new UnsupportedOperationException("Not yet implemented");
+		} catch (InvalidKeySpecException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 	}
 	
 
@@ -391,8 +515,11 @@ public final class ECKey extends JWK {
 	 * 
 	 * @return The Elliptic Curve key pair. The private Elliptic Curve key 
 	 *         will be {@code null} if not specified.
+	 * 
+	 * @throws JOSEException If the export to an EC key pair failed.
 	 */
-	public KeyPair toKeyPair() {
+	public KeyPair toKeyPair()
+		throws JOSEException {
 
 		return new KeyPair(toECPublicKey(), toECPrivateKey());		
 	}
