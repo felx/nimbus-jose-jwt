@@ -932,7 +932,8 @@ public final class RSAKey extends JWK {
 	 *                                  underlying Java Cryptography (JCA)
 	 *                                  provider.
 	 * @throws InvalidKeySpecException  If the JWK key parameters are 
-	 *                                  invalid for a private RSA key.
+	 *                                  invalid for a public and / or 
+	 *                                  private RSA key.
 	 */
 	public KeyPair toKeyPair() 
 		throws NoSuchAlgorithmException, InvalidKeySpecException {

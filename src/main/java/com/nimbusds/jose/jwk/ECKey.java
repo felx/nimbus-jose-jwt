@@ -23,7 +23,6 @@ import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 import com.nimbusds.jose.Algorithm;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -185,8 +184,7 @@ public final class ECKey extends JWK {
 		 *         cryptographic curve has no standard (JCA) name 
 		 *         specified or if lookup of the EC parameters failed.
 		 */
-		public ECParameterSpec toECParameterSpec()
-			throws JOSEException {
+		public ECParameterSpec toECParameterSpec() {
 
 			if (stdName == null) {
 
@@ -500,19 +498,13 @@ public final class ECKey extends JWK {
 	 *
 	 * @return The EC key factory.
 	 *
-	 * @throws JOSEException If a JCA provider or algorithm exception was
-	 *                       encountered.
+	 * @throws NoSuchAlgorithmException If a JCA provider or algorithm 
+	 *                                  exception was encountered.
 	 */
 	private static KeyFactory getECKeyFactory()
-		throws JOSEException {
+		throws NoSuchAlgorithmException {
 
-		try {
-			return KeyFactory.getInstance("EC", new BouncyCastleProvider());
-
-		} catch (NoSuchAlgorithmException e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
+		return KeyFactory.getInstance("EC", new BouncyCastleProvider());
 	}
 
 
@@ -522,16 +514,20 @@ public final class ECKey extends JWK {
 	 * 
 	 * @return The public Elliptic Curve key.
 	 * 
-	 * @throws JOSEException If the export to a public EC key failed.
+	 * @throws NoSuchAlgorithmException If EC is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a public EC key.
 	 */
 	public ECPublicKey toECPublicKey()
-		throws JOSEException {
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		ECParameterSpec spec = crv.toECParameterSpec();
 
 		if (spec == null) {
 
-			throw new JOSEException("Couldn't get EC parameter spec for curve " + crv);
+			throw new NoSuchAlgorithmException("Couldn't get EC parameter spec for curve " + crv);
 		}
 
 		ECPoint w = new ECPoint(x.decodeToBigInteger(), y.decodeToBigInteger());
@@ -540,13 +536,7 @@ public final class ECKey extends JWK {
 
 		KeyFactory keyFactory = getECKeyFactory();
 
-		try {
-			return (ECPublicKey)keyFactory.generatePublic(publicKeySpec);
-
-		} catch (InvalidKeySpecException e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
+		return (ECPublicKey)keyFactory.generatePublic(publicKeySpec);
 	}
 	
 
@@ -557,10 +547,14 @@ public final class ECKey extends JWK {
 	 * @return The private Elliptic Curve key, {@code null} if not 
 	 *         specified by this JWK.
 	 * 
-	 * @throws JOSEException If the export to a private EC key failed.
+	 * @throws NoSuchAlgorithmException If EC is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a private EC key.
 	 */
 	public ECPrivateKey toECPrivateKey()
-		throws JOSEException {
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		if (d == null) {
 
@@ -572,20 +566,14 @@ public final class ECKey extends JWK {
 
 		if (spec == null) {
 
-			throw new JOSEException("Couldn't get EC parameter spec for curve " + crv);
+			throw new NoSuchAlgorithmException("Couldn't get EC parameter spec for curve " + crv);
 		}
 
 		ECPrivateKeySpec privateKeySpec = new ECPrivateKeySpec(d.decodeToBigInteger(), spec);
 
 		KeyFactory keyFactory = getECKeyFactory();
 
-		try {
-			return (ECPrivateKey)keyFactory.generatePrivate(privateKeySpec);
-
-		} catch (InvalidKeySpecException e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
+		return (ECPrivateKey)keyFactory.generatePrivate(privateKeySpec);
 	}
 	
 
@@ -596,10 +584,15 @@ public final class ECKey extends JWK {
 	 * @return The Elliptic Curve key pair. The private Elliptic Curve key 
 	 *         will be {@code null} if not specified.
 	 * 
-	 * @throws JOSEException If the export to an EC key pair failed.
+	 * @throws NoSuchAlgorithmException If EC is not supported by the
+	 *                                  underlying Java Cryptography (JCA)
+	 *                                  provider.
+	 * @throws InvalidKeySpecException  If the JWK key parameters are 
+	 *                                  invalid for a public and / or 
+	 *                                  private EC key.
 	 */
 	public KeyPair toKeyPair()
-		throws JOSEException {
+		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		return new KeyPair(toECPublicKey(), toECPrivateKey());		
 	}
