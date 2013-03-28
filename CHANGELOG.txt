@@ -147,3 +147,5 @@ version 2.13.0 (2013-03-28)
 	* Implements basic MMA attack protection for RSA1_5 JWE algorithm.
 	* Refactors JOSE header filters.
 	* Refactors crypto package.
+	* Adds support to translate JWKs to and from native Java key objects.
+
