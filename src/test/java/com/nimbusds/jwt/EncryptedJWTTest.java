@@ -26,7 +26,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-04-08)
  */
 public class EncryptedJWTTest extends TestCase {
 
@@ -157,13 +157,14 @@ public class EncryptedJWTTest extends TestCase {
 		jwtClaims.setAudience(aud);
 
 		// Set expiration in 10 minutes
-		Date exp = new Date(new Date().getTime() + 1000*60*10);
+		final Date NOW =  new Date(new Date().getTime() / 1000 * 1000);
+		Date exp = new Date(NOW.getTime() + 1000*60*10);
 		jwtClaims.setExpirationTime(exp);
 
-		Date nbf = new Date();
+		Date nbf = NOW;
 		jwtClaims.setNotBeforeTime(nbf);
 
-		Date iat = new Date();
+		Date iat = NOW;
 		jwtClaims.setIssueTime(iat);
 
 		String jti = UUID.randomUUID().toString();

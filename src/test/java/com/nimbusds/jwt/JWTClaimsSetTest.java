@@ -16,7 +16,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-04-08)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -37,11 +37,13 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals(8, names.size());
 	}
 
+
 	public void testRun() {
 
 		JWTClaimsSet cs = new JWTClaimsSet();
 
-		final Date NOW = new Date();
+		// JWT time claim precision is seconds
+		final Date NOW =  new Date(new Date().getTime() / 1000 * 1000);
 
 		// iss
 		assertNull("iss init check", cs.getIssuer());
@@ -133,6 +135,7 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("abc", (String)all.get("x-custom"));
 	}
 
+
 	public void testClaimsPassthrough() {
 
 		JWTClaimsSet cs = new JWTClaimsSet();
@@ -167,5 +170,23 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("iss set check", "http://issuer.com", cs.getClaim("iss"));
 		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
 		assertEquals("abc", (String)cs.getClaim("x-custom"));
+	}
+
+
+	public void testDateConversion() {
+
+		JWTClaimsSet cs = new JWTClaimsSet();
+
+		final Date ONE_MIN_AFTER_EPOCH = new Date(1000*60);
+
+		cs.setIssueTime(ONE_MIN_AFTER_EPOCH);
+		cs.setNotBeforeTime(ONE_MIN_AFTER_EPOCH);
+		cs.setExpirationTime(ONE_MIN_AFTER_EPOCH);
+
+		JSONObject json = cs.toJSONObject();
+
+		assertEquals(new Long(60l), (Long)json.get("iat"));
+		assertEquals(new Long(60l), (Long)json.get("nbf"));
+		assertEquals(new Long(60l), (Long)json.get("exp"));
 	}
 }

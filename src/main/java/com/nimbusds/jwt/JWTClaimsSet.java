@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-04-08)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -525,15 +525,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		}
 
 		if (exp != null) {
-			o.put(EXPIRATION_TIME_CLAIM, exp.getTime());
+			o.put(EXPIRATION_TIME_CLAIM, exp.getTime() / 1000);
 		}
 
 		if (nbf != null) {
-			o.put(NOT_BEFORE_CLAIM, nbf.getTime());
+			o.put(NOT_BEFORE_CLAIM, nbf.getTime() / 1000);
 		}
 
 		if (iat != null) {
-			o.put(ISSUED_AT_CLAIM, iat.getTime());
+			o.put(ISSUED_AT_CLAIM, iat.getTime() / 1000);
 		}
 
 		if (jti != null) {
@@ -556,8 +556,8 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The JWT claims set.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't represent
-	 *                        a valid JWT claims set.
+	 * @throws ParseException If the specified JSON object doesn't 
+	 *                        represent a valid JWT claims set.
 	 */
 	public static JWTClaimsSet parse(final JSONObject json)
 			throws ParseException {
@@ -590,15 +590,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			}
 			else if (name.equals(EXPIRATION_TIME_CLAIM)) {
 
-				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM)));
+				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM) * 1000));
 			}
 			else if (name.equals(NOT_BEFORE_CLAIM)) {
 
-				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM)));
+				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM) * 1000));
 			}
 			else if (name.equals(ISSUED_AT_CLAIM)) {
 
-				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM)));
+				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM) * 1000));
 			}
 			else if (name.equals(JWT_ID_CLAIM)) {
 
