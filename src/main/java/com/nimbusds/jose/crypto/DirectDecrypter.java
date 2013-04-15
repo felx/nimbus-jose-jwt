@@ -125,9 +125,9 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		throws JOSEException {
 
 		// Validate required JWE parts
-		if (encryptedKey != null || ! encryptedKey.toString().isEmpty()) {
+		if (encryptedKey != null) {
 
-			throw new JOSEException("The encrypted key must be omitted (empty)");
+			throw new JOSEException("Unexpected encrypted key, must be omitted");
 		}	
 
 		if (iv == null) {
@@ -144,7 +144,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
-			
+
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
@@ -175,7 +175,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
 
 			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                  encryptedKey.toString() + "." +
+			                  /* encryptedKey omitted */ "." +
 			                  iv.toString() + "." +
 			                  cipherText.toString();
 
@@ -190,7 +190,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 	    		// Compose the additional authenticated data
 			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-						encryptedKey.toString() + "." +
+						/* encryptedKey omitted */ "." +
 						iv.toString();
 
 			byte[] authData = null;
