@@ -55,9 +55,9 @@ public final class JWECryptoParts {
 	 *                       algorithm provides built-in integrity check.
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
-			final Base64URL iv,
-			final Base64URL cipherText, 
-			final Base64URL integrityValue) {
+		              final Base64URL iv,
+		              final Base64URL cipherText, 
+		              final Base64URL integrityValue) {
 
 		this.encryptedKey = encryptedKey;
 

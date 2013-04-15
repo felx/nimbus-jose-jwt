@@ -154,3 +154,6 @@ version 2.13.1 (2013-04-15)
 	  claims.
 	* If the JOSE header was parsed Header.toBase64URL() returns the 
 	  original Base64URL.
+
+version 2.14 (2013-04-15)
+	* Adds support for direct JWE encryption and decryption.
