@@ -149,6 +149,8 @@ version 2.13.0 (2013-03-28)
 	* Refactors crypto package.
 	* Adds support to translate JWKs to and from native Java key objects.
 
-version 2.13.1 (2013-04-08)
+version 2.13.1 (2013-04-15)
 	* Fixes incorrect time unit representation of "iat", "exp" and "nbf" JWT
 	  claims.
+	* If the JOSE header was parsed Header.toBase64URL() returns the 
+	  original Base64URL.

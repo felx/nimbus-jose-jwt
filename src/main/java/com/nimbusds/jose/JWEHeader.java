@@ -52,7 +52,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-04-15)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -308,7 +308,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	public Set<String> getIncludedParameters() {
 
 		Set<String> includedParameters = 
-				new HashSet<String>(getCustomParameters().keySet());
+			new HashSet<String>(getCustomParameters().keySet());
 
 		includedParameters.add("alg");
 		includedParameters.add("enc");
@@ -422,7 +422,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 *                        parsed.
 	 */
 	private static EncryptionMethod parseEncryptionMethod(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		return EncryptionMethod.parse(JSONObjectUtils.getString(json, "enc"));
 	}
@@ -439,7 +439,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 *                        represent a valid JWE header.
 	 */
 	public static JWEHeader parse(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
@@ -510,7 +510,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 *                        represent a valid JWE header.
 	 */
 	public static JWEHeader parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
 
@@ -529,8 +529,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 *                        valid JWE header.
 	 */
 	public static JWEHeader parse(final Base64URL base64URL)
-			throws ParseException {
+		throws ParseException {
 
-		return parse(base64URL.decodeToString());
+		JWEHeader header = parse(base64URL.decodeToString());
+		header.setParsedBase64URL(base64URL);
+		return header;
 	}
 }

@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-12-09)
+ * @version $version$ (2013-04-15)
  */
 public abstract class Header implements ReadOnlyHeader {
 
@@ -47,6 +47,13 @@ public abstract class Header implements ReadOnlyHeader {
 	 * Custom header parameters.
 	 */
 	private Map<String,Object> customParameters = new HashMap<String,Object>();
+
+
+	/**
+	 * The original parsed Base64URL, {@code null} if the header was 
+	 * created from scratch.
+	 */
+	private Base64URL parsedBase64URL;
 
 
 	/**
@@ -148,6 +155,18 @@ public abstract class Header implements ReadOnlyHeader {
 	}
 
 
+	/**
+	 * Sets the original parsed Base64URL used to create this header.
+	 *
+	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the 
+	 *                        header was created from scratch.
+	 */
+	protected void setParsedBase64URL(final Base64URL parsedBase64URL) {
+
+		this.parsedBase64URL = parsedBase64URL;
+	}
+
+
 	@Override
 	public JSONObject toJSONObject() {
 
@@ -170,13 +189,6 @@ public abstract class Header implements ReadOnlyHeader {
 	}
 
 
-	/**
-	 * Returns a JSON string representation of this header. All custom
-	 * parameters will be included if they serialise to a JSON entity and 
-	 * their names don't conflict with the reserved ones.
-	 *
-	 * @return The JSON string representation of this header.
-	 */
 	@Override
 	public String toString() {
 
@@ -187,7 +199,16 @@ public abstract class Header implements ReadOnlyHeader {
 	@Override
 	public Base64URL toBase64URL() {
 
-		return Base64URL.encode(toString());
+		if (parsedBase64URL == null) {
+
+			// Header was created from scratch, return new Base64URL
+			return Base64URL.encode(toString());
+
+		} else {
+
+			// Header was parsed, return original Base64URL
+			return parsedBase64URL;
+		}
 	}
 
 
@@ -235,21 +256,28 @@ public abstract class Header implements ReadOnlyHeader {
 	 *
 	 * @return The header.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't represent
-	 *                        a valid header.
+	 * @throws ParseException If the specified JSON object doesn't 
+	 *                        represent a valid header.
 	 */
 	public static Header parse(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		Algorithm alg = parseAlgorithm(json);
 
 		if (alg.equals(Algorithm.NONE)) {
+
 			return PlainHeader.parse(json);
+
 		} else if (alg instanceof JWSAlgorithm) {
+
 			return JWSHeader.parse(json);
+
 		} else if (alg instanceof JWEAlgorithm) {
+
 			return JWEHeader.parse(json);
+
 		} else {
+
 			throw new AssertionError("Unexpected algorithm type: " + alg);
 		}
 	}

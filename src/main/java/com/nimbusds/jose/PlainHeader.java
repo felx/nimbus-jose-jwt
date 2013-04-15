@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-04-15)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
@@ -108,7 +108,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	public Set<String> getIncludedParameters() {
 
 		Set<String> includedParameters = 
-				new HashSet<String>(getCustomParameters().keySet());
+			new HashSet<String>(getCustomParameters().keySet());
 
 		includedParameters.add("alg");
 
@@ -135,7 +135,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        a valid plain header.
 	 */
 	public static PlainHeader parse(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		// Get the "alg" parameter
 		Algorithm alg = Header.parseAlgorithm(json);
@@ -178,7 +178,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        represent a valid plain header.
 	 */
 	public static PlainHeader parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
 
@@ -197,12 +197,14 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *                        valid plain header.
 	 */
 	public static PlainHeader parse(final Base64URL base64URL)
-			throws ParseException {
+		throws ParseException {
 
 		if (base64URL == null) {
 			throw new ParseException("The Base64URL must not be null", 0);
 		}
 
-		return parse(base64URL.decodeToString());
+		PlainHeader header = parse(base64URL.decodeToString());
+		header.setParsedBase64URL(base64URL);
+		return header;
 	}
 }

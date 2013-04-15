@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-12-09)
+ * @version $version$ (2013-04-15)
  */
 public interface ReadOnlyHeader {
 
@@ -82,9 +82,23 @@ public interface ReadOnlyHeader {
 
 
 	/**
-	 * Returns a Base64URL representation of the header.
+	 * Returns a JSON string representation of the header. All custom
+	 * parameters will be included if they serialise to a JSON entity and 
+	 * their names don't conflict with the reserved ones.
 	 *
-	 * @return The Base64URL representation of the header.
+	 * @return The JSON string representation of the header.
+	 */
+	public String toString();
+
+
+	/**
+	 * Returns a Base64URL representation of the header. If the header was
+	 * parsed always returns the original Base64URL (required for JWS
+	 * validation and authenticated JWE decryption).
+	 *
+	 * @return The original parsed Base64URL representation of the header,
+	 *         or a new Base64URL representation if the header was created
+	 *         from scratch.
 	 */
 	public Base64URL toBase64URL();
 }

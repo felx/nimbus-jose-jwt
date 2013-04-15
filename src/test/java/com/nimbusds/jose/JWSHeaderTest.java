@@ -12,26 +12,19 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2013-04-15)
  */
 public class JWSHeaderTest extends TestCase {
 
 
-	public void testParseJSONText() {
+	public void testParseJSONText()
+		throws Exception {
 
 		// Example header from JWS spec
 
 		String s = "{\"typ\":\"JWT\",\"alg\":\"HS256\"}";
 
-		JWSHeader h = null;
-
-		try {
-			h = JWSHeader.parse(s);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
+		JWSHeader h = JWSHeader.parse(s);
 
 		assertNotNull(h);
 
@@ -45,23 +38,16 @@ public class JWSHeaderTest extends TestCase {
 	}
 
 
-	public void testParseBase64URLText() {
+	public void testParseBase64URLText()
+		throws Exception {
 
 		// Example header from JWS spec
 
-		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9";
+		Base64URL in = new Base64URL("eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9");
 
-		JWSHeader h = null;
+		JWSHeader h = JWSHeader.parse(in);
 
-		try {
-			h = JWSHeader.parse(new Base64URL(s));
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
-
-		assertNotNull(h);
+		assertEquals(in, h.toBase64URL());
 
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());

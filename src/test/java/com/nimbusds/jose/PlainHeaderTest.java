@@ -12,12 +12,13 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-01)
+ * @version $version$ (2013-04-15)
  */
 public class PlainHeaderTest extends TestCase {
 
 
-	public void testSerializeAndParse() {
+	public void testSerializeAndParse()
+		throws Exception {
 
 		PlainHeader h = new PlainHeader();
 
@@ -40,22 +41,29 @@ public class PlainHeaderTest extends TestCase {
 		Base64URL b64url = h.toBase64URL();
 
 		// Parse back
+		h = PlainHeader.parse(b64url);
 
-		try {
-			h = PlainHeader.parse(b64url);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
-
-		assertNotNull(h);
+		assertEquals(b64url, h.toBase64URL());
 
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals("application/jwt", h.getContentType());
 		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
 		assertEquals(1, h.getCustomParameters().size());
+	}
+
+
+	public void testParseExample()
+		throws Exception {
+
+		// Example BASE64URL from JWT spec
+		Base64URL in = new Base64URL("eyJhbGciOiJub25lIn0");
+
+		PlainHeader header = PlainHeader.parse(in);
+
+		assertEquals(in, header.toBase64URL());
+
+		assertEquals(Algorithm.NONE, header.getAlgorithm());
 	}
 }
 

@@ -16,26 +16,21 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-04-15)
  */
 public class JWEHeaderTest extends TestCase {
 
 
-	public void testParse1() {
+	public void testParse1()
+		throws Exception {
 
 		// Example header from JWE spec
 		// {"alg":"RSA-OAEP","enc":"A256GCM"}
-		String s = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ";
+		Base64URL in = new Base64URL("eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ");
 
-		JWEHeader h = null;
+		JWEHeader h = JWEHeader.parse(in);
 
-		try {
-			h = JWEHeader.parse(new Base64URL(s));
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
+		assertEquals(in, h.toBase64URL());
 
 		assertNotNull(h);
 
@@ -51,21 +46,16 @@ public class JWEHeaderTest extends TestCase {
 	}
 
 
-	public void testParse2() {
+	public void testParse2()
+		throws Exception {
 
 		// Example header from JWE spec
 		// {"alg":"RSA1_5","enc":"A128CBC+HS256"}
-		String s = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0";
+		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0");
 
-		JWEHeader h = null;
+		JWEHeader h = JWEHeader.parse(in);
 
-		try {
-			h = JWEHeader.parse(new Base64URL(s));
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
+		assertEquals(in, h.toBase64URL());
 
 		assertNotNull(h);
 
@@ -82,10 +72,9 @@ public class JWEHeaderTest extends TestCase {
 
 
 	public void testSerializeAndParse()
-			throws Exception {
+		throws Exception {
 
-		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, 
-				EncryptionMethod.A256GCM);
+		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
 
 		h.setType(new JOSEObjectType("JWT"));
 		h.setCompressionAlgorithm(CompressionAlgorithm.DEF);
@@ -119,16 +108,7 @@ public class JWEHeaderTest extends TestCase {
 		String s = h.toString();
 
 		// Parse back
-
-		try {
-			h = JWEHeader.parse(s);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
-
-		assertNotNull(h);
+		h = JWEHeader.parse(s);
 
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());

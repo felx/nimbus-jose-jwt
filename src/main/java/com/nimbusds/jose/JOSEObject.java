@@ -35,7 +35,7 @@ public abstract class JOSEObject {
 
 	/**
 	 * Creates a new JOSE object. The payload and the original parsed 
-	 * Base64URL parts are not not defined.
+	 * Base64URL parts are not defined.
 	 */
 	protected JOSEObject() {
 
