@@ -431,4 +431,66 @@ public class JWKSetTest extends TestCase {
 		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 		assertFalse(key.isPrivate());
 	}
+	
+	public void testGetByKeyId() throws Exception{
+		// The string is from the JWK spec
+		String s = "{\"keys\":" +
+			   "[" +
+			   "{\"kty\":\"EC\"," +
+			   "\"crv\":\"P-256\"," +
+			   "\"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\"," +
+			   "\"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\"," +
+			   "\"use\":\"enc\"," +
+			   "\"kid\":\"1\"}," +
+			   " " +
+			   "{\"kty\":\"RSA\"," +
+			   "\"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx" +
+			   "4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs" +
+			   "tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2" +
+			   "QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI" +
+			   "SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb" +
+			   "w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"," +
+			   "\"e\":\"AQAB\"," +
+			   "\"alg\":\"RS256\"," +
+			   "\"kid\":\"2011-04-29\"}" +
+			   "]" +
+			   "}";
+
+		
+		JWKSet keySet = JWKSet.parse(s);
+
+		
+		// Check first EC key
+		JWK key = keySet.getKeyByKeyId("1");
+
+		assertTrue(key instanceof ECKey);
+		assertEquals("1", key.getKeyID());
+		assertEquals(Use.ENCRYPTION, key.getKeyUse());
+
+		ECKey ecKey = (ECKey)key;
+		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
+		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
+		assertFalse(key.isPrivate());
+
+
+		// Check second RSA key
+		key = keySet.getKeyByKeyId("2011-04-29");
+		assertTrue(key instanceof RSAKey);
+		assertEquals("2011-04-29", key.getKeyID());
+		assertNull(key.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+
+		RSAKey rsaKey = (RSAKey)key;
+		assertEquals("0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx" +
+		             "4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs" +
+		             "tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2" +
+		             "QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI" +
+		             "SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb" +
+		             "w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw", 
+		             rsaKey.getModulus().toString());
+		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
+		assertFalse(key.isPrivate());
+		
+	}
 }
