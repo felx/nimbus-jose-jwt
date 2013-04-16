@@ -129,6 +129,27 @@ public class JWKSet {
 		return keys;
 	}
 
+	/**
+	 * Gets the key from this JSON Web Key (JWK) set as identified 
+	 * by its Key ID (kid) member.
+	 * 
+	 * If more than one key exists in the JWK Set with the same 
+	 * identifier, this function returns only the first one in
+	 * the set.
+	 * 
+	 * @return The key identified by {@code kid} or {@code null} 
+	 * 			if no key exists.
+	 */
+	public JWK getKeyByKeyId(String kid) {
+		for (JWK key : getKeys()) {
+	        if (key.getKeyID() != null && key.getKeyID().equals(kid)) {
+	        	return key;
+	        }
+        }
+		
+		// no key found
+		return null;
+	}
 
 	/**
 	 * Gets the additional custom members of this JSON Web Key (JWK) set.
