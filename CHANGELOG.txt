@@ -157,3 +157,4 @@ version 2.13.1 (2013-04-15)
 
 version 2.14 (2013-04-16)
 	* Adds support for direct JWE encryption and decryption.
+	* Adds JWKSet method to lookup a key by its key ID (kid).
