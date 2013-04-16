@@ -8,7 +8,6 @@ import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.CompressionAlgorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -16,7 +15,6 @@ import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.DeflateUtils;
 
 
 
@@ -42,7 +40,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-04-16)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -99,44 +97,6 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	}
 
 
-	/**
-	 * Applies compression to the specified plain text if requested.
-	 *
-	 * @param readOnlyJWEHeader The JWE header. Must not be {@code null}.
-	 * @param bytes             The plain text bytes. Must not be 
-	 *                          {@code null}.
-	 *
-	 * @return The bytes to encrypt.
-	 *
-	 * @throws JOSEException If compression failed or the requested 
-	 *                       compression algorithm is not supported.
-	 */
-	private static final byte[] applyCompression(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
-		throws JOSEException {
-
-		CompressionAlgorithm compressionAlg = readOnlyJWEHeader.getCompressionAlgorithm();
-
-		if (compressionAlg == null) {
-
-			return bytes;
-
-		} else if (compressionAlg.equals(CompressionAlgorithm.DEF)) {
-
-			try {
-				return DeflateUtils.compress(bytes);
-
-			} catch (Exception e) {
-
-				throw new JOSEException("Couldn't compress plain text: " + e.getMessage(), e);
-			}
-
-		} else {
-
-			throw new JOSEException("Unsupported compression algorithm: " + compressionAlg);
-		}
-	}
-
-
 	@Override
 	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
 		throws JOSEException {
@@ -169,7 +129,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 		// Apply compression if instructed
-		byte[] plainText = applyCompression(readOnlyJWEHeader, bytes);
+		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
 		
 
 		// Encrypt the plain text according to the JWE enc

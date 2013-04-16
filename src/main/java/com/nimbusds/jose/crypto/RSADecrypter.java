@@ -8,7 +8,6 @@ import javax.crypto.SecretKey;
 
 import org.bouncycastle.util.Arrays;
 
-import com.nimbusds.jose.CompressionAlgorithm;
 import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -17,7 +16,6 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeaderFilter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.DeflateUtils;
 
 
 /**
@@ -48,7 +46,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-04-16)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -99,44 +97,6 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	public JWEHeaderFilter getJWEHeaderFilter() {
 
 		return headerFilter;
-	}
-
-
-	/**
-	 * Applies decompression to the specified plain text if requested.
-	 *
-	 * @param readOnlyJWEHeader The JWE header. Must not be {@code null}.
-	 * @param bytes             The plain text bytes. Must not be 
-	 *                          {@code null}.
-	 *
-	 * @return The output bytes, decompressed if requested.
-	 *
-	 * @throws JOSEException If decompression failed or the requested 
-	 *                       compression algorithm is not supported.
-	 */
-	private static final byte[] applyDecompression(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
-		throws JOSEException {
-
-		CompressionAlgorithm compressionAlg = readOnlyJWEHeader.getCompressionAlgorithm();
-
-		if (compressionAlg == null) {
-
-			return bytes;
-
-		} else if (compressionAlg.equals(CompressionAlgorithm.DEF)) {
-
-			try {
-				return DeflateUtils.decompress(bytes);
-
-			} catch (Exception e) {
-
-				throw new JOSEException("Couldn't decompress plain text: " + e.getMessage(), e);
-			}
-
-		} else {
-
-			throw new JOSEException("Unsupported compression algorithm: " + compressionAlg);
-		}
 	}
 
 
@@ -259,7 +219,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	    	// Apply decompression if requested
-	    	return applyDecompression(readOnlyJWEHeader, plainText);
+	    	return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
 	}
 }
 
