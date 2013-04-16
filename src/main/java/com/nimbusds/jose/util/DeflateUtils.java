@@ -4,17 +4,27 @@ package com.nimbusds.jose.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.Inflater;
 
 
 /**
  * Deflate (RFC 1951) utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-04-16)
  */
 public class DeflateUtils {
+
+
+	/**
+	 * Omit headers and CRC fields from output, as specified by RFC 1950.
+	 * Note that the Deflater JavaDocs are incorrect, see
+	 * http://stackoverflow.com/questions/11076060/decompressing-gzipped-data-with-inflater-in-java
+	 */
+	private static final boolean NOWRAP = true;
 
 
 	/**
@@ -32,7 +42,7 @@ public class DeflateUtils {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-		DeflaterOutputStream def = new DeflaterOutputStream(out);
+		DeflaterOutputStream def = new DeflaterOutputStream(out, new Deflater(Deflater.DEFLATED, NOWRAP));
 		def.write(bytes);
 		def.close();
 
@@ -53,7 +63,7 @@ public class DeflateUtils {
 	public static byte[] decompress(final byte[] bytes)
 		throws IOException {
 
-		InflaterInputStream inf = new InflaterInputStream(new ByteArrayInputStream(bytes));
+		InflaterInputStream inf = new InflaterInputStream(new ByteArrayInputStream(bytes), new Inflater(NOWRAP));
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 		// Transfer bytes from the compressed array to the output
