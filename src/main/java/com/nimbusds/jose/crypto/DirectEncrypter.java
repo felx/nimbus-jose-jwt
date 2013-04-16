@@ -4,7 +4,6 @@ package com.nimbusds.jose.crypto;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.SecretKey;
 
@@ -40,7 +39,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-04-16)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 

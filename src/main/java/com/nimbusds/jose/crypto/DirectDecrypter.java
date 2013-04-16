@@ -2,7 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.io.UnsupportedEncodingException;
-import java.security.interfaces.RSAPrivateKey;
 
 import javax.crypto.SecretKey;
 
@@ -46,7 +45,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-04-16)
  *
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
