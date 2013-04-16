@@ -20,10 +20,16 @@ import net.jcip.annotations.Immutable;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-04-15)
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {
+
+
+	/**
+	 * The Content Master Key (CMK) bit length, zero if not specified.
+	 */
+	private final int cmkBitLength;
 
 
 	/**
@@ -32,7 +38,8 @@ public final class EncryptionMethod extends Algorithm {
 	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
 	 * HMAC SHA-256, using a 256 bit CMK (and a 128 bit CEK) (required).
 	 */
-	public static final EncryptionMethod A128CBC_HS256 = new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED);
+	public static final EncryptionMethod A128CBC_HS256 = 
+		new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED, 256);
 
 
 	/**
@@ -41,21 +48,42 @@ public final class EncryptionMethod extends Algorithm {
 	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
 	 * HMAC SHA-512, using a 512 bit CMK (and a 256 bit CEK) (required).
 	 */
-	public static final EncryptionMethod A256CBC_HS512 = new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED);
+	public static final EncryptionMethod A256CBC_HS512 = 
+		new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED, 512);
 
 
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
 	 * (NIST.800-38D) using 128 bit keys (recommended).
 	 */
-	public static final EncryptionMethod A128GCM = new EncryptionMethod("A128GCM", Requirement.RECOMMENDED);
+	public static final EncryptionMethod A128GCM = 
+		new EncryptionMethod("A128GCM", Requirement.RECOMMENDED, 128);
 
 
 	/**
 	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
 	 * (NIST.800-38D) using 256 bit keys (recommended).
 	 */
-	public static final EncryptionMethod A256GCM = new EncryptionMethod("A256GCM", Requirement.RECOMMENDED);
+	public static final EncryptionMethod A256GCM = 
+		new EncryptionMethod("A256GCM", Requirement.RECOMMENDED, 256);
+
+
+	/**
+	 * Creates a new encryption method.
+	 *
+	 * @param name         The encryption method name. Must not be 
+	 *                     {@code null}.
+	 * @param req          The implementation requirement, {@code null} if 
+	 *                     not known.
+	 * @param cmkBitLength The Content Master Key (CMK) bit length, zero if
+	 *                     not specified.
+	 */
+	public EncryptionMethod(final String name, final Requirement req, final int cmkBitLength) {
+
+		super(name, req);
+
+		this.cmkBitLength = cmkBitLength;
+	}
 
 
 	/**
@@ -67,7 +95,7 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public EncryptionMethod(final String name, final Requirement req) {
 
-		super(name, req);
+		this(name, req, 0);
 	}
 
 
@@ -78,7 +106,20 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public EncryptionMethod(final String name) {
 
-		super(name, null);
+		this(name, null, 0);
+	}
+
+
+	/**
+	 * Gets the length of the associated Content Master Key (CMK) for
+	 * encryption.
+	 *
+	 * @return The Content Master Key (CMK) bit length, zero if not 
+	 *         specified.
+	 */
+	public int cmkBitLength() {
+
+		return cmkBitLength;
 	}
 
 
@@ -92,15 +133,24 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public static EncryptionMethod parse(final String s) {
 
-		if (s == A128CBC_HS256.getName()) {
+		if (s.equals(A128CBC_HS256.getName())) {
+
 			return A128CBC_HS256;
-		} else if (s == A256CBC_HS512.getName()) {
+
+		} else if (s.equals(A256CBC_HS512.getName())) {
+
 			return A256CBC_HS512;
-		} else if (s == A128GCM.getName()) {
+
+		} else if (s.equals(A128GCM.getName())) {
+
 			return A128GCM;
-		} else if (s == A256GCM.getName()) {
+
+		} else if (s.equals(A256GCM.getName())) {
+
 			return A256GCM;
+
 		} else {
+
 			return new EncryptionMethod(s);
 		}
 	}

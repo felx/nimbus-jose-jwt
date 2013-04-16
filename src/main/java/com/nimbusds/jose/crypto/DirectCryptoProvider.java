@@ -8,6 +8,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -75,11 +76,19 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Creates a new direct encryption / decryption provider.
 	 *
-	 * @param key The shared symmetric key. Must not be {@code null}.
+	 * @param key The shared symmetric key. Must be 128 bits (16 bytes),
+	 *            256 bits (32 bytes) or 512 bits (64 bytes) long. Must not 
+	 *            be {@code null}.
 	 */
-	protected DirectCryptoProvider(final byte[] key) {
+	protected DirectCryptoProvider(final byte[] key)
+		throws JOSEException {
 
 		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+
+		if (key.length != 16 && key.length != 32 && key.length != 64) {
+
+			throw new JOSEException("The key length must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 bites (64 bytes)");
+		}
 
 		cmk = new SecretKeySpec(key, "AES");
 	}

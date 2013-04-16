@@ -31,7 +31,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-04-15)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -68,59 +68,26 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * Gets the Content Master Key (CMK) length for the specified 
-	 * encryption method.
-	 *
-	 * @param method The encryption method. Must be supported by this RSA
-	 *               provider. Must not be {@code null}.
-	 *
-	 * @return The CMK length, in bits.
-	 *
-	 * @throws JOSEException If the encryption method is not supported.
-	 */
-	protected static int cmkBitLength(final EncryptionMethod method)
-		throws JOSEException {
-
-		if (method.equals(EncryptionMethod.A128CBC_HS256)) {
-
-			return 256;
-
-		} else if (method.equals(EncryptionMethod.A256CBC_HS512)) {
-
-			return 512;
-
-		} else if (method.equals(EncryptionMethod.A128GCM)) {
-
-			return 128;
-
-		} else if (method.equals(EncryptionMethod.A256GCM)) {
-		        
-		        return 256;
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A256GCM, ");
-		}
-	}
-
-
-	/**
 	 * Gets the Content Encryption Key (CEK) length for the specified 
 	 * encryption method.
 	 *
-	 * @param method The encryption method. Must be supported by this RSA
-	 *               provider and must employ CEKs. Must not be 
-	 *               {@code null}.
+	 * @param method The encryption method. Must not be {@code null}.
 	 *
 	 * @return The CEK length, in bits.
 	 *
-	 * @throws JOSEException If the encryption method is not supported or
-	 *                       doesn't employ CEKs.
+	 * @throws JOSEException If the encryption method is not supported.
 	 */
 	protected static int cekBitLength(final EncryptionMethod method)
 		throws JOSEException {
 
-		return cmkBitLength(method);
+		int len = method.cmkBitLength();
+
+		if (len < 1) {
+
+			throw new JOSEException("Unsupported encryption method");
+		}
+
+		return len;
 	}
 
 

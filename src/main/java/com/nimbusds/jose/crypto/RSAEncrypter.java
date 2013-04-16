@@ -42,7 +42,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-04-15)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -145,9 +145,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
 		// Generate and encrypt the CMK according to the JWE alg
-		final int keyLength = RSACryptoProvider.cmkBitLength(enc);
-
-		SecretKey cmk = AES.generateAESCMK(keyLength);
+		SecretKey cmk = AES.generateAESCMK(enc.cmkBitLength());
 
 		Base64URL encryptedKey = null; // The second JWE part
 

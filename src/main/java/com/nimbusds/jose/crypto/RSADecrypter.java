@@ -48,7 +48,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-04-15)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -172,7 +172,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			int keyLength = cmkBitLength(readOnlyJWEHeader.getEncryptionMethod());
+			int keyLength = readOnlyJWEHeader.getEncryptionMethod().cmkBitLength();
 
 			SecretKey randomCMK = AES.generateAESCMK(keyLength);
 

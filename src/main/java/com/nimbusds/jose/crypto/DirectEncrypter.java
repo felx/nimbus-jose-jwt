@@ -54,10 +54,13 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	/**
 	 * Creates a new direct encrypter.
 	 *
-	 * @param key The shared symmetric key. Must not be {@code null}.
+	 * @param key The shared symmetric key. Must be 128 bits (16 bytes),
+	 *            256 bits (32 bytes) or 512 bits (64 bytes) long. Must not 
+	 *            be {@code null}.
 	 *
-	 * @throws JOSEException If the underlying secure random generator
-	 *                       couldn't be instantiated.
+	 * @throws JOSEException If the key length is unexpected or the
+	 *                       underlying secure random generator couldn't be 
+	 *                       instantiated.
 	 */
 	public DirectEncrypter(final byte[] key)
 		throws JOSEException {
@@ -119,11 +122,17 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
-			
+
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
+		// Check key length matches matches encryption method
 		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+
+		if (enc.cmkBitLength() != getKey().length * 8) {
+
+			throw new JOSEException("The key length must be " + enc.cmkBitLength() + " bits for " + enc + " encryption");
+		}
 
 		final Base64URL encryptedKey = null; // The second JWE part
 

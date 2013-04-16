@@ -61,9 +61,14 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	/**
 	 * Creates a new direct decrypter.
 	 *
-	 * @param key The shared symmetric key. Must not be {@code null}.
+	 * @param key The shared symmetric key. Must be 128 bits (16 bytes),
+	 *            256 bits (32 bytes) or 512 bits (64 bytes) long. Must not 
+	 *            be {@code null}.
+	 *
+	 * @throws JOSEException If the key length is unexpected.
 	 */
-	public DirectDecrypter(final byte[] key) {
+	public DirectDecrypter(final byte[] key)
+		throws JOSEException {
 
 		super(key);
 
