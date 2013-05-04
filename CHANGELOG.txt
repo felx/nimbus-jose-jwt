@@ -165,3 +165,4 @@ version 2.15 (2013-05-04)
 	* Deprecates JWSObject.getSignableContent() in favour of
 	  JWSObject.getSigningInput() to reflect change in JWS terminology in
 	  draft 09.
+	* Adds MIME type constants for the plain, JWS and JWE objects.

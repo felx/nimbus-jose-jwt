@@ -4,6 +4,9 @@ package com.nimbusds.jose;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParameterList;
+
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -41,6 +44,31 @@ public class JWSObject extends JOSEObject {
 		 * The JWS object is signed and its signature was successfully verified.
 		 */
 		VERIFIED;
+	}
+
+
+	/**
+	 * The MIME type of JWS objects serialised to a compact form:
+	 * {@code application/jws; charset=UTF-8}
+	 */
+	public static final ContentType MIME_TYPE_COMPACT;
+
+
+	/**
+	 * The MIME type of JWS objects serialised to a JSON object form:
+	 * {@code application/jws-js; charset=UTF-8}
+	 */
+	public static final ContentType MIME_TYPE_JS;
+
+
+	static {
+
+		final ParameterList params = new ParameterList();
+		params.set("charset", "UTF-8");
+
+		MIME_TYPE_COMPACT = new ContentType("application", "jws", params);
+
+		MIME_TYPE_JS = new ContentType("application", "jws-js", params);
 	}
 
 

@@ -1,8 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.text.ParseException;
-
 import junit.framework.TestCase;
 
 
@@ -10,12 +8,26 @@ import junit.framework.TestCase;
  * Tests plaintext JOSE object parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-05-04)
  */
 public class PlainObjectTest extends TestCase {
 
 
-	public void testSerializeAndParse() {
+	public void testMIMETypes()
+		throws Exception {
+
+		assertTrue(PlainObject.MIME_TYPE_COMPACT.match("application/jws"));
+		assertTrue(PlainObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
+		assertEquals(1, PlainObject.MIME_TYPE_COMPACT.getParameterList().size());
+
+		assertTrue(PlainObject.MIME_TYPE_JS.match("application/jws-js"));
+		assertTrue(PlainObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
+		assertEquals(1, PlainObject.MIME_TYPE_JS.getParameterList().size());
+	}
+
+
+	public void testSerializeAndParse()
+		throws Exception {
 
 		Payload payload = new Payload("Hello world!");
 
@@ -32,13 +44,7 @@ public class PlainObjectTest extends TestCase {
 
 		String serializedJOSEObject = p.serialize();
 
-		try {
-			p = PlainObject.parse(serializedJOSEObject);
-
-		} catch (ParseException e) {
-
-			fail(e.getMessage());
-		}
+		p = PlainObject.parse(serializedJOSEObject);
 
 		h = p.getHeader();
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
