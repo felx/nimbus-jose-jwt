@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-04)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -51,7 +51,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * The signable content of this JWS object.
+	 * The signing input for this JWS object.
 	 *
 	 * <p>Format:
 	 *
@@ -59,7 +59,7 @@ public class JWSObject extends JOSEObject {
 	 * [header-base64url].[payload-base64url]
 	 * </pre>
 	 */
-	private byte[] signableContent;
+	private byte[] signingInput;
 
 
 	/**
@@ -98,7 +98,7 @@ public class JWSObject extends JOSEObject {
 
 		setPayload(payload);
 
-		setSignableContent(header.toBase64URL(), payload.toBase64URL());
+		setSigningInput(header.toBase64URL(), payload.toBase64URL());
 
 		signature = null;
 
@@ -121,7 +121,7 @@ public class JWSObject extends JOSEObject {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public JWSObject(final Base64URL firstPart, final Base64URL secondPart, final Base64URL thirdPart)	
-			throws ParseException {
+		throws ParseException {
 
 		if (firstPart == null) {
 
@@ -143,7 +143,7 @@ public class JWSObject extends JOSEObject {
 
 		setPayload(new Payload(secondPart));
 
-		setSignableContent(firstPart, secondPart);
+		setSigningInput(firstPart, secondPart);
 
 		if (thirdPart == null) {
 			throw new IllegalArgumentException("The third part must not be null");
@@ -165,7 +165,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Sets the signable content of this JWS object.
+	 * Sets the signing input for this JWS object.
 	 *
 	 * <p>Format:
 	 *
@@ -175,17 +175,17 @@ public class JWSObject extends JOSEObject {
 	 *
 	 * @param firstPart  The first part, corresponding to the JWS header.
 	 *                   Must not be {@code null}.
-	 * @param secondPart The second part, corresponding to the payload. Must
-	 *                   not be {@code null}.
+	 * @param secondPart The second part, corresponding to the payload. 
+	 *                   Must not be {@code null}.
 	 */
-	private void setSignableContent(final Base64URL firstPart, final Base64URL secondPart) {
+	private void setSigningInput(final Base64URL firstPart, final Base64URL secondPart) {
 
 		StringBuilder sb = new StringBuilder(firstPart.toString());
 		sb.append('.');
 		sb.append(secondPart.toString());
 
 		try {
-			signableContent = sb.toString().getBytes("UTF-8");
+			signingInput = sb.toString().getBytes("UTF-8");
 
 		} catch (UnsupportedEncodingException e) {
 
@@ -195,7 +195,16 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Gets the signable content of this JWS object.
+	 * @deprecated Use {@link #setSigningInput} instead.
+	 */
+	private void setSignableContent(final Base64URL firstPart, final Base64URL secondPart) {
+
+		setSigningInput(firstPart, secondPart);
+	}
+
+
+	/**
+	 * Gets the signing input for this JWS object.
 	 *
 	 * <p>Format:
 	 *
@@ -203,12 +212,21 @@ public class JWSObject extends JOSEObject {
 	 * [header-base64url].[payload-base64url]
 	 * </pre>
 	 *
-	 * @return The signable content, ready for passing to the signing or
-	 *         verification service.
+	 * @return The signing input, to be passed to a JWS signer or verifier.
 	 */
+	public byte[] getSigningInput() {
+
+		return signingInput;
+	}
+
+
+	/**
+	 * @deprecated Use {@link #getSigningInput} instead.
+	 */
+	@Deprecated
 	public byte[] getSignableContent() {
 
-		return signableContent;
+		return getSigningInput();
 	}
 
 
@@ -329,7 +347,7 @@ public class JWSObject extends JOSEObject {
 		ensureJWSSignerSupport(signer);
 
 		try {
-			signature = signer.sign(getHeader(), getSignableContent());
+			signature = signer.sign(getHeader(), getSigningInput());
 
 		} catch (JOSEException e) {
 
@@ -371,7 +389,7 @@ public class JWSObject extends JOSEObject {
 		boolean verified = false;
 
 		try {
-			verified = verifier.verify(getHeader(), getSignableContent(), getSignature());
+			verified = verifier.verify(getHeader(), getSigningInput(), getSignature());
 
 		} catch (JOSEException e) {
 

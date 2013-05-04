@@ -31,7 +31,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-04)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -142,7 +142,7 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 
 	@Override
-	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signableContent)
+	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
@@ -159,7 +159,7 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		ECPrivateKeyParameters ecPrivateKeyParameters = 
 			new ECPrivateKeyParameters(privateKey, ecParameterSpec);
 
-		digest.update(signableContent, 0, signableContent.length);
+		digest.update(signingInput, 0, signingInput.length);
 		byte[] out = new byte[digest.getDigestSize()];
 		digest.doFinal(out, 0);
 
