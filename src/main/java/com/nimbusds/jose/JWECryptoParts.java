@@ -9,11 +9,11 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
  * an immutable simple wrapper for returning the cipher text, initialisation 
- * vector (IV), encrypted key and integrity value from {@link JWEEncrypter} 
+ * vector (IV), encrypted key and authentication tag from {@link JWEEncrypter} 
  * implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2012-05-05)
  */
 @Immutable
 public final class JWECryptoParts {
@@ -38,38 +38,41 @@ public final class JWECryptoParts {
 
 
 	/**
-	 * The integrity value (optional).
+	 * The authentication tag (optional).
 	 */
-	private final Base64URL integrityValue;
+	private final Base64URL authenticationTag;
 
 
 	/**
 	 * Creates a new cryptograhic JWE parts instance.
 	 *
-	 * @param encryptedKey   The encrypted key, {@code null} if not
-	 *                       required by the encryption algorithm.
-	 * @param iv             The initialisation vector (IV), {@code null} if
-	 *                       not required by the encryption algorithm.
-	 * @param cipherText     The cipher text. Must not be {@code null}.
-	 * @param integrityValue The integrity value, {@code null} if the JWE 
-	 *                       algorithm provides built-in integrity check.
+	 * @param encryptedKey      The encrypted key, {@code null} if not
+	 *                          required by the encryption algorithm.
+	 * @param iv                The initialisation vector (IV), 
+	 *                          {@code null} if not required by the 
+	 *                          encryption algorithm.
+	 * @param cipherText        The cipher text. Must not be {@code null}.
+	 * @param authenticationTag The authentication tag, {@code null} if the 
+	 *                          JWE algorithm provides built-in integrity 
+	 *                          check.
 	 */
 	public JWECryptoParts(final Base64URL encryptedKey, 
 		              final Base64URL iv,
 		              final Base64URL cipherText, 
-		              final Base64URL integrityValue) {
+		              final Base64URL authenticationTag) {
 
 		this.encryptedKey = encryptedKey;
 
 		this.iv = iv;
 
 		if (cipherText == null) {
+
 			throw new IllegalArgumentException("The cipher text must not be null");
 		}
 
 		this.cipherText = cipherText;
 
-		this.integrityValue = integrityValue;
+		this.authenticationTag = authenticationTag;
 	}
 
 
@@ -109,13 +112,23 @@ public final class JWECryptoParts {
 
 
 	/**
-	 * Gets the integrity value.
+	 * Gets the authentication tag.
 	 *
-	 * @return The integrity value, {@code null} if the encryption
+	 * @return The authentication tag, {@code null} if the encryption
 	 *         algorithm provides built-in integrity checking.
 	 */
+	public Base64URL getAuthenticationTag() {
+
+		return authenticationTag;
+	}
+
+
+	/**
+	 * Use {@link #getAuthenticationTag} instead.
+	 */
+	@Deprecated
 	public Base64URL getIntegrityValue() {
 
-		return integrityValue;
+		return getAuthenticationTag();
 	}
 }

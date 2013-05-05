@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-05)
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -97,9 +97,9 @@ public class JWEObject extends JOSEObject {
 
 
 	/**
-	 * The integrity value, {@code null} if not computed or applicable.
+	 * The authentication tag, {@code null} if not computed or applicable.
 	 */
-	private Base64URL integrityValue;
+	private Base64URL authenticationTag;
 
 
 	/**
@@ -154,8 +154,8 @@ public class JWEObject extends JOSEObject {
 	 *                   none.
 	 * @param fourthPart The fourth part, corresponding to the cipher text.
 	 *                   Must not be {@code null}.
-	 * @param fifthPart  The fifth part, corresponding to the integrity
-	 *                   value. Empty of {@code null} if none.
+	 * @param fifthPart  The fifth part, corresponding to the 
+	 *                   authentication tag. Empty of {@code null} if none.
 	 *
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
@@ -206,11 +206,11 @@ public class JWEObject extends JOSEObject {
 
 		if (fifthPart == null || fifthPart.toString().isEmpty()) {
 
-			integrityValue = null;
+			authenticationTag = null;
 
 		} else {
 
-			integrityValue = fifthPart;
+			authenticationTag = fifthPart;
 		}
 
 		state = State.ENCRYPTED; // but not decrypted yet!
@@ -263,14 +263,24 @@ public class JWEObject extends JOSEObject {
 
 
 	/**
-	 * Gets the integrity value of this JWE object.
+	 * Gets the authentication tag of this JWE object.
 	 *
-	 * @return The integrity value, {@code null} if not applicable or the 
-	 *         JWE object has not been encrypted yet.
+	 * @return The authentication tag, {@code null} if not applicable or 
+	 *         the JWE object has not been encrypted yet.
 	 */
+	public Base64URL getAuthenticationTag() {
+
+		return authenticationTag;
+	}
+
+
+	/**
+	 * Use {@link #getAuthenticationTag} instead.
+	 */
+	@Deprecated
 	public Base64URL getIntegrityValue() {
 
-		return integrityValue;
+		return getAuthenticationTag();
 	}
 
 
@@ -431,7 +441,7 @@ public class JWEObject extends JOSEObject {
 		encryptedKey = parts.getEncryptedKey();
 		initializationVector = parts.getInitializationVector();
 		cipherText = parts.getCipherText();
-		integrityValue = parts.getIntegrityValue();
+		authenticationTag = parts.getAuthenticationTag();
 
 		state = State.ENCRYPTED;
 	}
@@ -461,7 +471,7 @@ public class JWEObject extends JOSEObject {
 					       getEncryptedKey(), 
 					       getInitializationVector(),
 					       getCipherText(), 
-					       getIntegrityValue())));
+					       getAuthenticationTag())));
 
 		} catch (JOSEException e) {
 
@@ -485,7 +495,7 @@ public class JWEObject extends JOSEObject {
 	 * {@link State#DECRYPTED decrypted} state.
 	 *
 	 * <pre>
-	 * [header-base64url].[encryptedKey-base64url].[iv-base64url].[cipherText-base64url].[integrityValue-base64url]
+	 * [header-base64url].[encryptedKey-base64url].[iv-base64url].[cipherText-base64url].[authTag-base64url]
 	 * </pre>
 	 *
 	 * @return The serialised JWE object.
@@ -521,9 +531,9 @@ public class JWEObject extends JOSEObject {
 
 		sb.append('.');
 
-		if (integrityValue != null) {
+		if (authenticationTag != null) {
 
-			sb.append(integrityValue.toString());
+			sb.append(authenticationTag.toString());
 		}
 
 		return sb.toString();
@@ -542,7 +552,7 @@ public class JWEObject extends JOSEObject {
 	 *                        JWE object.
 	 */
 	public static JWEObject parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 
