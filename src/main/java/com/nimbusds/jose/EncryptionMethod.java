@@ -11,8 +11,8 @@ import net.jcip.annotations.Immutable;
  * <p>Includes constants for the following standard encryption method names:
  *
  * <ul>
- *     <li>{@link #A128CBC_HS256 A128CBC+HS256}
- *     <li>{@link #A256CBC_HS512 A256CBC+HS512}
+ *     <li>{@link #A128CBC_HS256 A128CBC-HS256}
+ *     <li>{@link #A256CBC_HS512 A256CBC-HS512}
  *     <li>{@link #A128GCM}
  *     <li>{@link #A256GCM}
  * </ul>
@@ -20,49 +20,45 @@ import net.jcip.annotations.Immutable;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-05)
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {
 
 
 	/**
-	 * The Content Master Key (CMK) bit length, zero if not specified.
+	 * The Content Encryption Key (CEK) bit length, zero if not specified.
 	 */
-	private final int cmkBitLength;
+	private final int cekBitLength;
 
 
 	/**
-	 * Composite Authenticated Encryption algorithm using Advanced 
-	 * Encryption Standard (AES) in Cipher Block Chaining (CBC) mode with 
-	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
-	 * HMAC SHA-256, using a 256 bit CMK (and a 128 bit CEK) (required).
+	 * AES_128_CBC_HMAC_SHA_256 authenticated encryption using a 256 bit 
+	 * key (required).
 	 */
 	public static final EncryptionMethod A128CBC_HS256 = 
-		new EncryptionMethod("A128CBC+HS256", Requirement.REQUIRED, 256);
+		new EncryptionMethod("A128CBC-HS256", Requirement.REQUIRED, 256);
 
 
 	/**
-	 * Composite Authenticated Encryption algorithm using Advanced 
-	 * Encryption Standard (AES) in Cipher Block Chaining (CBC) mode with 
-	 * PKCS #5 padding (NIST.800-38A) with an integrity calculation using 
-	 * HMAC SHA-512, using a 512 bit CMK (and a 256 bit CEK) (required).
+	 * AES_256_CBC_HMAC_SHA_512 authenticated encryption using a 512 bit
+	 * key (required).
 	 */
 	public static final EncryptionMethod A256CBC_HS512 = 
-		new EncryptionMethod("A256CBC+HS512", Requirement.REQUIRED, 512);
+		new EncryptionMethod("A256CBC-HS512", Requirement.REQUIRED, 512);
 
 
 	/**
-	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
-	 * (NIST.800-38D) using 128 bit keys (recommended).
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) using a 128 bit key 
+	 * (recommended).
 	 */
 	public static final EncryptionMethod A128GCM = 
 		new EncryptionMethod("A128GCM", Requirement.RECOMMENDED, 128);
 
 
 	/**
-	 * Advanced Encryption Standard (AES) in Galois/Counter Mode (GCM)
-	 * (NIST.800-38D) using 256 bit keys (recommended).
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) using a 256 bit key 
+	 * (recommended).
 	 */
 	public static final EncryptionMethod A256GCM = 
 		new EncryptionMethod("A256GCM", Requirement.RECOMMENDED, 256);
@@ -75,19 +71,20 @@ public final class EncryptionMethod extends Algorithm {
 	 *                     {@code null}.
 	 * @param req          The implementation requirement, {@code null} if 
 	 *                     not known.
-	 * @param cmkBitLength The Content Master Key (CMK) bit length, zero if
-	 *                     not specified.
+	 * @param cekBitLength The Content Encryption Key (CEK) bit length, 
+	 *                     zero if not specified.
 	 */
-	public EncryptionMethod(final String name, final Requirement req, final int cmkBitLength) {
+	public EncryptionMethod(final String name, final Requirement req, final int cekBitLength) {
 
 		super(name, req);
 
-		this.cmkBitLength = cmkBitLength;
+		this.cekBitLength = cekBitLength;
 	}
 
 
 	/**
-	 * Creates a new encryption method.
+	 * Creates a new encryption method. The Content Encryption Key (CEK)
+	 * bit length is not specified.
 	 *
 	 * @param name The encryption method name. Must not be {@code null}.
 	 * @param req  The implementation requirement, {@code null} if not 
@@ -100,7 +97,8 @@ public final class EncryptionMethod extends Algorithm {
 
 
 	/**
-	 * Creates a new encryption method.
+	 * Creates a new encryption method. The implementation requirement and
+	 * the Content Encryption Key (CEK) bit length are not specified.
 	 *
 	 * @param name The encryption method name. Must not be {@code null}.
 	 */
@@ -111,15 +109,14 @@ public final class EncryptionMethod extends Algorithm {
 
 
 	/**
-	 * Gets the length of the associated Content Master Key (CMK) for
-	 * encryption.
+	 * Gets the length of the associated Content Encryption Key (CEK).
 	 *
-	 * @return The Content Master Key (CMK) bit length, zero if not 
+	 * @return The Content Encryption Key (CEK) bit length, zero if not 
 	 *         specified.
 	 */
-	public int cmkBitLength() {
+	public int cekBitLength() {
 
-		return cmkBitLength;
+		return cekBitLength;
 	}
 
 
