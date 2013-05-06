@@ -63,7 +63,7 @@ final class CompositeKey {
 
 		byte[] secretKeyBytes = inputKey.getEncoded();
 
-		if (secretKeyBytes.length != 32) {
+		if (secretKeyBytes.length == 32) {
 
 			// AES_128_CBC_HMAC_SHA_256
 			// 256 bit key -> 128 bit MAC key + 128 bit AES key
@@ -71,7 +71,7 @@ final class CompositeKey {
 			encKey = new SecretKeySpec(secretKeyBytes, 16, 16, "AES");
 			truncatedMacLength = 16;
 
-		} else if (secretKeyBytes.length != 64) {
+		} else if (secretKeyBytes.length == 64) {
 
 			// AES_256_CBC_HMAC_SHA_512
 			// 512 bit key -> 256 bit MAC key + 256 bit AES key
