@@ -1,11 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.io.UnsupportedEncodingException;
-
 import javax.crypto.SecretKey;
-
-import org.bouncycastle.util.Arrays;
 
 import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
@@ -15,6 +11,7 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeaderFilter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -43,7 +40,7 @@ import com.nimbusds.jose.util.Base64URL;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version $version$ (2013-05-06)
  *
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
@@ -58,16 +55,34 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	/**
 	 * Creates a new direct decrypter.
 	 *
-	 * @param key The shared symmetric key. Must be 128 bits (16 bytes),
-	 *            256 bits (32 bytes) or 512 bits (64 bytes) long. Must not 
-	 *            be {@code null}.
+	 * @param key The shared symmetric key. Its algorithm must be "AES".
+	 *            Must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 
+	 *            bits (64 bytes) long. Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the key length is unexpected.
 	 */
-	public DirectDecrypter(final byte[] key)
+	public DirectDecrypter(final SecretKey key)
 		throws JOSEException {
 
 		super(key);
+
+		headerFilter = new DefaultJWEHeaderFilter(supportedAlgorithms(), supportedEncryptionMethods());
+	}
+
+
+	/**
+	 * Creates a new direct decrypter.
+	 *
+	 * @param keyBytes The shared symmetric key, as a byte array. Must be 
+	 *                 128 bits (16 bytes), 256 bits (32 bytes) or 512 bits
+	 *                 (64 bytes) long. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the key length is unexpected.
+	 */
+	public DirectDecrypter(final byte[] keyBytes)
+		throws JOSEException {
+
+		super(keyBytes);
 
 		headerFilter = new DefaultJWEHeaderFilter(supportedAlgorithms(), supportedEncryptionMethods());
 	}
@@ -85,7 +100,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,
-		              final Base64URL integrityValue) 
+		              final Base64URL authTag) 
 		throws JOSEException {
 
 		// Validate required JWE parts
@@ -99,9 +114,9 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
-		if (integrityValue == null) {
+		if (authTag == null) {
 
-			throw new JOSEException("The integrity value must not be null");
+			throw new JOSEException("The authentication tag must not be null");
 		}
 		
 
@@ -116,63 +131,22 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 	    	byte[] plainText;
 
-	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
+	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-	    		byte[] epu = null;
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
 
-			if (readOnlyJWEHeader.getEncryptionPartyUInfo() != null) {
+			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
-				epu = readOnlyJWEHeader.getEncryptionPartyUInfo().decode();
-			}
+		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] epv = null;
-			
-			if (readOnlyJWEHeader.getEncryptionPartyVInfo() != null) {
+			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
 
-				epv = readOnlyJWEHeader.getEncryptionPartyVInfo().decode();
-			}
+			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), authData, authTag.decode());
 
-	    		SecretKey cek = ConcatKDF.generateCEK(cmk, enc, epu, epv);
+		} else {
 
-			plainText = AESCBC.decrypt(cek, iv.decode(), cipherText.decode());
-
-			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
-
-			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                  /* encryptedKey omitted */ "." +
-			                  iv.toString() + "." +
-			                  cipherText.toString();
-
-			byte[] mac = HMAC.compute(cik, macInput.getBytes());
-
-			if (! Arrays.constantTimeAreEqual(integrityValue.decode(), mac)) {
-
-				throw new JOSEException("HMAC integrity check failed");
-			}
-
-	    	} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)    ) {
-
-	    		// Compose the additional authenticated data
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-						/* encryptedKey omitted */ "." +
-						iv.toString();
-
-			byte[] authData = null;
-
-			try {
-				authData = authDataString.getBytes("UTF-8");
-
-			} catch (UnsupportedEncodingException e) {
-
-				throw new JOSEException(e.getMessage(), e);
-			}
-
-			plainText = AESGCM.decrypt(cmk, iv.decode(), cipherText.decode(), authData, integrityValue.decode());
-
-	    	} else {
-
-	    		throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
-	    	}
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
+		}
 
 
 	    	// Apply decompression if requested

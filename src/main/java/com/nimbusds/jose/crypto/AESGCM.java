@@ -16,14 +16,14 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Constants and static methods for AES/GSM/NoPadding encryption and 
- * decryption. Uses the BouncyCastle.org provider.
+ * AES/GSM/NoPadding encryption and decryption methods. Uses the 
+ * BouncyCastle.org provider.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-08, section 4.9.
+ * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.9.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-06)
  */
 class AESGCM {
 
@@ -41,64 +41,6 @@ class AESGCM {
 
 
 	/**
-	 * Encapsulates the result of an AES GCM encryption. This class is 
-	 * immutable.
-	 */
-	@Immutable
-	public static class Result {
-
-
-		/**
-		 * The cipher text.
-		 */
-		private final byte[] cipherText;
-
-
-		/**
-		 * The authentication tag.
-		 */
-		private final byte[] authTag;
-
-
-		/**
-		 * Creates a new AES GCM encryption result.
-		 *
-		 * @param cipherText The cipher text. Must not be {@code null}.
-		 * @param authTag    The authentication tag. Must not be
-		 *                   {@code null}.
-		 */
-		public Result(final byte[] cipherText, final byte[] authTag) {
-
-			this.cipherText = cipherText;
-
-			this.authTag = authTag;
-		}
-
-
-		/**
-		 * Gets the cipher text.
-		 *
-		 * @return The cipher text.
-		 */
-		public byte[] getCipherText() {
-
-			return cipherText;
-		}
-
-
-		/**
-		 * Gets the authentication tag.
-		 *
-		 * @return The authentication tag.
-		 */
-		public byte[] getAuthenticationTag() {
-
-			return authTag;
-		}
-	}
-
-
-	/**
 	 * Generates a random 96 bit (12 byte) Initialisation Vector(IV) for
 	 * use in AES-GCM encryption.
 	 *
@@ -112,9 +54,7 @@ class AESGCM {
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
 		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
-
 		randomGen.nextBytes(bytes);
-
 		return bytes;
 	}
 
@@ -138,7 +78,7 @@ class AESGCM {
 		                                         final byte[] authData) {
 
 		// Initialise AES cipher
-		BlockCipher cipher = AES.createAESCipher(secretKey, forEncryption);
+		BlockCipher cipher = AES.createCipher(secretKey, forEncryption);
 
 		// Create GCM cipher with AES
 		GCMBlockCipher gcm = new GCMBlockCipher(cipher);
@@ -162,15 +102,14 @@ class AESGCM {
 	 *                  {@code null}.
 	 * @param authData  The authenticated data. Must not be {@code null}.
 	 *
-	 * @return The encryption result, consisting of the cipher text and the
-	 *         authentication tag.
+	 * @return The authenticated cipher text.
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static Result encrypt(final SecretKey secretKey, 
-		                     final byte[] iv,
-		                     final byte[] plainText, 
-		                     final byte[] authData)
+	public static AuthenticatedCipherText encrypt(final SecretKey secretKey, 
+		                                      final byte[] iv,
+		                                      final byte[] plainText, 
+		                                      final byte[] authData)
 		throws JOSEException {
 
 		// Initialise AES/GCM cipher for encryption
@@ -204,7 +143,7 @@ class AESGCM {
 		System.arraycopy(output, 0, cipherText, 0, cipherText.length);
 		System.arraycopy(output, outputOffset - authTagLength, authTag, 0, authTag.length);
 
-		return new Result(cipherText, authTag);
+		return new AuthenticatedCipherText(cipherText, authTag);
 	}
 
 

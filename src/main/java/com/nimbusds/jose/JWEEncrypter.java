@@ -27,7 +27,6 @@ public interface JWEEncrypter extends JWEAlgorithmProvider {
 	 * @throws JOSEException If the JWE algorithm is not supported or if
 	 *                       encryption failed for some other reason.
 	 */
-	public JWECryptoParts encrypt(final ReadOnlyJWEHeader header, 
-			final byte[] clearText)
-					throws JOSEException;
+	public JWECryptoParts encrypt(final ReadOnlyJWEHeader header, final byte[] clearText)
+		throws JOSEException;
 }

@@ -12,70 +12,68 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Static methods for RSAES-PKCS1-V1_5 Content Master Key (CMK) encryption and
- * decryption. Uses the BouncyCastle.org provider.
+ * RSAES-PKCS1-V1_5 methods for Content Encryption Key (CEK) encryption and
+ * decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-05-06)
  */
 class RSA1_5 {
 
 
 	/**
-	 * Encrypts the specified Content Master Key (CMK).
+	 * Encrypts the specified Content Encryption Key (CEK).
 	 *
-	 * @param publicKey        The public RSA key. Must not be 
-	 *                         {@code null}.
-	 * @param contentMasterKey The Content Master Key (CMK). Must not be
-	 *                         {@code null}.
+	 * @param pub The public RSA key. Must not be {@code null}.
+	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
+	 *            {@code null}.
 	 *
-	 * @return The encrypted Content Master Key (CMK).
+	 * @return The encrypted Content Encryption Key (CEK).
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static byte[] encryptCMK(final RSAPublicKey publicKey,
-		                        final SecretKey contentMasterKey)
+	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek)
 		throws JOSEException {
 
 		try {
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-			return cipher.doFinal(contentMasterKey.getEncoded());
+			cipher.init(Cipher.ENCRYPT_MODE, pub);
+			return cipher.doFinal(cek.getEncoded());
 
 		} catch (Exception e) {
 
 			// java.security.NoSuchAlgorithmException
 			// java.security.InvalidKeyException
 			// javax.crypto.IllegalBlockSizeException
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Couldn't encrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
 
 
 	/**
-	 * Decrypts the Content Master Key (CMK).
+	 * Decrypts the specified encrypted Content Encryption Key (CEK).
 	 *
-	 * @param privateKey   The private RSA key. Must not be {@code null}.
-	 * @param encryptedCMK The encrypted Content Master Key (CMK). Must not
-	 *                     be {@code null}.
+	 * @param priv         The private RSA key. Must not be {@code null}.
+	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
+	 *                     decrypt. Must not be {@code null}.
 	 *
-	 * @return The decrypted Content Master Key (CMK).
+	 * @return The decrypted Content Encryption Key (CEK).
 	 *
-	 * @throws JOSEException If derivation failed.
+	 * @throws JOSEException If decryption failed.
 	 */
-	public static SecretKey decryptCMK(final RSAPrivateKey privateKey, 
-		                           final byte[] encryptedCMK,
+	public static SecretKey decryptCEK(final RSAPrivateKey priv, 
+		                           final byte[] encryptedCEK,
 		                           final int keyLength)
 		throws JOSEException {
 
 		try {
 			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-			cipher.init(Cipher.DECRYPT_MODE, privateKey);
-			byte[] secretKeyBytes = cipher.doFinal(encryptedCMK);
+			cipher.init(Cipher.DECRYPT_MODE, priv);
+			byte[] secretKeyBytes = cipher.doFinal(encryptedCEK);
 
 			if (8 * secretKeyBytes.length != keyLength) {
 
-				throw new JOSEException("CMK key length mismatch: " + 
+				throw new JOSEException("CEK key length mismatch: " + 
 					                secretKeyBytes.length + " != " + keyLength);
 			}
 
@@ -86,7 +84,7 @@ class RSA1_5 {
 			// java.security.NoSuchAlgorithmException
 			// java.security.InvalidKeyException
 			// javax.crypto.IllegalBlockSizeException
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
 

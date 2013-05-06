@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
@@ -15,6 +14,7 @@ import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StringUtils;
 
 
 
@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version $version$ (2013-05-06)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -104,101 +104,56 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
 		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-		// Generate and encrypt the CMK according to the JWE alg
-		SecretKey cmk = AES.generateAESCMK(enc.cmkBitLength());
+		// Generate and encrypt the CEK according to the enc method
+		SecretKey cek = AES.generateKey(enc.cekBitLength());
 
 		Base64URL encryptedKey = null; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			encryptedKey = Base64URL.encode(RSA1_5.encryptCMK(publicKey, cmk));
+			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCMK(publicKey, cmk));
+			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek));
 
 		} else {
 
-			throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
-		}
-
-		if (encryptedKey == null ) {
-
-			throw new JOSEException("Couldn't generate encrypted key");
+			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA-OAEP");
 		}
 
 
 		// Apply compression if instructed
 		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
-		
 
 		// Encrypt the plain text according to the JWE enc
+		byte[] iv;
+		AuthenticatedCipherText authCipherText;
+		
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			byte[] epu = null;
+			iv = AESCBC.generateIV(randomGen);
 
-			if (readOnlyJWEHeader.getEncryptionPartyUInfo() != null) {
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
 
-				epu = readOnlyJWEHeader.getEncryptionPartyUInfo().decode();
-			}
-
-			byte[] epv = null;
-			
-			if (readOnlyJWEHeader.getEncryptionPartyVInfo() != null) {
-
-				epv = readOnlyJWEHeader.getEncryptionPartyVInfo().decode();
-			}
-
-			SecretKey cek = ConcatKDF.generateCEK(cmk, enc, epu, epv);
-
-			byte[] iv = AESCBC.generateIV(randomGen);
-
-			byte[] cipherText = AESCBC.encrypt(cek, iv, plainText);
-
-			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
-
-			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                  encryptedKey.toString() + "." +
-			                  Base64URL.encode(iv).toString() + "." +
-			                  Base64URL.encode(cipherText);
-
-			byte[] mac = HMAC.compute(cik, macInput.getBytes());
-
-			return new JWECryptoParts(encryptedKey,  
-				                  Base64URL.encode(iv), 
-				                  Base64URL.encode(cipherText),
-				                  Base64URL.encode(mac));
+			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] iv = AESGCM.generateIV(randomGen);
+			iv = AESGCM.generateIV(randomGen);
 
-			// Compose the additional authenticated data
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                        encryptedKey.toString() + "." +
-			                        Base64URL.encode(iv).toString();
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + Base64URL.encode(iv));
 
-			byte[] authData;
-
-			try {
-				authData = authDataString.getBytes("UTF-8");
-
-			} catch (UnsupportedEncodingException e) {
-
-				throw new JOSEException(e.getMessage(), e);
-			}
-
-			
-			AESGCM.Result result = AESGCM.encrypt(cmk, iv, plainText, authData);
-
-			return new JWECryptoParts(encryptedKey,  
-				                  Base64URL.encode(iv), 
-				                  Base64URL.encode(result.getCipherText()),
-				                  Base64URL.encode(result.getAuthenticationTag()));
+			authCipherText = AESGCM.encrypt(cek, iv, plainText, aad);
 
 		} else {
 
 			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
 		}
+
+		return new JWECryptoParts(encryptedKey,  
+			                  Base64URL.encode(iv), 
+			                  Base64URL.encode(authCipherText.getCipherText()),
+			                  Base64URL.encode(authCipherText.getAuthenticationTag()));
 	}
 }

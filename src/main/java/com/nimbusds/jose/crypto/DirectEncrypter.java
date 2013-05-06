@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
@@ -14,6 +13,7 @@ import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version $version$ (2013-05-06)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -44,24 +44,17 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	/**
 	 * Random byte generator.
 	 */
-	private final SecureRandom randomGen;
+	private SecureRandom randomGen;
 
 
 	/**
-	 * Creates a new direct encrypter.
+	 * Initialises the secure random byte generator.
 	 *
-	 * @param key The shared symmetric key. Must be 128 bits (16 bytes),
-	 *            256 bits (32 bytes) or 512 bits (64 bytes) long. Must not 
-	 *            be {@code null}.
-	 *
-	 * @throws JOSEException If the key length is unexpected or the
-	 *                       underlying secure random generator couldn't be 
-	 *                       instantiated.
+	 * @throws JOSEException If the secure random byte generator couldn't 
+	 *                       be instantiated.
 	 */
-	public DirectEncrypter(final byte[] key)
+	private void initSecureRandom()
 		throws JOSEException {
-
-		super(key);
 
 		try {
 			randomGen = SecureRandom.getInstance("SHA1PRNG");
@@ -73,6 +66,46 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	}
 
 
+	/**
+	 * Creates a new direct encrypter.
+	 *
+	 * @param key The shared symmetric key. Its algorithm must be "AES".
+	 *            Must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 
+	 *            bits (64 bytes) long. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the key length or algorithm are unexpected,
+	 *                       or if the underlying secure random generator 
+	 *                       couldn't be instantiated.
+	 */
+	public DirectEncrypter(final SecretKey key)
+		throws JOSEException {
+
+		super(key);
+
+		initSecureRandom();	
+	}
+
+
+	/**
+	 * Creates a new direct encrypter.
+	 *
+	 * @param keyBytes The shared symmetric key, as a byte array. Must be 
+	 *                 128 bits (16 bytes), 256 bits (32 bytes) or 512 bits
+	 *                 (64 bytes) long. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the key length or algorithm are unexpected,
+	 *                       or if the underlying secure random generator 
+	 *                       couldn't be instantiated.
+	 */
+	public DirectEncrypter(final byte[] keyBytes)
+		throws JOSEException {
+
+		super(keyBytes);
+
+		initSecureRandom();
+	}
+
+
 	@Override
 	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
 		throws JOSEException {
@@ -81,15 +114,15 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
 
-			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
+			throw new JOSEException("Unsupported JWE algorithm, must be \"dir\"");
 		}
 
 		// Check key length matches matches encryption method
 		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-		if (enc.cmkBitLength() != getKey().length * 8) {
+		if (enc.cekBitLength() != getKey().getEncoded().length * 8) {
 
-			throw new JOSEException("The key length must be " + enc.cmkBitLength() + " bits for " + enc + " encryption");
+			throw new JOSEException("The Content Encryption Key (CEK) length must be " + enc.cekBitLength() + " bits for " + enc + " encryption");
 		}
 
 		final Base64URL encryptedKey = null; // The second JWE part
@@ -100,72 +133,36 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		
 
 		// Encrypt the plain text according to the JWE enc
+		byte[] iv;
+		AuthenticatedCipherText authCipherText;
+
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			byte[] epu = null;
+			iv = AESCBC.generateIV(randomGen);
 
-			if (readOnlyJWEHeader.getEncryptionPartyUInfo() != null) {
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
 
-				epu = readOnlyJWEHeader.getEncryptionPartyUInfo().decode();
-			}
-
-			byte[] epv = null;
-			
-			if (readOnlyJWEHeader.getEncryptionPartyVInfo() != null) {
-
-				epv = readOnlyJWEHeader.getEncryptionPartyVInfo().decode();
-			}
-
-			SecretKey cek = ConcatKDF.generateCEK(cmk, enc, epu, epv);
-
-			byte[] iv = AESCBC.generateIV(randomGen);
-
-			byte[] cipherText = AESCBC.encrypt(cek, iv, plainText);
-
-			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
-
-			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                  /* encryptedKey omitted */ "." +
-			                  Base64URL.encode(iv).toString() + "." +
-			                  Base64URL.encode(cipherText);
-
-			byte[] mac = HMAC.compute(cik, macInput.getBytes());
-
-			return new JWECryptoParts(encryptedKey,  
-				                  Base64URL.encode(iv), 
-				                  Base64URL.encode(cipherText),
-				                  Base64URL.encode(mac));
+			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] iv = AESGCM.generateIV(randomGen);
+			iv = AESGCM.generateIV(randomGen);
 
 			// Compose the additional authenticated data
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                        /* encryptedKey omitted */ "." +
-			                        Base64URL.encode(iv).toString();
-
-			byte[] authData;
-
-			try {
-				authData = authDataString.getBytes("UTF-8");
-
-			} catch (UnsupportedEncodingException e) {
-
-				throw new JOSEException(e.getMessage(), e);
-			}
-
+			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." +
+			                                          /* encryptedKey omitted */ "." +
+			                                          Base64URL.encode(iv));
 			
-			AESGCM.Result result = AESGCM.encrypt(cmk, iv, plainText, authData);
-
-			return new JWECryptoParts(encryptedKey,  
-				                  Base64URL.encode(iv), 
-				                  Base64URL.encode(result.getCipherText()),
-				                  Base64URL.encode(result.getAuthenticationTag()));
+			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, authData);
 
 		} else {
 
 			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
 		}
+
+		return new JWECryptoParts(encryptedKey,  
+			                  Base64URL.encode(iv), 
+			                  Base64URL.encode(authCipherText.getCipherText()),
+			                  Base64URL.encode(authCipherText.getAuthenticationTag()));
 	}
 }

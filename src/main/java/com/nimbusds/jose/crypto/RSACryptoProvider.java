@@ -31,7 +31,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-06)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -64,61 +64,6 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 		methods.add(EncryptionMethod.A128GCM);
 		methods.add(EncryptionMethod.A256GCM);
 		SUPPORTED_ENCRYPTION_METHODS = methods;
-	}
-
-
-	/**
-	 * Gets the Content Encryption Key (CEK) length for the specified 
-	 * encryption method.
-	 *
-	 * @param method The encryption method. Must not be {@code null}.
-	 *
-	 * @return The CEK length, in bits.
-	 *
-	 * @throws JOSEException If the encryption method is not supported.
-	 */
-	protected static int cekBitLength(final EncryptionMethod method)
-		throws JOSEException {
-
-		int len = method.cmkBitLength();
-
-		if (len < 1) {
-
-			throw new JOSEException("Unsupported encryption method");
-		}
-
-		return len;
-	}
-
-
-	/**
-	 * Gets the Content Integrity Key (CIK) length for the specified 
-	 * encryption method.
-	 *
-	 * @param method The encryption method. Must be supported by this RSA
-	 *               provider and must employ CIKs. Must not be 
-	 *               {@code null}.
-	 *
-	 * @return The CIK length, in bits.
-	 *
-	 * @throws JOSEException If the encryption method is not supported or
-	 *                       doesn't employ CIKs.
-	 */
-	protected static int cikBitLength(final EncryptionMethod method)
-		throws JOSEException {
-
-		if (method.equals(EncryptionMethod.A128CBC_HS256)) {
-
-			return 256;
-
-		} else if (method.equals(EncryptionMethod.A256CBC_HS512)) {
-
-			return 512;
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256 or A256CBC_HS512");
-		}
 	}
 
 

@@ -1,7 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.nio.ByteBuffer;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -12,14 +14,14 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Constants and static methods for AES/CBC/PKCS5Padding encryption and 
- * decryption.
+ * AES/CBC/PKCS5Padding and AES/CBC/PKCS5Padding/HMAC-SHA2 encryption and 
+ * decryption methods.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-08, section 4.8.
+ * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.3.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-06)
  */
 class AESCBC {
 
@@ -42,9 +44,7 @@ class AESCBC {
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
 		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
-
 		randomGen.nextBytes(bytes);
-
 		return bytes;
 	}
 
@@ -122,6 +122,53 @@ class AESCBC {
 
 
 	/**
+	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding/
+	 * HMAC-SHA2.
+	 * 
+	 * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.2.
+	 *
+	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
+	 *
+	 * @param secretKey The secret key. Must be 256 or 512 bits long. Must
+	 *                  not be {@code null}.
+	 * @param iv        The initialisation vector (IV). Must not be
+	 *                  {@code null}.
+	 * @param plainText The plain text. Must not be {@code null}.
+	 * @param aad       The additional authenticated data. Must not be
+	 *                  {@code null}.
+	 *
+	 * @return The authenticated cipher text.
+	 *
+	 * @throws JOSEException If encryption failed.
+	 */
+	public static AuthenticatedCipherText encryptAuthenticated(final SecretKey secretKey,
+		                                                   final byte[] iv,
+		                                                   final byte[] plainText,
+		                                                   final byte[] aad)
+		throws JOSEException {
+
+		// Extract MAC + AES/CBC keys from input secret key
+		CompositeKey compositeKey = new CompositeKey(secretKey);
+
+		// Encrypt plain text
+		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText);
+
+		// AAD length to 8 byte array
+		byte[] al = ByteBuffer.allocate(8).putLong(aad.length).array();
+
+		// Do MAC
+		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
+		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
+
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput);
+
+		byte[] authTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
+
+		return new AuthenticatedCipherText(cipherText, authTag);
+	}
+
+
+	/**
 	 * Decrypts the specified cipher text using AES/CBC/PKCS5Padding.
 	 *
 	 * @param secretKey  The AES key. Must not be {@code null}.
@@ -147,6 +194,67 @@ class AESCBC {
 
 			throw new JOSEException(e.getMessage(), e);
 		}
+	}
+
+
+	/**
+	 * Decrypts the specified plain text using AES/CBC/PKCS5Padding/
+	 * HMAC-SHA2.
+	 * 
+	 * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.2.
+	 *
+	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
+	 *
+	 * @param secretKey  The secret key. Must be 256 or 512 bits long. Must
+	 *                   not be {@code null}.
+	 * @param iv         The initialisation vector (IV). Must not be
+	 *                   {@code null}.
+	 * @param cipherText The cipher text. Must not be {@code null}.
+	 * @param aad        The additional authenticated data. Must not be
+	 *                   {@code null}.
+	 * @param authTag    The authentication tag. Must not be {@code null}.
+	 *
+	 * @return The decrypted plain text.
+	 *
+	 * @throws JOSEException If decryption failed.
+	 */
+	public static byte[] decryptAuthenticated(final SecretKey secretKey,
+		                                  final byte[] iv,
+		                                  final byte[] cipherText,
+		                                  final byte[] aad,
+		                                  final byte[] authTag)
+		throws JOSEException {
+
+
+		// Extract MAC + AES/CBC keys from input secret key
+		CompositeKey compositeKey = new CompositeKey(secretKey);
+
+		// AAD length to 8 byte array
+		byte[] al = ByteBuffer.allocate(8).putLong(aad.length).array();
+
+		// Check MAC
+		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
+		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
+
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput);
+
+		byte[] expectedAuthTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
+
+		boolean macCheckPassed = true;
+
+		if (! org.bouncycastle.util.Arrays.constantTimeAreEqual(expectedAuthTag, authTag)) {
+			// Thwart timing attacks by delaying exception until after decryption
+			macCheckPassed = false;
+		}
+
+		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText);
+
+		if (! macCheckPassed) {
+
+			throw new JOSEException("MAC check failed");
+		}
+
+		return plainText;
 	}
 
 

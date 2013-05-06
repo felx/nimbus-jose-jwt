@@ -24,7 +24,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2013-05-06)
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {
@@ -59,9 +59,9 @@ public final class JWEAlgorithm extends Algorithm {
 
 
 	/**
-	 * Direct use of a shared symmetric key as the Content Master Key (CMK)
-	 * for the block encryption step (rather than using the symmetric key to
-	 * wrap the CMK) (recommended).
+	 * Direct use of a shared symmetric key as the Content Encryption Key 
+	 * (CEK) for the block encryption step (rather than using the symmetric
+	 * key to wrap the CEK) (recommended).
 	 */
 	public static final JWEAlgorithm DIR = new JWEAlgorithm("dir", Requirement.RECOMMENDED);
 
@@ -70,8 +70,8 @@ public final class JWEAlgorithm extends Algorithm {
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static (RFC 6090) key 
 	 * agreement using the Concat KDF, as defined in section 5.8.1 of
 	 * NIST.800-56A, with the agreed-upon key being used directly as the 
-	 * Content Master Key (CMK) (rather than being used to wrap the CMK) 
-	 * (recommended).
+	 * Content Encryption Key (CEK) (rather than being used to wrap the 
+	 * CEK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES = new JWEAlgorithm("ECDH-ES", Requirement.RECOMMENDED);
 
@@ -79,8 +79,8 @@ public final class JWEAlgorithm extends Algorithm {
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
-	 * Master Key (CMK) with the "A128KW" function (rather than being used
-	 * directly as the CMK) (recommended).
+	 * Encryption Key (CEK) with the "A128KW" function (rather than being 
+	 * used directly as the CEK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A128KW = new JWEAlgorithm("ECDH-ES+A128KW", Requirement.RECOMMENDED);
 
@@ -88,8 +88,8 @@ public final class JWEAlgorithm extends Algorithm {
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
-	 * Master Key (CMK) with the "A256KW" function (rather than being used
-	 * directly as the CMK) (recommended).
+	 * Encryption Key (CEK) with the "A256KW" function (rather than being 
+	 * used directly as the CEK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A256KW = new JWEAlgorithm("ECDH-ES+A256KW", Requirement.RECOMMENDED);
 

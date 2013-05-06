@@ -14,25 +14,25 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Static methods for AES encryption and decryption. Uses the BouncyCastle.org 
- * provider.
+ * AES encryption, decryption and key generation methods. Uses the 
+ * BouncyCastle.org provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-06)
  */
 class AES {
 
 
 	/**
-	 * Generates an AES Content Master Key (CMK) of the specified length.
+	 * Generates an AES key of the specified length.
 	 *
 	 * @param keyBitLength The key length, in bits.
 	 *
-	 * @return The AES CMK.
+	 * @return The AES key.
 	 *
-	 * @throws JOSEException If AES key generation failed.
+	 * @throws JOSEException If an AES key couldn't be generated.
 	 */
-	public static SecretKey generateAESCMK(final int keyBitLength) 
+	public static SecretKey generateKey(final int keyBitLength) 
 		throws JOSEException {
 
 		KeyGenerator keygen;
@@ -60,8 +60,8 @@ class AES {
 	 *
 	 * @return The AES cipher.
 	 */
-	public static AESEngine createAESCipher(final SecretKey secretKey, 
-		                                final boolean forEncryption) {
+	public static AESEngine createCipher(final SecretKey secretKey, 
+		                             final boolean forEncryption) {
 
 		AESEngine cipher = new AESEngine();
 

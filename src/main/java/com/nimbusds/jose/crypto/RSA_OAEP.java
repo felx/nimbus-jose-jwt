@@ -17,29 +17,27 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Static methods for RSAES OAEP Content Master Key (CMK) encryption and
+ * RSAES OAEP methods for Content Encryption Key (CEK) encryption and 
  * decryption. Uses the BouncyCastle.org provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-24)
+ * @version $version$ (2013-05-06)
  */
 class RSA_OAEP {
 
 
 	/**
-	 * Encrypts the specified Content Master Key (CMK).
+	 * Encrypts the specified Content Encryption Key (CEK).
 	 *
-	 * @param publicKey        The public RSA key. Must not be 
-	 *                         {@code null}.
-	 * @param contentMasterKey The Content Master Key (CMK). Must not be
-	 *                         {@code null}.
+	 * @param pub The public RSA key. Must not be {@code null}.
+	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
+	 *            {@code null}.
 	 *
-	 * @return The encrypted Content Master Key (CMK).
+	 * @return The encrypted Content Encryption Key (CEK).
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static byte[] encryptCMK(final RSAPublicKey publicKey,
-		                        final SecretKey contentMasterKey)
+	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek)
 		throws JOSEException {
 
 		try {
@@ -48,57 +46,57 @@ class RSA_OAEP {
 			// JCA identifier RSA/ECB/OAEPWithSHA-1AndMGF1Padding ?
 			OAEPEncoding cipher = new OAEPEncoding(engine);
 
-			BigInteger mod = publicKey.getModulus();
-			BigInteger exp = publicKey.getPublicExponent();
+			BigInteger mod = pub.getModulus();
+			BigInteger exp = pub.getPublicExponent();
 			RSAKeyParameters keyParams = new RSAKeyParameters(false, mod, exp);
 			cipher.init(true, keyParams);
 
 			int inputBlockSize = cipher.getInputBlockSize();
 			int outputBlockSize = cipher.getOutputBlockSize();
 
-			byte[] keyBytes = contentMasterKey.getEncoded();
+			byte[] keyBytes = cek.getEncoded();
 
 			return cipher.processBlock(keyBytes, 0, keyBytes.length);
 
 		} catch (Exception e) {
 
 			// org.bouncycastle.crypto.InvalidCipherTextException
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Couldn't encrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
 
 	
 	/**
-	 * Decrypts the Content Master Key (CMK).
+	 * Decrypts the specified encrypted Content Encryption Key (CEK).
 	 *
-	 * @param privateKey   The private RSA key. Must not be {@code null}.
-	 * @param encryptedCMK The encrypted Content Master Key (CMK). Must not
-	 *                     be {@code null}.
+	 * @param priv         The private RSA key. Must not be {@code null}.
+	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
+	 *                     decrypt. Must not be {@code null}.
 	 *
-	 * @return The decrypted Content Master Key (CMK).
+	 * @return The decrypted Content Encryption Key (CEK).
 	 *
-	 * @throws JOSEException If derivation failed.
+	 * @throws JOSEException If decryption failed.
 	 */
-	public static SecretKey decryptCMK(final RSAPrivateKey privateKey, 
-		                           final byte[] encryptedCMK)
+	public static SecretKey decryptCEK(final RSAPrivateKey priv, 
+		                           final byte[] encryptedCEK)
 		throws JOSEException {
 
 		try {
 			RSAEngine engine = new RSAEngine();
 			OAEPEncoding cipher = new OAEPEncoding(engine);
 			
-			BigInteger mod = privateKey.getModulus();
-			BigInteger exp = privateKey.getPrivateExponent();
+			BigInteger mod = priv.getModulus();
+			BigInteger exp = priv.getPrivateExponent();
 
 			RSAKeyParameters keyParams = new RSAKeyParameters(true, mod, exp);
 			cipher.init(false, keyParams);
-			byte[] secretKeyBytes = cipher.processBlock(encryptedCMK, 0, encryptedCMK.length);
+			byte[] secretKeyBytes = cipher.processBlock(encryptedCEK, 0, encryptedCEK.length);
 			return new SecretKeySpec(secretKeyBytes, "AES");
 
 		} catch (Exception e) {
 
 			// org.bouncycastle.crypto.InvalidCipherTextException
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
 

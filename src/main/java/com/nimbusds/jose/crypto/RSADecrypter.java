@@ -1,12 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.io.UnsupportedEncodingException;
 import java.security.interfaces.RSAPrivateKey;
 
 import javax.crypto.SecretKey;
-
-import org.bouncycastle.util.Arrays;
 
 import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
@@ -16,6 +13,7 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeaderFilter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -46,7 +44,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version $version$ (2013-05-06)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -105,7 +103,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,
-		              final Base64URL integrityValue) 
+		              final Base64URL authTag) 
 		throws JOSEException {
 
 		// Validate required JWE parts
@@ -119,103 +117,62 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
-		if (integrityValue == null) {
+		if (authTag == null) {
 
-			throw new JOSEException("The integrity value must not be null");
+			throw new JOSEException("The authentication tag must not be null");
 		}
 		
 
-		// Derive the encryption AES key
+		// Derive the content encryption key
 		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
 
-		SecretKey cmk = null;
+		SecretKey cek = null;
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			int keyLength = readOnlyJWEHeader.getEncryptionMethod().cmkBitLength();
+			int keyLength = readOnlyJWEHeader.getEncryptionMethod().cekBitLength();
 
-			SecretKey randomCMK = AES.generateAESCMK(keyLength);
+			SecretKey randomCEK = AES.generateKey(keyLength);
 
 			try {
-				cmk = RSA1_5.decryptCMK(privateKey, encryptedKey.decode(), keyLength);	
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength);	
 			
 			} catch (Exception e) {
 
-				// Protect against MMA attack by generating random CMK on failure, 
+				// Protect against MMA attack by generating random CEK on failure, 
 				// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
-				cmk = randomCMK;
+				cek = randomCEK;
 			}
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			cmk = RSA_OAEP.decryptCMK(privateKey, encryptedKey.decode());
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode());
 
 		} else {
 		
-			throw new JOSEException("Unsupported algorithm, must be RSA1_5 or RSA_OAEP");
+			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA_OAEP");
 	    	}
 
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
 	    	byte[] plainText;
 
-	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-	    		byte[] epu = null;
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
 
-			if (readOnlyJWEHeader.getEncryptionPartyUInfo() != null) {
+			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
 
-				epu = readOnlyJWEHeader.getEncryptionPartyUInfo().decode();
-			}
+		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] epv = null;
-			
-			if (readOnlyJWEHeader.getEncryptionPartyVInfo() != null) {
+			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
 
-				epv = readOnlyJWEHeader.getEncryptionPartyVInfo().decode();
-			}
+			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), authData, authTag.decode());
 
-	    		SecretKey cek = ConcatKDF.generateCEK(cmk, enc, epu, epv);
+		} else {
 
-			plainText = AESCBC.decrypt(cek, iv.decode(), cipherText.decode());
-
-			SecretKey cik = ConcatKDF.generateCIK(cmk, enc, epu, epv);
-
-			String macInput = readOnlyJWEHeader.toBase64URL().toString() + "." +
-			                  encryptedKey.toString() + "." +
-			                  iv.toString() + "." +
-			                  cipherText.toString();
-
-			byte[] mac = HMAC.compute(cik, macInput.getBytes());
-
-			if (! Arrays.constantTimeAreEqual(integrityValue.decode(), mac)) {
-
-				throw new JOSEException("HMAC integrity check failed");
-			}
-
-	    	} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)    ) {
-
-	    		// Compose the additional authenticated data
-			String authDataString = readOnlyJWEHeader.toBase64URL().toString() + "." +
-						encryptedKey.toString() + "." +
-						iv.toString();
-
-			byte[] authData = null;
-
-			try {
-				authData = authDataString.getBytes("UTF-8");
-
-			} catch (UnsupportedEncodingException e) {
-
-				throw new JOSEException(e.getMessage(), e);
-			}
-
-			plainText = AESGCM.decrypt(cmk, iv.decode(), cipherText.decode(), authData, integrityValue.decode());
-
-	    	} else {
-
-	    		throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
-	    	}
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
+		}
 
 
 	    	// Apply decompression if requested

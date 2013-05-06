@@ -26,10 +26,21 @@
  *
  * <p>Provides {@link com.nimbusds.jose.JWEEncrypter encrypters} and 
  * {@link com.nimbusds.jose.JWEDecrypter decrypters} for the following JSON
- * Web Signature (JWS) algorithms:
+ * Web Encryption (JWE) algorithms:
  *
  * <ul>
- *     <li>TBD
+ *     <li>For RSAES-PKCS1-V1_5 and RSA OAEP with A128CBC-HS256, A256CBC-HS512, 
+ *         A128GCM and A256GCM encryption:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.RSAEncrypter}
+ *             <li>{@link com.nimbusds.jose.crypto.RSADecrypter}
+ *         </ul>
+ *     <li>For direct A128CBC-HS256, A256CBC-HS512, A128GCM and A256GCM
+ *         encryption (using a shared symmetric key): 
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.DirectEncrypter}
+ *             <li>{@link com.nimbusds.jose.crypto.DirectDecrypter}
+ *         </ul>
  * </ul>
  *
  * @author Vladimir Dzhuvinov

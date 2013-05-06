@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
