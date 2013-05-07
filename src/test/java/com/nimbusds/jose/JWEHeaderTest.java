@@ -52,8 +52,10 @@ public class JWEHeaderTest extends TestCase {
 		throws Exception {
 
 		// Example header from JWE spec
-		// {"alg":"RSA1_5","enc":"A128CBC+HS256"}
+		// {"alg":"RSA1_5","enc":"A128CBC-HS256"}
 		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0");
+
+		System.out.println("JWE: " + in.decodeToString());
 
 		JWEHeader h = JWEHeader.parse(in);
 
