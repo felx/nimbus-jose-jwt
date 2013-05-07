@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-06)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -51,7 +51,7 @@ public class JWEHeaderTest extends TestCase {
 
 		// Example header from JWE spec
 		// {"alg":"RSA1_5","enc":"A128CBC+HS256"}
-		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0");
+		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0");
 
 		JWEHeader h = JWEHeader.parse(in);
 
@@ -101,8 +101,6 @@ public class JWEHeaderTest extends TestCase {
 
 		h.setAgreementPartyUInfo(new Base64URL("abc"));
 		h.setAgreementPartyVInfo(new Base64URL("def"));
-		h.setEncryptionPartyUInfo(new Base64URL("ghi"));
-		h.setEncryptionPartyVInfo(new Base64URL("jkl"));
 
 
 		String s = h.toString();
@@ -136,8 +134,6 @@ public class JWEHeaderTest extends TestCase {
 
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
 		assertEquals(new Base64URL("def"), h.getAgreementPartyVInfo());
-		assertEquals(new Base64URL("ghi"), h.getEncryptionPartyUInfo());
-		assertEquals(new Base64URL("jkl"), h.getEncryptionPartyVInfo());
 
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
@@ -151,8 +147,6 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5c"));
 		assertTrue(h.getIncludedParameters().contains("apu"));
 		assertTrue(h.getIncludedParameters().contains("apv"));
-		assertTrue(h.getIncludedParameters().contains("epu"));
-		assertTrue(h.getIncludedParameters().contains("epv"));
-		assertEquals(14, h.getIncludedParameters().size());
+		assertEquals(12, h.getIncludedParameters().size());
 	}
 }

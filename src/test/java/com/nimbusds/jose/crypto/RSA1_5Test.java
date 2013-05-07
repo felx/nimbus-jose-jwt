@@ -25,7 +25,7 @@ import com.nimbusds.jose.Payload;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-05-07)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -71,7 +71,7 @@ public class RSA1_5Test extends TestCase {
 		(byte) 75, (byte) 55, (byte)230, (byte)132, (byte)  3, (byte) 13, (byte)239, (byte) 71  };
 
 
-	private static final byte[] exp= { 1, 0, 1 };
+	private static final byte[] exp = { 1, 0, 1 };
 
 
 	private static final byte[] modPriv = { 
@@ -277,19 +277,18 @@ public class RSA1_5Test extends TestCase {
 	public void testExampleDecrypt()
 		throws Exception {
 
-		// From JWE spec draft-ietf-jose-json-web-encryption-08#appendix-A.2
+		// From JWE spec draft-ietf-jose-json-web-encryption-10, appendix-A.2
 
-		String jweString = 
-			"eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0." +
-			"ZmnlqWgjXyqwjr7cXHys8F79anIUI6J2UWdAyRQEcGBU-KPHsePM910_RoTDGu1I" +
-			"W40Dn0dvcdVEjpJcPPNIbzWcMxDi131Ejeg-b8ViW5YX5oRdYdiR4gMSDDB3mbkI" +
-			"nMNUFT-PK5CuZRnHB2rUK5fhPuF6XFqLLZCG5Q_rJm6Evex-XLcNQAJNa1-6CIU1" +
-			"2Wj3mPExxw9vbnsQDU7B4BfmhdyiflLA7Ae5ZGoVRl3A__yLPXxRjHFhpOeDp_ad" +
-			"x8NyejF5cz9yDKULugNsDMdlHeJQOMGVLYaSZt3KP6aWNSqFA1PHDg-10ceuTEtq" +
-			"_vPE4-Gtev4N4K4Eudlj4Q." +
+		String jweString = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0." +
+			"nJa_uE2D0wlKz-OcwSbKFzj302xYSI-RLBM6hbVGmP4axtJQPA9S0po3s3NMkmOm" +
+			"kkawnfwPNjpc0mc3z79cuQWkQPFQo-mDxmogz8dxBcheaTUg3ZvpbGCXxZjDYENR" +
+			"WiZ5M9BiLy09BIF5mHp85QL6XED1JEZMOh-1uT1lqPDcDD79qWtrCfEJmNmfsx5f" +
+			"cB2PfAcVtQ0t_YmOXx5_Gu0it1nILKXLR2Ynf9mfLhEcC5LebpWyEHW6WzQ4iH9S" +
+			"IcIupPV1iKCzmJcPrDBJ5Fc_KMBcXBinaS__wftNywaGgfi_NSsx24LxtK6fIkej" +
+			"RlMBmCfxv0Tg8CtxpURigg." +
 			"AxY8DCtDaGlsbGljb3RoZQ." +
-			"Rxsjg6PIExcmGSF7LnSEkDqWIKfAw1wZz2XpabV5PwQsolKwEauWYZNE9Q1hZJEZ." +
-			"8LXqMd0JLGsxMaB5uoNaMpg7uUW_p40RlaZHCwMIyzk";
+			"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY." +
+			"fY2U_Hx5VcfXmipEldHhMA";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 
@@ -303,7 +302,7 @@ public class RSA1_5Test extends TestCase {
 
 		Payload payload = jweObject.getPayload();
 
-		assertEquals("No matter where you go, there you are.", payload.toString());
+		assertEquals("Live long and prosper.", payload.toString());
 	}
 
 

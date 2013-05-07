@@ -24,7 +24,7 @@ import com.nimbusds.jose.Payload;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-22)
+ * @version $version$ (2013-05-06)
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -138,7 +138,7 @@ public class RSA_OAEPTest extends TestCase {
 
 
 	public void testWithA128GCM()
-			throws Exception {
+		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
@@ -170,7 +170,7 @@ public class RSA_OAEPTest extends TestCase {
 
 
 	public void testWithA256GCM()
-			throws Exception {
+		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");
@@ -204,21 +204,21 @@ public class RSA_OAEPTest extends TestCase {
 
 	
 	public void testDecryptWith256GCM()
-			throws Exception {
+		throws Exception {
 
 		// JWE object from spec, appendix 1
 
-		String jweString = 
-				"eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ." +
-						"M2XxpbORKezKSzzQL_95-GjiudRBTqn_omS8z9xgoRb7L0Jw5UsEbxmtyHn2T71m" +
-						"rZLkjg4Mp8gbhYoltPkEOHvAopz25-vZ8C2e1cOaAo5WPcbSIuFcB4DjBOM3t0UA" +
-						"O6JHkWLuAEYoe58lcxIQneyKdaYSLbV9cKqoUoFQpvKWYRHZbfszIyfsa18rmgTj" +
-						"zrtLDTPnc09DSJE24aQ8w3i8RXEDthW9T1J6LsTH_vwHdwUgkI-tC2PNeGrnM-dN" +
-						"SfzF3Y7-lwcGy0FsdXkPXytvDV7y4pZeeUiQ-0VdibIN2AjjfW60nfrPuOjepMFG" +
-						"6BBBbR37pHcyzext9epOAQ." +
-						"48V1_ALb6US04U3b." +
-						"_e21tGGhac_peEFkLXr2dMPUZiUkrw." +
-						"7V5ZDko0v_mf2PAc4JMiUg";
+		String jweString = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ." +
+			"ApfOLCaDbqs_JXPYy2I937v_xmrzj-Iss1mG6NAHmeJViM6j2l0MHvfseIdHVyU2" +
+			"BIoGVu9ohvkkWiRq5DL2jYZTPA9TAdwq3FUIVyoH-Pedf6elHIVFi2KGDEspYMtQ" +
+			"ARMMSBcS7pslx6flh1Cfh3GBKysztVMEhZ_maFkm4PYVCsJsvq6Ct3fg2CJPOs0X" +
+			"1DHuxZKoIGIqcbeK4XEO5a0h5TAuJObKdfO0dKwfNSSbpu5sFrpRFwV2FTTYoqF4" +
+			"zI46N9-_hMIznlEpftRXhScEJuZ9HG8C8CHB1WRZ_J48PleqdhF4o7fB5J1wFqUX" +
+			"BtbtuGJ_A2Xe6AEhrlzCOw." +
+			"48V1_ALb6US04U3b." +
+			"5eym8TW_c8SuK0ltJ3rpYIzOeDQz7TALvtu6UG9oMo4vpzs9tX_EFShS8iB7j6ji" +
+			"SdiwkIr3ajwQzaBtQD_A." +
+			"ghEgxninkHEAMp4xZtB2mA";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 
@@ -235,6 +235,6 @@ public class RSA_OAEPTest extends TestCase {
 
 		Payload payload = jweObject.getPayload();
 
-		assertEquals("Live long and prosper.", payload.toString());
+		assertEquals("The true sign of intelligence is not knowledge but imagination.", payload.toString());
 	}
 }
