@@ -33,6 +33,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>kid
  *     <li>typ
  *     <li>cty
+ *     <li>crit
  *     <li>apu
  *     <li>apv
  * </ul>
@@ -45,12 +46,12 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <pre>
  * { 
  *   "alg" : "RSA1_5",
- *   "enc" : "A128CBC+HS256"
+ *   "enc" : "A128CBC-HS256"
  * }
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -79,6 +80,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		p.add("kid");
 		p.add("typ");
 		p.add("cty");
+		p.add("crit");
 		p.add("apu");
 		p.add("apv");
 
@@ -276,6 +278,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			includedParameters.add("cty");
 		}
 
+		if (getCriticalHeaders() != null && ! getCriticalHeaders().isEmpty()) {
+			includedParameters.add("crit");
+		}
+
 		if (getJWKURL() != null) {
 			includedParameters.add("jku");
 		}
@@ -400,6 +406,8 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("cty")) {
 				h.setContentType(JSONObjectUtils.getString(json, name));
+			} else if (name.equals("crit")) {
+				h.setCriticalHeaders(new HashSet<String>(JSONObjectUtils.getStringList(json, name)));
 			} else if (name.equals("jku")) {
 				h.setJWKURL(JSONObjectUtils.getURL(json, name));
 			} else if (name.equals("jwk")) {

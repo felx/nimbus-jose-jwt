@@ -29,10 +29,11 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>kid
  *     <li>typ
  *     <li>cty
+ *     <li>crit
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-22)
+ * @version $version$ (2013-05-07)
  */
 public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
@@ -244,7 +245,7 @@ public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEH
 	 *                        parsed.
 	 */
 	protected static Base64[] parseX509CertChain(final JSONArray jsonArray)
-			throws ParseException {
+		throws ParseException {
 
 		Base64[] chain = new Base64[jsonArray.size()];
 

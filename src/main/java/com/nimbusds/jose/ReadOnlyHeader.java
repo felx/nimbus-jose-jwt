@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-07)
  */
 public interface ReadOnlyHeader {
 
@@ -40,6 +40,16 @@ public interface ReadOnlyHeader {
 	 * @return The content type parameter, {@code null} if not specified.
 	 */
 	public String getContentType();
+
+
+
+	/**
+	 * Gets the critical headers ({@code crit}) parameter.
+	 *
+	 * @return The names of the critical header parameters, empty set or
+	 *         {@code null} if none.
+	 */
+	public Set<String> getCriticalHeaders();
 
 
 	/**

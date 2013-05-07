@@ -2,6 +2,8 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -12,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-07)
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -52,6 +54,37 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
 		assertNull(h.getContentType());
+	}
+
+
+	public void testCrit()
+		throws Exception {
+
+		JWSHeader h = new JWSHeader(JWSAlgorithm.RS256);
+
+		Set<String> crit = new HashSet<String>();
+		crit.add("iat");
+		crit.add("exp");
+		crit.add("nbf");
+
+		assertNull(h.getCriticalHeaders());
+
+		h.setCriticalHeaders(crit);
+
+		assertEquals(3, h.getCriticalHeaders().size());
+
+		Base64URL b64url = h.toBase64URL();
+
+		// Parse back
+		h = JWSHeader.parse(b64url);
+		
+		crit = h.getCriticalHeaders();
+
+		assertTrue(crit.contains("iat"));
+		assertTrue(crit.contains("exp"));
+		assertTrue(crit.contains("nbf"));
+
+		assertEquals(3, crit.size());
 	}
 }
 

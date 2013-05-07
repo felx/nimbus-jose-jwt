@@ -29,6 +29,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>kid
  *     <li>typ
  *     <li>cty
+ *     <li>crit
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
@@ -44,7 +45,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-07)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -70,6 +71,7 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 		p.add("kid");
 		p.add("typ");
 		p.add("cty");
+		p.add("crit");
 
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -135,6 +137,10 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			includedParameters.add("cty");
 		}
 
+		if (getCriticalHeaders() != null && ! getCriticalHeaders().isEmpty()) {
+			includedParameters.add("crit");
+		}
+
 		if (getJWKURL() != null) {
 			includedParameters.add("jku");
 		}
@@ -194,7 +200,9 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			} else if (name.equals("typ")) {
 				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("cty")) {
-				h.setContentType(JSONObjectUtils.getString(json, name));
+				h.setContentType(JSONObjectUtils.getString(json, name)); 
+			} else if (name.equals("crit")) {
+				h.setCriticalHeaders(new HashSet<String>(JSONObjectUtils.getStringList(json, name)));
 			} else if (name.equals("jku")) {
 				h.setJWKURL(JSONObjectUtils.getURL(json, name));
 			} else if (name.equals("jwk")) {

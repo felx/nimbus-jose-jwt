@@ -3,6 +3,8 @@ package com.nimbusds.jose;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -16,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -148,5 +150,36 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("apu"));
 		assertTrue(h.getIncludedParameters().contains("apv"));
 		assertEquals(12, h.getIncludedParameters().size());
+	}
+
+
+	public void testCrit()
+		throws Exception {
+
+		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+
+		Set<String> crit = new HashSet<String>();
+		crit.add("iat");
+		crit.add("exp");
+		crit.add("nbf");
+
+		assertNull(h.getCriticalHeaders());
+
+		h.setCriticalHeaders(crit);
+
+		assertEquals(3, h.getCriticalHeaders().size());
+
+		Base64URL b64url = h.toBase64URL();
+
+		// Parse back
+		h = JWEHeader.parse(b64url);
+		
+		crit = h.getCriticalHeaders();
+
+		assertTrue(crit.contains("iat"));
+		assertTrue(crit.contains("exp"));
+		assertTrue(crit.contains("nbf"));
+
+		assertEquals(3, crit.size());
 	}
 }

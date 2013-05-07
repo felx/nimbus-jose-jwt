@@ -2,9 +2,11 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import net.minidev.json.JSONObject;
 
@@ -20,7 +22,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-15)
+ * @version $version$ (2013-05-07)
  */
 public abstract class Header implements ReadOnlyHeader {
 
@@ -41,6 +43,12 @@ public abstract class Header implements ReadOnlyHeader {
 	 * The content type ({@code cty}) parameter.
 	 */
 	private String cty;
+
+
+	/**
+	 * The critical headers ({@code crit}) parameter.
+	 */
+	private Set<String> crit;
 
 
 	/**
@@ -105,6 +113,26 @@ public abstract class Header implements ReadOnlyHeader {
 	public void setContentType(final String cty) {
 
 		this.cty = cty;
+	}
+
+
+	@Override
+	public Set<String> getCriticalHeaders() {
+
+		return crit;
+	}
+
+
+
+	/**
+	 * Sets the critical headers ({@code crit}) parameter.
+	 *
+	 * @param crit The names of the critical header parameters, empty set 
+	 *             {@code null} if none.
+	 */
+	public void setCriticalHeaders(Set<String> crit) {
+
+		this.crit = crit;
 	}
 
 
@@ -183,6 +211,10 @@ public abstract class Header implements ReadOnlyHeader {
 
 		if (cty != null) {
 			o.put("cty", cty);
+		}
+
+		if (crit != null && ! crit.isEmpty()) {
+			o.put("crit", new ArrayList<String>(crit));
 		}
 
 		return o;
