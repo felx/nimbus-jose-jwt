@@ -127,21 +127,19 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
+		// Compose the AAD
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+
+		// Decrypt the cipher text according to the JWE enc
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
 	    	byte[] plainText;
 
 	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-	    		// Compose the additional authenticated data, encrypted key omitted
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
-
-			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
+	    		plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
-
-			// Compose the additional authenticated data, encrypted key omitted
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".." + iv);
 
 			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 

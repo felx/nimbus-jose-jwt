@@ -130,6 +130,10 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 		// Apply compression if instructed
 		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
+
+
+		// Compose the AAD
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
 		
 
 		// Encrypt the plain text according to the JWE enc
@@ -140,18 +144,12 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 			iv = AESCBC.generateIV(randomGen);
 
-			// Compose the additional authenticated data, encrypted key omitted
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
-
 			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			// Compose the additional authenticated data, encrypted key omitted
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".." + Base64URL.encode(iv));
-			
 			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad);
 
 		} else {

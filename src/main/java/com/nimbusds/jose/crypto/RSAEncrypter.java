@@ -126,6 +126,9 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		// Apply compression if instructed
 		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
 
+		// Compose the AAD
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;
 		AuthenticatedCipherText authCipherText;
@@ -134,15 +137,11 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
-
 			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
-
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + Base64URL.encode(iv));
 
 			authCipherText = AESGCM.encrypt(cek, iv, plainText, aad);
 

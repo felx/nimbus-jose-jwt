@@ -153,19 +153,19 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA_OAEP");
 	    	}
 
+	    	// Compose the AAD
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+
+	    	// Decrypt the cipher text according to the JWE enc
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
 	    	byte[] plainText;
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
-
 			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
-
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
 
 			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
 
