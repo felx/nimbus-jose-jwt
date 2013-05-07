@@ -165,9 +165,9 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
 
-			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), authData, authTag.decode());
+			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else {
 

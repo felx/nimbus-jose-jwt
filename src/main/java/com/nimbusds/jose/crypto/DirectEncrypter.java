@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -140,7 +140,8 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 			iv = AESCBC.generateIV(randomGen);
 
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+			// Compose the additional authenticated data, encrypted key omitted
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
 
 			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad);
 
@@ -148,12 +149,10 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 			iv = AESGCM.generateIV(randomGen);
 
-			// Compose the additional authenticated data
-			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." +
-			                                          /* encryptedKey omitted */ "." +
-			                                          Base64URL.encode(iv));
+			// Compose the additional authenticated data, encrypted key omitted
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".." + Base64URL.encode(iv));
 			
-			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, authData);
+			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad);
 
 		} else {
 

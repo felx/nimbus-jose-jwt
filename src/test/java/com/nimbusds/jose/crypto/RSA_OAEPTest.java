@@ -24,7 +24,7 @@ import com.nimbusds.jose.Payload;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 public class RSA_OAEPTest extends TestCase {
 

@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.StringUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  *
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
@@ -133,15 +133,17 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+	    		// Compose the additional authenticated data, encrypted key omitted
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
 
 			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			byte[] authData = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey + "." + iv);
+			// Compose the additional authenticated data, encrypted key omitted
+			byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".." + iv);
 
-			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), authData, authTag.decode());
+			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else {
 
