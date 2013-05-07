@@ -162,7 +162,14 @@ version 2.14 (2013-04-16)
 	  CRC fields.
 
 version 2.15 (2013-05-04)
+	* Adds support for "crit" header parameter introduced in draft 09.
 	* Deprecates JWSObject.getSignableContent() in favour of
 	  JWSObject.getSigningInput() to reflect change in JWS terminology in
 	  draft 09.
+	* Deprecates JWEObject.getIntegrityValue() in favour of
+	  JWEObject.getAuthenticationTag() to reflect change in JWE terminology
+	  in draft 09.
+	* Updates authenticated AES/CBC encryption to new AES_CBC_HMAC_SHA2
+	  method (draft-mcgrew-aead-aes-cbc-hmac-sha2-01).
 	* Adds MIME type constants for the plain, JWS and JWE objects.
+	* Refactors crypto package classes.

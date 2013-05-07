@@ -13,10 +13,9 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-06
+ *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-07
  * </ul>
  *
- * @author Vladimir Dzhuvinov
  * @version $version$ ($version-date$)
  */
 package com.nimbusds.jwt;

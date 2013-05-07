@@ -11,7 +11,6 @@
  *     <li>http://tools.ietf.org/wg/jose/
  * </ul>
  *
- * @author Vladimir Dzhuvinov
  * @version $version$ ($version-date$)
  */
 package com.nimbusds.jose.jwk;
