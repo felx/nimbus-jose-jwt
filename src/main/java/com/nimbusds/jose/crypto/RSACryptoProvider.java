@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -31,7 +30,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 

@@ -4,8 +4,6 @@ package com.nimbusds.jose.crypto;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.Immutable;
-
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
@@ -23,7 +21,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-07)
  */
 class AESGCM {
 
