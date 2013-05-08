@@ -171,5 +171,7 @@ version 2.15 (2013-05-07)
 	  in draft 09.
 	* Updates authenticated AES/CBC encryption to new AES_CBC_HMAC_SHA2
 	  method (draft-mcgrew-aead-aes-cbc-hmac-sha2-01).
+	* Updates AES/GCM encryption by removing IV from additional 
+	  authenticated data (AAD) computation.
 	* Adds MIME type constants for the plain, JWS and JWE objects.
 	* Refactors crypto package classes.
