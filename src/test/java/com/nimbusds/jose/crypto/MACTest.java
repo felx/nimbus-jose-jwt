@@ -25,13 +25,13 @@ public class MACTest extends TestCase {
 	private static final byte[] sharedSecret = 
 
 		{ (byte)   3, (byte)  35, (byte)  53, (byte)  75, (byte)  43, (byte)  15, (byte) 165, (byte) 188, 
-		(byte) 131, (byte) 126, (byte)   6, (byte) 101, (byte) 119, (byte) 123, (byte) 166, (byte) 143, 
-		(byte)  90, (byte) 179, (byte)  40, (byte) 230, (byte) 240, (byte)  84, (byte) 201, (byte)  40, 
-		(byte) 169, (byte)  15, (byte) 132, (byte) 178, (byte) 210, (byte)  80, (byte)  46, (byte) 191, 
-		(byte) 211, (byte) 251, (byte)  90, (byte) 146, (byte) 210, (byte)   6, (byte)  71, (byte) 239, 
-		(byte) 150, (byte) 138, (byte) 180, (byte) 195, (byte) 119, (byte)  98, (byte)  61, (byte)  34, 
-		(byte)  61, (byte)  46, (byte)  33, (byte) 114, (byte)   5, (byte)  46, (byte)  79, (byte)   8, 
-		(byte) 192, (byte) 205, (byte) 154, (byte) 245, (byte) 103, (byte) 208, (byte) 128, (byte) 163  };
+		  (byte) 131, (byte) 126, (byte)   6, (byte) 101, (byte) 119, (byte) 123, (byte) 166, (byte) 143, 
+		  (byte)  90, (byte) 179, (byte)  40, (byte) 230, (byte) 240, (byte)  84, (byte) 201, (byte)  40, 
+		  (byte) 169, (byte)  15, (byte) 132, (byte) 178, (byte) 210, (byte)  80, (byte)  46, (byte) 191, 
+		  (byte) 211, (byte) 251, (byte)  90, (byte) 146, (byte) 210, (byte)   6, (byte)  71, (byte) 239, 
+		  (byte) 150, (byte) 138, (byte) 180, (byte) 195, (byte) 119, (byte)  98, (byte)  61, (byte)  34, 
+		  (byte)  61, (byte)  46, (byte)  33, (byte) 114, (byte)   5, (byte)  46, (byte)  79, (byte)   8, 
+		  (byte) 192, (byte) 205, (byte) 154, (byte) 245, (byte) 103, (byte) 208, (byte) 128, (byte) 163  };
 
 
 	private static final Base64URL b64header = new Base64URL("eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9");
@@ -52,7 +52,7 @@ public class MACTest extends TestCase {
 
 
 	public void testSignAndVerify()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
@@ -92,7 +92,7 @@ public class MACTest extends TestCase {
 
 
 	public void testSignWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
@@ -105,7 +105,7 @@ public class MACTest extends TestCase {
 
 
 	public void testVerifyWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
@@ -118,7 +118,7 @@ public class MACTest extends TestCase {
 
 
 	public void testParseAndVerify()
-			throws Exception {
+		throws Exception {
 
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
 
