@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-16)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -44,7 +44,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	/**
 	 * Random byte generator.
 	 */
-	private SecureRandom randomGen;
+	private static SecureRandom randomGen;
 
 
 	/**
@@ -82,7 +82,10 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 		super(key);
 
-		initSecureRandom();	
+		if (randomGen == null) {
+
+			initSecureRandom();
+		}
 	}
 
 

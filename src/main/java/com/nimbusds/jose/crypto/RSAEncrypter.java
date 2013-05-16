@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-16)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -48,13 +48,32 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	/**
 	 * Random byte generator.
 	 */
-	private final SecureRandom randomGen;
+	private static SecureRandom randomGen;
 
 
 	/**
 	 * The public RSA key.
 	 */
 	private final RSAPublicKey publicKey;
+
+
+	/**
+	 * Initialises the secure random byte generator.
+	 *
+	 * @throws JOSEException If the secure random byte generator couldn't 
+	 *                       be instantiated.
+	 */
+	private void initSecureRandom()
+		throws JOSEException {
+
+		try {
+			randomGen = SecureRandom.getInstance("SHA1PRNG");
+
+		} catch(NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+	}
 
 
 	/**
@@ -76,12 +95,9 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		this.publicKey = publicKey;
 
 
-		try {
-			randomGen = SecureRandom.getInstance("SHA1PRNG");
+		if (randomGen == null) {
 
-		} catch(NoSuchAlgorithmException e) {
-
-			throw new JOSEException(e.getMessage(), e);
+			initSecureRandom();
 		}
 	}
 
