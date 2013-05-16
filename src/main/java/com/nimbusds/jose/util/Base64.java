@@ -1,7 +1,7 @@
 package com.nimbusds.jose.util;
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.math.BigInteger;
 
 import net.jcip.annotations.Immutable;
@@ -14,7 +14,7 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-05-16)
  */
 @Immutable
 public class Base64 implements JSONAware {
@@ -23,7 +23,7 @@ public class Base64 implements JSONAware {
 	/**
 	 * UTF-8 is the required character set for all JOSE + JWT objects.
 	 */
-	public static final String CHARSET = "utf-8";
+	public static final Charset CHARSET = Charset.forName("UTF-8");
 
 
 	/**
@@ -42,6 +42,7 @@ public class Base64 implements JSONAware {
 	public Base64(final String base64) {
 
 		if (base64 == null) {
+
 			throw new IllegalArgumentException("The Base64 value must not be null");
 		}
 
@@ -80,14 +81,7 @@ public class Base64 implements JSONAware {
 	 */
 	public String decodeToString() {
 
-		try {
-			return new String(decode(), CHARSET);
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return "";
-		}
+		return new String(decode(), CHARSET);
 	}
 
 
@@ -182,13 +176,6 @@ public class Base64 implements JSONAware {
 	 */
 	public static Base64 encode(final String text) {
 
-		try {
-			return encode(text.getBytes(CHARSET));
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return null;
-		}
+		return encode(text.getBytes(CHARSET));
 	}
 }

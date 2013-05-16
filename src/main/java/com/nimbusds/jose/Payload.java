@@ -1,10 +1,11 @@
 package com.nimbusds.jose;
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -18,8 +19,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * <p>Non-initial views are created on demand to conserve resources.
  *
- * <p>UTF-8 is the character set for all string from / to byte array 
- * conversions.
+ * <p>UTF-8 is the character set for all conversions between strings and byte
+ * arrays.
  *
  * <p>Conversion relations:
  *
@@ -29,7 +30,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-05-16)
  */
 @Immutable
 public class Payload {
@@ -68,10 +69,10 @@ public class Payload {
 
 
 	/**
-	 * UTF-8 is the character set for all string from / to byte array
-	 * conversions.
+	 * UTF-8 is the character set for all conversions between strings and
+	 * byte arrays.
 	 */
-	private static final String CHARSET = "UTF-8";
+	private static final Charset CHARSET = Charset.forName("UTF-8");
 
 
 	/**
@@ -114,17 +115,11 @@ public class Payload {
 	private static String byteArrayToString(final byte[] bytes) {
 
 		if (bytes == null) {
+
 			return null;
 		}
 
-		try {
-			return new String(bytes, CHARSET);
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return null;
-		}
+		return new String(bytes, CHARSET);
 	}
 
 
@@ -138,17 +133,11 @@ public class Payload {
 	private static byte[] stringToByteArray(final String string) {
 
 		if (string == null) {
+
 			return null;
 		}
 
-		try {
-			return string.getBytes(CHARSET);
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return null;
-		}
+		return string.getBytes(CHARSET);
 	}
 
 
@@ -179,6 +168,7 @@ public class Payload {
 	public Payload(final String string) {
 
 		if (string == null) {
+
 			throw new IllegalArgumentException("The string must not be null");
 		}
 
@@ -197,6 +187,7 @@ public class Payload {
 	public Payload(final byte[] bytes) {
 
 		if (bytes == null) {
+
 			throw new IllegalArgumentException("The byte array must not be null");
 		}
 
@@ -215,6 +206,7 @@ public class Payload {
 	public Payload(final Base64URL base64URL) {
 
 		if (base64URL == null) {
+
 			throw new IllegalArgumentException("The Base64URL-encoded object must not be null");
 		}
 
@@ -244,6 +236,7 @@ public class Payload {
 	public JSONObject toJSONObject() {
 
 		if (jsonView != null) {
+
 			return jsonView;
 		}
 
@@ -257,8 +250,8 @@ public class Payload {
 
 				// jsonView remains null
 			}
-		}
-		else if (bytesView != null) {
+
+		} else if (bytesView != null) {
 
 			stringView = byteArrayToString(bytesView);
 
@@ -269,8 +262,8 @@ public class Payload {
 
 				// jsonView remains null
 			}
-		}
-		else if (base64URLView != null) {
+
+		} else if (base64URLView != null) {
 
 			stringView = base64URLView.decodeToString();
 
@@ -296,6 +289,7 @@ public class Payload {
 	public String toString() {
 
 		if (stringView != null) {
+
 			return stringView;
 		}
 
@@ -303,12 +297,12 @@ public class Payload {
 		if (jsonView != null) {
 
 			stringView = jsonView.toString();
-		}
-		else if (bytesView != null) {
+
+		} else if (bytesView != null) {
 
 			stringView = byteArrayToString(bytesView);
-		}
-		else if (base64URLView != null) {
+
+		} else if (base64URLView != null) {
 
 			stringView = base64URLView.decodeToString();
 		}
@@ -325,6 +319,7 @@ public class Payload {
 	public byte[] toBytes() {
 
 		if (bytesView != null) {
+			
 			return bytesView;
 		}
 
@@ -332,13 +327,13 @@ public class Payload {
 		if (stringView != null) {
 
 			bytesView = stringToByteArray(stringView);
-		}		
-		else if (jsonView != null) {
+
+		} else if (jsonView != null) {
 
 			stringView = jsonView.toString();
 			bytesView = stringToByteArray(stringView);
-		}
-		else if (base64URLView != null) {
+
+		} else if (base64URLView != null) {
 
 			bytesView = base64URLView.decode();
 		}
@@ -355,6 +350,7 @@ public class Payload {
 	public Base64URL toBase64URL() {
 
 		if (base64URLView != null) {
+
 			return base64URLView;
 		}
 
@@ -364,13 +360,11 @@ public class Payload {
 
 			base64URLView = Base64URL.encode(stringView);
 
-		}
-		else if (bytesView != null) {
+		} else if (bytesView != null) {
 
 			base64URLView = Base64URL.encode(bytesView);
 
-		}
-		else if (jsonView != null) {
+		} else if (jsonView != null) {
 
 			stringView = jsonView.toString();
 			base64URLView = Base64URL.encode(stringView);

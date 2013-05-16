@@ -1,8 +1,8 @@
 package com.nimbusds.jose.util;
 
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 
 import junit.framework.TestCase;
 
@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  * Tests the Base64URL class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-05-16)
  */
 public class Base64URLTest extends TestCase {
 
@@ -54,10 +54,9 @@ public class Base64URLTest extends TestCase {
 	}
 
 
-	public void testEncodeAndDecode() 
-		throws UnsupportedEncodingException {
+	public void testEncodeAndDecode() {
 
-		byte[] bytes = STRING.getBytes("utf-8");
+		byte[] bytes = STRING.getBytes(Charset.forName("utf-8"));
 
 		Base64URL b64url = Base64URL.encode(bytes);
 

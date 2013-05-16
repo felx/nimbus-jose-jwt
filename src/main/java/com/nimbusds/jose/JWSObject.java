@@ -1,7 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 
 import javax.mail.internet.ContentType;
@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-16)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -212,13 +212,7 @@ public class JWSObject extends JOSEObject {
 		sb.append('.');
 		sb.append(secondPart.toString());
 
-		try {
-			signingInput = sb.toString().getBytes("UTF-8");
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-		}
+		signingInput = sb.toString().getBytes(Charset.forName("UTF-8"));
 	}
 
 

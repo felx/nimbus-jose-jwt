@@ -1,7 +1,7 @@
 package com.nimbusds.jose.util;
 
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.math.BigInteger;
 
 import net.jcip.annotations.Immutable;
@@ -20,7 +20,7 @@ import net.minidev.json.JSONValue;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-20)
+ * @version $version$ (2013-05-16)
  */
 @Immutable
 public class Base64URL implements JSONAware {
@@ -81,14 +81,7 @@ public class Base64URL implements JSONAware {
 	 */
 	public String decodeToString() {
 
-		try {
-			return new String(decode(), Base64.CHARSET);
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return "";
-		}
+		return new String(decode(), Base64.CHARSET);
 	}
 
 
@@ -181,13 +174,6 @@ public class Base64URL implements JSONAware {
 	 */
 	public static Base64URL encode(final String text) {
 
-		try {
-			return encode(text.getBytes(Base64.CHARSET));
-
-		} catch (UnsupportedEncodingException e) {
-
-			// UTF-8 should always be supported
-			return null;
-		}
+		return encode(text.getBytes(Base64.CHARSET));
 	}
 }
