@@ -182,3 +182,4 @@ version 2.15.1 (2013-05-16)
 	  a second or more).
 	* Adds support for UTF-8 string based shared secrets in MACSigner and
 	  MACVerifier.
+	* Lets Base64URL extend Base64 class.

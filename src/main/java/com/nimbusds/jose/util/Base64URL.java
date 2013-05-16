@@ -1,13 +1,9 @@
 package com.nimbusds.jose.util;
 
 
-import java.nio.charset.Charset;
 import java.math.BigInteger;
 
 import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONValue;
 
 
 /**
