@@ -52,8 +52,8 @@ class HMAC {
 	 *
 	 * @return A MAC service instance.
 	 *
-	 * @throws JOSEException If the algorithm is not supported or the
-	 *                       MAC secret key is invalid.
+	 * @throws JOSEException If the algorithm is not supported or the MAC 
+	 *                       secret key is invalid.
 	 */
 	public static byte[] compute(final SecretKey secretKey, final byte[] message)
 		throws JOSEException {

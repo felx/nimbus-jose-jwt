@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HS256 JWS signing and verfication. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-05-16)
  */
 public class MACTest extends TestCase {
 
@@ -78,10 +78,51 @@ public class MACTest extends TestCase {
 
 		MACVerifier verifier = new MACVerifier(sharedSecret);
 		assertEquals("Shared secret check", sharedSecret, verifier.getSharedSecret());
+		assertEquals(3, verifier.supportedAlgorithms().size());
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testSignAndVerifyWithStringSecret()
+		throws Exception {
+
+		final String stringSecret = "3eae8196ad1b";
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+
+		assertEquals("HS512 alg check", JWSAlgorithm.HS512, header.getAlgorithm());
+
+		JWSObject jwsObject = new JWSObject(header, payload);
+
+		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
+
+
+		MACSigner signer = new MACSigner(stringSecret);
+		assertEquals("Shared secret string check", stringSecret, signer.getSharedSecretString());
 		assertEquals(3, signer.supportedAlgorithms().size());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+
+		jwsObject.sign(signer);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+
+		MACVerifier verifier = new MACVerifier(stringSecret);
+		assertEquals("Shared secret string check", stringSecret, verifier.getSharedSecretString());
+		assertEquals(3, verifier.supportedAlgorithms().size());
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
 		boolean verified = jwsObject.verify(verifier);
 

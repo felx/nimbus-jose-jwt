@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-16)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -37,6 +37,18 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	public MACSigner(final byte[] sharedSecret) {
 
 		super(sharedSecret);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) signer.
+	 *
+	 * @param sharedSecretString The shared secret as a UTF-8 encoded
+	 *                           string. Must not be {@code null}.
+	 */
+	public MACSigner(final String sharedSecretString) {
+
+		super(sharedSecretString);
 	}
 
 

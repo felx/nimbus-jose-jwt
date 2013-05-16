@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-16)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -104,6 +105,18 @@ abstract class MACProvider extends BaseJWSProvider {
 
 
 	/**
+	 * Creates a new Message Authentication (MAC) provider.
+	 *
+	 * @param sharedSecretString The shared secret as a UTF-8 encoded 
+	 *                           string. Must not be {@code null}.
+	 */
+	protected MACProvider(final String sharedSecretString) {
+
+		this(sharedSecretString.getBytes(Charset.forName("UTF-8")));
+	}
+
+
+	/**
 	 * Gets the shared secret.
 	 *
 	 * @return The shared secret.
@@ -111,5 +124,16 @@ abstract class MACProvider extends BaseJWSProvider {
 	public byte[] getSharedSecret() {
 
 		return sharedSecret;
+	}
+
+
+	/**
+	 * Gets the shared secret as a UTF-8 encoded string.
+	 *
+	 * @return The shared secret as a UTF-8 encoded string.
+	 */
+	public String getSharedSecretString() {
+
+		return new String(sharedSecret, Charset.forName("UTF-8"));
 	}
 }

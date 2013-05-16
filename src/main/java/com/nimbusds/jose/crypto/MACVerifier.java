@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-05-16)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -49,6 +49,20 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	public MACVerifier(final byte[] sharedSecret) {
 
 		super(sharedSecret);
+
+		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param sharedSecretString The shared secret as a UTF-8 encoded
+	 *                           string. Must not be {@code null}.
+	 */
+	public MACVerifier(final String sharedSecretString) {
+
+		super(sharedSecretString);
 
 		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
