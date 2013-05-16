@@ -23,13 +23,7 @@ import net.minidev.json.JSONValue;
  * @version $version$ (2013-05-16)
  */
 @Immutable
-public class Base64URL implements JSONAware {
-
-
-	/**
-	 * The Base64URL value.
-	 */
-	private final String value;
+public class Base64URL extends Base64 {
 
 
 	/**
@@ -41,83 +35,7 @@ public class Base64URL implements JSONAware {
 	 */
 	public Base64URL(final String base64URL) {
 
-		if (base64URL == null) {
-
-			throw new IllegalArgumentException("The Base64URL value must not be null");
-		}
-
-		value = base64URL;
-	}
-
-
-	/**
-	 * Decodes this Base64URL object to a byte array.
-	 *
-	 * @return The resulting byte array.
-	 */
-	public byte[] decode() {
-
-		return org.apache.commons.codec.binary.Base64.decodeBase64(value);
-	}
-
-
-	/**
-	 * Decodes this Base64URL object to an unsigned big integer.
-	 *
-	 * <p>Same as {@code new BigInteger(1, base64url.decode())}.
-	 *
-	 * @return The resulting big integer.
-	 */
-	public BigInteger decodeToBigInteger() {
-
-		return new BigInteger(1, decode());
-	}
-
-
-	/**
-	 * Decodes this Base64URL object to a string.
-	 *
-	 * @return The resulting string, in the UTF-8 character set.
-	 */
-	public String decodeToString() {
-
-		return new String(decode(), Base64.CHARSET);
-	}
-
-
-	/**
-	 * Returns a JSON string representation of this object.
-	 *
-	 * @return The JSON string representation of this object.
-	 */
-	@Override
-	public String toJSONString() {
-
-		return "\"" + JSONValue.escape(value) + "\"";
-	}
-
-
-	/**
-	 * Returns a Base64URL string representation of this object.
-	 *
-	 * @return The Base64URL string representation.
-	 */
-	@Override
-	public String toString() {
-
-		return value;
-	}
-
-
-	/**
-	 * Overrides {@code Object.hashCode()}.
-	 *
-	 * @return The object hash code.
-	 */
-	@Override
-	public int hashCode() {
-
-		return value.hashCode();
+		super(base64URL);
 	}
 
 
