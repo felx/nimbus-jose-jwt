@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.StringUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-20)
  *
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
@@ -127,8 +127,8 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+		// Compose the AAD, encryption key empty
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
 
 		// Decrypt the cipher text according to the JWE enc
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
