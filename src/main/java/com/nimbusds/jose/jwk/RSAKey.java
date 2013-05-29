@@ -747,11 +747,10 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the modulus value ({@code n}) of the RSA key. It is 
-	 * represented as the Base64URL encoding of the value's big endian 
-	 * representation.
+	 * Returns the modulus value ({@code n}) of the RSA key.
 	 *
-	 * @return The RSA key modulus.
+	 * @return The RSA key modulus. It is represented as the Base64URL 
+	 *         encoding of the value's big endian representation.
 	 */
 	public Base64URL getModulus() {
 
@@ -760,11 +759,10 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the public exponent ({@code e}) of the RSA key. It is
-	 * represented as the Base64URL encoding of the value's big endian 
-	 * representation.
+	 * Returns the public exponent ({@code e}) of the RSA key.
 	 *
-	 * @return The public RSA key exponent.
+	 * @return The public RSA key exponent. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation.
 	 */
 	public Base64URL getPublicExponent() {
 
@@ -773,11 +771,11 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the private exponent ({@code d}) of the RSA key. It is
-	 * represented as the Base64URL encoding of the value's big endian 
-	 * representation.
+	 * Returns the private exponent ({@code d}) of the RSA key.
 	 *
-	 * @return The private RSA key exponent, {@code null} if not specified.
+	 * @return The private RSA key exponent. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getPrivateExponent() {
 
@@ -787,10 +785,10 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Returns the first prime factor ({@code p}) of the private RSA key. 
-	 * It is represented as the Base64URL encoding of the value's big 
-	 * endian representation.
 	 *
-	 * @return The RSA first prime factor, {@code null} if not specified.
+	 * @return The RSA first prime factor. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getFirstPrimeFactor() {
 
@@ -799,11 +797,11 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the second prime factor ({@code q}) of the private RSA key. 
-	 * It is represented as the Base64URL encoding of the value's big 
-	 * endian representation.
+	 * Returns the second prime factor ({@code q}) of the private RSA key.
 	 *
-	 * @return The RSA second prime factor, {@code null} if not specified.
+	 * @return The RSA second prime factor. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getSecondPrimeFactor() {
 
@@ -813,11 +811,11 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Returns the first factor Chinese Remainder Theorem (CRT) exponent
-	 * ({@code dp}) of the private RSA key. It is represented as the 
-	 * Base64URL encoding of the value's big endian representation.
+	 * ({@code dp}) of the private RSA key.
 	 *
-	 * @return The RSA first factor CRT exponent, {@code null} if not 
-	 *         specified.
+	 * @return The RSA first factor CRT exponent. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getFirstFactorCRTExponent() {
 
@@ -827,11 +825,11 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Returns the second factor Chinese Remainder Theorem (CRT) exponent 
-	 * ({@code dq}) of the private RSA key. It is represented as the 
-	 * Base64URL encoding of the value's big endian representation.
+	 * ({@code dq}) of the private RSA key.
 	 *
-	 * @return The RSA second factor CRT exponent, {@code null} if not
-	 *         specified.
+	 * @return The RSA second factor CRT exponent. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getSecondFactorCRTExponent() {
 
@@ -841,11 +839,11 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Returns the first Chinese Remainder Theorem (CRT) coefficient
-	 * ({@code qi})} of the private RSA key. It is represented as the 
-	 * Base64URL encoding of the value's big endian representation.
+	 * ({@code qi})} of the private RSA key.
 	 *
-	 * @return The RSA first CRT coefficient, {@code null} if not 
-	 *         specified.
+	 * @return The RSA first CRT coefficient. It is represented as the 
+	 *         Base64URL encoding of the value's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getFirstCRTCoefficient() {
 
