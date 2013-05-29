@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests plaintext JOSE object parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-29)
  */
 public class PlainObjectTest extends TestCase {
 
@@ -20,7 +20,7 @@ public class PlainObjectTest extends TestCase {
 		assertTrue(PlainObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
 		assertEquals(1, PlainObject.MIME_TYPE_COMPACT.getParameterList().size());
 
-		assertTrue(PlainObject.MIME_TYPE_JS.match("application/jws-js"));
+		assertTrue(PlainObject.MIME_TYPE_JS.match("application/jws+js"));
 		assertTrue(PlainObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
 		assertEquals(1, PlainObject.MIME_TYPE_JS.getParameterList().size());
 	}

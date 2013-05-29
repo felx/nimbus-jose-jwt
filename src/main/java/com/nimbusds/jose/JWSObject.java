@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2013-05-29)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -68,7 +68,7 @@ public class JWSObject extends JOSEObject {
 
 		MIME_TYPE_COMPACT = new ContentType("application", "jws", params);
 
-		MIME_TYPE_JS = new ContentType("application", "jws-js", params);
+		MIME_TYPE_JS = new ContentType("application", "jws+js", params);
 	}
 
 

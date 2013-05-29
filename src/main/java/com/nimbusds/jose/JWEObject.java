@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-05)
+ * @version $version$ (2013-05-29)
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -67,7 +67,7 @@ public class JWEObject extends JOSEObject {
 
 		MIME_TYPE_COMPACT = new ContentType("application", "jwe", params);
 
-		MIME_TYPE_JS = new ContentType("application", "jwe-js", params);
+		MIME_TYPE_JS = new ContentType("application", "jwe+js", params);
 	}
 
 

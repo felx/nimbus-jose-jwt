@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-29)
  */
 public class JWSObjectTest extends TestCase {
 
@@ -22,7 +22,7 @@ public class JWSObjectTest extends TestCase {
 		assertTrue(JWSObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
 		assertEquals(1, JWSObject.MIME_TYPE_COMPACT.getParameterList().size());
 
-		assertTrue(JWSObject.MIME_TYPE_JS.match("application/jws-js"));
+		assertTrue(JWSObject.MIME_TYPE_JS.match("application/jws+js"));
 		assertTrue(JWSObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
 		assertEquals(1, JWSObject.MIME_TYPE_JS.getParameterList().size());
 	}

@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plaintext (unsecured) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2013-05-29)
  */
 @ThreadSafe
 public class PlainObject extends JOSEObject {
@@ -42,7 +42,7 @@ public class PlainObject extends JOSEObject {
 
 		MIME_TYPE_COMPACT = new ContentType("application", "jws", params);
 
-		MIME_TYPE_JS = new ContentType("application", "jws-js", params);
+		MIME_TYPE_JS = new ContentType("application", "jws+js", params);
 	}
 
 
