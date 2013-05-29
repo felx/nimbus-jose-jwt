@@ -74,19 +74,19 @@ public abstract class JWK implements JSONAware {
 	/**
 	 * X.509 certificate URL, optional.
 	 */
-	private URL x5u;
+	private final URL x5u;
 
 
 	/**
 	 * X.509 certificate thumbprint, optional.
 	 */
-	private Base64URL x5t;
+	private final Base64URL x5t;
 
 
 	/**
 	 * The X.509 certificate chain, optional.
 	 */
-	private List<Base64> x5c;
+	private final List<Base64> x5c;
 
 
 	/**
@@ -98,20 +98,27 @@ public abstract class JWK implements JSONAware {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
-	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid) {
+	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid,
+		   final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		if (kty == null) {
 			throw new IllegalArgumentException("The key type \"kty\" must not be null");
 		}
 
 		this.kty = kty;
-
 		this.use = use;
-
 		this.alg = alg;
-
 		this.kid = kid;
+
+		this.x5u = x5u;
+		this.x5t = x5t;
+		this.x5c = x5c;
 	}
 
 
@@ -175,17 +182,6 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Sets the X.509 certificate URL ({@code x5u}) of this JWK.
-	 *
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 */
-	public void setX509CertURL(final URL x5u) {
-
-		this.x5u = x5u;
-	}
-
-
-	/**
 	 * Gets the X.509 certificate thumbprint ({@code x5t}) of this JWK.
 	 *
 	 * @return The X.509 certificate thumbprint, {@code null} if not
@@ -198,18 +194,6 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Sets the X.509 certificate thumbprint ({@code x5t}) of this JWK.
-	 *
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 */
-	public void setX509CertThumbprint(final Base64URL x5t) {
-
-		this.x5t = x5t;
-	}
-
-
-	/**
 	 * Gets the X.509 certificate chain ({@code x5c}) of this JWK.
 	 *
 	 * @return The X.509 certificate chain as a unmodifiable list,
@@ -217,22 +201,11 @@ public abstract class JWK implements JSONAware {
 	 */
 	public List<Base64> getX509CertChain() {
 
-		return x5c;
-	}
+		if (x5c == null) {
+			return null;
+		}
 
-
-	/**
-	 * Sets the X.509 certificate chain ({@code x5c}) of this JWK.
-	 *
-	 * @param x5c The X.509 certificate chain, {@code null} if not
-	 *            specified.
-	 */
-	public void setX509CertChain(final List<Base64> x5c) {
-
-		if (x5c == null)
-			return;
-
-		this.x5c = Collections.unmodifiableList(x5c);
+		return Collections.unmodifiableList(x5c);
 	}
 
 

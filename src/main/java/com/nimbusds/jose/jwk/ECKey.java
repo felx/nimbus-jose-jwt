@@ -346,11 +346,17 @@ public final class ECKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-		     final Use use, final Algorithm alg, final String kid) {
+		     final Use use, final Algorithm alg, final String kid,
+		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		this(crv, x, y, null, use, alg, kid);
+		this(crv, x, y, null, use, alg, kid, x5u, x5t, x5c);
 	}
 
 
@@ -375,11 +381,17 @@ public final class ECKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final Base64URL d,
-		     final Use use, final Algorithm alg, final String kid) {
+		     final Use use, final Algorithm alg, final String kid,
+		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		super(KeyType.EC, use, alg, kid);
+		super(KeyType.EC, use, alg, kid, x5u, x5t, x5c);
 
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
@@ -413,12 +425,21 @@ public final class ECKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, 
-		     final Use use, final Algorithm alg, final String kid) {
+		     final Use use, final Algorithm alg, final String kid,
+		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		this(crv, Base64URL.encode(pub.getW().getAffineX()), Base64URL.encode(pub.getW().getAffineY()),
-		     use, alg, kid);
+		this(crv, 
+		     Base64URL.encode(pub.getW().getAffineX()), 
+		     Base64URL.encode(pub.getW().getAffineY()),
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -435,15 +456,23 @@ public final class ECKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID, {@code null} if not specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not 
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not 
+	 *             specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, final ECPrivateKey priv, 
-		     final Use use, final Algorithm alg, final String kid) {
+		     final Use use, final Algorithm alg, final String kid,
+		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv,
 		     Base64URL.encode(pub.getW().getAffineX()), 
 		     Base64URL.encode(pub.getW().getAffineY()),
 		     Base64URL.encode(priv.getS()),
-		     use, alg, kid);
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -626,7 +655,8 @@ public final class ECKey extends JWK {
 	@Override
 	public ECKey toPublicJWK() {
 
-		return new ECKey(getCurve(), getX(), getY(), getKeyUse(), getAlgorithm(), getKeyID());
+		return new ECKey(getCurve(), getX(), getY(), getKeyUse(), getAlgorithm(), getKeyID(),
+			         getX509CertURL(), getX509CertThumbprint(), getX509CertChain());
 	}
 	
 
@@ -741,6 +771,6 @@ public final class ECKey extends JWK {
 			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
 		}
 
-		return new ECKey(crv, x, y, d, use, alg, kid);
+		return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
 	}
 }

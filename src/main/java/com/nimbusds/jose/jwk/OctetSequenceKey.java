@@ -54,10 +54,16 @@ public class OctetSequenceKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
-	public OctetSequenceKey(final Base64URL k, final Use use, final Algorithm alg, final String kid) {
+	public OctetSequenceKey(final Base64URL k, final Use use, final Algorithm alg, final String kid,
+		                final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	
-		super(KeyType.OCT, use, alg, kid);
+		super(KeyType.OCT, use, alg, kid, x5u, x5t, x5c);
 
 		if (k == null) {
 
@@ -78,17 +84,16 @@ public class OctetSequenceKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
-	public OctetSequenceKey(final byte[] k, final Use use, final Algorithm alg, final String kid) {
+	public OctetSequenceKey(final byte[] k, final Use use, final Algorithm alg, final String kid,
+		                final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	
-		super(KeyType.OCT, use, alg, kid);
-
-		if (k == null) {
-
-			throw new IllegalArgumentException("The key value must not be null");
-		}
-
-		this.k = Base64URL.encode(k);
+		this(Base64URL.encode(k), use, alg, kid, x5u, x5t, x5c);
 	}
     
 
@@ -240,6 +245,6 @@ public class OctetSequenceKey extends JWK {
 			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
 		}
 
-		return new OctetSequenceKey(k, use, alg, kid);
+		return new OctetSequenceKey(k, use, alg, kid, x5u, x5t, x5c);
 	}
 }

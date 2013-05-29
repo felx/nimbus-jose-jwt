@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-28)
+ * @version $version$ (2013-05-29)
  */
 public class ECKeyTest extends TestCase {
 
@@ -36,7 +36,7 @@ public class ECKeyTest extends TestCase {
 		throws Exception {
 
 		ECKey key = new ECKey(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES256, "1");
+			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
 		
 		// Test getters
 		assertEquals(Use.SIGNATURE, key.getKeyUse());
@@ -90,7 +90,7 @@ public class ECKeyTest extends TestCase {
 
 
 		ECKey key = new ECKey(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES256, "1");
+			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
 
 
 		// Export
@@ -105,7 +105,7 @@ public class ECKeyTest extends TestCase {
 
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_256, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES256, "1");
+		key = new ECKey(ECKey.Curve.P_256, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
 		assertEquals(new Base64URL(x), key.getX());
 		assertEquals(new Base64URL(y), key.getY());
@@ -120,7 +120,7 @@ public class ECKeyTest extends TestCase {
 
 
 		ECKey key = new ECKey(ECKey.Curve.P_384, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES384, "1");
+			              Use.SIGNATURE, JWSAlgorithm.ES384, "1", null, null, null);
 
 
 		// Export
@@ -135,7 +135,7 @@ public class ECKeyTest extends TestCase {
 
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_384, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES384, "1");
+		key = new ECKey(ECKey.Curve.P_384, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES384, "1", null, null, null);
 		assertEquals(ECKey.Curve.P_384, key.getCurve());
 		assertEquals(new Base64URL(x), key.getX());
 		assertEquals(new Base64URL(y), key.getY());
@@ -149,7 +149,7 @@ public class ECKeyTest extends TestCase {
 		throws Exception {
 
 		ECKey key = new ECKey(ECKey.Curve.P_521, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES512, "1");
+			              Use.SIGNATURE, JWSAlgorithm.ES512, "1", null, null, null);
 
 
 		// Export
@@ -164,7 +164,7 @@ public class ECKeyTest extends TestCase {
 
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_521, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES512, "1");
+		key = new ECKey(ECKey.Curve.P_521, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES512, "1", null, null, null);
 		assertEquals(ECKey.Curve.P_521, key.getCurve());
 		assertEquals(new Base64URL(x), key.getX());
 		assertEquals(new Base64URL(y), key.getY());

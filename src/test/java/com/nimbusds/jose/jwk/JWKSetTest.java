@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-05-29)
  */
 public class JWKSetTest extends TestCase {
 
@@ -96,13 +96,15 @@ public class JWKSetTest extends TestCase {
 				new Base64URL("def"),
 				Use.ENCRYPTION,
 				JWEAlgorithm.ECDH_ES,
-				"1234");
+				"1234",
+				null, null, null);
 
 		RSAKey rsaKey = new RSAKey(new Base64URL("abc"),
 				new Base64URL("def"),
 				Use.SIGNATURE,
 				JWSAlgorithm.RS256,
-				"5678");
+				"5678",
+				null, null, null);
 
 		JWKSet keySet = new JWKSet();
 

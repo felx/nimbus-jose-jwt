@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-25)
+ * @version $version$ (2013-05-29)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -21,7 +21,7 @@ public class OctetSequenceKeyTest extends TestCase {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
 
-		OctetSequenceKey key = new OctetSequenceKey(k, Use.SIGNATURE, JWSAlgorithm.HS256, "1");
+		OctetSequenceKey key = new OctetSequenceKey(k, Use.SIGNATURE, JWSAlgorithm.HS256, "1", null, null, null);
 
 		assertEquals(KeyType.OCT, key.getKeyType());
 		assertEquals(Use.SIGNATURE, key.getKeyUse());
@@ -76,7 +76,7 @@ public class OctetSequenceKeyTest extends TestCase {
 
 		byte[] kBytes = k.decode();
 
-		OctetSequenceKey key = new OctetSequenceKey(kBytes, Use.SIGNATURE, JWSAlgorithm.HS256, "1");
+		OctetSequenceKey key = new OctetSequenceKey(kBytes, Use.SIGNATURE, JWSAlgorithm.HS256, "1", null, null, null);
 
 		assertEquals(KeyType.OCT, key.getKeyType());
 		assertEquals(Use.SIGNATURE, key.getKeyUse());

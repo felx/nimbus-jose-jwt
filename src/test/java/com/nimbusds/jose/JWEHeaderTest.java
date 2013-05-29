@@ -92,7 +92,7 @@ public class JWEHeaderTest extends TestCase {
 		final Use use = Use.ENCRYPTION;
 		final String kid = "1234";
 
-		RSAKey jwk = new RSAKey(mod, exp, use, JWEAlgorithm.RSA1_5, kid);
+		RSAKey jwk = new RSAKey(mod, exp, use, JWEAlgorithm.RSA1_5, kid, null, null, null);
 
 		h.setJWK(jwk);
 		h.setX509CertURL(new URL("https://example/cert.b64"));

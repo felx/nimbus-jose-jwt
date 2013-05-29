@@ -345,12 +345,19 @@ public final class RSAKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Use use, 
-		      final Algorithm alg, final String kid) {
+		      final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		// Call the full constructor, all private key parameters are null
-		this(n, e, null, null, null, null, null, null, null, use, alg, kid);
+		this(n, e, null, null, null, null, null, null, null, use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -372,13 +379,20 @@ public final class RSAKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		// Call the full constructor, the second private representation 
 		// parameters are all null
-		this(n, e, d, null, null, null, null, null, null, use, alg, kid);
+		this(n, e, d, null, null, null, null, null, null, use, alg, kid,
+		     x5u, x5t, x5c);
 
 		if (d == null) {
 			throw new IllegalArgumentException("The private exponent must not be null");
@@ -418,16 +432,23 @@ public final class RSAKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, 
 		      final Base64URL p, final Base64URL q, 
 		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
 		      final List<OtherPrimesInfo> oth,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		// Call the full constructor, the first private representation 
 		// d param is null
-		this(n, e, null, p, q, dp, dq, qi, oth, use, alg, kid);
+		this(n, e, null, p, q, dp, dq, qi, oth, use, alg, kid,
+		     x5u, x5t, x5c);
 
 		if (p == null) {
 			throw new IllegalArgumentException("The first prime factor must not be null");
@@ -494,15 +515,21 @@ public final class RSAKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e,
 		      final Base64URL d, 
 		      final Base64URL p, final Base64URL q, 
 		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
 		      final List<OtherPrimesInfo> oth,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
-		super(KeyType.RSA, use, alg, kid);
+		super(KeyType.RSA, use, alg, kid, x5u, x5t, x5c);
 
 
 		// Ensure the public params are defined
@@ -597,12 +624,19 @@ public final class RSAKey extends JWK {
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
-	public RSAKey(final RSAPublicKey pub, final Use use, final Algorithm alg, final String kid) {
+	public RSAKey(final RSAPublicKey pub, final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
-		     use, alg, kid);
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -619,14 +653,21 @@ public final class RSAKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateKey priv,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
 		     Base64URL.encode(priv.getPrivateExponent()),
-		     use, alg, kid);
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -643,9 +684,15 @@ public final class RSAKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateCrtKey priv,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -656,7 +703,8 @@ public final class RSAKey extends JWK {
 		     Base64URL.encode(priv.getPrimeExponentQ()),
 		     Base64URL.encode(priv.getCrtCoefficient()),
 		     null,
-		     use, alg, kid);
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -674,9 +722,15 @@ public final class RSAKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not 
+	 *            specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAMultiPrimePrivateCrtKey priv,
-		      final Use use, final Algorithm alg, final String kid) {
+		      final Use use, final Algorithm alg, final String kid,
+		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -687,7 +741,8 @@ public final class RSAKey extends JWK {
 		     Base64URL.encode(priv.getPrimeExponentQ()),
 		     Base64URL.encode(priv.getCrtCoefficient()),
 		     OtherPrimesInfo.toList(priv.getOtherPrimeInfo()),
-		     use, alg, kid);
+		     use, alg, kid,
+		     x5u, x5t, x5c);
 	}
 
 
@@ -968,7 +1023,8 @@ public final class RSAKey extends JWK {
 	@Override
 	public RSAKey toPublicJWK() {
 
-		return new RSAKey(getModulus(), getPublicExponent(), getKeyUse(), getAlgorithm(), getKeyID());
+		return new RSAKey(getModulus(), getPublicExponent(), getKeyUse(), getAlgorithm(), getKeyID(),
+			          getX509CertURL(), getX509CertThumbprint(), getX509CertChain());
 	}
 	
 	
@@ -1156,7 +1212,7 @@ public final class RSAKey extends JWK {
 		}
 
 		try {
-			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, alg, kid);	
+			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, alg, kid, x5u, x5t, x5c);	
 		
 		} catch (IllegalArgumentException ex) {
 
