@@ -33,9 +33,9 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-29)
  */
-public abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
+abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	/**

@@ -12,9 +12,9 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of {@link CommonSEHeader common JWS/JWE header parameters}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-19)
+ * @version $version$ (2013-05-29)
  */
-public interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
+interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 
 
 	/**
