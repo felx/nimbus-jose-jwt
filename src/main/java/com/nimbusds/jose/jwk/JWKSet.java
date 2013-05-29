@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParameterList;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -43,9 +46,25 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-03-29)
  */
 public class JWKSet {
+
+
+	/**
+	 * The MIME type of JWK set objects: 
+	 * {@code application/jwk-set+json; charset=UTF-8}
+	 */
+	public static final ContentType MIME_TYPE;
+
+
+	static {
+
+		final ParameterList params = new ParameterList();
+		params.set("charset", "UTF-8");
+
+		MIME_TYPE = new ContentType("application", "jwk-set+json", params);
+	}
 
 
 	/**
