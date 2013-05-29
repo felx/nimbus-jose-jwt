@@ -6,6 +6,7 @@ import java.util.List;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
@@ -42,6 +43,174 @@ public class OctetSequenceKey extends JWK {
 	 */
 	private final Base64URL k;
 
+	/**
+	 * Implements a builder pattern for constructing octet sequence JWKs.
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The symmetric key value.
+		 */
+		private final Base64URL k;
+
+
+		/**
+		 * The key use, optional.
+		 */
+		private Use use;
+
+
+		/**
+		 * The intended JOSE algorithm for the key, optional.
+		 */
+		private Algorithm alg;
+
+
+		/**
+		 * The key ID, optional.
+		 */
+		private String kid;
+
+
+		/**
+		 * X.509 certificate URL, optional.
+		 */
+		private URL x5u;
+
+
+		/**
+		 * X.509 certificate thumbprint, optional.
+		 */
+		private Base64URL x5t;
+
+
+		/**
+		 * The X.509 certificate chain, optional.
+		 */
+		private List<Base64> x5c;
+
+
+		/**
+		 * Creates a new octet sequence JWK builder.
+		 *
+		 * @param k The key value. It is represented as the Base64URL 
+		 *          encoding of value's big endian representation. Must
+		 *          not be {@code null}.
+		 */
+		public Builder(final Base64URL k) {
+
+			if (k == null) {
+				throw new IllegalArgumentException("The key value must not be null");
+			}
+
+			this.k = k;
+		}
+
+
+		/**
+		 * Sets the use ({@code use}) of the JWK.
+		 *
+		 * @param use The key use, {@code null} if not specified or if 
+		 *            the key is intended for signing as well as 
+		 *            encryption.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setUse(final Use use) {
+
+			this.use = use;
+			return this;
+		}
+
+
+		/**
+		 * Sets the intended JOSE algorithm ({@code alg}) for the JWK.
+		 *
+		 * @param alg The intended JOSE algorithm, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setAlgorithm(final Algorithm alg) {
+
+			this.alg = alg;
+			return this;
+		}
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK. The key ID can be used 
+		 * to match a specific key. This can be used, for instance, to 
+		 * choose a key within a {@link JWKSet} during key rollover. 
+		 * The key ID may also correspond to a JWS/JWE {@code kid} 
+		 * header parameter value.
+		 *
+		 * @param kid The key ID, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setKeyID(final String kid) {
+
+			this.kid = kid;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate URL ({@code x5u}) of the JWK.
+		 *
+		 * @param x5u The X.509 certificate URL, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertURL(final URL x5u) {
+
+			this.x5u = x5u;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate thumbprint ({@code x5t}) of the
+		 * JWK.
+		 *
+		 * @param x5t The X.509 certificate thumbprint, {@code null} if 
+		 *            not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertThumbprint(final Base64URL x5t) {
+
+			this.x5t = x5t;
+			return this;
+		}
+
+		/**
+		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
+		 *
+		 * @param x5c The X.509 certificate chain as a unmodifiable 
+		 *            list, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertChain(final List<Base64> x5c) {
+
+			this.x5c = x5c;
+			return this;
+		}
+
+		/**
+		 * Builds a new octet sequence JWK.
+		 *
+		 * @return The octet sequence JWK.
+		 */
+		public OctetSequenceKey build() {
+
+			return new OctetSequenceKey(k, use, alg, kid, x5u, x5t, x5c);
+		}
+	}
+
 	
 	/**
 	 * Creates a new octet sequence JSON Web Key (JWK) with the specified
@@ -66,43 +235,18 @@ public class OctetSequenceKey extends JWK {
 		super(KeyType.OCT, use, alg, kid, x5u, x5t, x5c);
 
 		if (k == null) {
-
 			throw new IllegalArgumentException("The key value must not be null");
 		}
 
 		this.k = k;
 	}
-
-
-	/**
-	 * Creates a new octet sequence JSON Web Key (JWK) with the specified
-	 * parameters.
-	 *
-	 * @param k   The key value. It is represented as the value's big 
-	 *            endian representation. Must not be {@code null}.
-	 * @param use The key use. {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if
-	 *            not specified.
-	 * @param kid The key ID. {@code null} if not specified.
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 * @param x5c The X.509 certificate chain, {@code null} if not 
-	 *            specified.
-	 */
-	public OctetSequenceKey(final byte[] k, final Use use, final Algorithm alg, final String kid,
-		                final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
-	
-		this(Base64URL.encode(k), use, alg, kid, x5u, x5t, x5c);
-	}
     
 
 	/**
-	 * Returns the value of this octet sequence key. It is represented as 
-	 * the Base64URL encoding of the coordinate's big endian 
-	 * representation.
+	 * Returns the value of this octet sequence key. 
 	 *
-	 * @return The key value. 
+	 * @return The key value. It is represented as the Base64URL encoding 
+	 *         of the coordinate's big endian representation.
 	 */
 	public Base64URL getKeyValue() {
 

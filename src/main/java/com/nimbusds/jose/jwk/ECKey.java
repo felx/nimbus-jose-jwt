@@ -306,6 +306,271 @@ public final class ECKey extends JWK {
 
 
 	/**
+	 * Implements a builder pattern for constructing Elliptic Curve JWKs.
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The curve name.
+		 */
+		private final Curve crv;
+
+
+		/**
+		 * The public 'x' EC coordinate.
+		 */
+		private final Base64URL x;
+
+
+		/**
+		 * The public 'y' EC coordinate.
+		 */
+		private final Base64URL y;
+		
+
+		/**
+		 * The private 'd' EC coordinate, optional.
+		 */
+		private Base64URL d;
+
+
+		/**
+		 * The key use, optional.
+		 */
+		private Use use;
+
+
+		/**
+		 * The intended JOSE algorithm for the key, optional.
+		 */
+		private Algorithm alg;
+
+
+		/**
+		 * The key ID, optional.
+		 */
+		private String kid;
+
+
+		/**
+		 * X.509 certificate URL, optional.
+		 */
+		private URL x5u;
+
+
+		/**
+		 * X.509 certificate thumbprint, optional.
+		 */
+		private Base64URL x5t;
+
+
+		/**
+		 * The X.509 certificate chain, optional.
+		 */
+		private List<Base64> x5c;
+
+
+		/**
+		 * Creates a new Elliptic Curve JWK builder.
+		 *
+		 * @param crv The cryptographic curve. Must not be 
+		 *            {@code null}.
+		 * @param x   The public 'x' coordinate for the elliptic curve 
+		 *            point. It is represented as the Base64URL 
+		 *            encoding of the coordinate's big endian 
+		 *            representation. Must not be {@code null}.
+		 * @param y   The public 'y' coordinate for the elliptic curve 
+		 *            point. It is represented as the Base64URL 
+		 *            encoding of the coordinate's big endian 
+		 *            representation. Must not be {@code null}.
+		 */
+		public Builder(final Curve crv, final Base64URL x, final Base64URL y) {
+
+			if (crv == null) {
+				throw new IllegalArgumentException("The curve must not be null");
+			}
+
+			this.crv = crv;
+
+			if (x == null) {
+				throw new IllegalArgumentException("The x coordinate must not be null");
+			}
+
+			this.x = x;
+
+			if (y == null) {
+				throw new IllegalArgumentException("The y coordinate must not be null");
+			}
+
+			this.y = y;
+		}
+
+
+		/**
+		 * Creates a new Elliptic Curve JWK builder.
+		 *
+		 * @param crv The cryptographic curve. Must not be 
+		 *            {@code null}.
+		 * @param pub The public EC key to represent. Must not be 
+		 *            {@code null}.
+		 */
+		public Builder(final Curve crv, final ECPublicKey pub) {
+
+			this(crv, 
+			     Base64URL.encode(pub.getW().getAffineX()), 
+			     Base64URL.encode(pub.getW().getAffineY()));
+		}
+
+
+		/**
+		 * Sets the private 'd' coordinate for the elliptic curve 
+		 * point. 
+		 *
+		 * @param d The 'd' coordinate. It is represented as the 
+		 *          Base64URL encoding of the coordinate's big endian 
+		 *          representation. {@code null} if not specified (for
+		 *          a public key).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setD(final Base64URL d) {
+
+			this.d = d;
+			return this;
+		}
+
+
+		/**
+		 * Sets the private 'd' coordinate for the elliptic curve
+		 * point.
+		 *
+		 * @param priv The private EC key to represent. {@code null} if
+		 *             not specified (for a public key).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setD(final ECPrivateKey priv) {
+
+			if (priv != null) {
+				this.d = Base64URL.encode(priv.getS());	
+			}
+			
+			return this;
+		}
+
+
+		/**
+		 * Sets the use ({@code use}) of the JWK.
+		 *
+		 * @param use The key use, {@code null} if not specified or if 
+		 *            the key is intended for signing as well as 
+		 *            encryption.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setUse(final Use use) {
+
+			this.use = use;
+			return this;
+		}
+
+
+		/**
+		 * Sets the intended JOSE algorithm ({@code alg}) for the JWK.
+		 *
+		 * @param alg The intended JOSE algorithm, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setAlgorithm(final Algorithm alg) {
+
+			this.alg = alg;
+			return this;
+		}
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK. The key ID can be used 
+		 * to match a specific key. This can be used, for instance, to 
+		 * choose a key within a {@link JWKSet} during key rollover. 
+		 * The key ID may also correspond to a JWS/JWE {@code kid} 
+		 * header parameter value.
+		 *
+		 * @param kid The key ID, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setKeyID(final String kid) {
+
+			this.kid = kid;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate URL ({@code x5u}) of the JWK.
+		 *
+		 * @param x5u The X.509 certificate URL, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertURL(final URL x5u) {
+
+			this.x5u = x5u;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate thumbprint ({@code x5t}) of the
+		 * JWK.
+		 *
+		 * @param x5t The X.509 certificate thumbprint, {@code null} if 
+		 *            not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertThumbprint(final Base64URL x5t) {
+
+			this.x5t = x5t;
+			return this;
+		}
+
+		/**
+		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
+		 *
+		 * @param x5c The X.509 certificate chain as a unmodifiable 
+		 *            list, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertChain(final List<Base64> x5c) {
+
+			this.x5c = x5c;
+			return this;
+		}
+
+		/**
+		 * Builds a new octet sequence JWK.
+		 *
+		 * @return The octet sequence JWK.
+		 */
+		public ECKey build() {
+
+			if (d == null) {
+				// Public key
+				return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);
+			}
+
+			// Pair
+			return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
+		}
+	}
+
+
+	/**
 	 * The curve name.
 	 */
 	private final Curve crv;
@@ -356,7 +621,27 @@ public final class ECKey extends JWK {
 		     final Use use, final Algorithm alg, final String kid,
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		this(crv, x, y, null, use, alg, kid, x5u, x5t, x5c);
+		super(KeyType.EC, use, alg, kid, x5u, x5t, x5c);
+
+		if (crv == null) {
+			throw new IllegalArgumentException("The curve must not be null");
+		}
+
+		this.crv = crv;
+
+		if (x == null) {
+			throw new IllegalArgumentException("The x coordinate must not be null");
+		}
+
+		this.x = x;
+
+		if (y == null) {
+			throw new IllegalArgumentException("The y coordinate must not be null");
+		}
+
+		this.y = y;
+
+		this.d = null;
 	}
 
 
@@ -375,8 +660,8 @@ public final class ECKey extends JWK {
 	 *            {@code null}.
 	 * @param d   The private 'd' coordinate for the elliptic curve point. 
 	 *            It is represented as the Base64URL encoding of the 
-	 *            coordinate's big endian representation. May be 
-	 *            {@code null} if this is a public key.
+	 *            coordinate's big endian representation. Must not be 
+	 *            {@code null}.
 	 * @param use The key use, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -411,6 +696,10 @@ public final class ECKey extends JWK {
 
 		this.y = y;
 		
+		if (d == null) {
+			throw new IllegalArgumentException("The d coordinate must not be null");
+		}
+
 		this.d = d;
 	}
 
@@ -488,11 +777,10 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Gets the public 'x' coordinate for the elliptic curve point. It is 
-	 * represented as the Base64URL encoding of the coordinate's big endian 
-	 * representation.
+	 * Gets the public 'x' coordinate for the elliptic curve point.
 	 *
-	 * @return The 'x' coordinate.
+	 * @return The 'x' coordinate. It is represented as the Base64URL 
+	 *         encoding of the coordinate's big endian representation.
 	 */
 	public Base64URL getX() {
 
@@ -501,11 +789,10 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Gets the public 'y' coordinate for the elliptic curve point. It is 
-	 * represented as the Base64URL encoding of the coordinate's big endian 
-	 * representation.
+	 * Gets the public 'y' coordinate for the elliptic curve point.
 	 *
-	 * @return The 'y' coordinate.
+	 * @return The 'y' coordinate. It is represented as the Base64URL 
+	 *         encoding of the coordinate's big endian representation.
 	 */
 	public Base64URL getY() {
 
@@ -518,8 +805,9 @@ public final class ECKey extends JWK {
 	 * represented as the Base64URL encoding of the coordinate's big endian 
 	 * representation.
 	 *
-	 * @return The 'd' coordinate, {@code null} if not specified (for a 
-	 *         public key).
+	 * @return The 'd' coordinate.  It is represented as the Base64URL 
+	 *         encoding of the coordinate's big endian representation. 
+	 *         {@code null} if not specified (for a public key).
 	 */
 	public Base64URL getD() {
 
@@ -591,7 +879,6 @@ public final class ECKey extends JWK {
 		throws NoSuchAlgorithmException, InvalidKeySpecException {
 
 		if (d == null) {
-
 			// No private 'd' param
 			return null;
 		}
@@ -599,7 +886,6 @@ public final class ECKey extends JWK {
 		ECParameterSpec spec = crv.toECParameterSpec();
 
 		if (spec == null) {
-
 			throw new NoSuchAlgorithmException("Couldn't get EC parameter spec for curve " + crv);
 		}
 
@@ -636,11 +922,8 @@ public final class ECKey extends JWK {
 	public boolean isPrivate() {
 
 		if (d != null) {
-
 			return true;
-
 		} else {
-
 			return false;
 		}
 	}
@@ -771,6 +1054,12 @@ public final class ECKey extends JWK {
 			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
 		}
 
+		if (d == null) {
+			// Public key
+			return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);	
+		}
+
+		// Key pair
 		return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
 	}
 }
