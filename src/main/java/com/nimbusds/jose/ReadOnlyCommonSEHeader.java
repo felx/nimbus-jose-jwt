@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.net.URL;
+import java.util.List;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64;
@@ -55,12 +56,13 @@ interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 
 	/**
 	 * Gets the X.509 certificate chain parameter ({@code x5c}) 
-	 * corresponding to the key used to sign or encrypt the JWS/JWE object.
+	 * corresponding to the key used to sign or encrypt the JWS / JWE 
+	 * object.
 	 *
-	 * @return The X.509 certificate chain parameter, {@code null} if not
-	 *         specified.
+	 * @return The X.509 certificate chain parameter as a unmodifiable 
+	 *         list, {@code null} if not specified.
 	 */
-	public Base64[] getX509CertChain();
+	public List<Base64> getX509CertChain();
 
 
 	/**

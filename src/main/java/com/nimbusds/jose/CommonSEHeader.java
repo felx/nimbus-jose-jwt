@@ -3,7 +3,9 @@ package com.nimbusds.jose;
 
 import java.net.URL;
 import java.text.ParseException;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -64,9 +66,9 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 	/**
 	 * The X.509 certificate chain corresponding to the key used to sign or 
-	 * encrypt the JWS/JWE object, {@code null} if not specified.
+	 * encrypt the JWS / JWE object, {@code null} if not specified.
 	 */
-	private Base64[] x5c;
+	private List<Base64> x5c;
 
 
 	/**
@@ -164,7 +166,7 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	@Override
-	public Base64[] getX509CertChain() {
+	public List<Base64> getX509CertChain() {
 
 		return x5c;
 	}
@@ -172,14 +174,18 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 	/**
 	 * Sets the X.509 certificate chain parameter ({@code x5c}) 
-	 * corresponding to the key used to sign or encrypt the JWS/JWE object.
+	 * corresponding to the key used to sign or encrypt the JWS / JWE 
+	 * object.
 	 *
-	 * @param x5c The X.509 certificate chain parameter, {@code null} if not
-	 *            specified.
+	 * @param x5c The X.509 certificate chain parameter, {@code null} if 
+	 *            not specified.
 	 */
-	public void setX509CertChain(final Base64[] x5c) {
+	public void setX509CertChain(final List<Base64> x5c) {
 
-		this.x5c = x5c;
+		if (x5c == null)
+			return;
+
+		this.x5c = Collections.unmodifiableList(x5c);
 	}
 
 
@@ -223,7 +229,7 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 		}
 
 		if (x5c != null) {
-			o.put("x5c", Arrays.asList(x5c));
+			o.put("x5c", x5c);
 		}
 
 		if (kid != null) {
@@ -244,10 +250,10 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 	 * @throws ParseException If the X.509 certificate chain couldn't be
 	 *                        parsed.
 	 */
-	protected static Base64[] parseX509CertChain(final JSONArray jsonArray)
+	protected static List<Base64> parseX509CertChain(final JSONArray jsonArray)
 		throws ParseException {
 
-		Base64[] chain = new Base64[jsonArray.size()];
+		List<Base64> chain = new LinkedList<Base64>();
 
 		for (int i=0; i < jsonArray.size(); i++) {
 
@@ -258,10 +264,10 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 			}
 
 			if  (! (item instanceof String)) {
-				throw new ParseException("The X.509 certificate must be encoded as a Base64 string", 0);
+				throw new ParseException("The X.509 certificate at position " + i + " must be encoded as a Base64 string", 0);
 			}
 
-			chain[i] = new Base64((String)item);
+			chain.add(new Base64((String)item));
 		}
 
 		return chain;

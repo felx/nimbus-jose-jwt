@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
@@ -96,10 +98,10 @@ public class JWEHeaderTest extends TestCase {
 		h.setX509CertURL(new URL("https://example/cert.b64"));
 		h.setX509CertThumbprint(new Base64URL("789iop"));
 
-		Base64[] certChain = new Base64[3];
-		certChain[0] = new Base64("asd");
-		certChain[1] = new Base64("fgh");
-		certChain[2] = new Base64("jkl");
+		List<Base64> certChain = new LinkedList<Base64>();
+		certChain.add(new Base64("asd"));
+		certChain.add(new Base64("fgh"));
+		certChain.add(new Base64("jkl"));
 
 		h.setX509CertChain(certChain);
 
@@ -130,10 +132,10 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
 
 		certChain = h.getX509CertChain();
-		assertEquals(3, certChain.length);
-		assertEquals(new Base64("asd"), certChain[0]);
-		assertEquals(new Base64("fgh"), certChain[1]);
-		assertEquals(new Base64("jkl"), certChain[2]);
+		assertEquals(3, certChain.size());
+		assertEquals(new Base64("asd"), certChain.get(0));
+		assertEquals(new Base64("fgh"), certChain.get(1));
+		assertEquals(new Base64("jkl"), certChain.get(2));
 
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
 
