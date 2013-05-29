@@ -1,14 +1,18 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.net.URL;
+import java.util.List;
 import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
@@ -27,7 +31,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-26)
+ * @version $version$ (2013-05-29)
  */
 @Immutable
 public class OctetSequenceKey extends JWK {
@@ -195,13 +199,46 @@ public class OctetSequenceKey extends JWK {
 		}
 		
 		// Get optional key use
-		Use use = JWK.parseKeyUse(jsonObject);
+		Use use = null;
+
+		if (jsonObject.containsKey("use")) {
+			use = Use.parse(JSONObjectUtils.getString(jsonObject, "use"));
+		}
 
 		// Get optional intended algorithm
-		Algorithm alg = JWK.parseAlgorithm(jsonObject);
+		Algorithm alg = null;
+
+		if (jsonObject.containsKey("alg")) {
+			alg = new Algorithm(JSONObjectUtils.getString(jsonObject, "alg"));
+		}
 
 		// Get optional key ID
-		String kid = JWK.parseKeyID(jsonObject);
+		String kid = null;
+
+		if (jsonObject.containsKey("kid")) {
+			kid = JSONObjectUtils.getString(jsonObject, "kid");
+		}
+
+		// Get optional X.509 cert URL
+		URL x5u = null;
+
+		if (jsonObject.containsKey("x5u")) {
+			x5u = JSONObjectUtils.getURL(jsonObject, "x5u");	
+		}
+
+		// Get optional X.509 cert thumbprint
+		Base64URL x5t = null;
+
+		if (jsonObject.containsKey("x5t")) {
+			x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, "x5t"));
+		}
+
+		// Get optional X.509 cert chain
+		List<Base64> x5c = null;
+
+		if (jsonObject.containsKey("x5c")) {
+			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
+		}
 
 		return new OctetSequenceKey(k, use, alg, kid);
 	}

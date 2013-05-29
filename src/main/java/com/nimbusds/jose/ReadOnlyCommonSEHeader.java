@@ -55,7 +55,7 @@ interface ReadOnlyCommonSEHeader extends ReadOnlyHeader {
 
 
 	/**
-	 * Gets the X.509 certificate chain parameter ({@code x5c}) 
+	 * Gets the X.509 certificate chain ({@code x5c}) parameter  
 	 * corresponding to the key used to sign or encrypt the JWS / JWE 
 	 * object.
 	 *

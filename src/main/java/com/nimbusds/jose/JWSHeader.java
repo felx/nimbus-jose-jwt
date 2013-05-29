@@ -11,6 +11,7 @@ import net.minidev.json.JSONObject;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
@@ -45,7 +46,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-29)
  */
 public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
@@ -212,7 +213,7 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 			} else if (name.equals("x5t")) {
 				h.setX509CertThumbprint(new Base64URL(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("x5c")) {
-				h.setX509CertChain(CommonSEHeader.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
+				h.setX509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
 			} else if (name.equals("kid")) {
 				h.setKeyID(JSONObjectUtils.getString(json, name));
 			} else {

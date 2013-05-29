@@ -1,12 +1,17 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.net.URL;
 import java.text.ParseException;
+import java.util.Collections;
+import java.util.List;
 
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.util.Base64;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
@@ -37,7 +42,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-19)
+ * @version $version$ (2013-05-29)
  */
 public abstract class JWK implements JSONAware {
 
@@ -64,6 +69,24 @@ public abstract class JWK implements JSONAware {
 	 * The key ID, optional.
 	 */
 	private final String kid;
+
+
+	/**
+	 * X.509 certificate URL, optional.
+	 */
+	private URL x5u;
+
+
+	/**
+	 * X.509 certificate thumbprint, optional.
+	 */
+	private Base64URL x5t;
+
+
+	/**
+	 * The X.509 certificate chain, optional.
+	 */
+	private List<Base64> x5c;
 
 
 	/**
@@ -141,6 +164,79 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
+	 * Gets the X.509 certificate URL ({@code x5u}) of this JWK.
+	 *
+	 * @return The X.509 certificate URL, {@code null} if not specified.
+	 */
+	public URL getX509CertURL() {
+
+		return x5u;
+	}
+
+
+	/**
+	 * Sets the X.509 certificate URL ({@code x5u}) of this JWK.
+	 *
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 */
+	public void setX509CertURL(final URL x5u) {
+
+		this.x5u = x5u;
+	}
+
+
+	/**
+	 * Gets the X.509 certificate thumbprint ({@code x5t}) of this JWK.
+	 *
+	 * @return The X.509 certificate thumbprint, {@code null} if not
+	 *         specified.
+	 */
+	public Base64URL getX509CertThumbprint() {
+
+		return x5t;
+	}
+
+
+	/**
+	 * Sets the X.509 certificate thumbprint ({@code x5t}) of this JWK.
+	 *
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 */
+	public void setX509CertThumbprint(final Base64URL x5t) {
+
+		this.x5t = x5t;
+	}
+
+
+	/**
+	 * Gets the X.509 certificate chain ({@code x5c}) of this JWK.
+	 *
+	 * @return The X.509 certificate chain as a unmodifiable list,
+	 *         {@code null} if not specified.
+	 */
+	public List<Base64> getX509CertChain() {
+
+		return x5c;
+	}
+
+
+	/**
+	 * Sets the X.509 certificate chain ({@code x5c}) of this JWK.
+	 *
+	 * @param x5c The X.509 certificate chain, {@code null} if not
+	 *            specified.
+	 */
+	public void setX509CertChain(final List<Base64> x5c) {
+
+		if (x5c == null)
+			return;
+
+		this.x5c = Collections.unmodifiableList(x5c);
+	}
+
+
+	/**
 	 * Returns {@code true} if this JWK contains private or sensitive
 	 * (non-public) parameters.
 	 *
@@ -199,6 +295,18 @@ public abstract class JWK implements JSONAware {
 
 		if (kid != null) {
 			o.put("kid", kid);
+		}
+
+		if (x5u != null) {
+			o.put("x5u", x5u.toString());
+		}
+
+		if (x5t != null) {
+			o.put("x5t", x5t.toString());
+		}
+
+		if (x5c != null) {
+			o.put("x5c", x5c);
 		}
 
 		return o;
@@ -280,91 +388,5 @@ public abstract class JWK implements JSONAware {
 
 			throw new ParseException("Unsupported key type \"kty\" parameter: " + kty, 0);
 		}
-	}
-
-
-	/**
-	 * Parses a key use ({@code use}) parameter from the specified JSON 
-	 * object representation of a JWK.
-	 *
-	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   {@code null}.
-	 *
-	 * @return The key use, {@code null} if not specified.
-	 *
-	 * @throws ParseException If the key use parameter couldn't be parsed.
-	 */
-	protected static Use parseKeyUse(final JSONObject jsonObject)
-		throws ParseException {
-
-		if (jsonObject.get("use") == null) {
-			return null;
-		}
-
-		String useStr = JSONObjectUtils.getString(jsonObject, "use");
-
-		if (useStr.equals("sig")) {
-
-			return Use.SIGNATURE;
-
-		} else if (useStr.equals("enc")) {
-
-			return Use.ENCRYPTION;
-
-		} else {
-			
-			throw new ParseException("Invalid or unsupported key use \"use\" parameter, must be \"sig\" or \"enc\"", 0);
-		}
-	}
-
-
-	/**
-	 * Parses an algorithm ({@code alg}) parameter from the specified JSON
-	 * object representation of a JWK.
-	 *
-	 * <p>Note that the algorithm requirement level is not inferred.
-	 *
-	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   {@code null}.
-	 *
-	 * @return The algorithm, {@code null} if not specified.
-	 *
-	 * @throws ParseException If the algorithm parameter couldn't be
-	 *                        parsed.
-	 */
-	protected static Algorithm parseAlgorithm(final JSONObject jsonObject)
-		throws ParseException {
-
-		if (jsonObject.get("alg") == null) {
-
-			return null;
-		}
-
-		String algStr = JSONObjectUtils.getString(jsonObject, "alg");
-
-		return new Algorithm(algStr);
-	}
-
-
-	/**
-	 * Parses a key ID ({@code kid}) parameter from the specified JSON
-	 * object representation of a JWK.
-	 *
-	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   {@code null}.
-	 *
-	 * @return The key ID, {@code null} if not specified.
-	 *
-	 * @throws ParseException If the key ID parameter couldn't be parsed.
-	 */
-	protected static String parseKeyID(final JSONObject jsonObject)
-		throws ParseException {
-
-		if (jsonObject.get("kid") == null) {
-
-			return null;
-		}
-
-		return JSONObjectUtils.getString(jsonObject, "kid");
 	}
 }

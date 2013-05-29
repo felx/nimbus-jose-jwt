@@ -10,8 +10,8 @@ import com.nimbusds.jose.Requirement;
 
 
 /**
- * Key type. Used to represent the {@code kty} parameter in a JSON Web Key
- * (JWK). This class is immutable.
+ * Key type. Represents the {@code kty} parameter in a JSON Web Key (JWK). 
+ * This class is immutable.
  *
  * <p>Includes constants for the following standard key types:
  *
@@ -25,7 +25,7 @@ import com.nimbusds.jose.Requirement;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-05-29)
  */
 @Immutable
 public final class KeyType implements JSONAware {
@@ -165,7 +165,7 @@ public final class KeyType implements JSONAware {
 
 
 	/**
-	 * Parses a key type from the specified string.
+	 * Parses a key type from the specified {@code kty} parameter value.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
@@ -175,11 +175,6 @@ public final class KeyType implements JSONAware {
 	 * @throws ParseException If the string couldn't be parsed.
 	 */
 	public static KeyType parse(final String s) {
-
-		if (s == null) {
-
-			throw new IllegalArgumentException("The ket type string must not be null");
-		}
 
 		if (s.equals(EC.getValue())) {
 

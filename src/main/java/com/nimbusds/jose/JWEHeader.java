@@ -12,6 +12,7 @@ import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
@@ -382,7 +383,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			} else if (name.equals("x5t")) {
 				h.setX509CertThumbprint(new Base64URL(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("x5c")) {
-				h.setX509CertChain(CommonSEHeader.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
+				h.setX509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(json, name)));
 			} else if (name.equals("kid")) {
 				h.setKeyID(JSONObjectUtils.getString(json, name));
 			} else if (name.equals("apu")) {
