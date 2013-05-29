@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-29)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
@@ -56,13 +56,4 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public Base64URL getAgreementPartyUInfo();
-
-
-	/**
-	 * Gets the agreement PartyVInfo ({@code apv}) parameter.
-	 *
-	 * @return The agreement PartyVInfo parameter, {@code null} if not
-	 *         specified.
-	 */
-	public Base64URL getAgreementPartyVInfo();
 }

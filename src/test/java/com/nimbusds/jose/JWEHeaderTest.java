@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-29)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -104,7 +104,6 @@ public class JWEHeaderTest extends TestCase {
 		h.setX509CertChain(certChain);
 
 		h.setAgreementPartyUInfo(new Base64URL("abc"));
-		h.setAgreementPartyVInfo(new Base64URL("def"));
 
 
 		String s = h.toString();
@@ -137,7 +136,6 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64("jkl"), certChain[2]);
 
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
-		assertEquals(new Base64URL("def"), h.getAgreementPartyVInfo());
 
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
@@ -150,8 +148,7 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5t"));
 		assertTrue(h.getIncludedParameters().contains("x5c"));
 		assertTrue(h.getIncludedParameters().contains("apu"));
-		assertTrue(h.getIncludedParameters().contains("apv"));
-		assertEquals(12, h.getIncludedParameters().size());
+		assertEquals(11, h.getIncludedParameters().size());
 	}
 
 
