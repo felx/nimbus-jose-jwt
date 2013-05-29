@@ -478,7 +478,7 @@ public final class RSAKey extends JWK {
 	 * first and second representations (see RFC 3447, section 3.2).
 	 *
 	 * <p>A valid first private RSA key representation must specify the
-	 * {@code d}.
+	 * {@code d} parameter.
 	 *
 	 * <p>A valid second private RSA key representation must specify all 
 	 * required Chinese Remained Theorem (CRT) parameters - {@code p}, 
@@ -567,11 +567,8 @@ public final class RSAKey extends JWK {
 
 			// Other RSA primes info optional, default to empty list
 			if (oth != null) {
-
 				this.oth = Collections.unmodifiableList(oth);
-
 			} else {
-
 				this.oth = Collections.emptyList();
 			}
 
@@ -747,7 +744,7 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the modulus value ({@code n}) of the RSA key.
+	 * Gets the modulus value ({@code n}) of the RSA key.
 	 *
 	 * @return The RSA key modulus. It is represented as the Base64URL 
 	 *         encoding of the value's big endian representation.
@@ -759,7 +756,7 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the public exponent ({@code e}) of the RSA key.
+	 * Gets the public exponent ({@code e}) of the RSA key.
 	 *
 	 * @return The public RSA key exponent. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation.
@@ -771,11 +768,12 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the private exponent ({@code d}) of the RSA key.
+	 * Gets the private exponent ({@code d}) of the RSA key.
 	 *
 	 * @return The private RSA key exponent. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the second representation only).
 	 */
 	public Base64URL getPrivateExponent() {
 
@@ -784,11 +782,12 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first prime factor ({@code p}) of the private RSA key. 
+	 * Gets the first prime factor ({@code p}) of the private RSA key. 
 	 *
 	 * @return The RSA first prime factor. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the first representation only).
 	 */
 	public Base64URL getFirstPrimeFactor() {
 
@@ -797,11 +796,12 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the second prime factor ({@code q}) of the private RSA key.
+	 * Gets the second prime factor ({@code q}) of the private RSA key.
 	 *
 	 * @return The RSA second prime factor. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the first representation only).
 	 */
 	public Base64URL getSecondPrimeFactor() {
 
@@ -810,12 +810,13 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first factor Chinese Remainder Theorem (CRT) exponent
+	 * Gets the first factor Chinese Remainder Theorem (CRT) exponent
 	 * ({@code dp}) of the private RSA key.
 	 *
 	 * @return The RSA first factor CRT exponent. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the first representation only).
 	 */
 	public Base64URL getFirstFactorCRTExponent() {
 
@@ -824,12 +825,13 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the second factor Chinese Remainder Theorem (CRT) exponent 
+	 * Gets the second factor Chinese Remainder Theorem (CRT) exponent 
 	 * ({@code dq}) of the private RSA key.
 	 *
 	 * @return The RSA second factor CRT exponent. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the first representation only).
 	 */
 	public Base64URL getSecondFactorCRTExponent() {
 
@@ -838,12 +840,13 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the first Chinese Remainder Theorem (CRT) coefficient
+	 * Gets the first Chinese Remainder Theorem (CRT) coefficient
 	 * ({@code qi})} of the private RSA key.
 	 *
 	 * @return The RSA first CRT coefficient. It is represented as the 
 	 *         Base64URL encoding of the value's big endian representation. 
-	 *         {@code null} if not specified (for a public key).
+	 *         {@code null} if not specified (for a public key or a private
+	 *         key using the first representation only).
 	 */
 	public Base64URL getFirstCRTCoefficient() {
 
@@ -852,8 +855,8 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Returns the other primes information ({@code oth}) for the private 
-	 * RSA key, should they exist.
+	 * Gets the other primes information ({@code oth}) for the private RSA
+	 * key, should they exist.
 	 *
 	 * @return The RSA other primes information, {@code null} or empty list
 	 *         if not specified.
@@ -1003,11 +1006,8 @@ public final class RSAKey extends JWK {
 
 		// Check if 1st or 2nd form params are specified
 		if (d != null || p != null) {
-
 			return true;
-
 		} else {
-
 			return false;
 		}
 	}
@@ -1104,7 +1104,7 @@ public final class RSAKey extends JWK {
 	 *                        RSA JWK.
 	 */
 	public static RSAKey parse(final JSONObject jsonObject)
-			throws ParseException {
+		throws ParseException {
 
 		// Parse the mandatory public key parameters first
 		Base64URL n = new Base64URL(JSONObjectUtils.getString(jsonObject, "n"));
@@ -1120,34 +1120,34 @@ public final class RSAKey extends JWK {
 
 		// 1st private representation
 		Base64URL d = null;
-		if (jsonObject.get("d") != null) {
+		if (jsonObject.containsKey("d")) {
 			d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
 		}
 
 		// 2nd private (CRT) representation
 		Base64URL p = null;
-		if (jsonObject.get("p") != null) {
+		if (jsonObject.containsKey("p")) {
 			p = new Base64URL(JSONObjectUtils.getString(jsonObject, "p"));
 		}
 		Base64URL q = null;
-		if (jsonObject.get("q") != null) {
+		if (jsonObject.containsKey("q")) {
 			q = new Base64URL(JSONObjectUtils.getString(jsonObject, "q"));
 		}
 		Base64URL dp = null;
-		if (jsonObject.get("dp") != null) {
+		if (jsonObject.containsKey("dp")) {
 			dp = new Base64URL(JSONObjectUtils.getString(jsonObject, "dp"));
 		}
 		Base64URL dq= null;
-		if (jsonObject.get("dq") != null) {
+		if (jsonObject.containsKey("dq")) {
 			dq = new Base64URL(JSONObjectUtils.getString(jsonObject, "dq"));
 		}
 		Base64URL qi = null;
-		if (jsonObject.get("qi") != null) {
+		if (jsonObject.containsKey("qi")) {
 			qi = new Base64URL(JSONObjectUtils.getString(jsonObject, "qi"));
 		}
 		
 		List<OtherPrimesInfo> oth = null;
-		if (jsonObject.get("oth") != null) {
+		if (jsonObject.containsKey("oth")) {
 
 			JSONArray arr = JSONObjectUtils.getJSONArray(jsonObject, "oth");
 			oth = new ArrayList<RSAKey.OtherPrimesInfo>(arr.size());

@@ -148,7 +148,6 @@ public final class ECKey extends JWK {
 		public Curve(final String name, final String stdName) {
 
 			if (name == null) {
-
 				throw new IllegalArgumentException("The cryptographic curve name must not be null");
 			}
 
@@ -200,7 +199,6 @@ public final class ECKey extends JWK {
 				ECNamedCurveTable.getParameterSpec(stdName);
 
 			if (curveParams == null) {
-
 				return null;
 			}
 
@@ -251,24 +249,19 @@ public final class ECKey extends JWK {
 			throws ParseException {
 
 			if (s == null) {
-
 				throw new IllegalArgumentException("The cryptographic curve string must not be null");
 			}
 
 			if (s.equals(P_256.getName())) {
-				
 				return P_256;
 
 			} else if (s.equals(P_384.getName())) {
-				
 				return P_384;
 
 			} else if (s.equals(P_521.getName())) {
-
 				return P_521;
 
 			} else {
-
 				return new Curve(s);
 			}
 		}
@@ -287,18 +280,15 @@ public final class ECKey extends JWK {
 		public static Curve forStdName(final String stdName) {
 
 			if (stdName.equals("secp256r1")) {
-
 				return P_256;
-			} else if (stdName.equals("secp384r1")) {
 
+			} else if (stdName.equals("secp384r1")) {
 				return P_384;
 
 			} else if (stdName.equals("secp521r1")) {
-
 				return P_521;
 
 			} else {
-
 				throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
 			}
 		}
@@ -1056,10 +1046,11 @@ public final class ECKey extends JWK {
 
 		if (d == null) {
 			// Public key
-			return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);	
-		}
+			return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);
 
-		// Key pair
-		return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
+		} else {
+			// Key pair
+			return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
+		}
 	}
 }
