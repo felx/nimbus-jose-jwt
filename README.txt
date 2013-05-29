@@ -30,7 +30,7 @@ algorithms:
 
 	* HMAC signatures with HS256, HS384 and HS512. 
 
-	* RSA signatures with RS256, RS384 and RS512. 
+	* RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512. 
 
 	* EC signatures with ES256, ES384 and ES512. 
 
@@ -57,17 +57,15 @@ http://nimbusds.com/files/jose-jwt/javadoc/
 
 Related IETF drafts
 
-	[JWA] draft-ietf-jose-json-web-algorithms-08 
+	[JWA] draft-ietf-jose-json-web-algorithms-11 
 
-	[JWS] draft-ietf-jose-json-web-signature-08 
+	[JWS] draft-ietf-jose-json-web-signature-11 
 
-	[JWE] draft-ietf-jose-json-web-encryption-08 
+	[JWE] draft-ietf-jose-json-web-encryption-11 
 
-	[JWK] draft-ietf-jose-json-web-key-08 
+	[JWK] draft-ietf-jose-json-web-key-11
 
-	[JPSK] draft-jones-jose-json-private-and-symmetric-key-00 
-
-	[JWT] draft-ietf-oauth-json-web-token-06 
+	[JWT] draft-ietf-oauth-json-web-token-08 
 
 
 Dependencies
@@ -109,15 +107,37 @@ The library has received numerous contributions and is now on the way to have
 all standard JWAs fully implemented. You're welcome to join us if you wish to 
 help out with that.
 
+Acknowledgements
+
+    Axel Nennker and the guys behind OpenInfoCard for providing much of the 
+    initial code.
+    
+    Justin Richer from MITRE for handling releases to Maven Central, JPSK 
+    support, numerous improvements, fixes and suggestions.
+
+    Ville Kurkinen for adding initial Maven support.
+
+    David Ortiz for initiating RSA encryption development.
+
+    Juraj Somorovsky for security related reviews and improvements.
+
+    Lai Xin Chu for initial work on JWE.
+
+    Wisgary Torres from the Microsoft Xbox team for important feedback and bug 
+    reports.
+
+    CertiVox UK for supporting the library development.
+
+    Everyone on the JOSE IETF WG list.
+    
+    NimbusDS QA. 
 
 To post bug reports and suggestions
 
-	https://bitbucket.org/nimbusds/nimbus-jose-jwt/issues
-
-
+https://bitbucket.org/nimbusds/nimbus-jose-jwt/issues
 Follow us on Twitter
 
-	https://twitter.com/NimbusDS
+https://twitter.com/NimbusDS
 
 
 [EOF]

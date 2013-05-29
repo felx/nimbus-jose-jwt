@@ -187,3 +187,7 @@ version 2.15.1 (2013-05-16)
 version 2.15.2 (2013-05-20)
 	* Fixes bug in additional authentication data (AAD) composition for
 	  direct JWE encryption and decryption.
+
+version 2.16 (2013-05-29)
+	* Updates the library to match the latest JOSE -11 and JWT -08 draft 
+	  suite.
