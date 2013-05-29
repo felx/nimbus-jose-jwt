@@ -44,7 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-05-29)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -154,7 +154,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	    	}
 
 	    	// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
 
 	    	// Decrypt the cipher text according to the JWE enc
 	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();

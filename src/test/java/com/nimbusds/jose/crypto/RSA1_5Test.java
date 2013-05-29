@@ -25,7 +25,7 @@ import com.nimbusds.jose.Payload;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-29)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -280,15 +280,15 @@ public class RSA1_5Test extends TestCase {
 		// From JWE spec draft-ietf-jose-json-web-encryption-10, appendix-A.2
 
 		String jweString = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0." +
-			"nJa_uE2D0wlKz-OcwSbKFzj302xYSI-RLBM6hbVGmP4axtJQPA9S0po3s3NMkmOm" +
-			"kkawnfwPNjpc0mc3z79cuQWkQPFQo-mDxmogz8dxBcheaTUg3ZvpbGCXxZjDYENR" +
-			"WiZ5M9BiLy09BIF5mHp85QL6XED1JEZMOh-1uT1lqPDcDD79qWtrCfEJmNmfsx5f" +
-			"cB2PfAcVtQ0t_YmOXx5_Gu0it1nILKXLR2Ynf9mfLhEcC5LebpWyEHW6WzQ4iH9S" +
-			"IcIupPV1iKCzmJcPrDBJ5Fc_KMBcXBinaS__wftNywaGgfi_NSsx24LxtK6fIkej" +
-			"RlMBmCfxv0Tg8CtxpURigg." +
+			"UGhIOguC7IuEvf_NPVaXsGMoLOmwvc1GyqlIKOK1nN94nHPoltGRhWhw7Zx0-kFm" +
+			"1NJn8LE9XShH59_i8J0PH5ZZyNfGy2xGdULU7sHNF6Gp2vPLgNZ__deLKxGHZ7Pc" +
+			"HALUzoOegEI-8E66jX2E4zyJKx-YxzZIItRzC5hlRirb6Y5Cl_p-ko3YvkkysZIF" +
+			"NPccxRU7qve1WYPxqbb2Yw8kZqa2rMWI5ng8OtvzlV7elprCbuPhcCdZ6XDP0_F8" +
+			"rkXds2vE4X-ncOIM8hAYHHi29NX0mcKiRaD0-D-ljQTP-cFPgwCp6X-nZZd9OHBv" +
+			"-B3oWh2TbqmScqXMR4gp_A." +
 			"AxY8DCtDaGlsbGljb3RoZQ." +
 			"KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY." +
-			"fY2U_Hx5VcfXmipEldHhMA";
+			"9hH0vgRfYgPnAHOd8stkvw";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 

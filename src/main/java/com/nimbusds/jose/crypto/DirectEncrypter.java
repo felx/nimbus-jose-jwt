@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-20)
+ * @version $version$ (2013-05-29)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -135,8 +135,8 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
 
 
-		// Compose the AAD, encryption key empty
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + ".");
+		// Compose the AAD
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
 		
 
 		// Encrypt the plain text according to the JWE enc

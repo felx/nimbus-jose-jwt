@@ -24,7 +24,7 @@ import com.nimbusds.jose.Payload;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-05-29)
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -206,19 +206,19 @@ public class RSA_OAEPTest extends TestCase {
 	public void testDecryptWith256GCM()
 		throws Exception {
 
-		// JWE object from spec, appendix 1
+		// JWE object from spec, appendix A-1
 
 		String jweString = "eyJhbGciOiJSU0EtT0FFUCIsImVuYyI6IkEyNTZHQ00ifQ." +
-			"ApfOLCaDbqs_JXPYy2I937v_xmrzj-Iss1mG6NAHmeJViM6j2l0MHvfseIdHVyU2" +
-			"BIoGVu9ohvkkWiRq5DL2jYZTPA9TAdwq3FUIVyoH-Pedf6elHIVFi2KGDEspYMtQ" +
-			"ARMMSBcS7pslx6flh1Cfh3GBKysztVMEhZ_maFkm4PYVCsJsvq6Ct3fg2CJPOs0X" +
-			"1DHuxZKoIGIqcbeK4XEO5a0h5TAuJObKdfO0dKwfNSSbpu5sFrpRFwV2FTTYoqF4" +
-			"zI46N9-_hMIznlEpftRXhScEJuZ9HG8C8CHB1WRZ_J48PleqdhF4o7fB5J1wFqUX" +
-			"BtbtuGJ_A2Xe6AEhrlzCOw." +
+			"OKOawDo13gRp2ojaHV7LFpZcgV7T6DVZKTyKOMTYUmKoTCVJRgckCL9kiMT03JGe" +
+			"ipsEdY3mx_etLbbWSrFr05kLzcSr4qKAq7YN7e9jwQRb23nfa6c9d-StnImGyFDb" +
+			"Sv04uVuxIp5Zms1gNxKKK2Da14B8S4rzVRltdYwam_lDp5XnZAYpQdb76FdIKLaV" +
+			"mqgfwX7XWRxv2322i-vDxRfqNzo_tETKzpVLzfiwQyeyPGLBIO56YJ7eObdv0je8" +
+			"1860ppamavo35UgoRdbYaBcoh9QcfylQr66oc6vFWXRcZ_ZT2LawVCWTIy3brGPi" +
+			"6UklfCpIMfIjf7iGdXKHzg." +
 			"48V1_ALb6US04U3b." +
 			"5eym8TW_c8SuK0ltJ3rpYIzOeDQz7TALvtu6UG9oMo4vpzs9tX_EFShS8iB7j6ji" +
 			"SdiwkIr3ajwQzaBtQD_A." +
-			"ghEgxninkHEAMp4xZtB2mA";
+			"XFBoMYUZodetZdvTiFvSkQ";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 

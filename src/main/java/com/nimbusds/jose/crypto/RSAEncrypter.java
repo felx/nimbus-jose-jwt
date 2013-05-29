@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2013-05-29)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -143,7 +143,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL() + "." + encryptedKey);
+		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
 
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;
