@@ -68,7 +68,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-05-30)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -153,7 +153,6 @@ public final class ECKey extends JWK {
 
 			this.name = name;
 
-
 			this.stdName = stdName;
 		}
 
@@ -191,7 +190,6 @@ public final class ECKey extends JWK {
 		public ECParameterSpec toECParameterSpec() {
 
 			if (stdName == null) {
-
 				return null;
 			}
 
@@ -384,13 +382,13 @@ public final class ECKey extends JWK {
 			this.crv = crv;
 
 			if (x == null) {
-				throw new IllegalArgumentException("The x coordinate must not be null");
+				throw new IllegalArgumentException("The 'x' coordinate must not be null");
 			}
 
 			this.x = x;
 
 			if (y == null) {
-				throw new IllegalArgumentException("The y coordinate must not be null");
+				throw new IllegalArgumentException("The 'y' coordinate must not be null");
 			}
 
 			this.y = y;
@@ -415,7 +413,7 @@ public final class ECKey extends JWK {
 
 		/**
 		 * Sets the private 'd' coordinate for the elliptic curve 
-		 * point. 
+		 * point. The alternative method is {@link #setPrivateKey}.
 		 *
 		 * @param d The 'd' coordinate. It is represented as the 
 		 *          Base64URL encoding of the coordinate's big endian 
@@ -432,15 +430,17 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * Sets the private 'd' coordinate for the elliptic curve
-		 * point.
+		 * Sets the private Elliptic Curve key. The alternative method 
+		 * is {@link #setD}.
 		 *
-		 * @param priv The private EC key to represent. {@code null} if
-		 *             not specified (for a public key).
+		 * @param priv The private EC key, used to obtain the private
+		 *             'd' coordinate for the elliptic curve point.
+		 *             {@code null} if not specified (for a public 
+		 *             key).
 		 *
 		 * @return This builder.
 		 */
-		public Builder setD(final ECPrivateKey priv) {
+		public Builder setPrivateKey(final ECPrivateKey priv) {
 
 			if (priv != null) {
 				this.d = Base64URL.encode(priv.getS());	
@@ -620,13 +620,13 @@ public final class ECKey extends JWK {
 		this.crv = crv;
 
 		if (x == null) {
-			throw new IllegalArgumentException("The x coordinate must not be null");
+			throw new IllegalArgumentException("The 'x' coordinate must not be null");
 		}
 
 		this.x = x;
 
 		if (y == null) {
-			throw new IllegalArgumentException("The y coordinate must not be null");
+			throw new IllegalArgumentException("The 'y' coordinate must not be null");
 		}
 
 		this.y = y;
@@ -675,19 +675,19 @@ public final class ECKey extends JWK {
 		this.crv = crv;
 
 		if (x == null) {
-			throw new IllegalArgumentException("The x coordinate must not be null");
+			throw new IllegalArgumentException("The 'x' coordinate must not be null");
 		}
 
 		this.x = x;
 
 		if (y == null) {
-			throw new IllegalArgumentException("The y coordinate must not be null");
+			throw new IllegalArgumentException("The 'y' coordinate must not be null");
 		}
 
 		this.y = y;
 		
 		if (d == null) {
-			throw new IllegalArgumentException("The d coordinate must not be null");
+			throw new IllegalArgumentException("The 'd' coordinate must not be null");
 		}
 
 		this.d = d;
@@ -838,7 +838,6 @@ public final class ECKey extends JWK {
 		ECParameterSpec spec = crv.toECParameterSpec();
 
 		if (spec == null) {
-
 			throw new NoSuchAlgorithmException("Couldn't get EC parameter spec for curve " + crv);
 		}
 

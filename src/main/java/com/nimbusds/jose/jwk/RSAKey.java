@@ -263,6 +263,475 @@ public final class RSAKey extends JWK {
 	}
 
 
+	/**
+	 * Implements a builder pattern for constructing RSA JWKs.
+	 */
+	public static class Builder {
+
+
+		// Public RSA params
+
+		/**
+		 * The modulus value for the RSA key.
+		 */
+		private final Base64URL n;
+
+
+		/**
+		 * The public exponent of the RSA key.
+		 */
+		private final Base64URL e;
+
+
+		// Private RSA params, 1st representation	
+
+		/**
+		 * The private exponent of the RSA key.
+		 */
+		private Base64URL d;
+
+		
+		// Private RSA params, 2nd representation
+
+		/**
+		 * The first prime factor of the private RSA key.
+		 */
+		private Base64URL p;
+
+		
+		/**
+		 * The second prime factor of the private RSA key.
+		 */
+		private Base64URL q;
+
+		
+		/**
+		 * The first factor Chinese Remainder Theorem exponent of the 
+		 * private RSA key.
+		 */
+		private Base64URL dp;
+
+		
+		/**
+		 * The second factor Chinese Remainder Theorem exponent of the
+		 * private RSA key.
+		 */
+		private Base64URL dq;
+
+		
+		/**
+		 * The first Chinese Remainder Theorem coefficient of the private RSA
+		 * key.
+		 */
+		private Base64URL qi;
+
+		
+		/**
+		 * The other primes information of the private RSA key, should
+		 * they exist. When only two primes have been used (the normal
+		 * case), this parameter MUST be omitted. When three or more 
+		 * primes have been used, the number of array elements MUST be 
+		 * the number of primes used minus two.
+		 */
+		private List<OtherPrimesInfo> oth;
+		
+
+
+		/**
+		 * The key use, optional.
+		 */
+		private Use use;
+
+
+		/**
+		 * The intended JOSE algorithm for the key, optional.
+		 */
+		private Algorithm alg;
+
+
+		/**
+		 * The key ID, optional.
+		 */
+		private String kid;
+
+
+		/**
+		 * X.509 certificate URL, optional.
+		 */
+		private URL x5u;
+
+
+		/**
+		 * X.509 certificate thumbprint, optional.
+		 */
+		private Base64URL x5t;
+
+
+		/**
+		 * The X.509 certificate chain, optional.
+		 */
+		private List<Base64> x5c;
+
+
+		/**
+		 * Creates a new RSA JWK builder.
+		 *
+		 * @param n The the modulus value for the public RSA key. It is 
+		 *          represented as the Base64URL encoding of value's 
+		 *          big endian representation. Must not be 
+		 *          {@code null}.
+		 * @param e The exponent value for the public RSA key. It is 
+		 *          represented as the Base64URL encoding of value's 
+		 *          big endian representation. Must not be 
+		 *          {@code null}.
+		 */
+		public Builder(final Base64URL n, final Base64URL e) {
+
+			// Ensure the public params are defined
+
+			if (n == null) {
+				throw new IllegalArgumentException("The modulus value must not be null");
+			}
+
+			this.n = n;
+
+
+			if (e == null) {
+				throw new IllegalArgumentException("The public exponent value must not be null");
+			}
+
+			this.e = e;
+		}
+
+
+		/**
+		 * Creates a new RSA JWK builder.
+		 * 
+		 * @param pub The public RSA key to represent. Must not be 
+		 *            {@code null}.
+		 */
+		public Builder(final RSAPublicKey pub) {
+
+			n = Base64URL.encode(pub.getModulus());
+			e = Base64URL.encode(pub.getPublicExponent());
+		}
+
+
+		/**
+		 * Sets the private exponent ({@code d}) of the RSA key.
+		 *
+		 * @param d The private RSA key exponent. It is represented as 
+		 *          the Base64URL encoding of the value's big endian 
+		 *          representation. {@code null} if not specified (for 
+		 *          a public key or a private key using the second 
+		 *          representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setPrivateExponent(final Base64URL d) {
+
+			this.d = d;
+			return this;
+		}
+
+
+		/**
+		 * Sets the private RSA key, using the first representation.
+		 * 
+		 * @param priv The private RSA key, used to obtain the private
+		 *             exponent ({@code d}). Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setPrivateKey(final RSAPrivateKey priv) {
+
+			this.d = Base64URL.encode(priv.getPrivateExponent());
+			return this;
+		}
+
+
+		/**
+		 * Sets the first prime factor ({@code p}) of the private RSA
+		 * key. 
+		 *
+		 * @param p The RSA first prime factor. It is represented as 
+		 *          the Base64URL encoding of the value's big endian 
+		 *          representation. {@code null} if not specified (for 
+		 *          a public key or a private key using the first 
+		 *          representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setFirstPrimeFactor(final Base64URL p) {
+
+			this.p = p;
+			return this;
+		}
+
+
+		/**
+		 * Sets the second prime factor ({@code q}) of the private RSA 
+		 * key.
+		 *
+		 * @param q The RSA second prime factor. It is represented as 
+		 *          the Base64URL encoding of the value's big endian 
+		 *          representation. {@code null} if not specified (for 
+		 *          a public key or a private key using the first 
+		 *          representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setSecondPrimeFactor(final Base64URL q) {
+
+			this.q = q;
+			return this;
+		}
+
+
+		/**
+		 * Sets the first factor Chinese Remainder Theorem (CRT) 
+		 * exponent ({@code dp}) of the private RSA key.
+		 *
+		 * @param dp The RSA first factor CRT exponent. It is 
+		 *           represented as the Base64URL encoding of the 
+		 *           value's big endian representation. {@code null} 
+		 *           if not specified (for a public key or a private
+		 *           key using the first representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setFirstFactorCRTExponent(final Base64URL dp) {
+
+			this.dp = dp;
+			return this;
+		}
+
+
+		/**
+		 * Sets the second factor Chinese Remainder Theorem (CRT) 
+		 * exponent ({@code dq}) of the private RSA key.
+		 *
+		 * @param dq The RSA second factor CRT exponent. It is 
+		 *           represented as the Base64URL encoding of the 
+		 *           value's big endian representation. {@code null} if 
+		 *           not specified (for a public key or a private key 
+		 *           using the first representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setSecondFactorCRTExponent(final Base64URL dq) {
+
+			this.dq = dq;
+			return this;
+		}
+
+
+		/**
+		 * Sets the first Chinese Remainder Theorem (CRT) coefficient
+		 * ({@code qi})} of the private RSA key.
+		 *
+		 * @param qi The RSA first CRT coefficient. It is represented 
+		 *           as the Base64URL encoding of the value's big 
+		 *           endian representation. {@code null} if not 
+		 *           specified (for a public key or a private key using 
+		 *           the first representation only).
+		 *
+		 * @return This builder.
+		 */
+		public Builder setFirstCRTCoefficient(final Base64URL qi) {
+
+			this.qi = qi;
+			return this;
+		}
+
+
+		/**
+		 * Sets the other primes information ({@code oth}) for the 
+		 * private RSA key, should they exist.
+		 *
+		 * @param oth The RSA other primes information, {@code null} or 
+		 *            empty list if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder getOtherPrimes(final List<OtherPrimesInfo> oth) {
+
+			this.oth = oth;
+			return this;
+		}
+
+
+		/**
+		 * Sets the private RSA key, using the second representation 
+		 * (see RFC 3447, section 3.2).
+		 * 
+		 * @param priv The private RSA key, used to obtain the private
+		 *             exponent ({@code d}), the first prime factor
+		 *             ({@code p}), the second prime factor 
+		 *             ({@code q}), the first factor CRT exponent 
+		 *             ({@code dp}), the second factor CRT exponent
+		 *             ({@code dq}) and the first CRT coefficient 
+		 *             ({@code qi}). Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setPrivateKey(final RSAPrivateCrtKey priv) {
+
+			d = Base64URL.encode(priv.getPrivateExponent());
+			p = Base64URL.encode(priv.getPrimeP());
+			q = Base64URL.encode(priv.getPrimeQ());
+			dp = Base64URL.encode(priv.getPrimeExponentP());
+			dq = Base64URL.encode(priv.getPrimeExponentQ());
+			qi = Base64URL.encode(priv.getCrtCoefficient());
+
+			return this;
+		}
+
+
+		/**
+		 * Sets the private RSA key, using the second representation, 
+		 * with optional other primes info (see RFC 3447, section 3.2).
+		 * 
+		 * @param priv The private RSA key, used to obtain the private
+		 *             exponent ({@code d}), the first prime factor
+		 *             ({@code p}), the second prime factor 
+		 *             ({@code q}), the first factor CRT exponent 
+		 *             ({@code dp}), the second factor CRT exponent
+		 *             ({@code dq}), the first CRT coefficient 
+		 *             ({@code qi}) and the other primes info
+		 *             ({@code oth}). Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setPrivateKey(final RSAMultiPrimePrivateCrtKey priv) {
+			
+			d = Base64URL.encode(priv.getPrivateExponent());
+			p = Base64URL.encode(priv.getPrimeP());
+			q = Base64URL.encode(priv.getPrimeQ());
+			dp = Base64URL.encode(priv.getPrimeExponentP());
+			dq = Base64URL.encode(priv.getPrimeExponentQ());
+			qi = Base64URL.encode(priv.getCrtCoefficient());
+			oth = OtherPrimesInfo.toList(priv.getOtherPrimeInfo());
+
+			return this;
+		}
+
+
+		/**
+		 * Sets the use ({@code use}) of the JWK.
+		 *
+		 * @param use The key use, {@code null} if not specified or if 
+		 *            the key is intended for signing as well as 
+		 *            encryption.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setUse(final Use use) {
+
+			this.use = use;
+			return this;
+		}
+
+
+		/**
+		 * Sets the intended JOSE algorithm ({@code alg}) for the JWK.
+		 *
+		 * @param alg The intended JOSE algorithm, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setAlgorithm(final Algorithm alg) {
+
+			this.alg = alg;
+			return this;
+		}
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK. The key ID can be used 
+		 * to match a specific key. This can be used, for instance, to 
+		 * choose a key within a {@link JWKSet} during key rollover. 
+		 * The key ID may also correspond to a JWS/JWE {@code kid} 
+		 * header parameter value.
+		 *
+		 * @param kid The key ID, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setKeyID(final String kid) {
+
+			this.kid = kid;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate URL ({@code x5u}) of the JWK.
+		 *
+		 * @param x5u The X.509 certificate URL, {@code null} if not 
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertURL(final URL x5u) {
+
+			this.x5u = x5u;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate thumbprint ({@code x5t}) of the
+		 * JWK.
+		 *
+		 * @param x5t The X.509 certificate thumbprint, {@code null} if 
+		 *            not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertThumbprint(final Base64URL x5t) {
+
+			this.x5t = x5t;
+			return this;
+		}
+
+		/**
+		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
+		 *
+		 * @param x5c The X.509 certificate chain as a unmodifiable 
+		 *            list, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder setX509CertChain(final List<Base64> x5c) {
+
+			this.x5c = x5c;
+			return this;
+		}
+
+		/**
+		 * Builds a new RSA JWK.
+		 *
+		 * @return The RSA JWK.
+		 *
+		 * @throws IllegalStateException If the JWK parameters were
+		 *                               inconsistently specified.
+		 */
+		public RSAKey build() {
+
+			try {
+				// The full constructor
+				return new RSAKey(n, e, d, p, q, dp, dq, qi, oth,
+					          use, alg, kid, x5u, x5t, x5c);
+
+			} catch (IllegalArgumentException e) {
+
+				throw new IllegalStateException(e.getMessage(), e);
+			}
+		}
+	}
+
+
 	// Public RSA params
 
 	/**
@@ -321,12 +790,11 @@ public final class RSAKey extends JWK {
 
 	
 	/**
-	 * The other primes information of the private RSA key, should the
+	 * The other primes information of the private RSA key, should they
 	 * exist. When only two primes have been used (the normal case), this 
 	 * parameter MUST be omitted. When three or more primes have been used,
 	 * the number of array elements MUST be the number of primes used minus
-	 * two. Each array element MUST be an object with the following 
-	 * members:
+	 * two.
 	 */
 	private final List<OtherPrimesInfo> oth;
 
@@ -558,7 +1026,6 @@ public final class RSAKey extends JWK {
 		if (p != null && q != null && dp != null && dq != null && qi != null) {
 
 			// CRT params fully specified
-
 			this.p = p;
 			this.q = q;
 			this.dp = dp;
