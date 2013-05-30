@@ -188,6 +188,8 @@ version 2.15.2 (2013-05-20)
 	* Fixes bug in additional authentication data (AAD) composition for
 	  direct JWE encryption and decryption.
 
-version 2.16 (2013-05-29)
+version 2.16 (2013-05-30)
 	* Updates the library to match the latest JOSE -11 and JWT -08 draft 
 	  suite.
+	* Adds builders for constructing RSA, EC and octet sequence JWKs (using
+	  the builder pattern).
