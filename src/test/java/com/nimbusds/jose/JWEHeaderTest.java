@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-05-30)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -56,8 +56,6 @@ public class JWEHeaderTest extends TestCase {
 		// Example header from JWE spec
 		// {"alg":"RSA1_5","enc":"A128CBC-HS256"}
 		Base64URL in = new Base64URL("eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0");
-
-		System.out.println("JWE: " + in.decodeToString());
 
 		JWEHeader h = JWEHeader.parse(in);
 
