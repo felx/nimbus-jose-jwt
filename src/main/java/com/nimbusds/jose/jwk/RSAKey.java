@@ -265,6 +265,16 @@ public final class RSAKey extends JWK {
 
 	/**
 	 * Implements a builder pattern for constructing RSA JWKs.
+	 *
+	 * <p>Example use:
+	 *
+	 * <pre>
+	 * RSAKey key = new RSAKey.Builder(n, e).
+	 *              setPrivateExponent(d).
+	 *              setAlgorithm(JWSAlgorithm.RS512).
+	 *              setKeyID("456").
+	 *              build();
+	 * </pre>
 	 */
 	public static class Builder {
 

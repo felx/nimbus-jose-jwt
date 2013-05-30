@@ -45,6 +45,15 @@ public class OctetSequenceKey extends JWK {
 
 	/**
 	 * Implements a builder pattern for constructing octet sequence JWKs.
+	 *
+	 * <p>Example use:
+	 *
+	 * <pre>
+	 * OctetSequenceKey key = new OctetSequenceKey.Builder(k).
+	 *                        setAlgorithm(JWSAlgorithm.HS512).
+	 *                        setKeyID("123").
+	 *                        build();
+	 * </pre>
 	 */
 	public static class Builder {
 
