@@ -1,14 +1,18 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.net.URL;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -16,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-05-30)
  */
 public class ECKeyTest extends TestCase {
 
@@ -35,13 +39,21 @@ public class ECKeyTest extends TestCase {
 	public void testFullConstructorAndSerialization()
 		throws Exception {
 
+		URL x5u = new URL("http://example.com/jwk.json");
+		Base64URL x5t = new Base64URL("abc");
+		List<Base64> x5c = new LinkedList<Base64>();
+		x5c.add(new Base64("def"));
+
 		ECKey key = new ECKey(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
+			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
 		
 		// Test getters
 		assertEquals(Use.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
 		assertEquals(new Base64URL(x), key.getX());
@@ -75,6 +87,9 @@ public class ECKeyTest extends TestCase {
 		assertEquals(Use.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
 		assertEquals(new Base64URL(x), key.getX());
@@ -82,6 +97,78 @@ public class ECKeyTest extends TestCase {
 		assertNull(key.getD());
 
 		assertFalse(key.isPrivate());
+	}
+
+
+	public void testBuilder()
+		throws Exception {
+
+		URL x5u = new URL("http://example.com/jwk.json");
+		Base64URL x5t = new Base64URL("abc");
+		List<Base64> x5c = new LinkedList<Base64>();
+		x5c.add(new Base64("def"));
+
+		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y)).
+		            setD(new Base64URL(d)).
+		            setKeyUse(Use.SIGNATURE).
+		            setAlgorithm(JWSAlgorithm.ES256).
+		            setKeyID("1").
+		            setX509CertURL(x5u).
+		            setX509CertThumbprint(x5t).
+		            setX509CertChain(x5c).
+		            build();
+		
+		// Test getters
+		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+
+		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(new Base64URL(x), key.getX());
+		assertEquals(new Base64URL(y), key.getY());
+		assertEquals(new Base64URL(d), key.getD());
+
+		assertTrue(key.isPrivate());
+
+
+		String jwkString = key.toJSONObject().toString();
+
+		key = ECKey.parse(jwkString);
+
+		// Test getters
+		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+
+		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(new Base64URL(x), key.getX());
+		assertEquals(new Base64URL(y), key.getY());
+		assertEquals(new Base64URL(d), key.getD());
+
+		assertTrue(key.isPrivate());
+		
+
+		// Test conversion to public JWK
+
+		key = key.toPublicJWK();
+		
+		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+
+		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(new Base64URL(x), key.getX());
+		assertEquals(new Base64URL(y), key.getY());
+		assertNull(key.getD());
+
+		assertFalse(key.isPrivate());
+
 	}
 
 

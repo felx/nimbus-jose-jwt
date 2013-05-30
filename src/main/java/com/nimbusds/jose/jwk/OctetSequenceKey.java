@@ -126,7 +126,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setUse(final Use use) {
+		public Builder setKeyUse(final Use use) {
 
 			this.use = use;
 			return this;
