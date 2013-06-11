@@ -10,8 +10,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for plaintext, JSON Web Signature (JWS) - secured 
- * and JSON Web Encryption (JWE) - secured objects.
+ * The base abstract class for plaintext, JSON Web Signature (JWS) and JSON Web 
+ * Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2012-10-23)
@@ -177,7 +177,7 @@ public abstract class JOSEObject {
 	 *                        into three or five Base64URL-encoded parts.
 	 */
 	public static Base64URL[] split(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		// We must have 2 (JWS) or 4 dots (JWE)
 
@@ -241,7 +241,7 @@ public abstract class JOSEObject {
 	 *                       plaintext, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = split(s);
 
