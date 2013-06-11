@@ -14,7 +14,7 @@
 	<version>2.16.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
     
-	<name>NimbusDS JOSE JWT</name>
+	<name>NimbusDS JOSE+JWT</name>
 	<description>Nimbus JOSE+JWT is a Java library that implements the 
 		Javascript Object Signing and Encryption (JOSE) spec suite and 
 		the closely related JSON Web Token (JWT) spec. 
@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.47</version>
+			<version>1.49</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
