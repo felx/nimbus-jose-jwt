@@ -7,7 +7,6 @@ import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.Header;
-import com.nimbusds.jose.JOSEObject;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
@@ -18,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Parser for plain, signed and encrypted JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-28)
+ * @version $version$ (2013-06-11)
  */
 public final class JWTParser {
 
@@ -36,14 +35,19 @@ public final class JWTParser {
 	 *                        plain, signed or encrypted JWT.
 	 */
 	public static JWT parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
-		Base64URL[] parts = JOSEObject.split(s);
-
+		final int firstDotPos = s.indexOf(".");
+		
+		if (firstDotPos == -1)
+			throw new ParseException("Invalid JWT serialization: Missing dot delimiter(s)", 0);
+			
+		Base64URL header = new Base64URL(s.substring(firstDotPos));
+		
 		JSONObject jsonObject = null;
 
 		try {
-			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
+			jsonObject = JSONObjectUtils.parseJSONObject(header.decodeToString());
 
 		} catch (ParseException e) {
 
