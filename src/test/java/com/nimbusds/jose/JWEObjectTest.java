@@ -10,22 +10,9 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-07-15)
  */
 public class JWEObjectTest extends TestCase {
-
-
-	public void testMIMETypes()
-		throws Exception {
-
-		assertTrue(JWEObject.MIME_TYPE_COMPACT.match("application/jwe"));
-		assertTrue(JWEObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
-		assertEquals(1, JWEObject.MIME_TYPE_COMPACT.getParameterList().size());
-
-		assertTrue(JWEObject.MIME_TYPE_JS.match("application/jwe+js"));
-		assertTrue(JWEObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
-		assertEquals(1, JWEObject.MIME_TYPE_JS.getParameterList().size());
-	}
 
 
 	public void testBase64URLConstructor()

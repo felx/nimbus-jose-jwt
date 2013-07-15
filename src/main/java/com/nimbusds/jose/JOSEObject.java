@@ -3,6 +3,9 @@ package com.nimbusds.jose;
 
 import java.text.ParseException;
 
+import javax.mail.internet.ContentType;
+import javax.mail.internet.ParameterList;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -14,9 +17,34 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2013-07-15)
  */
 public abstract class JOSEObject {
+	
+	
+	/**
+	 * The MIME type of JOSE objects serialised to a compact form:
+	 * {@code application/jose; charset=UTF-8}
+	 */
+	public static final ContentType MIME_TYPE_COMPACT;
+
+
+	/**
+	 * The MIME type of JOSE objects serialised to a JSON object form:
+	 * {@code application/jose+json; charset=UTF-8}
+	 */
+	public static final ContentType MIME_TYPE_JS;
+
+
+	static {
+
+		final ParameterList params = new ParameterList();
+		params.set("charset", "UTF-8");
+
+		MIME_TYPE_COMPACT = new ContentType("application", "jose", params);
+
+		MIME_TYPE_JS = new ContentType("application", "jose+json", params);
+	}
 
 
 	/**

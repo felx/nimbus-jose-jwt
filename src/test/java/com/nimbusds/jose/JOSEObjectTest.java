@@ -12,9 +12,22 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JOSE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2013-07-15)
  */
 public class JOSEObjectTest extends TestCase {
+	
+	
+	public void testMIMETypes()
+		throws Exception {
+
+		assertTrue(PlainObject.MIME_TYPE_COMPACT.match("application/jose"));
+		assertTrue(PlainObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
+		assertEquals(1, PlainObject.MIME_TYPE_COMPACT.getParameterList().size());
+
+		assertTrue(PlainObject.MIME_TYPE_JS.match("application/jose+json"));
+		assertTrue(PlainObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
+		assertEquals(1, PlainObject.MIME_TYPE_JS.getParameterList().size());
+	}
 
 
 	public void testSplitThreeParts() {
