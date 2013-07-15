@@ -2,7 +2,6 @@ package com.nimbusds.jose;
 
 
 import java.net.URL;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-30)
+ * @version $version$ (2013-07-15)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -104,6 +103,7 @@ public class JWEHeaderTest extends TestCase {
 		h.setX509CertChain(certChain);
 
 		h.setAgreementPartyUInfo(new Base64URL("abc"));
+		h.setAgreementPartyVInfo(new Base64URL("xyz"));
 
 
 		String s = h.toString();
@@ -136,6 +136,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64("jkl"), certChain.get(2));
 
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
+		assertEquals(new Base64URL("xyz"), h.getAgreementPartyVInfo());
 
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
@@ -148,7 +149,8 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5t"));
 		assertTrue(h.getIncludedParameters().contains("x5c"));
 		assertTrue(h.getIncludedParameters().contains("apu"));
-		assertEquals(11, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("apv"));
+		assertEquals(12, h.getIncludedParameters().size());
 	}
 
 

@@ -36,6 +36,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>cty
  *     <li>crit
  *     <li>apu
+ *     <li>apv
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
@@ -51,7 +52,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-07-15)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -82,6 +83,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		p.add("cty");
 		p.add("crit");
 		p.add("apu");
+		p.add("apv");
 
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -109,6 +111,12 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 * The agreement PartyUInfo ({@code apu}) parameter.
 	 */
 	private Base64URL apu;
+	
+	
+	/**
+	 * The agreement PartyVInfo ({@code apv}) parameter.
+	 */
+	private Base64URL apv;
 
 
 	/**
@@ -210,6 +218,25 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 		this.apu = apu;
 	}
+	
+	
+	@Override
+	public Base64URL getAgreementPartyVInfo() {
+
+		return apv;
+	}
+
+
+	/**
+	 * Sets the agreement PartyVInfo ({@code apv}) parameter.
+	 *
+	 * @param apv The agreement PartyVInfo parameter, {@code null} if not
+	 *            specified.
+	 */
+	public void setAgreementPartyVInfo(final Base64URL apv) {
+
+		this.apv = apv;
+	}
 
 
 	/**
@@ -283,6 +310,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		if (getAgreementPartyUInfo() != null) {
 			includedParameters.add("apu");
 		}
+		
+		if (getAgreementPartyVInfo() != null) {
+			includedParameters.add("apv");
+		}
 
 		return includedParameters;
 	}
@@ -307,6 +338,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 		if (apu != null) {
 			o.put("apu", apu.toString());
+		}
+		
+		if (apv != null) {
+			o.put("apv", apv.toString());
 		}
 
 		return o;
@@ -388,6 +423,8 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 				h.setKeyID(JSONObjectUtils.getString(json, name));
 			} else if (name.equals("apu")) {
 				h.setAgreementPartyUInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			} else if (name.equals("apv")) {
+				h.setAgreementPartyVInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
 			} else {
 				h.setCustomParameter(name, json.get(name));
 			}
