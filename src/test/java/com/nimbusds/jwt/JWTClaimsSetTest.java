@@ -3,11 +3,13 @@ package com.nimbusds.jwt;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
 import net.minidev.json.JSONObject;
 
 
@@ -16,7 +18,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-04-08)
+ * @version $version$ (2013-07-15)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -188,5 +190,54 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals(new Long(60l), (Long)json.get("iat"));
 		assertEquals(new Long(60l), (Long)json.get("nbf"));
 		assertEquals(new Long(60l), (Long)json.get("exp"));
+	}
+	
+	
+	public void testSetCustomClaimsNull() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setCustomClaim("locale", "bg-BG");
+		
+		assertEquals(1, cs.getCustomClaims().size());
+		
+		cs.setCustomClaims(null);
+		
+		assertTrue(cs.getCustomClaims().isEmpty());
+	}
+	
+	
+	public void testSetCustomClaimsEmpty() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setCustomClaim("locale", "bg-BG");
+		
+		assertEquals(1, cs.getCustomClaims().size());
+		
+		cs.setCustomClaims(new HashMap<String,Object>());
+		
+		assertTrue(cs.getCustomClaims().isEmpty());
+	}
+	
+	
+	public void testSetCustomClaims() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setCustomClaim("locale", "bg-BG");
+		
+		assertEquals(1, cs.getCustomClaims().size());
+		
+		Map<String,Object> newCustomClaims = new HashMap<String,Object>();
+		newCustomClaims.put("locale", "es-ES");
+		newCustomClaims.put("ip", "127.0.0.1");
+		
+		cs.setCustomClaims(newCustomClaims);
+		
+		assertEquals(2, cs.getCustomClaims().size());
+		
+		assertEquals("es-ES", (String)cs.getCustomClaims().get("locale"));
+		assertEquals("127.0.0.1", (String)cs.getCustomClaims().get("ip"));
 	}
 }

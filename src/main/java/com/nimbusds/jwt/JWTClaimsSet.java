@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-04-08)
+ * @version $version$ (2013-07-15)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -154,9 +154,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 
@@ -168,7 +165,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Gets the reserved JWT claim names.
 	 *
-	 * @return The reserved claim names, as an unmodifiable set.
+	 * @return The reserved claim names, as a unmodifiable set.
 	 */
 	public static Set<String> getReservedNames() {
 
@@ -220,7 +217,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Sets the audience ({@code aud}) clam.
+	 * Sets the audience ({@code aud}) claim.
 	 *
 	 * @param aud The audience claim, {@code null} if not specified.
 	 */
@@ -356,8 +353,8 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Sets the custom (non-reserved) claims. The values must be 
-	 * serialisable to a JSON entity, otherwise will be ignored.
+	 * Sets the custom (non-reserved) claims. If a claim value doesn't map
+	 * to a JSON entity it will be ignored during serialisation.
 	 *
 	 * @param customClaims The custom claims, empty map or {@code null} if
 	 *                     none.
@@ -365,10 +362,10 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	public void setCustomClaims(final Map<String,Object> customClaims) {
 
 		if (customClaims == null) {
-			return;
+			this.customClaims.clear();
+		} else {
+			this.customClaims = customClaims;
 		}
-
-		this.customClaims = customClaims;
 	}
 
 
@@ -617,9 +614,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 
