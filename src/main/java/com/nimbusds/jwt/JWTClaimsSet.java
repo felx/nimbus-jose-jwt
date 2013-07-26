@@ -34,8 +34,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>typ - Type
  * </ul>
  *
- * <p>The set may also carry {@link #setCustomClaims custom claims}; these will 
- * be serialised and parsed along the reserved ones.
+ * <p>The set may also contain {@link #setCustomClaims custom claims}; these 
+ * will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
@@ -390,6 +390,98 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			return getType();
 		} else {
 			return getCustomClaim(name);
+		}
+	}
+	
+	
+	@Override
+	public String getStringClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null || value instanceof String) {
+			return (String)value;
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a String", 0);
+		}
+	}
+	
+	
+	@Override
+	public Boolean getBooleanClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null || value instanceof Boolean) {
+			return (Boolean)value;
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a Boolean", 0);
+		}
+	}
+	
+	
+	@Override
+	public Integer getIntegerClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null) {
+			return null;
+		} else if (value instanceof Number) {
+			return ((Number)value).intValue();
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not an Integer", 0);
+		}
+	}
+	
+	
+	@Override
+	public Long getLongClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null) {
+			return null;
+		} else if (value instanceof Number) {
+			return ((Number)value).longValue();
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a Number", 0);
+		}
+	}
+	
+	
+	@Override
+	public Float getFloatClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null) {
+			return null;
+		} else if (value instanceof Number) {
+			return ((Number)value).floatValue();
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a Float", 0);
+		}
+	}
+	
+	
+	@Override
+	public Double getDoubleClaim(final String name)
+		throws ParseException {
+		
+		Object value = getClaim(name);
+		
+		if (value == null) {
+			return null;
+		} else if (value instanceof Number) {
+			return ((Number)value).doubleValue();
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a Double", 0);
 		}
 	}
 

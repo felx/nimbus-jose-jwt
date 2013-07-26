@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -102,13 +103,102 @@ public interface ReadOnlyJWTClaimsSet {
 	
 
 	/**
-	 * Gets a single claim by name, whether reserved or custom.
+	 * Gets the specified claim (reserved or custom).
 	 * 
-	 * @param name The name of the claim to get. Must not be {@code null}.
+	 * @param name The name of the claim. Must not be {@code null}.
 	 * 
 	 * @return The value of the claim, {@code null} if not specified.
 	 */
 	public Object getClaim(final String name);
+	
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.String}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public String getStringClaim(final String name)
+		throws ParseException;
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.Boolean}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public Boolean getBooleanClaim(final String name)
+		throws ParseException;
+	
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.Integer}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public Integer getIntegerClaim(final String name)
+		throws ParseException;
+	
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.Long}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public Long getLongClaim(final String name)
+		throws ParseException;
+	
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.Float}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public Float getFloatClaim(final String name)
+		throws ParseException;
+	
+	
+	/**
+	 * Gets the specified claim (reserved or custom) as 
+	 * {@link java.lang.Double}.
+	 * 
+	 * @param name The name of the claim. Must not be {@code null}.
+	 * 
+	 * @return The value of the claim, {@code null} if not specified.
+	 * 
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public Double getDoubleClaim(final String name)
+		throws ParseException;
 
 
 	/**

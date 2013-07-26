@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -297,5 +298,127 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("jwt", cs.getType());
 		cs.setClaim("typ", null);
 		assertNull(cs.getType());
+	}
+	
+	
+	public void testGetClaimTyped()
+		throws Exception {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setClaim("string", "abc");
+		assertEquals("abc", cs.getStringClaim("string"));
+		
+		cs.setClaim("boolean", false);
+		assertFalse(cs.getBooleanClaim("boolean"));
+		
+		cs.setClaim("integer", 123);
+		assertEquals(123, cs.getIntegerClaim("integer").intValue());
+		
+		cs.setClaim("long", 456l);
+		assertEquals(456l, cs.getLongClaim("long").longValue());
+		
+		cs.setClaim("float", 3.14f);
+		assertEquals(3.14f, cs.getFloatClaim("float").floatValue());
+		
+		cs.setClaim("double", 3.14d);
+		assertEquals(3.14d, cs.getDoubleClaim("double").doubleValue());
+	}
+	
+	
+	public void testGetClaimTypedNull()
+		throws Exception {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setClaim("string", null);
+		assertNull(cs.getStringClaim("string"));
+		
+		cs.setClaim("boolean", null);
+		assertNull(cs.getBooleanClaim("boolean"));
+		
+		cs.setClaim("integer", null);
+		assertNull(cs.getIntegerClaim("integer"));
+		
+		cs.setClaim("long", null);
+		assertNull(cs.getLongClaim("long"));
+		
+		cs.setClaim("float", null);
+		assertNull(cs.getFloatClaim("float"));
+		
+		cs.setClaim("double", null);
+		assertNull(cs.getDoubleClaim("double"));
+	}
+	
+	
+	public void testGetClaimTypedParseException() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setClaim("string", 3.14);
+		
+		try {
+			cs.getStringClaim("string");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
+		
+		cs.setClaim("boolean", "123");
+		
+		try {
+			cs.getBooleanClaim("boolean");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
+		
+		cs.setClaim("integer", true);
+		
+		try {
+			cs.getIntegerClaim("integer");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
+		
+		cs.setClaim("long", "abc");
+		
+		try {
+			cs.getLongClaim("long");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
+		
+		cs.setClaim("float", true);
+		
+		try {
+			cs.getFloatClaim("float");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
+		
+		cs.setClaim("double", "abc");
+		
+		try {
+			cs.getDoubleClaim("double");
+			
+			fail("Failed to raise exception");
+			
+		} catch (ParseException e) {
+			// ok
+		}
 	}
 }
