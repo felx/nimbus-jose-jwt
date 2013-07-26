@@ -199,3 +199,7 @@ version 2.17 (2013-07-15)
 	  suite.
 	* Fixes an assignment bug in JWTClaimsSet.setCustomClaims.
 	* Upgrades BouncyCastle JAR dependency to 1.49.
+
+version 2.17.1 (2013-05-26)
+	* Adds convenience JWTClaimsSet.get{Type}Claim(String) methods.
+	* Fixes JWTClaimsSet.setClaim(String,Object) null argument bug.
