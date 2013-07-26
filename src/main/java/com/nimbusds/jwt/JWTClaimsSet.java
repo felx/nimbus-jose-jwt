@@ -398,69 +398,64 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * Sets the specified claim, whether reserved or custom.
 	 *
 	 * @param name  The name of the claim to set. Must not be {@code null}.
-	 * @param value The value of the claim to set. May be {@code null}.
+	 * @param value The value of the claim to set, {@code null} if not 
+	 *              specified.
 	 *
 	 * @throws IllegalArgumentException If the claim is reserved and its
 	 *                                  value is not of the expected type.
 	 */
 	public void setClaim(final String name, final Object value) {
 
-		if (!getReservedNames().contains(name)) {
-			setCustomClaim(name, value);
-		} else {
-			// it's a reserved name, find out which one
-			if (ISSUER_CLAIM.equals(name)) {
-				if (value instanceof String) {
-					setIssuer((String)value);
-				} else {
-					throw new IllegalArgumentException("Issuer claim must be a String");
-				}
-			} else if (SUBJECT_CLAIM.equals(name)) {
-				if (value instanceof String) {
-					setSubject((String)value);
-				} else {
-					throw new IllegalArgumentException("Subject claim must be a String");
-				}
-			} else if (AUDIENCE_CLAIM.equals(name)) {
-				if (value instanceof List<?>) {
-					setAudience((List<String>)value);
-				} else {
-					throw new IllegalArgumentException("Audience claim must be a List<String>");
-				}
-			} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
-				if (value instanceof Date) {
-					setExpirationTime((Date)value);
-				} else {
-					throw new IllegalArgumentException("Expiration claim must be a Date");
-				}
-			} else if (NOT_BEFORE_CLAIM.equals(name)) {
-				if (value instanceof Date) {
-					setNotBeforeTime((Date)value);
-				} else {
-					throw new IllegalArgumentException("Not-before claim must be a Date");
-				}
-			} else if (ISSUED_AT_CLAIM.equals(name)) {
-				if (value instanceof Date) {
-					setIssueTime((Date)value);
-				} else {
-					throw new IllegalArgumentException("Issued-at claim must be a Date");
-				}
-			} else if (JWT_ID_CLAIM.equals(name)) {
-				if (value instanceof String) {
-					setJWTID((String)value);
-				} else {
-					throw new IllegalArgumentException("JWT-ID claim must be a String");
-				}
-			} else if (TYPE_CLAIM.equals(name)) {
-				if (value instanceof String) {
-					setType((String)value);
-				} else {
-					throw new IllegalArgumentException("Type claim must be a String");
-				}
+		if (ISSUER_CLAIM.equals(name)) {
+			if (value == null || value instanceof String) {
+				setIssuer((String) value);
 			} else {
-				// if we fall through down to here, something is wrong
-				throw new IllegalArgumentException("Couldn't find reserved claim: " + name);
+				throw new IllegalArgumentException("Issuer claim must be a String");
 			}
+		} else if (SUBJECT_CLAIM.equals(name)) {
+			if (value == null || value instanceof String) {
+				setSubject((String) value);
+			} else {
+				throw new IllegalArgumentException("Subject claim must be a String");
+			}
+		} else if (AUDIENCE_CLAIM.equals(name)) {
+			if (value == null || value instanceof List<?>) {
+				setAudience((List<String>) value);
+			} else {
+				throw new IllegalArgumentException("Audience claim must be a List<String>");
+			}
+		} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
+			if (value == null || value instanceof Date) {
+				setExpirationTime((Date) value);
+			} else {
+				throw new IllegalArgumentException("Expiration claim must be a Date");
+			}
+		} else if (NOT_BEFORE_CLAIM.equals(name)) {
+			if (value == null || value instanceof Date) {
+				setNotBeforeTime((Date) value);
+			} else {
+				throw new IllegalArgumentException("Not-before claim must be a Date");
+			}
+		} else if (ISSUED_AT_CLAIM.equals(name)) {
+			if (value == null || value instanceof Date) {
+				setIssueTime((Date) value);
+			} else {
+				throw new IllegalArgumentException("Issued-at claim must be a Date");
+			}
+		} else if (JWT_ID_CLAIM.equals(name)) {
+			if (value == null || value instanceof String) {
+				setJWTID((String) value);
+			} else {
+				throw new IllegalArgumentException("JWT-ID claim must be a String");
+			}
+		} else if (TYPE_CLAIM.equals(name)) {
+			if (value == null || value instanceof String) {
+				setType((String) value);
+			} else {
+				throw new IllegalArgumentException("Type claim must be a String");
+			}
+		} else {
+			setCustomClaim(name, value);
 		}
 	}
 

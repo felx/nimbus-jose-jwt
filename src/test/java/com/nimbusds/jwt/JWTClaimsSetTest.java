@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -247,5 +248,54 @@ public class JWTClaimsSetTest extends TestCase {
 		JWTClaimsSet cs = new JWTClaimsSet();
 		
 		assertNull(cs.getClaim("xyz"));
+	}
+	
+	
+	public void testSetClaimNull() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		cs.setIssuer("http://example.com");
+		assertEquals("http://example.com", cs.getIssuer());
+		cs.setClaim("iss", null);
+		assertNull(cs.getIssuer());
+		
+		cs.setSubject("alice");
+		assertEquals("alice", cs.getSubject());
+		cs.setClaim("sub", null);
+		assertNull(cs.getSubject());
+		
+		List<String> audList = new ArrayList<String>();
+		audList.add("http://client.example.com");
+		cs.setAudience(audList);
+		assertEquals("http://client.example.com", cs.getAudience().get(0));
+		cs.setClaim("aud", null);
+		assertNull(cs.getAudience());
+		
+		Date now = new Date();
+		cs.setExpirationTime(now);
+		assertEquals(now, cs.getExpirationTime());
+		cs.setClaim("exp", null);
+		assertNull(cs.getExpirationTime());
+		
+		cs.setNotBeforeTime(now);
+		assertEquals(now, cs.getNotBeforeTime());
+		cs.setClaim("nbf", null);
+		assertNull(cs.getNotBeforeTime());
+		
+		cs.setIssueTime(now);
+		assertEquals(now, cs.getIssueTime());
+		cs.setClaim("iat", null);
+		assertNull(cs.getIssueTime());
+		
+		cs.setJWTID("123");
+		assertEquals("123", cs.getJWTID());
+		cs.setClaim("jti", null);
+		assertNull(cs.getJWTID());
+		
+		cs.setType("jwt");
+		assertEquals("jwt", cs.getType());
+		cs.setClaim("typ", null);
+		assertNull(cs.getType());
 	}
 }
