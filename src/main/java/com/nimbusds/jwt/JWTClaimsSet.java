@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-07-15)
+ * @version $version$ (2013-07-26)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -372,32 +372,24 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	@Override
 	public Object getClaim(final String name) {
 
-		if (!getReservedNames().contains(name)) {
-
-			return getCustomClaim(name);
-
+		if (ISSUER_CLAIM.equals(name)) {
+			return getIssuer();
+		} else if (SUBJECT_CLAIM.equals(name)) {
+			return getSubject();
+		} else if (AUDIENCE_CLAIM.equals(name)) {
+			return getAudience();
+		} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
+			return getExpirationTime();
+		} else if (NOT_BEFORE_CLAIM.equals(name)) {
+			return getNotBeforeTime();
+		} else if (ISSUED_AT_CLAIM.equals(name)) {
+			return getIssueTime();
+		} else if (JWT_ID_CLAIM.equals(name)) {
+			return getJWTID();
+		} else if (TYPE_CLAIM.equals(name)) {
+			return getType();
 		} else {
-			// it's a reserved name, find out which one
-			if (ISSUER_CLAIM.equals(name)) {
-				return getIssuer();
-			} else if (SUBJECT_CLAIM.equals(name)) {
-				return getSubject();
-			} else if (AUDIENCE_CLAIM.equals(name)) {
-				return getAudience();
-			} else if (EXPIRATION_TIME_CLAIM.equals(name)) {
-				return getExpirationTime();
-			} else if (NOT_BEFORE_CLAIM.equals(name)) {
-				return getNotBeforeTime();
-			} else if (ISSUED_AT_CLAIM.equals(name)) {
-				return getIssueTime();
-			} else if (JWT_ID_CLAIM.equals(name)) {
-				return getJWTID();
-			} else if (TYPE_CLAIM.equals(name)) {
-				return getType();
-			} else {
-				// if we fall through down to here, something is wrong
-				throw new IllegalArgumentException("Couldn't find reserved claim: " + name);
-			}
+			return getCustomClaim(name);
 		}
 	}
 

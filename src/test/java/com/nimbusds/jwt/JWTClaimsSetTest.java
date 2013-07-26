@@ -18,7 +18,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-07-15)
+ * @version $version$ (2013-07-26)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -239,5 +239,13 @@ public class JWTClaimsSetTest extends TestCase {
 		
 		assertEquals("es-ES", (String)cs.getCustomClaims().get("locale"));
 		assertEquals("127.0.0.1", (String)cs.getCustomClaims().get("ip"));
+	}
+	
+	
+	public void testGetClaimValueNotSpecified() {
+		
+		JWTClaimsSet cs = new JWTClaimsSet();
+		
+		assertNull(cs.getClaim("xyz"));
 	}
 }

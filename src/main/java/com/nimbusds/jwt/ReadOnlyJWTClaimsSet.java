@@ -13,7 +13,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-02-21)
+ * @version $version$ (2013-07-26)
  */
 public interface ReadOnlyJWTClaimsSet {
 
@@ -87,7 +87,8 @@ public interface ReadOnlyJWTClaimsSet {
 	 * 
 	 * @param name The name of the custom claim. Must not be {@code null}.
 	 *
-	 * @return The value of the custom claim, {@code null} if not specified.
+	 * @return The value of the custom claim, {@code null} if not 
+	 *         specified.
 	 */
 	public Object getCustomClaim(final String name);
 
@@ -98,6 +99,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @return The custom claims, as a unmodifiable map, empty map if none.
 	 */
 	public Map<String,Object> getCustomClaims();
+	
 
 	/**
 	 * Gets a single claim by name, whether reserved or custom.
