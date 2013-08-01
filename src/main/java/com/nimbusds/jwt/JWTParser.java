@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Parser for plain, signed and encrypted JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-06-11)
+ * @version $version$ (2013-08-01)
  */
 public final class JWTParser {
 
@@ -42,7 +42,7 @@ public final class JWTParser {
 		if (firstDotPos == -1)
 			throw new ParseException("Invalid JWT serialization: Missing dot delimiter(s)", 0);
 			
-		Base64URL header = new Base64URL(s.substring(firstDotPos));
+		Base64URL header = new Base64URL(s.substring(0, firstDotPos));
 		
 		JSONObject jsonObject = null;
 
