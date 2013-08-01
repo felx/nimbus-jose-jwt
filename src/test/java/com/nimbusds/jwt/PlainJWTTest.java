@@ -13,13 +13,13 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-08)
+ * @version $version$ (2013-08-01)
  */
 public class PlainJWTTest extends TestCase {
 
 
 	public void testBase64URLConstructor()
-			throws Exception {
+		throws Exception {
 
 		// {"alg":"none"}
 		Base64URL part1 = new Base64URL("eyJhbGciOiJub25lIn0");
@@ -43,7 +43,7 @@ public class PlainJWTTest extends TestCase {
 
 
 	public void testParse()
-			throws Exception {
+		throws Exception {
 
 		String s = "eyJhbGciOiJub25lIn0" +
 				"." +
@@ -52,8 +52,6 @@ public class PlainJWTTest extends TestCase {
 				".";
 
 		PlainJWT jwt = PlainJWT.parse(s);
-
-		assertNotNull(jwt);
 
 		assertEquals(Algorithm.NONE, jwt.getHeader().getAlgorithm());
 		assertNull(jwt.getHeader().getType());
