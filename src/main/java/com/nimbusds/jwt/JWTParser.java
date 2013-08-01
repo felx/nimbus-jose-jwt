@@ -17,6 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Parser for plain, signed and encrypted JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
+ * @author Junya Hayashi
  * @version $version$ (2013-08-01)
  */
 public final class JWTParser {
