@@ -12,15 +12,17 @@ import net.jcip.annotations.Immutable;
  *
  * <ul>
  *     <li>{@link #A128CBC_HS256 A128CBC-HS256}
+ *     <li>{@link #A192CBC_HS384 A192CBC-HS384}
  *     <li>{@link #A256CBC_HS512 A256CBC-HS512}
  *     <li>{@link #A128GCM}
+ *     <li>{@link #A192GCM}
  *     <li>{@link #A256GCM}
  * </ul>
  *
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-05)
+ * @version $version$ (2013-08-20)
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {
@@ -41,6 +43,14 @@ public final class EncryptionMethod extends Algorithm {
 
 
 	/**
+	 * AES_192_CBC_HMAC_SHA_384 authenticated encryption using a 384 bit
+	 * key (optional).
+	 */
+	public static final EncryptionMethod A192CBC_HS384 =
+		new EncryptionMethod("A192CBC-HS384", Requirement.OPTIONAL, 384);
+
+
+	/**
 	 * AES_256_CBC_HMAC_SHA_512 authenticated encryption using a 512 bit
 	 * key (required).
 	 */
@@ -54,6 +64,14 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public static final EncryptionMethod A128GCM = 
 		new EncryptionMethod("A128GCM", Requirement.RECOMMENDED, 128);
+
+
+	/**
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) using a 192 bit key
+	 * (optional).
+	 */
+	public static final EncryptionMethod A192GCM =
+		new EncryptionMethod("A192GCM", Requirement.OPTIONAL, 192);
 
 
 	/**
@@ -125,14 +143,18 @@ public final class EncryptionMethod extends Algorithm {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The encryption method  (matching standard algorithm constant,
-	 *         else a newly created algorithm).
+	 * @return The encryption method  (matching standard algorithm
+	 *         constant, else a newly created algorithm).
 	 */
 	public static EncryptionMethod parse(final String s) {
 
 		if (s.equals(A128CBC_HS256.getName())) {
 
 			return A128CBC_HS256;
+
+		} else if (s.equals(A192CBC_HS384.getName())) {
+
+			return A192CBC_HS384;
 
 		} else if (s.equals(A256CBC_HS512.getName())) {
 
@@ -141,6 +163,10 @@ public final class EncryptionMethod extends Algorithm {
 		} else if (s.equals(A128GCM.getName())) {
 
 			return A128GCM;
+
+		} else if (s.equals(A192GCM.getName())) {
+
+			return A192GCM;
 
 		} else if (s.equals(A256GCM.getName())) {
 
