@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2013-08-20)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -105,6 +105,9 @@ public class JWEHeaderTest extends TestCase {
 		h.setAgreementPartyUInfo(new Base64URL("abc"));
 		h.setAgreementPartyVInfo(new Base64URL("xyz"));
 
+		h.setPBES2Salt(new Base64URL("omg"));
+		h.setPBES2Count(1000);
+
 
 		String s = h.toString();
 
@@ -138,6 +141,9 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
 		assertEquals(new Base64URL("xyz"), h.getAgreementPartyVInfo());
 
+		assertEquals(new Base64URL("omg"), h.getPBES2Salt());
+		assertEquals(1000, h.getPBES2Count());
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
@@ -150,7 +156,9 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("x5c"));
 		assertTrue(h.getIncludedParameters().contains("apu"));
 		assertTrue(h.getIncludedParameters().contains("apv"));
-		assertEquals(12, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("p2s"));
+		assertTrue(h.getIncludedParameters().contains("p2c"));
+		assertEquals(14, h.getIncludedParameters().size());
 	}
 
 

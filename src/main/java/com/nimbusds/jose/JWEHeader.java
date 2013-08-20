@@ -37,6 +37,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>crit
  *     <li>apu
  *     <li>apv
+ *     <li>p2s
+ *     <li>p2c
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
@@ -52,7 +54,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2013-08-20)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
@@ -84,6 +86,8 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		p.add("crit");
 		p.add("apu");
 		p.add("apv");
+		p.add("p2s");
+		p.add("p2c");
 
 		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -117,6 +121,18 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 * The agreement PartyVInfo ({@code apv}) parameter.
 	 */
 	private Base64URL apv;
+
+
+	/**
+	 * The PBES2 salt ({@code p2s}) parameter.
+	 */
+	private Base64URL p2s;
+
+
+	/**
+	 * The PBES2 count ({@code p2c}) parameter.
+	 */
+	private int p2c;
 
 
 	/**
@@ -239,6 +255,46 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	}
 
 
+	@Override
+	public Base64URL getPBES2Salt() {
+
+		return p2s;
+	}
+
+
+	/**
+	 * Sets the PBES2 salt ({@code p2s}) parameter.
+	 *
+	 * @param p2s The PBES2 salt parameter, {@code null} if not specified.
+	 */
+	public void setPBES2Salt(final Base64URL p2s) {
+
+		this.p2s = p2s;
+	}
+
+
+	@Override
+	public int getPBES2Count() {
+
+		return p2c;
+	}
+
+
+	/**
+	 * Sets the PBES2 count ({@code p2c}) parameter.
+	 *
+	 * @param p2c The PBES2 count parameter, zero if not specified. Must
+	 *            not be negative.
+	 */
+	public void setPBES2Count(final int p2c) {
+
+		if (p2c < 0)
+			throw new IllegalArgumentException("The PBES2 count parameter must not be negative");
+
+		this.p2c = p2c;
+	}
+
+
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
 	 *                                  matches a reserved parameter name.
@@ -315,6 +371,14 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 			includedParameters.add("apv");
 		}
 
+		if (getPBES2Salt() != null) {
+			includedParameters.add("p2s");
+		}
+
+		if (getPBES2Count() > 0) {
+			includedParameters.add("p2c");
+		}
+
 		return includedParameters;
 	}
 
@@ -342,6 +406,14 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		
 		if (apv != null) {
 			o.put("apv", apv.toString());
+		}
+
+		if (p2s != null) {
+			o.put("p2s", p2s.toString());
+		}
+
+		if (p2c > 0) {
+			o.put("p2c", p2c);
 		}
 
 		return o;
@@ -425,6 +497,10 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 				h.setAgreementPartyUInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
 			} else if (name.equals("apv")) {
 				h.setAgreementPartyVInfo(new Base64URL(JSONObjectUtils.getString(json, name)));
+			} else if (name.equals("p2s")) {
+				h.setPBES2Salt(new Base64URL(JSONObjectUtils.getString(json, name)));
+			} else if (name.equals("p2c")) {
+				h.setPBES2Count(JSONObjectUtils.getInt(json, name));
 			} else {
 				h.setCustomParameter(name, json.get(name));
 			}

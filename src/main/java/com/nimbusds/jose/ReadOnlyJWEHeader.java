@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link JWEHeader JWE header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2013-08-20)
  */
 public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 
@@ -65,4 +65,20 @@ public interface ReadOnlyJWEHeader extends ReadOnlyCommonSEHeader {
 	 *         specified.
 	 */
 	public Base64URL getAgreementPartyVInfo();
+
+
+	/**
+	 * Gets the PBES2 salt ({@code p2s}) parameter.
+	 *
+	 * @return The PBES2 salt parameter, {@code null} if not specified.
+	 */
+	public Base64URL getPBES2Salt();
+
+
+	/**
+	 * Gets the PBES2 count ({@code p2c}) parameter.
+	 *
+	 * @return The PBES2 count parameter, zero if not specified.
+	 */
+	public int getPBES2Count();
 }
