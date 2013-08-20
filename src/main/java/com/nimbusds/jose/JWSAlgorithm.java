@@ -22,13 +22,14 @@ import net.jcip.annotations.Immutable;
  *     <li>{@link #ES384}
  *     <li>{@link #ES512}
  *     <li>{@link #PS256}
+ *     <li>{@link #PS384}
  *     <li>{@link #PS512}
  * </ul>
  *
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-08-20)
  */
 @Immutable
 public final class JWSAlgorithm extends Algorithm {
@@ -89,13 +90,22 @@ public final class JWSAlgorithm extends Algorithm {
 
 
 	/**
-	 * RSASSA-PSS using SHA-256 hash algorithm (optional).
+	 * RSASSA-PSS using SHA-256 hash algorithm and MGF1 mask generation
+	 * function with SHA-256 (optional).
 	 */
 	public static final JWSAlgorithm PS256 = new JWSAlgorithm("PS256", Requirement.OPTIONAL);
 
 
 	/**
-	 * RSASSA-PSS using SHA-512 hash algorithm (optional).
+	 * RSASSA-PSS using SHA-384 hash algorithm and MGF1 mask generation
+	 * function with SHA-384 (optional).
+	 */
+	public static final JWSAlgorithm PS384 = new JWSAlgorithm("PS384", Requirement.OPTIONAL);
+
+
+	/**
+	 * RSASSA-PSS using SHA-512 hash algorithm and MGF1 mask generation
+	 * function with SHA-512 (optional).
 	 */
 	public static final JWSAlgorithm PS512 = new JWSAlgorithm("PS512", Requirement.OPTIONAL);
 
@@ -154,6 +164,8 @@ public final class JWSAlgorithm extends Algorithm {
 			return ES512;
 		} else if (s.equals(PS256.getName())) {
 			return PS256;
+		} else if (s.equals(PS384.getName())) {
+			return PS384;
 		} else if (s.equals(PS512.getName())) {
 			return PS512;
 		} else {
