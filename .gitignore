@@ -1,3 +1,5 @@
+/.idea
+/nimbus-jose-jwt.iml
 nimbus-jose-jwt-*.jar
 TEST*
 *.class
