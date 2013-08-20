@@ -14,11 +14,16 @@ import net.jcip.annotations.Immutable;
  *     <li>{@link #RSA1_5}
  *     <li>{@link #RSA_OAEP RSA-OAEP}
  *     <li>{@link #A128KW}
+ *     <li>{@link #A192KW}
  *     <li>{@link #A256KW}
  *     <li>{@link #DIR dir}
  *     <li>{@link #ECDH_ES ECDH-ES}
  *     <li>{@link #ECDH_ES_A128KW ESDH-ES+A128KW}
+ *     <li>{@link #ECDH_ES_A128KW ESDH-ES+A192KW}
  *     <li>{@link #ECDH_ES_A256KW ESDH-ES+A256KW}
+ *     <li>{@link #PBES2_HS256_A128KW PBES2-HS256+A128KW}
+ *     <li>{@link #PBES2_HS256_A192KW PBES2-HS256+A192KW}
+ *     <li>{@link #PBES2_HS256_A256KW PBES2-HS256+A256KW}
  * </ul>
  *
  * <p>Additional JWE algorithm names can be defined using the constructors.
