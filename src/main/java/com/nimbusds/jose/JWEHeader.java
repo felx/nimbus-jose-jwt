@@ -435,9 +435,9 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 
 	/**
-	 * Parses a JWE header from the specified JSON string.
+	 * Parses a JWE header from the specified JSON object string.
 	 *
-	 * @param s The JSON string to parse. Must not be {@code null}.
+	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
 	 * @return The JWE header.
 	 *

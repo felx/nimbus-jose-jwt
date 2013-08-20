@@ -226,9 +226,9 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 
 
 	/**
-	 * Parses a JWS header from the specified JSON string.
+	 * Parses a JWS header from the specified JSON object string.
 	 *
-	 * @param s The JSON string to parse. Must not be {@code null}.
+	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
 	 * @return The JWS header.
 	 *

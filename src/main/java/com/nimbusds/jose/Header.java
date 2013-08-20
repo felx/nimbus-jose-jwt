@@ -22,7 +22,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * these will be serialised and parsed along the reserved ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-08-20)
  */
 public abstract class Header implements ReadOnlyHeader {
 
@@ -312,5 +312,45 @@ public abstract class Header implements ReadOnlyHeader {
 
 			throw new AssertionError("Unexpected algorithm type: " + alg);
 		}
+	}
+
+
+	/**
+	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader}
+	 * from the specified JSON object string.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The header.
+	 *
+	 * @throws ParseException If the specified JSON object string doesn't
+	 *                        represent a valid header.
+	 */
+	public static Header parse(final String s)
+		throws ParseException {
+
+		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
+
+		return parse(jsonObject);
+	}
+
+
+	/**
+	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader}
+	 * from the specified Base64URL.
+	 *
+	 * @param base64URL The Base64URL to parse. Must not be {@code null}.
+	 *
+	 * @return The header.
+	 *
+	 * @throws ParseException If the specified Base64URL doesn't represent a
+	 *                        valid header.
+	 */
+	public static Header parse(final Base64URL base64URL)
+		throws ParseException {
+
+		Header header = parse(base64URL.decodeToString());
+		header.setParsedBase64URL(base64URL);
+		return header;
 	}
 }
