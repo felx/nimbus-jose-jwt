@@ -206,3 +206,6 @@ version 2.17.1 (2013-07-26)
 
 version 2.17.2 (2013-08-01)
 	* Fixes header parsing bug in JWTParser.
+
+version 2.18 (2013-08-20)
+	* Adds Header.parse(String) and Header.parse(Base64URL) static methods.
