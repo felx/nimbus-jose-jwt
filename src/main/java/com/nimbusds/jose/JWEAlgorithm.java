@@ -58,7 +58,7 @@ public final class JWEAlgorithm extends Algorithm {
 
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394)
-	 * using 192 bit keys (recommended).
+	 * using 192 bit keys (optional).
 	 */
 	public static final JWEAlgorithm A192KW = new JWEAlgorithm("A192KW", Requirement.OPTIONAL);
 
@@ -101,7 +101,7 @@ public final class JWEAlgorithm extends Algorithm {
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
 	 * Encryption Key (CEK) with the "A192KW" function (rather than being
-	 * used directly as the CEK) (recommended).
+	 * used directly as the CEK) (optional).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A192KW = new JWEAlgorithm("ECDH-ES+A192KW", Requirement.OPTIONAL);
 
@@ -116,40 +116,43 @@ public final class JWEAlgorithm extends Algorithm {
 
 
 	/**
-	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 128 bit keys.
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 128 bit keys
+	 * (optional).
 	 */
 	public static final JWEAlgorithm A128GCMKW = new JWEAlgorithm("A128GCMKW", Requirement.OPTIONAL);
 
 
 	/**
-	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 192 bit keys.
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 192 bit keys
+	 * (optional).
 	 */
 	public static final JWEAlgorithm A192GCMKW = new JWEAlgorithm("A192GCMKW", Requirement.OPTIONAL);
 
 
 	/**
-	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 256 bit keys.
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 256 bit keys
+	 * (optional).
 	 */
 	public static final JWEAlgorithm A256GCMKW = new JWEAlgorithm("A256GCMKW", Requirement.OPTIONAL);
 
 
 	/**
 	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
-	 * (RFC 3394) using 128 bit keys for the encryption scheme.
+	 * (RFC 3394) using 128 bit keys for the encryption scheme (optional).
 	 */
 	public static final JWEAlgorithm PBES2_HS256_A128KW = new JWEAlgorithm("PBES2-HS256+A128KW", Requirement.OPTIONAL);
 
 
 	/**
 	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
-	 * (RFC 3394) using 192 bit keys for the encryption scheme.
+	 * (RFC 3394) using 192 bit keys for the encryption scheme (optional).
 	 */
 	public static final JWEAlgorithm PBES2_HS256_A192KW = new JWEAlgorithm("PBES2-HS256+A192KW", Requirement.OPTIONAL);
 
 
 	/**
 	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
-	 * (RFC 3394) using 256 bit keys for the encryption scheme.
+	 * (RFC 3394) using 256 bit keys for the encryption scheme (optional).
 	 */
 	public static final JWEAlgorithm PBES2_HS256_A256KW = new JWEAlgorithm("PBES2-HS256+A256KW", Requirement.OPTIONAL);
 
