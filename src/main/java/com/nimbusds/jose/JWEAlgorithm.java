@@ -46,9 +46,16 @@ public final class JWEAlgorithm extends Algorithm {
 
 	/**
 	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394) 
-	 * using 256 bit keys (recommended).
+	 * using 128 bit keys (recommended).
 	 */
 	public static final JWEAlgorithm A128KW = new JWEAlgorithm("A128KW", Requirement.RECOMMENDED);
+
+
+	/**
+	 * Advanced Encryption Standard (AES) Key Wrap Algorithm (RFC 3394)
+	 * using 192 bit keys (recommended).
+	 */
+	public static final JWEAlgorithm A192KW = new JWEAlgorithm("A192KW", Requirement.OPTIONAL);
 
 
 	/**
@@ -88,11 +95,58 @@ public final class JWEAlgorithm extends Algorithm {
 	/**
 	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
 	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
+	 * Encryption Key (CEK) with the "A192KW" function (rather than being
+	 * used directly as the CEK) (recommended).
+	 */
+	public static final JWEAlgorithm ECDH_ES_A192KW = new JWEAlgorithm("ECDH-ES+A192KW", Requirement.OPTIONAL);
+
+
+	/**
+	 * Elliptic Curve Diffie-Hellman Ephemeral Static key agreement per
+	 * "ECDH-ES", but where the agreed-upon key is used to wrap the Content
 	 * Encryption Key (CEK) with the "A256KW" function (rather than being 
 	 * used directly as the CEK) (recommended).
 	 */
 	public static final JWEAlgorithm ECDH_ES_A256KW = new JWEAlgorithm("ECDH-ES+A256KW", Requirement.RECOMMENDED);
 
+
+	/**
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 128 bit keys.
+	 */
+	public static final JWEAlgorithm A128GCMKW = new JWEAlgorithm("A128GCMKW", Requirement.OPTIONAL);
+
+
+	/**
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 192 bit keys.
+	 */
+	public static final JWEAlgorithm A192GCMKW = new JWEAlgorithm("A192GCMKW", Requirement.OPTIONAL);
+
+
+	/**
+	 * AES in Galois/Counter Mode (GCM) (NIST.800-38D) 256 bit keys.
+	 */
+	public static final JWEAlgorithm A256GCMKW = new JWEAlgorithm("A256GCMKW", Requirement.OPTIONAL);
+
+
+	/**
+	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
+	 * (RFC 3394) using 128 bit keys for the encryption scheme.
+	 */
+	public static final JWEAlgorithm PBES2_HS256_A128KW = new JWEAlgorithm("PBES2-HS256+A128KW", Requirement.OPTIONAL);
+
+
+	/**
+	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
+	 * (RFC 3394) using 192 bit keys for the encryption scheme.
+	 */
+	public static final JWEAlgorithm PBES2_HS256_A192KW = new JWEAlgorithm("PBES2-HS256+A192KW", Requirement.OPTIONAL);
+
+
+	/**
+	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
+	 * (RFC 3394) using 256 bit keys for the encryption scheme.
+	 */
+	public static final JWEAlgorithm PBES2_HS256_A256KW = new JWEAlgorithm("PBES2-HS256+A256KW", Requirement.OPTIONAL);
 
 
 	/**
@@ -129,22 +183,38 @@ public final class JWEAlgorithm extends Algorithm {
 	 */
 	public static JWEAlgorithm parse(final String s) {
 
-		if (s == RSA1_5.getName()) {
+		if (s.equals(RSA1_5.getName())) {
 			return RSA1_5;
-		} else if (s == RSA_OAEP.getName()) {
+		} else if (s.equals(RSA_OAEP.getName())) {
 			return RSA_OAEP;
-		} else if (s == A128KW.getName()) {
+		} else if (s.equals(A128KW.getName())) {
 			return A128KW;
-		} else if (s == A256KW.getName()) {
+		} else if (s.equals(A192KW.getName())) {
+			return A192KW;
+		} else if (s.equals(A256KW.getName())) {
 			return A256KW;
-		} else if (s == DIR.getName()) {
+		} else if (s.equals(DIR.getName())) {
 			return DIR;
-		} else if (s == ECDH_ES.getName()) {
+		} else if (s.equals(ECDH_ES.getName())) {
 			return ECDH_ES;
-		} else if (s == ECDH_ES_A128KW.getName()) {
+		} else if (s.equals(ECDH_ES_A128KW.getName())) {
 			return ECDH_ES_A128KW;
-		} else if (s == ECDH_ES_A256KW.getName()) {
+		} else if (s.equals(ECDH_ES_A192KW.getName())) {
+			return ECDH_ES_A192KW;
+		} else if (s.equals(ECDH_ES_A256KW.getName())) {
 			return ECDH_ES_A256KW;
+		} else if (s.equals(A128GCMKW.getName())) {
+			return A128GCMKW;
+		} else if (s.equals(A192GCMKW.getName())) {
+			return A192GCMKW;
+		} else if (s.equals(A256GCMKW.getName())) {
+			return A256GCMKW;
+		} else if (s.equals(PBES2_HS256_A128KW.getName())) {
+			return PBES2_HS256_A128KW;
+		} else if (s.equals(PBES2_HS256_A192KW.getName())) {
+			return PBES2_HS256_A192KW;
+		} else if (s.equals(PBES2_HS256_A256KW.getName())) {
+			return PBES2_HS256_A256KW;
 		} else {
 			return new JWEAlgorithm(s);
 		}

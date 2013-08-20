@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 
 /**
- * Tests the JWT Algorithm class.
+ * Tests the JWS Algorithm class.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-08-20)
