@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-07-26)
+ * @version $version$ (2013-08-26)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -420,5 +420,45 @@ public class JWTClaimsSetTest extends TestCase {
 		} catch (ParseException e) {
 			// ok
 		}
+	}
+
+
+	public void testStringAudience()
+		throws Exception {
+
+		JSONObject o = new JSONObject();
+		o.put("aud", "http://example.com");
+
+		ReadOnlyJWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(o.toJSONString());
+
+		assertEquals("http://example.com", jwtClaimsSet.getAudience().get(0));
+		assertEquals(1, jwtClaimsSet.getAudience().size());
+	}
+
+
+	public void testStringArrayAudience()
+		throws Exception {
+
+		JSONObject o = new JSONObject();
+		o.put("aud", Arrays.asList("http://example.com"));
+
+		ReadOnlyJWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(o.toJSONString());
+
+		assertEquals("http://example.com", jwtClaimsSet.getAudience().get(0));
+		assertEquals(1, jwtClaimsSet.getAudience().size());
+	}
+
+
+	public void testStringArrayMultipleAudience()
+		throws Exception {
+
+		JSONObject o = new JSONObject();
+		o.put("aud", Arrays.asList("http://example.com", "http://example2.com"));
+
+		ReadOnlyJWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(o.toJSONString());
+
+		assertEquals("http://example.com", jwtClaimsSet.getAudience().get(0));
+		assertEquals("http://example2.com", jwtClaimsSet.getAudience().get(1));
+		assertEquals(2, jwtClaimsSet.getAudience().size());
 	}
 }

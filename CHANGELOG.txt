@@ -211,3 +211,6 @@ version 2.18 (2013-08-20)
 	* Updates the library to match the latest JOSE -14 and JWT -11 draft
 	  suite.
 	* Adds Header.parse(String) and Header.parse(Base64URL) static methods.
+	
+version 2.18.1 (2013-08-26)
+	* Adds JWTClaimsSet.parse(String) method.

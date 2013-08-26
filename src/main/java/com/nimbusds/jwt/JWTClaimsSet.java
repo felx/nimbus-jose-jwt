@@ -625,8 +625,8 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Parses a JSON Web Token (JWT) claims set from the specified
-	 * JSON object representation.
+	 * Parses a JSON Web Token (JWT) claims set from the specified JSON
+	 * object representation.
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
@@ -646,45 +646,44 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			if (name.equals(ISSUER_CLAIM)) {
 
 				cs.setIssuer(JSONObjectUtils.getString(json, ISSUER_CLAIM));
-			}
-			else if (name.equals(SUBJECT_CLAIM)) {
+
+			} else if (name.equals(SUBJECT_CLAIM)) {
 
 				cs.setSubject(JSONObjectUtils.getString(json, SUBJECT_CLAIM));
-			}
-			else if (name.equals(AUDIENCE_CLAIM)) {
+
+			} else if (name.equals(AUDIENCE_CLAIM)) {
 
 				Object audValue = json.get(AUDIENCE_CLAIM);
 
-				if (audValue != null && audValue instanceof String) {
+				if (audValue instanceof String) {
 					List<String> singleAud = new ArrayList<String>();
 					singleAud.add(JSONObjectUtils.getString(json, AUDIENCE_CLAIM));
 					cs.setAudience(singleAud);
-				}
-				else {
+				} else if (audValue instanceof List) {
 					cs.setAudience(JSONObjectUtils.getStringList(json, AUDIENCE_CLAIM));
 				}
-			}
-			else if (name.equals(EXPIRATION_TIME_CLAIM)) {
+
+			} else if (name.equals(EXPIRATION_TIME_CLAIM)) {
 
 				cs.setExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM) * 1000));
-			}
-			else if (name.equals(NOT_BEFORE_CLAIM)) {
+
+			} else if (name.equals(NOT_BEFORE_CLAIM)) {
 
 				cs.setNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM) * 1000));
-			}
-			else if (name.equals(ISSUED_AT_CLAIM)) {
+
+			} else if (name.equals(ISSUED_AT_CLAIM)) {
 
 				cs.setIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM) * 1000));
-			}
-			else if (name.equals(JWT_ID_CLAIM)) {
+
+			} else if (name.equals(JWT_ID_CLAIM)) {
 
 				cs.setJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
-			}
-			else if (name.equals(TYPE_CLAIM)) {
+
+			} else if (name.equals(TYPE_CLAIM)) {
 
 				cs.setType(JSONObjectUtils.getString(json, TYPE_CLAIM));
-			}
-			else {
+
+			} else {
 				cs.setCustomClaim(name, json.get(name));
 			}
 		}
@@ -692,6 +691,23 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		return cs;
 	}
 
+
+	/**
+	 * Parses a JSON Web Token (JWT) claims set from the specified JSON
+	 * object string representation.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The JWT claims set.
+	 *
+	 * @throws ParseException If the specified JSON object string doesn't
+	 *                        represent a valid JWT claims set.
+	 */
+	public static JWTClaimsSet parse(final String s)
+		throws ParseException {
+
+		return parse(JSONObjectUtils.parseJSONObject(s));
+	}
 
 	@Override
 	public String toString() {
