@@ -46,7 +46,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-29)
+ * @version $version$ (2013-09-20)
  */
 public class JWKSet {
 
@@ -186,10 +186,9 @@ public class JWKSet {
 
 	/**
 	 * Returns the JSON object representation of this JSON Web Key (JWK) 
-	 * set. Sensitive non-public parameters, such as EC and RSA private key 
-	 * parameters or symmetric key values, will not be included in the 
-	 * output JWK members. Use the alternative 
-	 * {@link #toJSONObject(boolean)} method if you wish to include them.
+	 * set. Private keys and parameters will be omitted from the output.
+	 * Use the alternative {@link #toJSONObject(boolean)} method if you
+	 * wish to include them.
 	 *
 	 * @return The JSON object representation.
 	 */
@@ -203,17 +202,15 @@ public class JWKSet {
 	 * Returns the JSON object representation of this JSON Web Key (JWK) 
 	 * set.
 	 *
-	 * @param publicParamsOnly Controls the inclusion of sensitive 
-	 *                         non-public key parameters into the output 
-	 *                         JWK members. If {@code true} sensitive and
-	 *                         private parameters, such as private EC and
-	 *                         RSA key details and symmetric secret values,
-	 *                         will be omitted. If {@code false} all
-	 *                         available key parameters will be included.
+	 * @param publicKeysOnly Controls the inclusion of private keys and
+	 *                       parameters into the output JWK members. If
+	 *                       {@code true} private keys and parameters will
+	 *                       be omitted. If {@code false} all available key
+	 *                       parameters will be included.
 	 *
 	 * @return The JSON object representation.
 	 */
-	public JSONObject toJSONObject(final boolean publicParamsOnly) {
+	public JSONObject toJSONObject(final boolean publicKeysOnly) {
 
 		JSONObject o = new JSONObject(customMembers);
 
@@ -221,11 +218,14 @@ public class JWKSet {
 
 		for (JWK key: keys) {
 
-			if (publicParamsOnly) {
+			if (publicKeysOnly) {
 
-				// Remove any sensitive params, then serialise
-				a.add(key.toPublicJWK().toJSONObject());
+				// Try to get public key, then serialise
+				JWK publicKey = key.toPublicJWK();
 
+				if (publicKey != null) {
+					a.add(publicKey.toJSONObject());
+				}
 			} else {
 
 				a.add(key.toJSONObject());

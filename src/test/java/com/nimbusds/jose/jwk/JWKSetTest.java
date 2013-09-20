@@ -2,20 +2,23 @@ package com.nimbusds.jose.jwk;
 
 
 import java.text.ParseException;
+import java.util.LinkedList;
 import java.util.List;
 
+import com.nimbusds.jose.Algorithm;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
+import net.minidev.json.JSONObject;
 
 
 /**
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-09-20)
  */
 public class JWKSetTest extends TestCase {
 
@@ -502,6 +505,29 @@ public class JWKSetTest extends TestCase {
 		             rsaKey.getModulus().toString());
 		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
 		assertFalse(key.isPrivate());
-		
+	}
+
+
+	public void testOctJWKSetPublicExport()
+		throws Exception {
+
+		OctetSequenceKey oct1 = new OctetSequenceKey.Builder(new Base64URL("abc")).build();
+		assertEquals("abc", oct1.getKeyValue().toString());
+
+		OctetSequenceKey oct2 = new OctetSequenceKey.Builder(new Base64URL("def")).build();
+		assertEquals("def", oct2.getKeyValue().toString());
+
+		List<JWK> keyList = new LinkedList<JWK>();
+		keyList.add(oct1);
+		keyList.add(oct2);
+
+		JWKSet privateSet = new JWKSet(keyList);
+
+		final boolean publicParamsOnly = true;
+		JSONObject jsonObject = privateSet.toJSONObject(publicParamsOnly);
+
+		JWKSet publicSet = JWKSet.parse(jsonObject.toJSONString());
+
+		assertEquals(0, publicSet.getKeys().size());
 	}
 }
