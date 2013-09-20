@@ -530,4 +530,25 @@ public class JWKSetTest extends TestCase {
 
 		assertEquals(0, publicSet.getKeys().size());
 	}
+
+
+	public void testOctJWKSetToPublic()
+		throws Exception {
+
+		OctetSequenceKey oct1 = new OctetSequenceKey.Builder(new Base64URL("abc")).build();
+		assertEquals("abc", oct1.getKeyValue().toString());
+
+		OctetSequenceKey oct2 = new OctetSequenceKey.Builder(new Base64URL("def")).build();
+		assertEquals("def", oct2.getKeyValue().toString());
+
+		List<JWK> keyList = new LinkedList<JWK>();
+		keyList.add(oct1);
+		keyList.add(oct2);
+
+		JWKSet privateSet = new JWKSet(keyList);
+
+		JWKSet publicSet = privateSet.toPublicJWKSet();
+
+		assertEquals(0, publicSet.getKeys().size());
+	}
 }

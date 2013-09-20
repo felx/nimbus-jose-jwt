@@ -185,6 +185,30 @@ public class JWKSet {
 
 
 	/**
+	 * Returns a copy of this JSON Web Key (JWK) set with all private keys
+	 * and parameters removed.
+	 *
+	 * @return A copy of this JWK set with all private keys and parameters
+	 *         removed.
+	 */
+	public JWKSet toPublicJWKSet() {
+
+		List<JWK> publicKeyList = new LinkedList<JWK>();
+
+		for (JWK key: keys) {
+
+			JWK publicKey = key.toPublicJWK();
+
+			if (publicKey != null) {
+				publicKeyList.add(publicKey);
+			}
+		}
+
+		return new JWKSet(publicKeyList, customMembers);
+	}
+
+
+	/**
 	 * Returns the JSON object representation of this JSON Web Key (JWK) 
 	 * set. Private keys and parameters will be omitted from the output.
 	 * Use the alternative {@link #toJSONObject(boolean)} method if you
