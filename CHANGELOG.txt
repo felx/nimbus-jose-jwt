@@ -223,4 +223,4 @@ version 2.18.2 (2013-09-20)
 version 2.18.3 (2013-10-07)
     * Adds JWSHeader and JWEHeader constructor checks to reject the "none"
       algorithm.
-      
+    * Updates references to the latest JOSE -17 / JWT -12 drafts.
