@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-10-08)
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -85,6 +85,20 @@ public class JWSHeaderTest extends TestCase {
 		assertTrue(crit.contains("nbf"));
 
 		assertEquals(3, crit.size());
+	}
+
+
+	public void testRejectNone() {
+
+		try {
+			new JWSHeader(new JWSAlgorithm("none"));
+
+			fail("Failed to raise exception");
+
+		} catch (IllegalArgumentException e) {
+
+			// ok
+		}
 	}
 }
 

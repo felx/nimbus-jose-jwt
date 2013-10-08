@@ -81,11 +81,18 @@ public class JWSHeader extends CommonSEHeader implements ReadOnlyJWSHeader {
 	/**
 	 * Creates a new JSON Web Signature (JWS) header.
 	 *
-	 * @param alg The JWS algorithm. Must not be {@code null}.
+	 * <p>Note: Use {@link PlainHeader} to create a header with algorithm
+	 * {@link Algorithm#NONE none}.
+	 *
+	 * @param alg The JWS algorithm. Must not be "none" or {@code null}.
 	 */
 	public JWSHeader(final JWSAlgorithm alg) {
 
 		super(alg);
+
+		if (alg.getName().equals(Algorithm.NONE.getName())) {
+			throw new IllegalArgumentException("The JWS algorithm cannot be \"none\"");
+		}
 	}
 
 

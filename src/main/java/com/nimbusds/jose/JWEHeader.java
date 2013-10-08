@@ -138,13 +138,21 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	/**
 	 * Creates a new JSON Web Encryption (JWE) header.
 	 *
-	 * @param alg The JWE algorithm parameter. Must not be {@code null}.
+	 * <p>Note: Use {@link PlainHeader} to create a header with algorithm
+	 * {@link Algorithm#NONE none}.
+	 *
+	 * @param alg The JWE algorithm parameter.  Must not be "none" or
+	 *            {@code null}.
 	 * @param enc The encryption method parameter. Must not be 
 	 *            {@code null}.
 	 */
 	public JWEHeader(final JWEAlgorithm alg, final EncryptionMethod enc) {
 
 		super(alg);
+
+		if (alg.getName().equals(Algorithm.NONE.getName())) {
+			throw new IllegalArgumentException("The JWE algorithm cannot be \"none\"");
+		}
 
 		if (enc == null) {
 			throw new IllegalArgumentException("The encryption method \"enc\" parameter must not be null");

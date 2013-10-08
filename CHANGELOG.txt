@@ -219,3 +219,8 @@ version 2.18.2 (2013-09-20)
     * Fixes bug in JWKSet.toJSONObject(boolean) serialiser.
     * Adds JWKSet.toPublicJWKSet() convenience method.
     * Updates references to the latest JOSE -16 drafts.
+
+version 2.18.3 (2013-10-07)
+    * Adds JWSHeader and JWEHeader constructor checks to reject the "none"
+      algorithm.
+      

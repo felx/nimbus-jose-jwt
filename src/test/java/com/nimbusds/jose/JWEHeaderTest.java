@@ -191,4 +191,18 @@ public class JWEHeaderTest extends TestCase {
 
 		assertEquals(3, crit.size());
 	}
+
+
+	public void testRejectNone() {
+
+		try {
+			new JWEHeader(new JWEAlgorithm("none"), EncryptionMethod.A128CBC_HS256);
+
+			fail("Failed to raise exception");
+
+		} catch (IllegalArgumentException e) {
+
+			// ok
+		}
+	}
 }
