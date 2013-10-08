@@ -220,7 +220,10 @@ version 2.18.2 (2013-09-20)
     * Adds JWKSet.toPublicJWKSet() convenience method.
     * Updates references to the latest JOSE -16 drafts.
 
-version 2.18.3 (2013-10-07)
+version 2.19 (2013-10-07)
     * Adds JWSHeader and JWEHeader constructor checks to reject the "none"
       algorithm.
+    * Renames the methods that returns the names of the registered JOSE header
+      parameters and the registered JWT claims, to reflect the terminology
+      changes in the JOSE -17 / JWT -12 drafts.
     * Updates references to the latest JOSE -17 / JWT -12 drafts.
