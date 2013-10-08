@@ -32,14 +32,14 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES512}
  * </ul>
  *
- * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getReservedParameterNames
- * reserved JWS header parameters}. Modify the {@link #getJWSHeaderFilter
+ * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
+ * registered JWS header parameters}. Modify the {@link #getJWSHeaderFilter
  * header filter} properties to restrict the acceptable JWS algorithms and
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-10-07)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {

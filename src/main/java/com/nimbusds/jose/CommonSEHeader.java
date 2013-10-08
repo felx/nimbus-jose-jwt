@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Common class for JWS and JWE headers.
  *
- * <p>Supports all reserved header parameters shared by the JWS and JWE
+ * <p>Supports all registered header parameters shared by the JWS and JWE
  * specifications:
  *
  * <ul>
@@ -35,7 +35,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-10-07)
  */
 abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 

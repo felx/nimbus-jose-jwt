@@ -36,15 +36,15 @@ import com.nimbusds.jose.util.StringUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
  *
- * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getReservedParameterNames
- * reserved JWE header parameters}. Modify the {@link #getJWEHeaderFilter
+ * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
+ * registered JWE header parameters}. Modify the {@link #getJWEHeaderFilter
  * header filter} properties to restrict the acceptable JWE algorithms, 
  * encryption methods and header parameters, or to allow custom JWE header 
  * parameters.
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-10-07)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {

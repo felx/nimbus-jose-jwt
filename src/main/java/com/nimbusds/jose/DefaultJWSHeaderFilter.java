@@ -13,7 +13,7 @@ import net.jcip.annotations.ThreadSafe;
  * thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2013-10-07)
  */
 @ThreadSafe
 public class DefaultJWSHeaderFilter extends DefaultHeaderFilter implements JWSHeaderFilter {
@@ -54,7 +54,8 @@ public class DefaultJWSHeaderFilter extends DefaultHeaderFilter implements JWSHe
 	/**
 	 * Creates a new JWS header filter. The accepted algorithms are set to
 	 * equal the specified supported ones. The accepted header parameters
-	 * are set to match {@link JWSHeader#getReservedParameterNames}.
+	 * are set to match
+	 * {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames()}.
 	 *
 	 * @param algs The supported JWS algorithms. Used to bound the 
 	 *             {@link #setAcceptedAlgorithms accepted algorithms}. Must 
@@ -62,7 +63,7 @@ public class DefaultJWSHeaderFilter extends DefaultHeaderFilter implements JWSHe
 	 */
 	public DefaultJWSHeaderFilter(final Set<JWSAlgorithm> algs) {
 
-		this(algs, JWSHeader.getReservedParameterNames());
+		this(algs, JWSHeader.getRegisteredParameterNames());
 	}
 
 

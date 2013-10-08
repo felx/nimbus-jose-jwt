@@ -14,7 +14,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-07-26)
+ * @version $version$ (2013-10-07)
  */
 public interface ReadOnlyJWTClaimsSet {
 
@@ -84,7 +84,7 @@ public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Gets a custom (non-reserved) claim.
+	 * Gets a custom (non-registered) claim.
 	 * 
 	 * @param name The name of the custom claim. Must not be {@code null}.
 	 *
@@ -95,7 +95,7 @@ public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Gets the custom (non-reserved) claims.
+	 * Gets the custom (non-registered) claims.
 	 *
 	 * @return The custom claims, as a unmodifiable map, empty map if none.
 	 */
@@ -103,7 +103,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 
 	/**
-	 * Gets the specified claim (reserved or custom).
+	 * Gets the specified claim (registered or custom).
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
 	 * 
@@ -113,7 +113,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.String}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -127,7 +127,7 @@ public interface ReadOnlyJWTClaimsSet {
 		throws ParseException;
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.Boolean}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -142,7 +142,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.Integer}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -157,7 +157,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.Long}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -172,7 +172,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.Float}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -187,7 +187,7 @@ public interface ReadOnlyJWTClaimsSet {
 	
 	
 	/**
-	 * Gets the specified claim (reserved or custom) as 
+	 * Gets the specified claim (registered or custom) as
 	 * {@link java.lang.Double}.
 	 * 
 	 * @param name The name of the claim. Must not be {@code null}.
@@ -202,9 +202,9 @@ public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Gets all claims, both reserved and custom, as a single map.
+	 * Gets all claims, both registered and custom, as a single map.
 	 *
-	 * <p>Note that the reserved claims Expiration-Time ({@code exp}),
+	 * <p>Note that the registered claims Expiration-Time ({@code exp}),
 	 * Not-Before-Time ({@code nbf}) and Issued-At ({@code iat}) will be
 	 * returned as {@code java.util.Date} instances.
 	 * 

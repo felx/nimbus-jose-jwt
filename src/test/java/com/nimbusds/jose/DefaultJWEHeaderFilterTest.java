@@ -36,8 +36,8 @@ public class DefaultJWEHeaderFilterTest extends TestCase {
 		assertTrue(filter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(filter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
 
-		assertTrue(filter.getAcceptedParameters().containsAll(JWEHeader.getReservedParameterNames()));
-		assertEquals(filter.getAcceptedParameters().size(), JWEHeader.getReservedParameterNames().size());
+		assertTrue(filter.getAcceptedParameters().containsAll(JWEHeader.getRegisteredParameterNames()));
+		assertEquals(filter.getAcceptedParameters().size(), JWEHeader.getRegisteredParameterNames().size());
 	}
 
 

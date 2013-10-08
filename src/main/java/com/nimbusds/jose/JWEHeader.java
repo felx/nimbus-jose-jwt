@@ -18,8 +18,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
 /**
  * JSON Web Encryption (JWE) header.
  *
- * <p>Supports all {@link #getReservedParameterNames reserved header parameters}
- * of the JWE specification:
+ * <p>Supports all {@link #getRegisteredParameterNames registered header
+ * parameters} of the JWE specification:
  *
  * <ul>
  *     <li>alg
@@ -42,7 +42,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
- * these will be serialised and parsed along the reserved ones.
+ * these will be serialised and parsed along the registered ones.
  *
  * <p>Example header:
  *
@@ -54,19 +54,19 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version $version$ (2013-10-07)
  */
 public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 
 	/**
-	 * The reserved parameter names.
+	 * The registered parameter names.
 	 */
-	private static final Set<String> RESERVED_PARAMETER_NAMES;
+	private static final Set<String> REGISTERED_PARAMETER_NAMES;
 
 
 	/**
-	 * Initialises the reserved parameter name set.
+	 * Initialises the registered parameter name set.
 	 */
 	static {
 		Set<String> p = new HashSet<String>();
@@ -89,7 +89,7 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 		p.add("p2s");
 		p.add("p2c");
 
-		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
+		REGISTERED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
 
 
@@ -163,13 +163,13 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 
 	/**
-	 * Gets the reserved parameter names for JWE headers.
+	 * Gets the registered parameter names for JWE headers.
 	 *
-	 * @return The reserved parameter names, as an unmodifiable set.
+	 * @return The registered parameter names, as an unmodifiable set.
 	 */
-	public static Set<String> getReservedParameterNames() {
+	public static Set<String> getRegisteredParameterNames() {
 
-		return RESERVED_PARAMETER_NAMES;
+		return REGISTERED_PARAMETER_NAMES;
 	}
 
 
@@ -305,13 +305,14 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
-	 *                                  matches a reserved parameter name.
+	 *                                  matches a registered parameter
+	 *                                  name.
 	 */
 	@Override
 	public void setCustomParameter(final String name, final Object value) {
 
-		if (getReservedParameterNames().contains(name)) {
-			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
+		if (getRegisteredParameterNames().contains(name)) {
+			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
 		}
 
 		super.setCustomParameter(name, value);
@@ -544,8 +545,8 @@ public class JWEHeader extends CommonSEHeader implements ReadOnlyJWEHeader {
 	 *
 	 * @return The JWE header.
 	 *
-	 * @throws ParseException If the specified Base64URL doesn't represent a 
-	 *                        valid JWE header.
+	 * @throws ParseException If the specified Base64URL doesn't represent
+	 *                        a valid JWE header.
 	 */
 	public static JWEHeader parse(final Base64URL base64URL)
 		throws ParseException {

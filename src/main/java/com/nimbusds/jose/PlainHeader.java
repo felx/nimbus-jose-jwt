@@ -15,8 +15,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 /**
  * Plaintext JOSE header.
  *
- * <p>Supports all {@link #getReservedParameterNames reserved header parameters}
- * of the plain specification:
+ * <p>Supports all {@link #getRegisteredParameterNames registered header
+ * parameters} of the plain specification:
  *
  * <ul>
  *     <li>alg (set to {@link Algorithm#NONE "none"}).
@@ -26,7 +26,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </ul>
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
- * these will be serialised and parsed along the reserved ones.
+ * these will be serialised and parsed along the registered ones.
  *
  * <p>Example:
  *
@@ -37,19 +37,19 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-10-07)
  */
 public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
 
 	/**
-	 * The reserved parameter names.
+	 * The registered parameter names.
 	 */
-	private static final Set<String> RESERVED_PARAMETER_NAMES;
+	private static final Set<String> REGISTERED_PARAMETER_NAMES;
 
 
 	/**
-	 * Initialises the reserved parameter name set.
+	 * Initialises the registered parameter name set.
 	 */
 	static {
 		Set<String> p = new HashSet<String>();
@@ -59,7 +59,7 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 		p.add("cty");
 		p.add("crit");
 
-		RESERVED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
+		REGISTERED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
 
 
@@ -74,13 +74,13 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
 
 	/**
-	 * Gets the reserved parameter names for plain headers.
+	 * Gets the registered parameter names for plain headers.
 	 *
-	 * @return The reserved parameter names, as an unmodifiable set.
+	 * @return The registered parameter names, as an unmodifiable set.
 	 */
-	public static Set<String> getReservedParameterNames() {
+	public static Set<String> getRegisteredParameterNames() {
 
-		return RESERVED_PARAMETER_NAMES;
+		return REGISTERED_PARAMETER_NAMES;
 	}
 
 
@@ -93,13 +93,14 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
 	/**
 	 * @throws IllegalArgumentException If the specified parameter name
-	 *                                  matches a reserved parameter name.
+	 *                                  matches a registered parameter
+	 *                                  name.
 	 */
 	@Override
 	public void setCustomParameter(final String name, final Object value) {
 
-		if (getReservedParameterNames().contains(name)) {
-			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a reserved name");
+		if (getRegisteredParameterNames().contains(name)) {
+			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
 		}
 
 		super.setCustomParameter(name, value);
@@ -137,8 +138,8 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *
 	 * @return The plain header.
 	 *
-	 * @throws ParseException If the specified JSON object doesn't represent
-	 *                        a valid plain header.
+	 * @throws ParseException If the specified JSON object doesn't
+	 *                        represent a valid plain header.
 	 */
 	public static PlainHeader parse(final JSONObject json)
 		throws ParseException {
@@ -201,8 +202,8 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	 *
 	 * @return The plain header.
 	 *
-	 * @throws ParseException If the specified Base64URL doesn't represent a
-	 *                        valid plain header.
+	 * @throws ParseException If the specified Base64URL doesn't represent
+	 *                        a valid plain header.
 	 */
 	public static PlainHeader parse(final Base64URL base64URL)
 		throws ParseException {

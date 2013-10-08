@@ -27,7 +27,7 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testReservedNames() {
 
-		Set<String> names = JWTClaimsSet.getReservedNames();
+		Set<String> names = JWTClaimsSet.getRegisteredNames();
 
 		assertTrue(names.contains("iss"));
 		assertTrue(names.contains("sub"));

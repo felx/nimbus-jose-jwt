@@ -69,7 +69,7 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 	 * Creates a new JWE header filter. The accepted algorithms and
 	 * encryption methods are set to equal the specified supported ones. 
 	 * The accepted header parameters are set to match 
-	 * {@link JWEHeader#getReservedParameterNames}.
+	 * {@link JWEHeader#getRegisteredParameterNames}.
 	 *
 	 * @param algs The supported JWE algorithms. Used to bound the 
 	 *             {@link #setAcceptedAlgorithms accepted algorithms}. Must
@@ -81,7 +81,7 @@ public class DefaultJWEHeaderFilter extends DefaultHeaderFilter implements JWEHe
 	public DefaultJWEHeaderFilter(final Set<JWEAlgorithm> algs,
 		                      final Set<EncryptionMethod> encs) {
 
-		this(algs, encs, JWEHeader.getReservedParameterNames());
+		this(algs, encs, JWEHeader.getRegisteredParameterNames());
 	}
 
 

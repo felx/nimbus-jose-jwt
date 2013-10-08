@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 /**
  * JSON Web Token (JWT) claims set.
  *
- * <p>Supports all {@link #getReservedNames reserved claims} of the JWT 
+ * <p>Supports all {@link #getRegisteredNames()}  registered claims} of the JWT
  * specification:
  *
  * <ul>
@@ -35,11 +35,11 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </ul>
  *
  * <p>The set may also contain {@link #setCustomClaims custom claims}; these 
- * will be serialised and parsed along the reserved ones.
+ * will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-07-26)
+ * @version $version$ (2013-10-07)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -55,13 +55,13 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * The reserved claim names.
+	 * The registered claim names.
 	 */
-	private static final Set<String> RESERVED_CLAIM_NAMES;
+	private static final Set<String> REGISTERED_CLAIM_NAMES;
 
 
 	/**
-	 * Initialises the reserved claim name set.
+	 * Initialises the registered claim name set.
 	 */
 	static {
 		Set<String> n = new HashSet<String>();
@@ -75,7 +75,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		n.add(JWT_ID_CLAIM);
 		n.add(TYPE_CLAIM);
 
-		RESERVED_CLAIM_NAMES = Collections.unmodifiableSet(n);
+		REGISTERED_CLAIM_NAMES = Collections.unmodifiableSet(n);
 	}
 
 
@@ -163,13 +163,13 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Gets the reserved JWT claim names.
+	 * Gets the registered JWT claim names.
 	 *
-	 * @return The reserved claim names, as a unmodifiable set.
+	 * @return The registered claim names, as a unmodifiable set.
 	 */
-	public static Set<String> getReservedNames() {
+	public static Set<String> getRegisteredNames() {
 
-		return RESERVED_CLAIM_NAMES;
+		return REGISTERED_CLAIM_NAMES;
 	}
 
 
@@ -325,20 +325,20 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Sets a custom (non-reserved) claim.
+	 * Sets a custom (non-registered) claim.
 	 *
 	 * @param name  The name of the custom claim. Must not be {@code null}.
 	 * @param value The value of the custom claim, should map to a valid 
 	 *              JSON entity, {@code null} if not specified.
 	 *
 	 * @throws IllegalArgumentException If the specified custom claim name
-	 *                                  matches a reserved claim name.
+	 *                                  matches a registered claim name.
 	 */
 	public void setCustomClaim(final String name, final Object value) {
 
-		if (getReservedNames().contains(name)) {
+		if (getRegisteredNames().contains(name)) {
 
-			throw new IllegalArgumentException("The claim name \"" + name + "\" matches a reserved name");
+			throw new IllegalArgumentException("The claim name \"" + name + "\" matches a registered name");
 		}
 
 		customClaims.put(name, value);
@@ -353,8 +353,8 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Sets the custom (non-reserved) claims. If a claim value doesn't map
-	 * to a JSON entity it will be ignored during serialisation.
+	 * Sets the custom (non-registered) claims. If a claim value doesn't
+	 * map to a JSON entity it will be ignored during serialisation.
 	 *
 	 * @param customClaims The custom claims, empty map or {@code null} if
 	 *                     none.
@@ -487,13 +487,13 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Sets the specified claim, whether reserved or custom.
+	 * Sets the specified claim, whether registered or custom.
 	 *
 	 * @param name  The name of the claim to set. Must not be {@code null}.
 	 * @param value The value of the claim to set, {@code null} if not 
 	 *              specified.
 	 *
-	 * @throws IllegalArgumentException If the claim is reserved and its
+	 * @throws IllegalArgumentException If the claim is registered and its
 	 *                                  value is not of the expected type.
 	 */
 	public void setClaim(final String name, final Object value) {
@@ -559,9 +559,9 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 		allClaims.putAll(customClaims);
 
-		for (String reservedClaim : RESERVED_CLAIM_NAMES) {
+		for (String registeredClaim : REGISTERED_CLAIM_NAMES) {
 
-			allClaims.put(reservedClaim, getClaim(reservedClaim));
+			allClaims.put(registeredClaim, getClaim(registeredClaim));
 		}
 
 		return Collections.unmodifiableMap(allClaims);
@@ -640,7 +640,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 		JWTClaimsSet cs = new JWTClaimsSet();
 
-		// Parse reserved + custom params
+		// Parse registered + custom params
 		for (final String name: json.keySet()) {
 
 			if (name.equals(ISSUER_CLAIM)) {

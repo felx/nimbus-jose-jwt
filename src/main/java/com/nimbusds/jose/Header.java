@@ -19,10 +19,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Encryption (JWE) headers.
  *
  * <p>The header may also carry {@link #setCustomParameters custom parameters};
- * these will be serialised and parsed along the reserved ones.
+ * these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version $version$ (2013-10-07)
  */
 public abstract class Header implements ReadOnlyHeader {
 
@@ -108,7 +108,8 @@ public abstract class Header implements ReadOnlyHeader {
 	/**
 	 * Sets the content type ({@code cty}) parameter.
 	 *
-	 * @param cty The content type parameter, {@code null} if not specified.
+	 * @param cty The content type parameter, {@code null} if not
+	 *            specified.
 	 */
 	public void setContentType(final String cty) {
 
@@ -144,14 +145,14 @@ public abstract class Header implements ReadOnlyHeader {
 
 
 	/**
-	 * Sets a custom (non-reserved) parameter. Callers and extending classes
-	 * should ensure the parameter name doesn't match a reserved parameter 
-	 * name.
+	 * Sets a custom (non-registered) parameter. Callers and extending
+	 * classes should ensure the parameter name doesn't match a registered
+	 * parameter name.
 	 *
 	 * @param name  The name of the custom parameter. Must not match a 
-	 *              reserved parameter name and must not be {@code null}.
-	 * @param value The value of the custom parameter, should map to a valid
-	 *              JSON entity, {@code null} if not specified.
+	 *              registered parameter name and must not be {@code null}.
+	 * @param value The value of the custom parameter, should map to a
+	 *              valid JSON entity, {@code null} if not specified.
 	 */
 	protected void setCustomParameter(final String name, final Object value) {
 
@@ -167,7 +168,7 @@ public abstract class Header implements ReadOnlyHeader {
 
 
 	/**
-	 * Sets the custom (non-reserved) parameters. The values must be 
+	 * Sets the custom (non-registered) parameters. The values must be
 	 * serialisable to a JSON entity, otherwise will be ignored.
 	 *
 	 * @param customParameters The custom parameters, empty map or 
@@ -199,7 +200,7 @@ public abstract class Header implements ReadOnlyHeader {
 	public JSONObject toJSONObject() {
 
 		// Include custom parameters, they will be overwritten if their
-		// names match specified reserved ones
+		// names match specified registered ones
 		JSONObject o = new JSONObject(customParameters);
 
 		// Alg is always defined
@@ -250,7 +251,8 @@ public abstract class Header implements ReadOnlyHeader {
 	 * JWE headers.
 	 *
 	 * <p>The algorithm type (none, JWS or JWE) is determined by inspecting
-	 * the algorithm name for "none" and the presence of an "enc" parameter.
+	 * the algorithm name for "none" and the presence of an "enc"
+	 * parameter.
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
@@ -343,8 +345,8 @@ public abstract class Header implements ReadOnlyHeader {
 	 *
 	 * @return The header.
 	 *
-	 * @throws ParseException If the specified Base64URL doesn't represent a
-	 *                        valid header.
+	 * @throws ParseException If the specified Base64URL doesn't represent
+	 *                        a valid header.
 	 */
 	public static Header parse(final Base64URL base64URL)
 		throws ParseException {

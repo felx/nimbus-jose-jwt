@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  * Tests the default JWS header filter implementation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-22)
+ * @version $version$ (2013-10-07)
  */
 public class DefaultJWSHeaderFilterTest extends TestCase {
 
@@ -30,8 +30,8 @@ public class DefaultJWSHeaderFilterTest extends TestCase {
 		assertTrue(filter.supportedAlgorithms().contains(JWSAlgorithm.HS384));
 		assertTrue(filter.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
-		assertTrue(filter.getAcceptedParameters().containsAll(JWSHeader.getReservedParameterNames()));
-		assertEquals(filter.getAcceptedParameters().size(), JWSHeader.getReservedParameterNames().size());
+		assertTrue(filter.getAcceptedParameters().containsAll(JWSHeader.getRegisteredParameterNames()));
+		assertEquals(filter.getAcceptedParameters().size(), JWSHeader.getRegisteredParameterNames().size());
 	}
 
 

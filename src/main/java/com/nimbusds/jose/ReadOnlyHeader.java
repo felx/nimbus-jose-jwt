@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Read-only view of a {@link Header header}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version $version$ (2013-10-07)
  */
 public interface ReadOnlyHeader {
 
@@ -53,7 +53,7 @@ public interface ReadOnlyHeader {
 
 
 	/**
-	 * Gets a custom (non-reserved) parameter.
+	 * Gets a custom (non-registered) parameter.
 	 *
 	 * @param name The name of the custom parameter. Must not be 
 	 *             {@code null}.
@@ -64,7 +64,7 @@ public interface ReadOnlyHeader {
 
 
 	/**
-	 * Gets the custom (non-reserved) parameters.
+	 * Gets the custom (non-registered) parameters.
 	 *
 	 * @return The custom parameters, as a unmodifiable map, empty map if 
 	 *         none.
@@ -73,7 +73,7 @@ public interface ReadOnlyHeader {
 
 
 	/**
-	 * Gets the names of all included parameters (reserved and custom) in 
+	 * Gets the names of all included parameters (registered and custom) in
 	 * the header instance.
 	 *
 	 * @return The included parameters.
@@ -84,7 +84,7 @@ public interface ReadOnlyHeader {
 	/**
 	 * Returns a JSON object representation of the header. All custom
 	 * parameters are included if they serialise to a JSON entity and 
-	 * their names don't conflict with the reserved ones.
+	 * their names don't conflict with the registered ones.
 	 *
 	 * @return The JSON object representation of the header.
 	 */
@@ -94,7 +94,7 @@ public interface ReadOnlyHeader {
 	/**
 	 * Returns a JSON string representation of the header. All custom
 	 * parameters will be included if they serialise to a JSON entity and 
-	 * their names don't conflict with the reserved ones.
+	 * their names don't conflict with the registered ones.
 	 *
 	 * @return The JSON string representation of the header.
 	 */
