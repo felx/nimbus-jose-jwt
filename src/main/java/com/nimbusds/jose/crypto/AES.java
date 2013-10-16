@@ -8,7 +8,6 @@ import javax.crypto.SecretKey;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.nimbusds.jose.JOSEException;
 
@@ -18,7 +17,7 @@ import com.nimbusds.jose.JOSEException;
  * BouncyCastle.org provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-10-16)
  */
 class AES {
 
@@ -38,7 +37,7 @@ class AES {
 		KeyGenerator keygen;
 
 		try {
-			keygen = KeyGenerator.getInstance("AES", new BouncyCastleProvider());
+			keygen = KeyGenerator.getInstance("AES", BouncyCastleProviderSingleton.getInstance());
 
 		} catch (NoSuchAlgorithmException e) {
 

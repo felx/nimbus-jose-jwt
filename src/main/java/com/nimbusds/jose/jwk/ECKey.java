@@ -17,15 +17,14 @@ import java.text.ParseException;
 
 import net.jcip.annotations.Immutable;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -68,7 +67,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-05-30)
+ * @version $version$ (2013-10-16)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -826,7 +825,7 @@ public final class ECKey extends JWK {
 	private static KeyFactory getECKeyFactory()
 		throws NoSuchAlgorithmException {
 
-		return KeyFactory.getInstance("EC", new BouncyCastleProvider());
+		return KeyFactory.getInstance("EC", BouncyCastleProviderSingleton.getInstance());
 	}
 
 
