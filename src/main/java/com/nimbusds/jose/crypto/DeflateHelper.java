@@ -1,6 +1,8 @@
 package com.nimbusds.jose.crypto;
 
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.CompressionAlgorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
@@ -9,11 +11,12 @@ import com.nimbusds.jose.util.DeflateUtils;
 
 /**
  * Deflate (RFC 1951) helper methods, intended for use by JWE encrypters and
- * decrypters.
+ * decrypters. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-04-16)
  */
+@ThreadSafe
 class DeflateHelper {
 
 

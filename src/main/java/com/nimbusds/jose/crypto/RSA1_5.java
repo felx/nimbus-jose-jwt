@@ -8,16 +8,19 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 
 
 /**
  * RSAES-PKCS1-V1_5 methods for Content Encryption Key (CEK) encryption and
- * decryption.
+ * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-05-06)
  */
+@ThreadSafe
 class RSA1_5 {
 
 

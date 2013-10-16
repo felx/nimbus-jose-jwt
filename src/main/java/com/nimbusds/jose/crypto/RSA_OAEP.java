@@ -8,6 +8,8 @@ import java.security.interfaces.RSAPublicKey;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSAEngine;
@@ -18,11 +20,12 @@ import com.nimbusds.jose.JOSEException;
 
 /**
  * RSAES OAEP methods for Content Encryption Key (CEK) encryption and 
- * decryption. Uses the BouncyCastle.org provider.
+ * decryption. Uses the BouncyCastle.org provider. This class is thread-safe
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-05-06)
  */
+@ThreadSafe
 class RSA_OAEP {
 
 

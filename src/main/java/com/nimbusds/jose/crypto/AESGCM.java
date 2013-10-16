@@ -4,6 +4,8 @@ package com.nimbusds.jose.crypto;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.bouncycastle.crypto.BlockCipher;
 import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bouncycastle.crypto.modes.GCMBlockCipher;
@@ -15,7 +17,7 @@ import com.nimbusds.jose.JOSEException;
 
 /**
  * AES/GSM/NoPadding encryption and decryption methods. Uses the 
- * BouncyCastle.org provider.
+ * BouncyCastle.org provider. This class is thread-safe.
  *
  * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.9.
  *
@@ -23,6 +25,7 @@ import com.nimbusds.jose.JOSEException;
  * @author Axel Nennker
  * @version $version$ (2013-05-07)
  */
+@ThreadSafe
 class AESGCM {
 
 

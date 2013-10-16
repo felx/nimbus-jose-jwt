@@ -8,16 +8,20 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 
 
 /**
- * Static methods for Hash-based Message Authentication Codes (HMAC).
+ * Static methods for Hash-based Message Authentication Codes (HMAC). This
+ * class is thread-safe.
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-03-23)
  */
+@ThreadSafe
 class HMAC {
 
 
