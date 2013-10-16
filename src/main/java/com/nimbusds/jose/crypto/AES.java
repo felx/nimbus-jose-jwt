@@ -2,8 +2,11 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+
+import net.jcip.annotations.ThreadSafe;
 
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.crypto.engines.AESEngine;
@@ -14,12 +17,34 @@ import com.nimbusds.jose.JOSEException;
 
 /**
  * AES encryption, decryption and key generation methods. Uses the 
- * BouncyCastle.org provider.
+ * BouncyCastle.org provider. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-10-16)
  */
+@ThreadSafe
 class AES {
+
+
+	/**
+	 * Returns a new AES key generator instance.
+	 *
+	 * @return The AES key generator.
+	 *
+	 * @throws JOSEException If an AES key generator couldn't be
+	 *                       instantiated.
+	 */
+	public static KeyGenerator createKeyGenerator()
+		throws JOSEException {
+
+		try {
+			return KeyGenerator.getInstance("AES", BouncyCastleProviderSingleton.getInstance());
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
+	}
 
 
 	/**
@@ -34,18 +59,9 @@ class AES {
 	public static SecretKey generateKey(final int keyBitLength) 
 		throws JOSEException {
 
-		KeyGenerator keygen;
-
-		try {
-			keygen = KeyGenerator.getInstance("AES", BouncyCastleProviderSingleton.getInstance());
-
-		} catch (NoSuchAlgorithmException e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
-
-		keygen.init(keyBitLength);
-		return keygen.generateKey();
+		KeyGenerator aesKeyGenerator = createKeyGenerator();
+		aesKeyGenerator.init(keyBitLength);
+		return aesKeyGenerator.generateKey();
 	}
 
 
