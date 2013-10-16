@@ -10,12 +10,14 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 
 
 /**
  * AES/CBC/PKCS5Padding and AES/CBC/PKCS5Padding/HMAC-SHA2 encryption and 
- * decryption methods.
+ * decryption methods. This class is thread-safe.
  *
  * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.3.
  *
@@ -23,6 +25,7 @@ import com.nimbusds.jose.JOSEException;
  * @author Axel Nennker
  * @version $version$ (2013-05-07)
  */
+@ThreadSafe
 class AESCBC {
 
 
