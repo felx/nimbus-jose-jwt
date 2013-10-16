@@ -230,5 +230,5 @@ version 2.19 (2013-10-07)
 
 version 2.19.1 (2013-10-16)
     * Fixes critical memory leak that affected RSA encryption, caused by
-      loading the BouncyCastle provider multiple times in the AES key
-      generation utility method.
+      loading the BouncyCastle provider more than once in the AES key
+      generation utility method (issue #68).
