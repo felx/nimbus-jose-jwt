@@ -125,7 +125,7 @@ class AESCBC {
 	 * Computes the bit length of the specified Additional Authenticated 
 	 * Data (AAD). Used in AES/CBC/PKCS5Padding/HMAC-SHA2 encryption.
 	 *
-	 * @param add The Additional Authenticated Data (AAD). Must not be
+	 * @param aad The Additional Authenticated Data (AAD). Must not be
 	 *            {@code null}.
 	 *
 	 * @return The computed AAD bit length, as a 64 bit big-ending 
