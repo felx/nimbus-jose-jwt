@@ -1,8 +1,10 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
+import java.security.spec.PSSParameterSpec;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,6 +84,8 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 		String internalAlgName;
 
+		PSSParameterSpec pssSpec = null;
+
 		if (alg.equals(JWSAlgorithm.RS256)) {
 
 			internalAlgName = "SHA256withRSA";
@@ -98,26 +102,52 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 			internalAlgName = "SHA256withRSAandMGF1";
 
+			// JWA mandates salt length must equal hash
+			pssSpec = new PSSParameterSpec(256);
+
 		} else if (alg.equals(JWSAlgorithm.PS384)) {
 
 			internalAlgName = "SHA384withRSAandMGF1";
 
+			// JWA mandates salt length must equal hash
+			pssSpec = new PSSParameterSpec(384);
+
 		} else if (alg.equals(JWSAlgorithm.PS512)) {
 
 			internalAlgName = "SHA512withRSAandMGF1";
+
+			// JWA mandates salt length must equal hash
+			pssSpec = new PSSParameterSpec(512);
 
 		} else {
 			
 			throw new JOSEException("Unsupported RSASSA algorithm, must be RS256, RS384, RS512, PS256, PS384 or PS512");
 		}
 
+		Signature signature;
+
 		try {
-			return Signature.getInstance(internalAlgName);
+			 signature = Signature.getInstance(internalAlgName);
 
 		} catch (NoSuchAlgorithmException e) {
 
 			throw new JOSEException("Unsupported RSASSA algorithm: " + e.getMessage(), e);
 		}
+
+
+		if (pssSpec != null) {
+
+			try {
+				signature.setParameter(pssSpec);
+
+			} catch (InvalidAlgorithmParameterException e) {
+
+				throw new JOSEException("Invalid RSASSA-PSS salt length parameter: " + e.getMessage(), e);
+			}
+		}
+
+
+		return signature;
 	}
 }
 

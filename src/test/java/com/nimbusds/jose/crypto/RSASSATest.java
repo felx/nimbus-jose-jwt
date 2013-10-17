@@ -20,11 +20,11 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Tests RS256 JWS signing and verfication. Uses test RSA keys and vectors 
+ * Tests RSASSA JWS signing and verfication. Uses test RSA keys and vectors
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-23)
+ * @version $version$ (2012-10-17)
  */
 public class RSASSATest extends TestCase {
 
@@ -175,10 +175,13 @@ public class RSASSATest extends TestCase {
 
 		RSASSASigner signer = new RSASSASigner(privateKey);
 		assertNotNull("Private key check", signer.getPrivateKey());
-		assertEquals(3, signer.supportedAlgorithms().size());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, signer.supportedAlgorithms().size());
 
 		jwsObject.sign(signer);
 
@@ -187,10 +190,13 @@ public class RSASSATest extends TestCase {
 
 		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
 		assertNotNull("Public key check", verifier.getPublicKey());
-		assertEquals(3, signer.supportedAlgorithms().size());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, signer.supportedAlgorithms().size());
 
 		boolean verified = jwsObject.verify(verifier);
 
