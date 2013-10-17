@@ -232,3 +232,7 @@ version 2.19.1 (2013-10-16)
     * Fixes critical memory leak that affected RSA encryption, caused by
       loading the BouncyCastle provider more than once in the AES key
       generation utility method (issue #68).
+
+version 2.20 (2013-10-17)
+    * Adds support for PS256, PS384 and PS512 signatures via the existing
+      RSASSA signer and verifier classes.

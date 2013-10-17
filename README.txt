@@ -35,6 +35,8 @@ algorithms:
 
     RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
 
+    RSASSA-PSS signatures with PS256, PS384 and PS512.
+
     EC signatures with ES256, ES384 and ES512.
 
     RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384,
@@ -93,7 +95,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.18.2</version>
+    <version>2.20</version>
 </dependency>
 
 
