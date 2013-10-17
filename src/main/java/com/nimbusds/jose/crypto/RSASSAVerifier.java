@@ -26,6 +26,9 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS512}
  * </ul>
  *
  * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
