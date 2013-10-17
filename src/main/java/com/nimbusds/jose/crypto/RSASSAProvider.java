@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.HashSet;
 import java.util.Set;
@@ -103,21 +104,21 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 			internalAlgName = "SHA256withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
-			pssSpec = new PSSParameterSpec(256);
+			pssSpec = new PSSParameterSpec("SHA256", "MGF1", MGF1ParameterSpec.SHA256, 32, 1);
 
 		} else if (alg.equals(JWSAlgorithm.PS384)) {
 
 			internalAlgName = "SHA384withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
-			pssSpec = new PSSParameterSpec(384);
+			pssSpec = new PSSParameterSpec("SHA384", "MGF1", MGF1ParameterSpec.SHA384, 48, 1);
 
 		} else if (alg.equals(JWSAlgorithm.PS512)) {
 
 			internalAlgName = "SHA512withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
-			pssSpec = new PSSParameterSpec(512);
+			pssSpec = new PSSParameterSpec("SHA512", "MGF1", MGF1ParameterSpec.SHA512, 64, 1);
 
 		} else {
 			

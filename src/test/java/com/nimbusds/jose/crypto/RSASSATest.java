@@ -2,7 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-import java.security.KeyFactory;
+import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
 public class RSASSATest extends TestCase {
 
 
-	private final static byte[] mod = { 
+	private final static byte[] MOD = {
 		(byte)161, (byte)248, (byte) 22, (byte) 10, (byte)226, (byte)227, (byte)201, (byte)180,
 		(byte)101, (byte)206, (byte)141, (byte) 45, (byte)101, (byte) 98, (byte) 99, (byte) 54, 
 		(byte) 43, (byte)146, (byte)125, (byte)190, (byte) 41, (byte)225, (byte)240, (byte) 36, 
@@ -70,10 +70,10 @@ public class RSASSATest extends TestCase {
 		(byte) 33, (byte)224, (byte) 84, (byte) 86, (byte)202, (byte)229, (byte)233, (byte)161  };
 
 
-	private static final byte[] exp= { 1, 0, 1 };
+	private static final byte[] EXP = { 1, 0, 1 };
 
 
-	private static final byte[] modPriv = { 
+	private static final byte[] MOD_PRIV = {
 		(byte) 18, (byte)174, (byte)113, (byte)164, (byte)105, (byte)205, (byte) 10, (byte) 43,
 		(byte)195, (byte)126, (byte) 82, (byte)108, (byte) 69, (byte)  0, (byte) 87, (byte) 31, 
 		(byte) 29, (byte) 97, (byte)117, (byte) 29, (byte)100, (byte)233, (byte) 73, (byte)112, 
@@ -114,21 +114,21 @@ public class RSASSATest extends TestCase {
 		(byte)225, (byte) 57, (byte) 84, (byte)110, (byte) 58, (byte)138, (byte)115, (byte)157 };
 
 
-	private static RSAPublicKey publicKey;
+	private static RSAPublicKey PUBLIC_KEY;
 
 
-	private static RSAPrivateKey privateKey;
+	private static RSAPrivateKey PRIVATE_KEY;
 
 
 	static {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, mod), new BigInteger(1, exp));
-			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, mod), new BigInteger(1, modPriv));
+			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, MOD), new BigInteger(1, EXP));
+			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, MOD), new BigInteger(1, MOD_PRIV));
 
-			publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+			PUBLIC_KEY = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+			PRIVATE_KEY = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
 
 		} catch (Exception e) {
 
@@ -137,21 +137,21 @@ public class RSASSATest extends TestCase {
 	}
 
 
-	private static final Base64URL b64header = new Base64URL("eyJhbGciOiJSUzI1NiJ9");
+	private static final Base64URL B64_HEADER = new Base64URL("eyJhbGciOiJSUzI1NiJ9");
 
 
-	private static final Payload payload = new Payload(new Base64URL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+	private static final Payload PAYLOAD = new Payload(new Base64URL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
 			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"));
 
 
-	private static final byte[] signable = new String(
+	private static final byte[] SIGNABLE = new String(
 			"eyJhbGciOiJSUzI1NiJ9" +
 					"." +
 					"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
 			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
 
 
-	private static final Base64URL b64sig = new Base64URL(
+	private static final Base64URL B64_SIG = new Base64URL(
 			"cC4hiUPoj9Eetdgtv3hF80EGrhuB__dzERat0XF9g2VtQgr9PJbu3XOiZj5RZmh7" +
 					"AAuHIm4Bh-0Qc_lF5YKt_O8W2Fp5jujGbds9uJdbF9CUAr7t1dnZcAcQjbKBYNX4" +
 					"BAynRFdiuB--f_nZLgrnbyTyWzO75vRK5h6xBArLIARNPvkSjtQBMHlb1L07Qe7K" +
@@ -164,16 +164,16 @@ public class RSASSATest extends TestCase {
 	public void testSignAndVerify()
 			throws Exception {
 
-		JWSHeader header = JWSHeader.parse(b64header);
+		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
 		assertEquals("RS256 alg check", JWSAlgorithm.RS256, header.getAlgorithm());
 
-		JWSObject jwsObject = new JWSObject(header, payload);
+		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
 
 		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
 
 
-		RSASSASigner signer = new RSASSASigner(privateKey);
+		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
 		assertNotNull("Private key check", signer.getPrivateKey());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
@@ -188,7 +188,7 @@ public class RSASSATest extends TestCase {
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
 
-		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
 		assertNotNull("Public key check", verifier.getPublicKey());
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
 		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
@@ -209,24 +209,24 @@ public class RSASSATest extends TestCase {
 	public void testSignWithReadyVector()
 			throws Exception {
 
-		JWSHeader header = JWSHeader.parse(b64header);
+		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
-		JWSSigner signer = new RSASSASigner(privateKey);
+		JWSSigner signer = new RSASSASigner(PRIVATE_KEY);
 
-		Base64URL b64sigComputed = signer.sign(header, signable);
+		Base64URL b64sigComputed = signer.sign(header, SIGNABLE);
 
-		assertEquals("Signature check", b64sig, b64sigComputed);
+		assertEquals("Signature check", B64_SIG, b64sigComputed);
 	}
 
 
 	public void testVerifyWithReadyVector()
 			throws Exception {
 
-		JWSHeader header = JWSHeader.parse(b64header);
+		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
-		JWSVerifier verifier = new RSASSAVerifier(publicKey);
+		JWSVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
 
-		boolean verified = verifier.verify(header, signable, b64sig);
+		boolean verified = verifier.verify(header, SIGNABLE, B64_SIG);
 
 		assertTrue("Signature check", verified);
 	}
@@ -235,7 +235,7 @@ public class RSASSATest extends TestCase {
 	public void testParseAndVerify()
 			throws Exception {
 
-		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
+		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + B64_SIG.toString();
 
 		JWSObject jwsObject = JWSObject.parse(s);
 
@@ -243,11 +243,82 @@ public class RSASSATest extends TestCase {
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
-		JWSVerifier verifier = new RSASSAVerifier(publicKey);
+		JWSVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
 
 		boolean verified = jwsObject.verify(verifier);
 
 		assertTrue("Signature check", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testRSASSASignAndVerifyCycle()
+		throws Exception {
+
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+		kpg.initialize(2048);
+
+		KeyPair kp = kpg.genKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+
+		// Need BouncyCastle for PSS
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
+		RSASSASigner signer = new RSASSASigner(privateKey);
+		assertNotNull("Private key check", signer.getPrivateKey());
+
+		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
+		assertNotNull("Public key check", verifier.getPublicKey());
+
+		testSignAndVerifyCycle(JWSAlgorithm.RS256, signer, verifier);
+		testSignAndVerifyCycle(JWSAlgorithm.RS384, signer, verifier);
+		testSignAndVerifyCycle(JWSAlgorithm.RS512, signer, verifier);
+	}
+
+
+	public void testPSSSignAndVerifyCycle()
+		throws Exception {
+
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+		kpg.initialize(2048);
+
+		KeyPair kp = kpg.genKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+
+		// Need BouncyCastle for PSS
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
+		RSASSASigner signer = new RSASSASigner(privateKey);
+		assertNotNull("Private key check", signer.getPrivateKey());
+
+		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
+		assertNotNull("Public key check", verifier.getPublicKey());
+
+		testSignAndVerifyCycle(JWSAlgorithm.PS256, signer, verifier);
+		testSignAndVerifyCycle(JWSAlgorithm.PS384, signer, verifier);
+		testSignAndVerifyCycle(JWSAlgorithm.PS512, signer, verifier);
+	}
+
+
+	public void testSignAndVerifyCycle(final JWSAlgorithm alg, final JWSSigner signer, final JWSVerifier verifier)
+		throws Exception {
+
+		JWSHeader header = new JWSHeader(alg);
+
+		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
+
+		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
+
+		jwsObject.sign(signer);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
