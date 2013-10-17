@@ -20,10 +20,13 @@ import com.nimbusds.jose.JWSAlgorithm;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS512}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS256}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS384}
+ *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS512}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-04)
+ * @version $version$ (2012-10-17)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
@@ -40,9 +43,13 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 	static {
 
 		Set<JWSAlgorithm> algs = new HashSet<JWSAlgorithm>();
+
 		algs.add(JWSAlgorithm.RS256);
 		algs.add(JWSAlgorithm.RS384);
 		algs.add(JWSAlgorithm.RS512);
+		algs.add(JWSAlgorithm.PS256);
+		algs.add(JWSAlgorithm.PS384);
+		algs.add(JWSAlgorithm.PS512);
 
 		SUPPORTED_ALGORITHMS = algs;
 	}
@@ -87,9 +94,21 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 			internalAlgName = "SHA512withRSA";
 
+		} else if (alg.equals(JWSAlgorithm.PS256)) {
+
+			internalAlgName = "SHA256withRSAandMGF1";
+
+		} else if (alg.equals(JWSAlgorithm.PS384)) {
+
+			internalAlgName = "SHA384withRSAandMGF1";
+
+		} else if (alg.equals(JWSAlgorithm.PS512)) {
+
+			internalAlgName = "SHA512withRSAandMGF1";
+
 		} else {
 			
-			throw new JOSEException("Unsupported RSASSA algorithm, must be RS256, RS384 or RS512");
+			throw new JOSEException("Unsupported RSASSA algorithm, must be RS256, RS384, RS512, PS256, PS384 or PS512");
 		}
 
 		try {
