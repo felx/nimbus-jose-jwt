@@ -11,7 +11,7 @@
     
 	<groupId>com.nimbusds</groupId>
 	<artifactId>nimbus-jose-jwt</artifactId>
-	<version>2.20</version>
+	<version>2.21-SNAPSHOT</version>
 	<packaging>jar</packaging>
     
 	<name>NimbusDS JOSE+JWT</name>
@@ -39,7 +39,7 @@
 		<connection>scm:git:https://bitbucket.org/nimbusds/nimbus-jose-jwt.git</connection>
 		<developerConnection>scm:git:git@bitbucket.org:nimbusds/nimbus-jose-jwt.git</developerConnection>
 		<url>https://bitbucket.org/nimbusds/nimbus-jose-jwt</url>
-		<tag>2.20</tag>
+		<tag>HEAD</tag>
 	</scm>
     
 	<developers>
