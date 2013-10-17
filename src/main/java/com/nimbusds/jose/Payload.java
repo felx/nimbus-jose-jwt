@@ -126,7 +126,7 @@ public class Payload {
 	/**
 	 * Converts a string to a byte array using {@link #CHARSET}.
 	 *
-	 * @param stirng The string to convert. May be {@code null}.
+	 * @param string The string to convert. May be {@code null}.
 	 *
 	 * @return The resulting byte array, {@code null} if conversion failed.
 	 */
