@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-11-06)
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 
@@ -56,14 +57,14 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 
 		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
 		algs.add(JWEAlgorithm.DIR);
-		SUPPORTED_ALGORITHMS = algs;
+		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
 		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
 		methods.add(EncryptionMethod.A128CBC_HS256);
 		methods.add(EncryptionMethod.A256CBC_HS512);
 		methods.add(EncryptionMethod.A128GCM);
 		methods.add(EncryptionMethod.A256GCM);
-		SUPPORTED_ENCRYPTION_METHODS = methods;
+		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
 
 

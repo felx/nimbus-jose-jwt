@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-17)
+ * @version $version$ (2013-11-06)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
@@ -54,7 +55,7 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 		algs.add(JWSAlgorithm.PS384);
 		algs.add(JWSAlgorithm.PS512);
 
-		SUPPORTED_ALGORITHMS = algs;
+		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 	}
 
 

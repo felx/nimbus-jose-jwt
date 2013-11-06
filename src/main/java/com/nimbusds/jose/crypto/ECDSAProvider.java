@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2013-11-06)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 
@@ -52,7 +53,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 		algs.add(JWSAlgorithm.ES384);
 		algs.add(JWSAlgorithm.ES512);
 
-		SUPPORTED_ALGORITHMS = algs;
+		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 	}
 
 

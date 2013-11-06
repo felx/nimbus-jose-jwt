@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2013-11-06)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -30,7 +31,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	/**
 	 * The supported JWS algorithms.
 	 */
-	private static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
+	public static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
 
 
 	/**
@@ -43,7 +44,7 @@ abstract class MACProvider extends BaseJWSProvider {
 		algs.add(JWSAlgorithm.HS384);
 		algs.add(JWSAlgorithm.HS512);
 
-		SUPPORTED_ALGORITHMS = algs;
+		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 	}
 
 
