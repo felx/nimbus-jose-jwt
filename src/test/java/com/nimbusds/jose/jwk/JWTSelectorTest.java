@@ -26,6 +26,23 @@ public class JWTSelectorTest extends TestCase {
 		assertNull(selector.getKeyUses());
 		assertNull(selector.getAlgorithms());
 		assertNull(selector.getKeyIDs());
+		assertFalse(selector.isPrivateOnly());
+		assertFalse(selector.isPublicOnly());
+	}
+
+
+	public void testPrivateAndPublicOnlySetters() {
+
+		JWKSelector selector = new JWKSelector();
+
+		assertFalse(selector.isPrivateOnly());
+		assertFalse(selector.isPublicOnly());
+
+		selector.setPrivateOnly(true);
+		assertTrue(selector.isPrivateOnly());
+
+		selector.setPublicOnly(true);
+		assertTrue(selector.isPublicOnly());
 	}
 
 
@@ -249,6 +266,46 @@ public class JWTSelectorTest extends TestCase {
 	}
 
 
+	public void testMatchPrivateOnly() {
+
+		JWKSelector selector = new JWKSelector();
+		selector.setPrivateOnly(true);
+
+		List<JWK> keyList = new ArrayList<JWK>();
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
+
+		JWKSet jwkSet = new JWKSet(keyList);
+
+		List<JWK> matches = selector.select(jwkSet);
+
+		OctetSequenceKey key1 = (OctetSequenceKey)matches.get(0);
+		assertEquals("k", key1.getKeyValue().toString());
+
+		assertEquals(1, matches.size());
+	}
+
+
+	public void testMatchPublicOnly() {
+
+		JWKSelector selector = new JWKSelector();
+		selector.setPublicOnly(true);
+
+		List<JWK> keyList = new ArrayList<JWK>();
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
+
+		JWKSet jwkSet = new JWKSet(keyList);
+
+		List<JWK> matches = selector.select(jwkSet);
+
+		RSAKey key1 = (RSAKey)matches.get(0);
+		assertEquals("1", key1.getKeyID());
+
+		assertEquals(1, matches.size());
+	}
+
+
 	public void testMatchComplex() {
 
 		JWKSelector selector = new JWKSelector();
@@ -256,6 +313,7 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyUse(Use.SIGNATURE);
 		selector.setAlgorithm(JWSAlgorithm.RS256);
 		selector.setKeyID("1");
+		selector.setPublicOnly(true);
 
 		List<JWK> keyList = new ArrayList<JWK>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setKeyUse(Use.SIGNATURE).setAlgorithm(JWSAlgorithm.RS256).build());

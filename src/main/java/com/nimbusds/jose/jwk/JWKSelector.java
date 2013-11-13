@@ -16,6 +16,8 @@ import com.nimbusds.jose.Algorithm;
  *     <li>Any, unspecified, one or more key uses.
  *     <li>Any, unspecified, one or more key algorithms.
  *     <li>Any, unspecified, one or more key identifiers.
+ *     <li>Private only key.
+ *     <li>Public only key.
  * </ul>
  *
  * <p>Selection by X.509 certificate URL, thumbprint and chain is not
@@ -48,6 +50,18 @@ public class JWKSelector {
 	 * The selected key IDs.
 	 */
 	private Set<String> ids;
+
+
+	/**
+	 * If {@code true} only private keys are matched.
+	 */
+	private boolean privateOnly = false;
+
+
+	/**
+	 * If {@code true} only public keys are matched.
+	 */
+	private boolean publicOnly = false;
 
 
 	/**
@@ -227,6 +241,50 @@ public class JWKSelector {
 
 
 	/**
+	 * Gets the selection of private keys.
+	 *
+	 * @return If {@code true} only private keys are selected.
+	 */
+	public boolean isPrivateOnly() {
+
+		return privateOnly;
+	}
+
+
+	/**
+	 * Sets the selection of private keys.
+	 *
+	 * @param privateOnly If {@code true} only private keys are selected.
+	 */
+	public void setPrivateOnly(final boolean privateOnly) {
+
+		this.privateOnly = privateOnly;
+	}
+
+
+	/**
+	 * Gets the selection of public keys.
+	 *
+	 * @return  If {@code true} only public keys are selected.
+	 */
+	public boolean isPublicOnly() {
+
+		return publicOnly;
+	}
+
+
+	/**
+	 * Sets the selection of public keys.
+	 *
+	 * @param publicOnly  If {@code true} only public keys are selected.
+	 */
+	public void setPublicOnly(final boolean publicOnly) {
+
+		this.publicOnly = publicOnly;
+	}
+
+
+	/**
 	 * Selects the keys from the specified JWK set that match the
 	 * configured criteria.
 	 *
@@ -244,6 +302,12 @@ public class JWKSelector {
 			return matches;
 
 		for (JWK key: jwkSet.getKeys()) {
+
+			if (privateOnly && ! key.isPrivate())
+				continue;
+
+			if (publicOnly && key.isPrivate())
+				continue;
 
 			if (types != null && ! types.contains(key.getKeyType()))
 				continue;
