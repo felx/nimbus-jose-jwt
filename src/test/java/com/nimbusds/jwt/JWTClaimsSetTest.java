@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-08-26)
+ * @version $version$ (2013-11-18)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -460,5 +460,39 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("http://example.com", jwtClaimsSet.getAudience().get(0));
 		assertEquals("http://example2.com", jwtClaimsSet.getAudience().get(1));
 		assertEquals(2, jwtClaimsSet.getAudience().size());
+	}
+
+
+	public void testParseExampleIDToken()
+		throws Exception {
+
+		String json = "{\"exp\":1384798159,\"sub\":\"alice\",\"aud\":[\"000001\"],\"iss\":\"https:\\/\\/localhost:8080\\/c2id\",\"login_geo\":{\"long\":\"37.3956\",\"lat\":\"-122.076\"},\"login_ip\":\"185.7.248.1\",\"iat\":1384797259,\"acr\":\"urn:mace:incommon:iap:silver\",\"c_hash\":\"vwVj99I7FizReIt5q3UwhQ\",\"amr\":[\"mfa\"]}";
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(json);
+
+		assertEquals(1384798159l, claimsSet.getExpirationTime().getTime() / 1000);
+		assertEquals(1384797259l, claimsSet.getIssueTime().getTime() / 1000);
+
+		assertEquals("alice", claimsSet.getSubject());
+
+		assertEquals("000001", claimsSet.getAudience().get(0));
+		assertEquals(1, claimsSet.getAudience().size());
+
+		assertEquals("https://localhost:8080/c2id", claimsSet.getIssuer());
+
+		assertEquals("urn:mace:incommon:iap:silver", claimsSet.getStringClaim("acr"));
+
+		assertEquals("vwVj99I7FizReIt5q3UwhQ", claimsSet.getStringClaim("c_hash"));
+
+		assertEquals("mfa", ((List<String>)claimsSet.getCustomClaim("amr")).get(0));
+		assertEquals(1, ((List<String>)claimsSet.getCustomClaim("amr")).size());
+
+		assertEquals("185.7.248.1", claimsSet.getStringClaim("login_ip"));
+
+		JSONObject geoLoc = (JSONObject)claimsSet.getCustomClaim("login_geo");
+
+		// {"long":"37.3956","lat":"-122.076"}
+		assertEquals("37.3956", (String)geoLoc.get("long"));
+		assertEquals("-122.076", (String)geoLoc.get("lat"));
 	}
 }
