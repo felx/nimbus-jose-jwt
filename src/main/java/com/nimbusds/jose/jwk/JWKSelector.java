@@ -291,7 +291,7 @@ public class JWKSelector {
 	 * @param jwkSet The JWK set. May be {@code null}.
 	 *
 	 * @return The selected keys, ordered by their position in the JWK set,
-	 *         empty set if none were matched or the JWK is {@code null}.
+	 *         empty list if none were matched or the JWK is {@code null}.
 	 *
 	 */
 	public List<JWK> select(final JWKSet jwkSet) {
