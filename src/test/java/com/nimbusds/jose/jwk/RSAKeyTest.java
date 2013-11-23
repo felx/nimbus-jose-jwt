@@ -372,4 +372,22 @@ public class RSAKeyTest extends TestCase {
 
 		assertTrue(key.isPrivate());
 	}
+
+
+	public void testParseSomeKey()
+		throws Exception {
+
+		String json = "{\n" +
+			"      \"kty\": \"RSA\",\n" +
+			"      \"n\": \"f9BhJgBgoDKGcYLh+xl6qulS8fUFYxuWSz4Sk+7Yw2Wv4Wroe3yLzJjqEqH8IFR0Ow8Sr3pZo0IwOPcWHQZMQr0s2kWbKSpBrnDsK4vsdBvoP1jOaylA9XsHPF9EZ/1F+eQkVHoMsc9eccf0nmr3ubD56LjSorTsbOuxi8nqEzisvhDHthacW/qxbpR/jojQNfdWyDz6NC+MA2LYYpdsw5TG8AVdKjobHWfQvXYdcpvQRkDDhgbwQt1KD8ZJ1VL+nJcIfSppPzCbfM2eY78y/c4euL/SQPs7kGf+u3R9hden7FjMUuIFZoAictiBgjVZ/JOaK+C++L+IsnCKqauhEQ==\",\n" +
+			"      \"e\": \"AQAB\",\n" +
+			"      \"alg\": \"RS256\"\n" +
+			"}";
+
+		RSAKey key = RSAKey.parse(json);
+
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+
+		assertEquals(256, key.getModulus().decode().length);
+	}
 }
