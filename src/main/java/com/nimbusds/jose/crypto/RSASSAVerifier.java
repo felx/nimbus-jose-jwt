@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.Base64URL;
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2013-11-23)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
@@ -101,16 +101,19 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 		try {
 			verifier.initVerify(publicKey);
-			verifier.update(signedContent);
-			return verifier.verify(signature.decode());
 
 		} catch (InvalidKeyException e) {
 
 			throw new JOSEException("Invalid public RSA key: " + e.getMessage(), e);
+		}
+
+		try {
+			verifier.update(signedContent);
+			return verifier.verify(signature.decode());
 
 		} catch (SignatureException e) {
 
-			throw new JOSEException("RSA signature exception: " + e.getMessage(), e);
+			return false;
 		}
 	}
 }

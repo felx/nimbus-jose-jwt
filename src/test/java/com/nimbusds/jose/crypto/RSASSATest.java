@@ -24,7 +24,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-10-17)
+ * @version $version$ (2013-11-23)
  */
 public class RSASSATest extends TestCase {
 
@@ -162,7 +162,7 @@ public class RSASSATest extends TestCase {
 
 
 	public void testSignAndVerify()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
@@ -207,7 +207,7 @@ public class RSASSATest extends TestCase {
 
 
 	public void testSignWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
@@ -220,7 +220,7 @@ public class RSASSATest extends TestCase {
 
 
 	public void testVerifyWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(B64_HEADER);
 
@@ -233,7 +233,7 @@ public class RSASSATest extends TestCase {
 
 
 	public void testParseAndVerify()
-			throws Exception {
+		throws Exception {
 
 		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + B64_SIG.toString();
 
@@ -250,6 +250,25 @@ public class RSASSATest extends TestCase {
 		assertTrue("Signature check", verified);
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testVerifyTruncatedSignature()
+		throws Exception {
+
+		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + B64_SIG.toString().substring(0, 100);
+
+		JWSObject jwsObject = JWSObject.parse(s);
+
+		assertEquals(s, jwsObject.getParsedString());
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		JWSVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Signature check", verified);
 	}
 
 
