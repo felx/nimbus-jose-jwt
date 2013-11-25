@@ -239,4 +239,14 @@ version 2.20 (2013-10-17)
 
 version 2.21 (2013-11-13)
     * Adds utility for selecting one or more JSON Web Keys (JWKs) from a JWK
-      set. Supports selection by key type, use, algorithm and ID.
+      set.
+
+version 2.21 (2013-11-25)
+    * Adds JWKSelector utility for retrieving one or more JSON Web Keys (JWKs)
+      from a set according to selected criteria such as key type, use,
+      algorithm and ID.
+    * Improves bad signature signalling in RSA-SSA signature verifier.
+    * Adds missing A192CBC-HS384 and A192GCM method support to RSA and direct
+      encrypters / decrypters.
+    * Ensures all crypto providers advertise the supported algorithms through a
+      public static unmodifiable set.
