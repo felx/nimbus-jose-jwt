@@ -64,15 +64,15 @@ http://nimbusds.com/files/jose-jwt/javadoc/
 
 Related IETF drafts:
 
-    [JWA] draft-ietf-jose-json-web-algorithms-17
+    [JWA] draft-ietf-jose-json-web-algorithms-18
 
-    [JWS] draft-ietf-jose-json-web-signature-17
+    [JWS] draft-ietf-jose-json-web-signature-18
 
-    [JWE] draft-ietf-jose-json-web-encryption-17
+    [JWE] draft-ietf-jose-json-web-encryption-18
 
-    [JWK] draft-ietf-jose-json-web-key-17
+    [JWK] draft-ietf-jose-json-web-key-18
 
-    [JWT] draft-ietf-oauth-json-web-token-12
+    [JWT] draft-ietf-oauth-json-web-token-13
 
 
 Dependencies:

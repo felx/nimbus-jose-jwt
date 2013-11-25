@@ -19,7 +19,7 @@ import com.nimbusds.jose.JOSEException;
  * AES/GSM/NoPadding encryption and decryption methods. Uses the 
  * BouncyCastle.org provider. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.9.
+ * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.1 and appendix 3.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker

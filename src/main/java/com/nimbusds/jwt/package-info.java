@@ -13,7 +13,7 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-07
+ *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13
  * </ul>
  *
  * @version $version$ ($version-date$)

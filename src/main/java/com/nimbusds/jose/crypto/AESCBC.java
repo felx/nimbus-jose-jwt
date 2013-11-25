@@ -19,7 +19,7 @@ import com.nimbusds.jose.JOSEException;
  * AES/CBC/PKCS5Padding and AES/CBC/PKCS5Padding/HMAC-SHA2 encryption and 
  * decryption methods. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.3.
+ * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
@@ -146,7 +146,7 @@ class AESCBC {
 	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
@@ -222,7 +222,7 @@ class AESCBC {
 	 * Decrypts the specified plain text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
