@@ -272,6 +272,31 @@ public class RSASSATest extends TestCase {
 	}
 
 
+	public static String transpose(String s) {
+		int L = s.length();
+		return (L < 2) ? s : s.substring(0, 1) + s.substring(L-1, L) + transpose(s.substring(1, L-1));
+	}
+
+
+	public void testVerifyBadSignatureOfExpectedLength()
+		throws Exception {
+
+		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + transpose(B64_SIG.toString());
+
+		JWSObject jwsObject = JWSObject.parse(s);
+
+		assertEquals(s, jwsObject.getParsedString());
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		JWSVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Signature check", verified);
+	}
+
+
 	public void testRSASSASignAndVerifyCycle()
 		throws Exception {
 
