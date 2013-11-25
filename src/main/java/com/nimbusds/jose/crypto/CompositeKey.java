@@ -13,12 +13,12 @@ import com.nimbusds.jose.JOSEException;
  * Composite key used in AES/CBC/PKCS5Padding/HMAC-SHA2 encryption. This class
  * is immutable.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-10, section 4.8.2.
+ * <p>See draft-ietf-jose-json-web-algorithms-17, section 4.10.2.
  *
  * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2013-11-25)
  */
 @Immutable
 final class CompositeKey {
@@ -71,6 +71,15 @@ final class CompositeKey {
 			encKey = new SecretKeySpec(secretKeyBytes, 16, 16, "AES");
 			truncatedMacLength = 16;
 
+		} else if (secretKeyBytes.length == 48) {
+
+			// AES_192_CBC_HMAC_SHA_384
+			// 384 bit key -> 129 bit MAC key + 192 bit AES key
+			macKey = new SecretKeySpec(secretKeyBytes, 0, 24, "HMACSHA384");
+			encKey = new SecretKeySpec(secretKeyBytes, 24, 24, "AES");
+			truncatedMacLength = 24;
+
+
 		} else if (secretKeyBytes.length == 64) {
 
 			// AES_256_CBC_HMAC_SHA_512
@@ -81,7 +90,7 @@ final class CompositeKey {
 
 		} else {
 
-			throw new JOSEException("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256 or 512 bits");
+			throw new JOSEException("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256, 384 or 512 bits");
 		}
 	}
 

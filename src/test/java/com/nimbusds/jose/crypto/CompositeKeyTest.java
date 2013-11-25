@@ -13,7 +13,7 @@ import com.nimbusds.jose.JOSEException;
 
 /**
  * Tests composite MAC + AES key extraction. Test cases from 
- * draft-ietf-jose-json-web-algorithms-10, appendix C.
+ * draft-ietf-jose-json-web-algorithms-18, appendix B.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-05-06)
@@ -37,6 +37,25 @@ public class CompositeKeyTest extends TestCase {
 		{ (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x15, (byte)0x16, (byte)0x17, 
                   (byte)0x18, (byte)0x19, (byte)0x1a, (byte)0x1b, (byte)0x1c, (byte)0x1d, (byte)0x1e, (byte)0x1f  };
 
+
+	private static final byte[] K_384 =
+		{ (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07,
+		  (byte)0x08, (byte)0x09, (byte)0x0a, (byte)0x0b, (byte)0x0c, (byte)0x0d, (byte)0x0e, (byte)0x0f,
+		  (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x15, (byte)0x16, (byte)0x17,
+		  (byte)0x18, (byte)0x19, (byte)0x1a, (byte)0x1b, (byte)0x1c, (byte)0x1d, (byte)0x1e, (byte)0x1f,
+		  (byte)0x20, (byte)0x21, (byte)0x22, (byte)0x23, (byte)0x24, (byte)0x25, (byte)0x26, (byte)0x27,
+		  (byte)0x28, (byte)0x29, (byte)0x2a, (byte)0x2b, (byte)0x2c, (byte)0x2d, (byte)0x2e, (byte)0x2f };
+
+
+	private static final byte[] MAC_KEY_192 =
+		{ (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07,
+		  (byte)0x08, (byte)0x09, (byte)0x0a, (byte)0x0b, (byte)0x0c, (byte)0x0d, (byte)0x0e, (byte)0x0f,
+		  (byte)0x10, (byte)0x11, (byte)0x12, (byte)0x13, (byte)0x14, (byte)0x15, (byte)0x16, (byte)0x17 };
+
+	private static final byte[] ENC_KEY_192 =
+		{ (byte)0x18, (byte)0x19, (byte)0x1a, (byte)0x1b, (byte)0x1c, (byte)0x1d, (byte)0x1e, (byte)0x1f,
+		  (byte)0x20, (byte)0x21, (byte)0x22, (byte)0x23, (byte)0x24, (byte)0x25, (byte)0x26, (byte)0x27,
+		  (byte)0x28, (byte)0x29, (byte)0x2a, (byte)0x2b, (byte)0x2c, (byte)0x2d, (byte)0x2e, (byte)0x2f };
 
 	private static final byte[] K_512 = 
 		{ (byte)0x00, (byte)0x01, (byte)0x02, (byte)0x03, (byte)0x04, (byte)0x05, (byte)0x06, (byte)0x07, 
@@ -77,6 +96,24 @@ public class CompositeKeyTest extends TestCase {
 		assertEquals(16, compositeKey.getTruncatedMACByteLength());
 
 		Assert.assertArrayEquals(ENC_KEY_128, compositeKey.getAESKey().getEncoded());
+		assertEquals("AES", compositeKey.getAESKey().getAlgorithm());
+	}
+
+
+	public void testExample384()
+		throws Exception {
+
+		SecretKey inputKey = new SecretKeySpec(K_384, "AES");
+
+		CompositeKey compositeKey = new CompositeKey(inputKey);
+
+		Assert.assertArrayEquals(K_384, compositeKey.getInputKey().getEncoded());
+
+		Assert.assertArrayEquals(MAC_KEY_192, compositeKey.getMACKey().getEncoded());
+		assertEquals("HMACSHA384", compositeKey.getMACKey().getAlgorithm());
+		assertEquals(24, compositeKey.getTruncatedMACByteLength());
+
+		Assert.assertArrayEquals(ENC_KEY_192, compositeKey.getAESKey().getEncoded());
 		assertEquals("AES", compositeKey.getAESKey().getAlgorithm());
 	}
 

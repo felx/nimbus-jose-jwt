@@ -33,14 +33,16 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192CBC_HS384}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-11-25)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -123,7 +125,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		// Generate and encrypt the CEK according to the enc method
 		SecretKey cek = AES.generateKey(enc.cekBitLength());
 
-		Base64URL encryptedKey = null; // The second JWE part
+		Base64URL encryptedKey; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
@@ -149,13 +151,13 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		byte[] iv;
 		AuthenticatedCipherText authCipherText;
 		
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			iv = AESCBC.generateIV(randomGen);
 
 			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad);
 
-		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
@@ -163,7 +165,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 		} else {
 
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
 		}
 
 		return new JWECryptoParts(encryptedKey,  

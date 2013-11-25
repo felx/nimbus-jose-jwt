@@ -25,7 +25,7 @@ import com.nimbusds.jose.Payload;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-11-25)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -150,6 +150,8 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
 		jweObject.encrypt(encrypter);
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
@@ -161,6 +163,46 @@ public class RSA1_5Test extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithA192CBC_HS384()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A192CBC_HS384);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -184,6 +226,8 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
 		jweObject.encrypt(encrypter);
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
@@ -195,6 +239,8 @@ public class RSA1_5Test extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -218,6 +264,8 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
 		jweObject.encrypt(encrypter);
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
@@ -229,6 +277,46 @@ public class RSA1_5Test extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithA192GCM()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A192GCM);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -252,6 +340,8 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
 		jweObject.encrypt(encrypter);
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
@@ -263,6 +353,8 @@ public class RSA1_5Test extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
