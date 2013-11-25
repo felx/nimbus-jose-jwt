@@ -27,13 +27,15 @@ import com.nimbusds.jose.JWEAlgorithm;
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192CBC_HS384}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-06)
+ * @version $version$ (2013-11-25)
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 
@@ -54,15 +56,16 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	 * Initialises the supported algorithms and encryption methods.
 	 */
 	static {
-
 		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
 		algs.add(JWEAlgorithm.DIR);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
 		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
 		methods.add(EncryptionMethod.A128CBC_HS256);
+		methods.add(EncryptionMethod.A192CBC_HS384);
 		methods.add(EncryptionMethod.A256CBC_HS512);
 		methods.add(EncryptionMethod.A128GCM);
+		methods.add(EncryptionMethod.A192GCM);
 		methods.add(EncryptionMethod.A256GCM);
 		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
@@ -78,8 +81,9 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	 * Creates a new direct encryption / decryption provider.
 	 *
 	 * @param key The shared symmetric key. Its algorithm must be "AES".
-	 *            Must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 
-	 *            bits (64 bytes) long. Must not be {@code null}.
+	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
+	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
+	 *            (64 bytes) long. Must not be {@code null}.
 	 */
 	protected DirectCryptoProvider(final SecretKey key)
 		throws JOSEException {
@@ -94,9 +98,13 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 
 		byte[] keyBytes = key.getEncoded();
 
-		if (keyBytes.length != 16 && keyBytes.length != 32 && keyBytes.length != 64) {
+		if (keyBytes.length != 16 &&
+		    keyBytes.length != 24 &&
+		    keyBytes.length != 32 &&
+		    keyBytes.length != 48 &&
+		    keyBytes.length != 64) {
 
-			throw new JOSEException("The length of the shared symmetric key must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 bites (64 bytes)");
+			throw new JOSEException("The length of the shared symmetric key must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
 		}
 
 		cek = key;

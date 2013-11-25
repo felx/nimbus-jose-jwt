@@ -17,7 +17,7 @@ import com.nimbusds.jose.Payload;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version $version$ (2013-11-25)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -27,6 +27,12 @@ public class DirectCryptoTest extends TestCase {
 		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121, 
 		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226 };
 
+	// 192-bit shared symmetric key
+	private final static byte[] key192 = {
+		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121,
+		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
+		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61 };
+
 
 	// 256-bit shared symmetric key
 	private final static byte[] key256 = { 
@@ -34,6 +40,16 @@ public class DirectCryptoTest extends TestCase {
 		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
 		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61, 
 		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234 };
+
+
+	// 384-bit shared symmetric key
+	private final static byte[] key384 = {
+		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121,
+		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
+		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61,
+		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234,
+		(byte) 60, (byte)181, (byte) 90, (byte) 85, (byte) 51, (byte)123, (byte)  6, (byte)224,
+		(byte)  4, (byte)122, (byte) 29, (byte)230, (byte)151, (byte) 12, (byte)244, (byte)127 };
 
 
 	// 512-bit shared symmetric key
@@ -52,7 +68,10 @@ public class DirectCryptoTest extends TestCase {
 	public void testKeyLengths() {
 
 		assertEquals(128, key128.length * 8);
+		assertEquals(192, key192.length * 8);
 		assertEquals(256, key256.length * 8);
+		assertEquals(384, key384.length * 8);
+		assertEquals(512, key512.length * 8);
 	}
 
 
@@ -79,6 +98,40 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new DirectDecrypter(key256);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithA192CBC_HS384()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new DirectEncrypter(key384);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new DirectDecrypter(key384);
 
 		jweObject.decrypt(decrypter);
 
@@ -147,6 +200,40 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
 		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithA192GCM()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A192GCM);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new DirectEncrypter(key192);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new DirectDecrypter(key192);
 
 		jweObject.decrypt(decrypter);
 

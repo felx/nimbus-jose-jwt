@@ -28,8 +28,10 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192CBC_HS384}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
  *
@@ -40,7 +42,7 @@ import com.nimbusds.jose.util.StringUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2013-11-25)
  *
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
@@ -135,17 +137,17 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 	    	byte[] plainText;
 
-	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
+	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
 	    		plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
-		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
 
 		} else {
 
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A256CBC_HS512, A128GCM or A128GCM");
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A128GCM");
 		}
 
 
