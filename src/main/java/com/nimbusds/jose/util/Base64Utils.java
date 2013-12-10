@@ -99,6 +99,36 @@ class Base64Utils {
 
 
 	/**
+	 * Computes the encoded BASE64 character length.
+	 *
+	 * @param inputLength The input byte length.
+	 * @param urlSafe     {@code true} for URL-safe encoding.
+	 *
+	 * @return The encoded BASE64 character length.
+	 */
+	public static int computeEncodedLength(final int inputLength, final boolean urlSafe) {
+
+		if (inputLength == 0)
+			return 0;
+
+		if (urlSafe) {
+
+			// Compute the number of complete quads (4-char blocks)
+			int fullQuadLength = (inputLength / 3) << 2;
+
+			// Compute the remaining bytes at the end
+			int remainder = inputLength % 3;
+
+			// Compute the total
+			return remainder == 0 ? fullQuadLength : fullQuadLength + remainder + 1;
+		} else {
+			// Original Mig code
+			return ((inputLength - 1) / 3 + 1) << 2;
+		}
+	}
+
+
+	/**
 	 * Encodes a raw byte array into a BASE64 <code>char[]</code>
 	 * representation i accordance with RFC 2045.
 	 *
@@ -116,26 +146,27 @@ class Base64Utils {
 		if (sLen == 0)
 			return new char[0];
 
-		int eLen = (sLen / 3) * 3;              // Length of even 24-bits.
-		int dLen = ((sLen - 1) / 3 + 1) << 2;   // Returned character count
-		char[] dArr = new char[dLen];
+		int eLen = (sLen / 3) * 3;                      // Length of even 24-bits.
+		int dLen = computeEncodedLength(sLen, urlSafe); // Returned character count
+		char[] out = new char[dLen];
 
 		// Encode even 24-bits
-		for (int s = 0, d = 0, cc = 0; s < eLen; ) {
-			// Copy next three bytes into lower 24 bits of int, paying attention to sign.
+		for (int s = 0, d = 0; s < eLen; ) {
+			
+			// Copy next three bytes into lower 24 bits of int, paying attention to sign
 			int i = (sArr[s++] & 0xff) << 16 | (sArr[s++] & 0xff) << 8 | (sArr[s++] & 0xff);
 
 			// Encode the int into four chars
 			if (urlSafe) {
-				dArr[d++] = CA_URL_SAFE[(i >>> 18) & 0x3f];
-				dArr[d++] = CA_URL_SAFE[(i >>> 12) & 0x3f];
-				dArr[d++] = CA_URL_SAFE[(i >>> 6) & 0x3f];
-				dArr[d++] = CA_URL_SAFE[i & 0x3f];
+				out[d++] = CA_URL_SAFE[(i >>> 18) & 0x3f];
+				out[d++] = CA_URL_SAFE[(i >>> 12) & 0x3f];
+				out[d++] = CA_URL_SAFE[(i >>> 6) & 0x3f];
+				out[d++] = CA_URL_SAFE[i & 0x3f];
 			} else {
-				dArr[d++] = CA[(i >>> 18) & 0x3f];
-				dArr[d++] = CA[(i >>> 12) & 0x3f];
-				dArr[d++] = CA[(i >>> 6) & 0x3f];
-				dArr[d++] = CA[i & 0x3f];
+				out[d++] = CA[(i >>> 18) & 0x3f];
+				out[d++] = CA[(i >>> 12) & 0x3f];
+				out[d++] = CA[(i >>> 6) & 0x3f];
+				out[d++] = CA[i & 0x3f];
 			}
 		}
 
@@ -147,16 +178,25 @@ class Base64Utils {
 
 			// Set last four chars
 			if (urlSafe) {
-				dArr[dLen - 4] = CA_URL_SAFE[i >> 12];
-				dArr[dLen - 3] = CA_URL_SAFE[(i >>> 6) & 0x3f];
+
+				if (left == 2) {
+					out[dLen - 3] = CA_URL_SAFE[i >> 12];
+					out[dLen - 2] = CA_URL_SAFE[(i >>> 6) & 0x3f];
+					out[dLen - 1] = CA_URL_SAFE[i & 0x3f];
+				} else {
+					out[dLen - 2] = CA_URL_SAFE[i >> 12];
+					out[dLen - 1] = CA_URL_SAFE[(i >>> 6) & 0x3f];
+				}
 			} else {
-				dArr[dLen - 4] = CA[i >> 12];
-				dArr[dLen - 3] = CA[(i >>> 6) & 0x3f];
+				// Original Mig code
+				out[dLen - 4] = CA[i >> 12];
+				out[dLen - 3] = CA[(i >>> 6) & 0x3f];
+				out[dLen - 2] = left == 2 ? CA[i & 0x3f] : '=';
+				out[dLen - 1] = '=';
 			}
-			dArr[dLen - 2] = left == 2 ? CA[i & 0x3f] : '=';
-			dArr[dLen - 1] = '=';
 		}
-		return dArr;
+
+		return out;
 	}
 
 
