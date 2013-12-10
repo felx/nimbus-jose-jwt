@@ -1,6 +1,8 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.SecureRandom;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -14,10 +16,10 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Tests HS256 JWS signing and verfication. Uses test vectors from JWS spec.
+ * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2013-12-10)
  */
 public class MACTest extends TestCase {
 
@@ -41,10 +43,10 @@ public class MACTest extends TestCase {
 			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"));
 
 
-	private static final byte[] signable = new String("eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
+	private static final byte[] signable = ("eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
+		"." +
+		"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+		"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
 
 
 	private static final Base64URL b64sig = new Base64URL("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
@@ -88,6 +90,40 @@ public class MACTest extends TestCase {
 		assertTrue("Verified signature", verified);
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testSignAndVerifyWithRandomSecret()
+		throws Exception {
+
+		// Generate random 32-bit shared secret
+		SecureRandom random = new SecureRandom();
+		byte[] sharedSecret = new byte[32];
+		random.nextBytes(sharedSecret);
+
+		// Create HMAC signer
+		JWSSigner signer = new MACSigner(sharedSecret);
+
+		// Prepare JWS object with "Hello, world!" payload
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello, world!"));
+
+		// Apply the HMAC
+		jwsObject.sign(signer);
+
+		assertTrue(jwsObject.getState().equals(JWSObject.State.SIGNED));
+
+		// To serialize to compact form, produces something like
+		// eyJhbGciOiJIUzI1NiJ9.SGVsbG8sIHdvcmxkIQ.onO9Ihudz3WkiauDO2Uhyuz0Y18UASXlSc1eS0NkWyA
+		String s = jwsObject.serialize();
+
+		// To parse the JWS and verify it, e.g. on client-side
+		jwsObject = JWSObject.parse(s);
+
+		JWSVerifier verifier = new MACVerifier(sharedSecret);
+
+		assertTrue(jwsObject.verify(verifier));
+
+		assertEquals("Hello, world!", jwsObject.getPayload().toString());
 	}
 
 
