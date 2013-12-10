@@ -24,7 +24,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-23)
+ * @version $version$ (2013-12-10)
  */
 public class RSASSATest extends TestCase {
 
@@ -365,5 +365,47 @@ public class RSASSATest extends TestCase {
 		assertTrue("Verified signature", verified);
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testExample()
+		throws Exception {
+
+		// RSA signatures require a public and private RSA key pair,
+		// the public key must be made known to the JWS recipient in
+		// order to verify the signatures
+		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+		keyGenerator.initialize(1024);
+
+		KeyPair kp = keyGenerator.genKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+
+		// Create RSA-signer with the private key
+		JWSSigner signer = new RSASSASigner(privateKey);
+
+		// Prepare JWS object with simple string as payload
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload("In RSA we trust!"));
+
+		// Compute the RSA signature
+		jwsObject.sign(signer);
+
+		assertTrue(jwsObject.getState().equals(JWSObject.State.SIGNED));
+
+		// To serialize to compact form, produces something like
+		// eyJhbGciOiJSUzI1NiJ9.SW4gUlNBIHdlIHRydXN0IQ.IRMQENi4nJyp4er2L
+		// mZq3ivwoAjqa1uUkSBKFIX7ATndFF5ivnt-m8uApHO4kfIFOrW7w2Ezmlg3Qd
+		// maXlS9DhN0nUk_hGI3amEjkKd0BWYCB8vfUbUv0XGjQip78AI4z1PrFRNidm7
+		// -jPDm5Iq0SZnjKjCNS5Q15fokXZc8u0A
+		String s = jwsObject.serialize();
+
+		// To parse the JWS and verify it, e.g. on client-side
+		jwsObject = JWSObject.parse(s);
+
+		JWSVerifier verifier = new RSASSAVerifier(publicKey);
+
+		assertTrue(jwsObject.verify(verifier));
+
+		assertEquals("In RSA we trust!", jwsObject.getPayload().toString());
 	}
 }
