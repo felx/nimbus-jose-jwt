@@ -74,7 +74,7 @@ import java.util.Arrays;
  * @author Vladimir Dzhuvinov
  * @version 2.2 (original)
  */
-class Base64Utils {
+final class Base64Utils {
 
 
 	private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
@@ -152,7 +152,7 @@ class Base64Utils {
 
 		// Encode even 24-bits
 		for (int s = 0, d = 0; s < eLen; ) {
-			
+
 			// Copy next three bytes into lower 24 bits of int, paying attention to sign
 			int i = (sArr[s++] & 0xff) << 16 | (sArr[s++] & 0xff) << 8 | (sArr[s++] & 0xff);
 
