@@ -5,7 +5,6 @@ import java.net.URL;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -109,13 +108,13 @@ public class ECKeyTest extends TestCase {
 		x5c.add(new Base64("def"));
 
 		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y)).
-		            setD(new Base64URL(d)).
-		            setKeyUse(Use.SIGNATURE).
-		            setAlgorithm(JWSAlgorithm.ES256).
-		            setKeyID("1").
-		            setX509CertURL(x5u).
-		            setX509CertThumbprint(x5t).
-		            setX509CertChain(x5c).
+			d(new Base64URL(d)).
+			keyUse(Use.SIGNATURE).
+			algorithm(JWSAlgorithm.ES256).
+			keyID("1").
+			x509CertURL(x5u).
+			x509CertThumbprint(x5t).
+			x509CertChain(x5c).
 		            build();
 		
 		// Test getters

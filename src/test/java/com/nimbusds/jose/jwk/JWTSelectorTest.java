@@ -120,8 +120,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyType(KeyType.RSA);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).setKeyID("2").build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -141,8 +141,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyTypes(KeyType.RSA, KeyType.EC);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).setKeyID("2").build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -166,8 +166,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyUse(Use.ENCRYPTION);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setKeyUse(Use.ENCRYPTION).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).setKeyID("2").build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(Use.ENCRYPTION).build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -188,9 +188,9 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyUses(Use.SIGNATURE, null);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setKeyUse(Use.SIGNATURE).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).setKeyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).setKeyID("3").setKeyUse(Use.ENCRYPTION).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(Use.SIGNATURE).build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3").keyUse(Use.ENCRYPTION).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -215,8 +215,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setAlgorithm(JWSAlgorithm.RS256);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("2").setAlgorithm(JWSAlgorithm.PS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.PS256).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -237,8 +237,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setKeyID("1");
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("2").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -256,7 +256,7 @@ public class JWTSelectorTest extends TestCase {
 		JWKSelector selector = new JWKSelector();
 		selector.setKeyID("1");
 
-		RSAKey key = new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("2").build();
+		RSAKey key = new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").build();
 
 		JWKSet jwkSet = new JWKSet(key);
 
@@ -272,7 +272,7 @@ public class JWTSelectorTest extends TestCase {
 		selector.setPrivateOnly(true);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
 		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
@@ -292,7 +292,7 @@ public class JWTSelectorTest extends TestCase {
 		selector.setPublicOnly(true);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
 		keyList.add(new OctetSequenceKey.Builder(new Base64URL("k")).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
@@ -316,8 +316,8 @@ public class JWTSelectorTest extends TestCase {
 		selector.setPublicOnly(true);
 
 		List<JWK> keyList = new ArrayList<JWK>();
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("1").setKeyUse(Use.SIGNATURE).setAlgorithm(JWSAlgorithm.RS256).build());
-		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).setKeyID("2").setAlgorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(Use.SIGNATURE).algorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 

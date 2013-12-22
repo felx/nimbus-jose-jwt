@@ -94,12 +94,12 @@ public class OctetSequenceKeyTest extends TestCase {
 		x5c.add(new Base64("def"));
 
 		OctetSequenceKey key = new OctetSequenceKey.Builder(k).
-		                       setKeyUse(Use.SIGNATURE).
-		                       setAlgorithm(JWSAlgorithm.HS256).
-		                       setKeyID("1").
-		                       setX509CertURL(x5u).
-		                       setX509CertThumbprint(x5t).
-		                       setX509CertChain(x5c).
+			keyUse(Use.SIGNATURE).
+			algorithm(JWSAlgorithm.HS256).
+			keyID("1").
+			x509CertURL(x5u).
+			x509CertThumbprint(x5t).
+			x509CertChain(x5c).
 		                       build();
 
 		assertEquals(KeyType.OCT, key.getKeyType());

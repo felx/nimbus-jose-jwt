@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-12-22)
  */
 @Immutable
 public class OctetSequenceKey extends JWK {
@@ -44,14 +44,14 @@ public class OctetSequenceKey extends JWK {
 	private final Base64URL k;
 
 	/**
-	 * Implements a builder pattern for constructing octet sequence JWKs.
+	 * Builder for constructing octet sequence JWKs.
 	 *
 	 * <p>Example use:
 	 *
 	 * <pre>
 	 * OctetSequenceKey key = new OctetSequenceKey.Builder(k).
-	 *                        setAlgorithm(JWSAlgorithm.HS512).
-	 *                        setKeyID("123").
+	 *                        algorithm(JWSAlgorithm.HS512).
+	 *                        keyID("123").
 	 *                        build();
 	 * </pre>
 	 */
@@ -126,7 +126,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyUse(final Use use) {
+		public Builder keyUse(final Use use) {
 
 			this.use = use;
 			return this;
@@ -141,7 +141,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setAlgorithm(final Algorithm alg) {
+		public Builder algorithm(final Algorithm alg) {
 
 			this.alg = alg;
 			return this;
@@ -158,7 +158,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyID(final String kid) {
+		public Builder keyID(final String kid) {
 
 			this.kid = kid;
 			return this;
@@ -173,7 +173,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URL x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -189,7 +189,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertThumbprint(final Base64URL x5t) {
+		public Builder x509CertThumbprint(final Base64URL x5t) {
 
 			this.x5t = x5t;
 			return this;
@@ -203,7 +203,7 @@ public class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertChain(final List<Base64> x5c) {
+		public Builder x509CertChain(final List<Base64> x5c) {
 
 			this.x5c = x5c;
 			return this;

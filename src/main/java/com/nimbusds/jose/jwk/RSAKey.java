@@ -112,7 +112,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-05-29)
+ * @version $version$ (2013-12-22)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -264,15 +264,15 @@ public final class RSAKey extends JWK {
 
 
 	/**
-	 * Implements a builder pattern for constructing RSA JWKs.
+	 * Builder for constructing RSA JWKs.
 	 *
 	 * <p>Example use:
 	 *
 	 * <pre>
 	 * RSAKey key = new RSAKey.Builder(n, e).
-	 *              setPrivateExponent(d).
-	 *              setAlgorithm(JWSAlgorithm.RS512).
-	 *              setKeyID("456").
+	 *              privateExponent(d).
+	 *              algorithm(JWSAlgorithm.RS512).
+	 *              keyID("456").
 	 *              build();
 	 * </pre>
 	 */
@@ -344,7 +344,6 @@ public final class RSAKey extends JWK {
 		 * the number of primes used minus two.
 		 */
 		private List<OtherPrimesInfo> oth;
-		
 
 
 		/**
@@ -438,7 +437,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setPrivateExponent(final Base64URL d) {
+		public Builder privateExponent(final Base64URL d) {
 
 			this.d = d;
 			return this;
@@ -453,7 +452,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setPrivateKey(final RSAPrivateKey priv) {
+		public Builder privateKey(final RSAPrivateKey priv) {
 
 			this.d = Base64URL.encode(priv.getPrivateExponent());
 			return this;
@@ -472,7 +471,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setFirstPrimeFactor(final Base64URL p) {
+		public Builder firstPrimeFactor(final Base64URL p) {
 
 			this.p = p;
 			return this;
@@ -491,7 +490,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setSecondPrimeFactor(final Base64URL q) {
+		public Builder secondPrimeFactor(final Base64URL q) {
 
 			this.q = q;
 			return this;
@@ -510,7 +509,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setFirstFactorCRTExponent(final Base64URL dp) {
+		public Builder firstFactorCRTExponent(final Base64URL dp) {
 
 			this.dp = dp;
 			return this;
@@ -529,7 +528,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setSecondFactorCRTExponent(final Base64URL dq) {
+		public Builder secondFactorCRTExponent(final Base64URL dq) {
 
 			this.dq = dq;
 			return this;
@@ -548,7 +547,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setFirstCRTCoefficient(final Base64URL qi) {
+		public Builder firstCRTCoefficient(final Base64URL qi) {
 
 			this.qi = qi;
 			return this;
@@ -564,7 +563,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder getOtherPrimes(final List<OtherPrimesInfo> oth) {
+		public Builder otherPrimes(final List<OtherPrimesInfo> oth) {
 
 			this.oth = oth;
 			return this;
@@ -585,7 +584,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setPrivateKey(final RSAPrivateCrtKey priv) {
+		public Builder privateKey(final RSAPrivateCrtKey priv) {
 
 			d = Base64URL.encode(priv.getPrivateExponent());
 			p = Base64URL.encode(priv.getPrimeP());
@@ -613,7 +612,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setPrivateKey(final RSAMultiPrimePrivateCrtKey priv) {
+		public Builder privateKey(final RSAMultiPrimePrivateCrtKey priv) {
 			
 			d = Base64URL.encode(priv.getPrivateExponent());
 			p = Base64URL.encode(priv.getPrimeP());
@@ -630,13 +629,13 @@ public final class RSAKey extends JWK {
 		/**
 		 * Sets the use ({@code use}) of the JWK.
 		 *
-		 * @param use The key use, {@code null} if not specified or if 
-		 *            the key is intended for signing as well as 
+		 * @param use The key use, {@code null} if not specified or if
+		 *            the key is intended for signing as well as
 		 *            encryption.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyUse(final Use use) {
+		public Builder keyUse(final Use use) {
 
 			this.use = use;
 			return this;
@@ -646,29 +645,29 @@ public final class RSAKey extends JWK {
 		/**
 		 * Sets the intended JOSE algorithm ({@code alg}) for the JWK.
 		 *
-		 * @param alg The intended JOSE algorithm, {@code null} if not 
+		 * @param alg The intended JOSE algorithm, {@code null} if not
 		 *            specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setAlgorithm(final Algorithm alg) {
+		public Builder algorithm(final Algorithm alg) {
 
 			this.alg = alg;
 			return this;
 		}
 
 		/**
-		 * Sets the ID ({@code kid}) of the JWK. The key ID can be used 
-		 * to match a specific key. This can be used, for instance, to 
-		 * choose a key within a {@link JWKSet} during key rollover. 
-		 * The key ID may also correspond to a JWS/JWE {@code kid} 
+		 * Sets the ID ({@code kid}) of the JWK. The key ID can be used
+		 * to match a specific key. This can be used, for instance, to
+		 * choose a key within a {@link JWKSet} during key rollover.
+		 * The key ID may also correspond to a JWS/JWE {@code kid}
 		 * header parameter value.
 		 *
 		 * @param kid The key ID, {@code null} if not specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyID(final String kid) {
+		public Builder keyID(final String kid) {
 
 			this.kid = kid;
 			return this;
@@ -678,12 +677,12 @@ public final class RSAKey extends JWK {
 		/**
 		 * Sets the X.509 certificate URL ({@code x5u}) of the JWK.
 		 *
-		 * @param x5u The X.509 certificate URL, {@code null} if not 
+		 * @param x5u The X.509 certificate URL, {@code null} if not
 		 *            specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URL x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -694,12 +693,12 @@ public final class RSAKey extends JWK {
 		 * Sets the X.509 certificate thumbprint ({@code x5t}) of the
 		 * JWK.
 		 *
-		 * @param x5t The X.509 certificate thumbprint, {@code null} if 
+		 * @param x5t The X.509 certificate thumbprint, {@code null} if
 		 *            not specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertThumbprint(final Base64URL x5t) {
+		public Builder x509CertThumbprint(final Base64URL x5t) {
 
 			this.x5t = x5t;
 			return this;
@@ -708,12 +707,12 @@ public final class RSAKey extends JWK {
 		/**
 		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
 		 *
-		 * @param x5c The X.509 certificate chain as a unmodifiable 
+		 * @param x5c The X.509 certificate chain as a unmodifiable
 		 *            list, {@code null} if not specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertChain(final List<Base64> x5c) {
+		public Builder x509CertChain(final List<Base64> x5c) {
 
 			this.x5c = x5c;
 			return this;
@@ -1064,26 +1063,15 @@ public final class RSAKey extends JWK {
 
 			if (p == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first prime factor must not be null");
-			}
-
-			if (q == null) {
+			} else if (q == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The second prime factor must not be null");
-			}
-
-			if (dp == null) {
+			} else if (dp == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first factor CRT exponent must not be null");
-			}
-
-			if (dq == null) {
+			} else if (dq == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The second factor CRT exponent must not be null");
-			}
-
-			if (qi == null) {
+			} else { // qi == null
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first CRT coefficient must not be null");
 			}
-
-			// We shouldn't really fall through
-			throw new IllegalArgumentException("Incomplete second private (CRT) representation");
 		}
 	}
 
@@ -1365,9 +1353,7 @@ public final class RSAKey extends JWK {
 		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
 		KeyFactory factory = KeyFactory.getInstance("RSA");
 		
-		RSAPublicKey pub = (RSAPublicKey) factory.generatePublic(spec);
-		
-		return pub;
+		return (RSAPublicKey) factory.generatePublic(spec);
 	}
 	
 
@@ -1451,9 +1437,7 @@ public final class RSAKey extends JWK {
 		
 		KeyFactory factory = KeyFactory.getInstance("RSA");
 		
-		RSAPrivateKey priv = (RSAPrivateKey) factory.generatePrivate(spec);
-		
-		return priv;
+		return (RSAPrivateKey) factory.generatePrivate(spec);
 	}
 
 
@@ -1482,11 +1466,7 @@ public final class RSAKey extends JWK {
 	public boolean isPrivate() {
 
 		// Check if 1st or 2nd form params are specified
-		if (d != null || p != null) {
-			return true;
-		} else {
-			return false;
-		}
+		return d != null || p != null;
 	}
 
 

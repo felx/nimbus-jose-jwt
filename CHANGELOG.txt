@@ -237,10 +237,6 @@ version 2.20 (2013-10-17)
     * Adds support for PS256, PS384 and PS512 signatures via the existing
       RSASSA signer and verifier classes.
 
-version 2.21 (2013-11-13)
-    * Adds utility for selecting one or more JSON Web Keys (JWKs) from a JWK
-      set.
-
 version 2.21 (2013-11-25)
     * Adds JWKSelector utility for retrieving one or more JSON Web Keys (JWKs)
       from a set according to selected criteria such as key type, use,
@@ -250,3 +246,6 @@ version 2.21 (2013-11-25)
       encrypters / decrypters.
     * Ensures all crypto providers advertise the supported algorithms through a
       public static unmodifiable set.
+
+version 2.22 (2013-12-22)
+    * Renames JWK builders methods, refactors JWK code.

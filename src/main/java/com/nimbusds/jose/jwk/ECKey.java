@@ -67,7 +67,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-10-16)
+ * @version $version$ (2013-12-22)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -278,13 +278,10 @@ public final class ECKey extends JWK {
 
 			if (stdName.equals("secp256r1")) {
 				return P_256;
-
 			} else if (stdName.equals("secp384r1")) {
 				return P_384;
-
 			} else if (stdName.equals("secp521r1")) {
 				return P_521;
-
 			} else {
 				throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
 			}
@@ -293,15 +290,15 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Implements a builder pattern for constructing Elliptic Curve JWKs.
+	 * Builder for constructing Elliptic Curve JWKs.
 	 *
 	 * <p>Example use:
 	 *
 	 * <pre>
 	 * ECKey key = new ECKey.Builder(Curve.P521, x, y).
-	 *             setD(d).
-	 *             setAlgorithm(JWSAlgorithm.ES512).
-	 *             setKeyID("789").
+	 *             d(d).
+	 *             algorithm(JWSAlgorithm.ES512).
+	 *             keyID("789").
 	 *             build();
 	 * </pre>
 	 */
@@ -422,7 +419,7 @@ public final class ECKey extends JWK {
 
 		/**
 		 * Sets the private 'd' coordinate for the elliptic curve 
-		 * point. The alternative method is {@link #setPrivateKey}.
+		 * point. The alternative method is {@link #privateKey}.
 		 *
 		 * @param d The 'd' coordinate. It is represented as the 
 		 *          Base64URL encoding of the coordinate's big endian 
@@ -431,7 +428,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setD(final Base64URL d) {
+		public Builder d(final Base64URL d) {
 
 			this.d = d;
 			return this;
@@ -440,7 +437,7 @@ public final class ECKey extends JWK {
 
 		/**
 		 * Sets the private Elliptic Curve key. The alternative method 
-		 * is {@link #setD}.
+		 * is {@link #d}.
 		 *
 		 * @param priv The private EC key, used to obtain the private
 		 *             'd' coordinate for the elliptic curve point.
@@ -449,7 +446,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setPrivateKey(final ECPrivateKey priv) {
+		public Builder privateKey(final ECPrivateKey priv) {
 
 			if (priv != null) {
 				this.d = Base64URL.encode(priv.getS());	
@@ -468,7 +465,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyUse(final Use use) {
+		public Builder keyUse(final Use use) {
 
 			this.use = use;
 			return this;
@@ -483,7 +480,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setAlgorithm(final Algorithm alg) {
+		public Builder algorithm(final Algorithm alg) {
 
 			this.alg = alg;
 			return this;
@@ -500,7 +497,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setKeyID(final String kid) {
+		public Builder keyID(final String kid) {
 
 			this.kid = kid;
 			return this;
@@ -515,7 +512,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URL x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -531,7 +528,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertThumbprint(final Base64URL x5t) {
+		public Builder x509CertThumbprint(final Base64URL x5t) {
 
 			this.x5t = x5t;
 			return this;
@@ -545,7 +542,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder setX509CertChain(final List<Base64> x5c) {
+		public Builder x509CertChain(final List<Base64> x5c) {
 
 			this.x5c = x5c;
 			return this;
@@ -919,11 +916,7 @@ public final class ECKey extends JWK {
 	@Override
 	public boolean isPrivate() {
 
-		if (d != null) {
-			return true;
-		} else {
-			return false;
-		}
+		return d != null;
 	}
 
 	
