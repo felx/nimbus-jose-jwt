@@ -8,6 +8,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
+import com.nimbusds.jose.jwk.RSAKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -24,7 +25,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-12-10)
+ * @version $version$ (2014-01-16)
  */
 public class RSASSATest extends TestCase {
 
@@ -407,5 +408,41 @@ public class RSASSATest extends TestCase {
 		assertTrue(jwsObject.verify(verifier));
 
 		assertEquals("In RSA we trust!", jwsObject.getPayload().toString());
+	}
+
+	public void testCompareSignatureFromRawKeyAndJWK()
+		throws Exception {
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+		keyGen.initialize(512);
+		KeyPair keyPair = keyGen.genKeyPair();
+		RSAPublicKey rsaPublicKey = (RSAPublicKey)keyPair.getPublic();
+		RSAPrivateKey rsaPrivateKey = (RSAPrivateKey)keyPair.getPrivate();
+
+		// Create signer from raw Java RSA key
+		JWSObject jwsObject1 = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload("test123"));
+		JWSSigner signer = new RSASSASigner(rsaPrivateKey);
+		jwsObject1.sign(signer);
+		Base64URL sig1 = jwsObject1.getSignature();
+
+		// Create signer from JWK representation
+		RSAKey rsaJWK = new RSAKey.Builder(rsaPublicKey).privateKey(rsaPrivateKey).build();
+
+		JWSObject jwsObject2 = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload("test123"));
+		signer = new RSASSASigner(rsaJWK.toRSAPrivateKey());
+		jwsObject2.sign(signer);
+		Base64URL sig2 = jwsObject2.getSignature();
+
+		assertTrue("Signature comparison", sig1.equals(sig2));
+
+		// Verifier from raw Java RSA key
+		JWSVerifier verifier = new RSASSAVerifier(rsaPublicKey);
+		assertTrue(jwsObject1.verify(verifier));
+		assertTrue(jwsObject2.verify(verifier));
+
+		// Verifier from JWK representation
+		verifier = new RSASSAVerifier(rsaJWK.toRSAPublicKey());
+		assertTrue(jwsObject1.verify(verifier));
+		assertTrue(jwsObject2.verify(verifier));
 	}
 }

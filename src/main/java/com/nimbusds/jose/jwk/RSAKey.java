@@ -744,7 +744,7 @@ public final class RSAKey extends JWK {
 	// Public RSA params
 
 	/**
-	 * The modulus value for the RSA key.
+	 * The modulus value of the RSA key.
 	 */
 	private final Base64URL n;
 
@@ -1353,7 +1353,7 @@ public final class RSAKey extends JWK {
 		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
 		KeyFactory factory = KeyFactory.getInstance("RSA");
 		
-		return (RSAPublicKey) factory.generatePublic(spec);
+		return (RSAPublicKey)factory.generatePublic(spec);
 	}
 	
 
@@ -1437,7 +1437,7 @@ public final class RSAKey extends JWK {
 		
 		KeyFactory factory = KeyFactory.getInstance("RSA");
 		
-		return (RSAPrivateKey) factory.generatePrivate(spec);
+		return (RSAPrivateKey)factory.generatePrivate(spec);
 	}
 
 

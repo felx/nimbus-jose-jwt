@@ -21,7 +21,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-12-22)
+ * @version $version$ (2014-01-16)
  */
 public class RSAKeyTest extends TestCase {
 
@@ -454,5 +454,45 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 
 		assertEquals(256, key.getModulus().decode().length);
+	}
+
+
+	public void testKeyConversionRoundTrip()
+		throws Exception {
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+		keyGen.initialize(512);
+		KeyPair keyPair = keyGen.genKeyPair();
+		RSAPublicKey rsaPublicKeyIn = (RSAPublicKey)keyPair.getPublic();
+		RSAPrivateKey rsaPrivateKeyIn = (RSAPrivateKey)keyPair.getPrivate();
+
+		RSAKey rsaJWK = new RSAKey.Builder(rsaPublicKeyIn).privateKey(rsaPrivateKeyIn).build();
+
+		// Compare JWK values with original Java RSA values
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK.getPublicExponent().decodeToBigInteger());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK.getModulus().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK.getPrivateExponent().decodeToBigInteger());
+
+		// Convert back to Java RSA keys
+		RSAPublicKey rsaPublicKeyOut = rsaJWK.toRSAPublicKey();
+		RSAPrivateKey rsaPrivateKeyOut = rsaJWK.toRSAPrivateKey();
+
+		assertEquals(rsaPublicKeyIn.getAlgorithm(), rsaPublicKeyOut.getAlgorithm());
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaPublicKeyOut.getPublicExponent());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaPublicKeyOut.getModulus());
+
+		assertEquals(rsaPrivateKeyIn.getAlgorithm(), rsaPrivateKeyOut.getAlgorithm());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaPrivateKeyOut.getPrivateExponent());
+
+		// Compare encoded forms
+		assertEquals("Public RSA", Base64.encode(rsaPublicKeyIn.getEncoded()).toString(), Base64.encode(rsaPublicKeyOut.getEncoded()).toString());
+		assertEquals("Private RSA", Base64.encode(rsaPrivateKeyIn.getEncoded()).toString(), Base64.encode(rsaPrivateKeyOut.getEncoded()).toString());
+
+		RSAKey rsaJWK2 = new RSAKey.Builder(rsaPublicKeyOut).privateKey(rsaPrivateKeyOut).build();
+
+		// Compare JWK values with original Java RSA values
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK2.getPublicExponent().decodeToBigInteger());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK2.getModulus().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK2.getPrivateExponent().decodeToBigInteger());
 	}
 }
