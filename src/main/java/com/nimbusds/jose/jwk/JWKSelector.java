@@ -24,6 +24,7 @@ import com.nimbusds.jose.Algorithm;
  * supported.
  *
  * @author Vladimir Dzhuvinov
+ * @version $version$ (2014-01-17)
  */
 public class JWKSelector {
 
