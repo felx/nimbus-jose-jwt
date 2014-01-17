@@ -3,9 +3,9 @@ package com.nimbusds.jose.jwk;
 
 import java.util.*;
 
-import com.nimbusds.jose.Algorithm;
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -248,6 +248,29 @@ public class JWTSelectorTest extends TestCase {
 		assertEquals("1", key1.getKeyID());
 
 		assertEquals(1, matches.size());
+	}
+
+
+	public void testMatchAnyID() {
+
+		JWKSelector selector = new JWKSelector();
+		selector.setKeyID(null);
+
+		List<JWK> keyList = new ArrayList<JWK>();
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").algorithm(JWSAlgorithm.RS256).build());
+		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build());
+
+		JWKSet jwkSet = new JWKSet(keyList);
+
+		List<JWK> matches = selector.select(jwkSet);
+
+		RSAKey key1 = (RSAKey)matches.get(0);
+		assertEquals("1", key1.getKeyID());
+
+		RSAKey key2 = (RSAKey)matches.get(1);
+		assertEquals("2", key2.getKeyID());
+
+		assertEquals(2, matches.size());
 	}
 
 

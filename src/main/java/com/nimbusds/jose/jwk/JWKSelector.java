@@ -82,7 +82,11 @@ public class JWKSelector {
 	 */
 	public void setKeyType(final KeyType kty) {
 
-		types = new HashSet<KeyType>(Arrays.asList(kty));
+		if (kty == null) {
+			types = null;
+		} else {
+			types = new HashSet<KeyType>(Arrays.asList(kty));
+		}
 	}
 
 
@@ -126,7 +130,11 @@ public class JWKSelector {
 	 */
 	public void setKeyUse(final Use use) {
 
-		this.uses = new HashSet<Use>(Arrays.asList(use));
+		if (use == null) {
+			uses = null;
+		} else {
+			uses = new HashSet<Use>(Arrays.asList(use));
+		}
 	}
 
 
@@ -170,7 +178,11 @@ public class JWKSelector {
 	 */
 	public void setAlgorithm(final Algorithm alg) {
 
-		this.algs = new HashSet<Algorithm>(Arrays.asList(alg));
+		if (alg == null) {
+			algs = null;
+		} else {
+			algs = new HashSet<Algorithm>(Arrays.asList(alg));
+		}
 	}
 
 
@@ -230,13 +242,17 @@ public class JWKSelector {
 
 
 	/**
-	 * Sets a singled selected key ID.
+	 * Sets a single selected key ID.
 	 *
 	 * @param id The key ID, {@code null} if not specified.
 	 */
 	public void setKeyID(final String id) {
 
-		this.ids = new HashSet<String>(Arrays.asList(id));
+		if (id == null) {
+			ids = null;
+		} else {
+			ids = new HashSet<String>(Arrays.asList(id));
+		}
 	}
 
 
