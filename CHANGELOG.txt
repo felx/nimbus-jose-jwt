@@ -249,3 +249,10 @@ version 2.21 (2013-11-25)
 
 version 2.22 (2014-01-14)
     * Renames JWK builders methods, refactors JWK code.
+
+version 2.22.1 (2014-01-17)
+    * Refactors JWSObject signing input composition and serialisation to
+      prevent header mutability and guarantee consistent serialisation.
+    * Fixes JWKSelector behaviour on null type, alg, use or kid.
+    * Plain, JWS and JWE object constructors switch to read-only header
+      arguments.
