@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-01-17)
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -46,7 +46,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final JWEHeader header;
+	private final ReadOnlyJWEHeader header;
 
 
 	/** 
@@ -88,7 +88,7 @@ public class JWEObject extends JOSEObject {
 	 * @param header  The JWE header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public JWEObject(final JWEHeader header, final Payload payload) {
+	public JWEObject(final ReadOnlyJWEHeader header, final Payload payload) {
 
 		if (header == null) {
 

@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plaintext (unsecured) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-01-17)
  */
 @ThreadSafe
 public class PlainObject extends JOSEObject {
@@ -21,7 +21,7 @@ public class PlainObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final PlainHeader header;
+	private final ReadOnlyPlainHeader header;
 
 
 	/**
@@ -50,7 +50,7 @@ public class PlainObject extends JOSEObject {
 	 * @param header  The plaintext header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public PlainObject(final PlainHeader header, final Payload payload) {
+	public PlainObject(final ReadOnlyPlainHeader header, final Payload payload) {
 
 		if (header == null) {
 
@@ -80,7 +80,7 @@ public class PlainObject extends JOSEObject {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public PlainObject(final Base64URL firstPart, final Base64URL secondPart)
-			throws ParseException {
+		throws ParseException {
 
 		if (firstPart == null) {
 
@@ -147,7 +147,7 @@ public class PlainObject extends JOSEObject {
 	 *                        plaintext JOSE object.
 	 */
 	public static PlainObject parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 

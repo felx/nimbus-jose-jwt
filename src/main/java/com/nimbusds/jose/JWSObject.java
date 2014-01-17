@@ -47,7 +47,7 @@ public class JWSObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final JWSHeader header;
+	private final ReadOnlyJWSHeader header;
 
 
 	/**
@@ -82,7 +82,7 @@ public class JWSObject extends JOSEObject {
 	 * @param header  The JWS header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public JWSObject(final JWSHeader header, final Payload payload) {
+	public JWSObject(final ReadOnlyJWSHeader header, final Payload payload) {
 
 		if (header == null) {
 
