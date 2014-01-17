@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-12-17)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -59,7 +59,7 @@ public class JWSObject extends JOSEObject {
 	 * [header-base64url].[payload-base64url]
 	 * </pre>
 	 */
-	private byte[] signingInput;
+	private final String signingInputString;
 
 
 	/**
@@ -98,7 +98,7 @@ public class JWSObject extends JOSEObject {
 
 		setPayload(payload);
 
-		setSigningInput(header.toBase64URL(), payload.toBase64URL());
+		signingInputString = composeSigningInput(header.toBase64URL(), payload.toBase64URL());
 
 		signature = null;
 
@@ -143,7 +143,7 @@ public class JWSObject extends JOSEObject {
 
 		setPayload(new Payload(secondPart));
 
-		setSigningInput(firstPart, secondPart);
+		signingInputString = composeSigningInput(firstPart, secondPart);
 
 		if (thirdPart == null) {
 			throw new IllegalArgumentException("The third part must not be null");
@@ -165,7 +165,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Sets the signing input for this JWS object.
+	 * Composes the signing input for the specified JWS object parts.
 	 *
 	 * <p>Format:
 	 *
@@ -177,23 +177,15 @@ public class JWSObject extends JOSEObject {
 	 *                   Must not be {@code null}.
 	 * @param secondPart The second part, corresponding to the payload. 
 	 *                   Must not be {@code null}.
+	 *
+	 * @return The signing input string.
 	 */
-	private void setSigningInput(final Base64URL firstPart, final Base64URL secondPart) {
+	private static String composeSigningInput(final Base64URL firstPart, final Base64URL secondPart) {
 
 		StringBuilder sb = new StringBuilder(firstPart.toString());
 		sb.append('.');
 		sb.append(secondPart.toString());
-
-		signingInput = sb.toString().getBytes(Charset.forName("UTF-8"));
-	}
-
-
-	/**
-	 * @deprecated Use {@link #setSigningInput} instead.
-	 */
-	private void setSignableContent(final Base64URL firstPart, final Base64URL secondPart) {
-
-		setSigningInput(firstPart, secondPart);
+		return sb.toString();
 	}
 
 
@@ -210,7 +202,7 @@ public class JWSObject extends JOSEObject {
 	 */
 	public byte[] getSigningInput() {
 
-		return signingInput;
+		return signingInputString.getBytes(Charset.forName("UTF-8"));
 	}
 
 
@@ -353,7 +345,6 @@ public class JWSObject extends JOSEObject {
 			// see issue #20
 			throw new JOSEException(e.getMessage(), e);
 		}
-		
 
 		state = State.SIGNED;
 	}
@@ -380,7 +371,7 @@ public class JWSObject extends JOSEObject {
 
 		ensureJWSVerifierAcceptance(verifier);
 
-		boolean verified = false;
+		boolean verified;
 
 		try {
 			verified = verifier.verify(getHeader(), getSigningInput(), getSignature());
@@ -426,9 +417,7 @@ public class JWSObject extends JOSEObject {
 
 		ensureSignedOrVerifiedState();
 
-		StringBuilder sb = new StringBuilder(header.toBase64URL().toString());
-		sb.append('.');
-		sb.append(getPayload().toBase64URL().toString());
+		StringBuilder sb = new StringBuilder(signingInputString);
 		sb.append('.');
 		sb.append(signature.toString());
 		return sb.toString();

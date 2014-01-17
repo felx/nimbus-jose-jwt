@@ -1,12 +1,14 @@
 package com.nimbusds.jwt;
 
 
+import java.net.URL;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
+import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
@@ -37,6 +39,8 @@ public class SignedJWTTest extends TestCase {
 		claimsSet.setCustomClaim("scope", "openid");
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
+		header.setKeyID("1");
+		header.setJWKURL(new URL("https://c2id.com/jwks.json"));
 
 		SignedJWT signedJWT = new SignedJWT(header, claimsSet);
 
@@ -47,6 +51,8 @@ public class SignedJWTTest extends TestCase {
 		assertEquals("https://c2id.com", signedJWT.getJWTClaimsSet().getIssuer());
 		assertEquals("openid", signedJWT.getJWTClaimsSet().getStringClaim("scope"));
 		assertNull(signedJWT.getSignature());
+
+		Base64URL sigInput = Base64URL.encode(signedJWT.getSigningInput());
 
 		JWSSigner signer = new RSASSASigner(privateKey);
 
@@ -62,6 +68,7 @@ public class SignedJWTTest extends TestCase {
 
 		assertEquals(JWSObject.State.SIGNED, signedJWT.getState());
 		assertNotNull(signedJWT.getSignature());
+		assertTrue(sigInput.equals(Base64URL.encode(signedJWT.getSigningInput())));
 
 		JWSVerifier verifier = new RSASSAVerifier(publicKey);
 		assertTrue(signedJWT.verify(verifier));
