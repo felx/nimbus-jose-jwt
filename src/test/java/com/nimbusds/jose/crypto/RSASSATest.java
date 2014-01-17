@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-16)
+ * @version $version$ (2014-01-17)
  */
 public class RSASSATest extends TestCase {
 
@@ -141,24 +141,24 @@ public class RSASSATest extends TestCase {
 	private static final Base64URL B64_HEADER = new Base64URL("eyJhbGciOiJSUzI1NiJ9");
 
 
-	private static final Payload PAYLOAD = new Payload(new Base64URL("eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"));
+	private static final Payload PAYLOAD = new Payload(new Base64URL(
+		"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+		"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"));
 
 
-	private static final byte[] SIGNABLE = new String(
-			"eyJhbGciOiJSUzI1NiJ9" +
-					"." +
-					"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
+	private static final byte[] SIGNABLE = ("eyJhbGciOiJSUzI1NiJ9" +
+		"." +
+		"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
+		"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
 
 
 	private static final Base64URL B64_SIG = new Base64URL(
-			"cC4hiUPoj9Eetdgtv3hF80EGrhuB__dzERat0XF9g2VtQgr9PJbu3XOiZj5RZmh7" +
-					"AAuHIm4Bh-0Qc_lF5YKt_O8W2Fp5jujGbds9uJdbF9CUAr7t1dnZcAcQjbKBYNX4" +
-					"BAynRFdiuB--f_nZLgrnbyTyWzO75vRK5h6xBArLIARNPvkSjtQBMHlb1L07Qe7K" +
-					"0GarZRmB_eSN9383LcOLn6_dO--xi12jzDwusC-eOkHWEsqtFZESc6BfI7noOPqv" +
-					"hJ1phCnvWh6IeYI2w9QOYEUipUTI8np6LbgGY9Fs98rqVt5AXLIhWkWywlVmtVrB" +
-			"p0igcN_IoypGlUPQGe77Rw");
+		"cC4hiUPoj9Eetdgtv3hF80EGrhuB__dzERat0XF9g2VtQgr9PJbu3XOiZj5RZmh7" +
+		"AAuHIm4Bh-0Qc_lF5YKt_O8W2Fp5jujGbds9uJdbF9CUAr7t1dnZcAcQjbKBYNX4" +
+		"BAynRFdiuB--f_nZLgrnbyTyWzO75vRK5h6xBArLIARNPvkSjtQBMHlb1L07Qe7K" +
+		"0GarZRmB_eSN9383LcOLn6_dO--xi12jzDwusC-eOkHWEsqtFZESc6BfI7noOPqv" +
+		"hJ1phCnvWh6IeYI2w9QOYEUipUTI8np6LbgGY9Fs98rqVt5AXLIhWkWywlVmtVrB" +
+		"p0igcN_IoypGlUPQGe77Rw");
 
 
 
@@ -361,9 +361,16 @@ public class RSASSATest extends TestCase {
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
-		boolean verified = jwsObject.verify(verifier);
+		assertTrue("Verify signature", jwsObject.verify(verifier));
 
-		assertTrue("Verified signature", verified);
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+
+		// Verify from serialised and then parsed JWS
+		jwsObject = JWSObject.parse(jwsObject.serialize());
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		assertTrue("Verify signature", jwsObject.verify(verifier));
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
 	}
@@ -409,6 +416,7 @@ public class RSASSATest extends TestCase {
 
 		assertEquals("In RSA we trust!", jwsObject.getPayload().toString());
 	}
+
 
 	public void testCompareSignatureFromRawKeyAndJWK()
 		throws Exception {

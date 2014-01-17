@@ -34,7 +34,7 @@ public interface JWT {
 	 *                        valid JSON object and a JWT claims set.
 	 */
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
-			throws ParseException;
+		throws ParseException;
 
 
 	/**

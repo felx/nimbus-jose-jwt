@@ -52,7 +52,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	 * @throws ParseException If parsing of the serialised parts failed.
 	 */
 	public SignedJWT(final Base64URL firstPart, final Base64URL secondPart, final Base64URL thirdPart)	
-			throws ParseException {
+		throws ParseException {
 
 		super(firstPart, secondPart, thirdPart);
 	}
@@ -60,7 +60,7 @@ public class SignedJWT extends JWSObject implements JWT {
 
 	@Override
 	public ReadOnlyJWTClaimsSet getJWTClaimsSet()	
-			throws ParseException {
+		throws ParseException {
 
 		JSONObject json = getPayload().toJSONObject();
 
@@ -84,7 +84,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	 *                        signed JWT.
 	 */
 	public static SignedJWT parse(final String s)
-			throws ParseException {
+		throws ParseException {
 
 		Base64URL[] parts = JOSEObject.split(s);
 

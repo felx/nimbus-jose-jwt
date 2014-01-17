@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Junya Hayashi
- * @version $version$ (2013-08-01)
+ * @version $version$ (2014-01-17)
  */
 public final class JWTParser {
 
@@ -45,7 +45,7 @@ public final class JWTParser {
 			
 		Base64URL header = new Base64URL(s.substring(0, firstDotPos));
 		
-		JSONObject jsonObject = null;
+		JSONObject jsonObject;
 
 		try {
 			jsonObject = JSONObjectUtils.parseJSONObject(header.decodeToString());
@@ -74,6 +74,5 @@ public final class JWTParser {
 	 */
 	private JWTParser() {
 
-		// Nothing to do
 	}
 }
