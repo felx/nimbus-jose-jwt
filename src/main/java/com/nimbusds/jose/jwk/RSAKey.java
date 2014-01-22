@@ -454,8 +454,14 @@ public final class RSAKey extends JWK {
 		 */
 		public Builder privateKey(final RSAPrivateKey priv) {
 
-			this.d = Base64URL.encode(priv.getPrivateExponent());
-			return this;
+			if (priv instanceof RSAPrivateCrtKey) {
+				return this.privateKey((RSAPrivateCrtKey) priv);
+			} else if (priv instanceof RSAMultiPrimePrivateCrtKey) {
+				return this.privateKey((RSAMultiPrimePrivateCrtKey) priv);
+			} else {
+				this.d = Base64URL.encode(priv.getPrivateExponent());
+				return this;
+			}
 		}
 
 
