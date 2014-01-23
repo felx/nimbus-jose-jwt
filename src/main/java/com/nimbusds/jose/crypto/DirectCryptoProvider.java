@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.Provider;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,6 +51,12 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	 * The supported encryption methods.
 	 */
 	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
+
+
+	/**
+	 * The underlying cryptographic provider.
+	 */
+	protected Provider provider = null;
 
 
 	/**
@@ -133,5 +140,16 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	public SecretKey getKey() {
 
 		return cek;
+	}
+
+
+	/**
+	 * Set a specific JCA provider to be used for RSA encryption/decryption.
+	 *
+	 * @param provider  The JCA provider to be used.
+	 */
+	@Override
+	public void setProvider(final Provider provider) {
+		this.provider = provider;
 	}
 }

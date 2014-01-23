@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.security.Provider;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -32,15 +33,16 @@ class RSA_OAEP {
 	/**
 	 * Encrypts the specified Content Encryption Key (CEK).
 	 *
-	 * @param pub The public RSA key. Must not be {@code null}.
-	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
-	 *            {@code null}.
+	 * @param pub      The public RSA key. Must not be {@code null}.
+	 * @param cek      The Content Encryption Key (CEK) to encrypt. Must
+	 *                 not be {@code null}.
+	 * @param provider The cryptographic provider to use (or {@code null}).
 	 *
 	 * @return The encrypted Content Encryption Key (CEK).
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek)
+	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek, final Provider provider)
 		throws JOSEException {
 
 		try {
@@ -75,13 +77,14 @@ class RSA_OAEP {
 	 * @param priv         The private RSA key. Must not be {@code null}.
 	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
 	 *                     decrypt. Must not be {@code null}.
+	 * @param provider     The cryptographic provider to use (or {@code null}).
 	 *
 	 * @return The decrypted Content Encryption Key (CEK).
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
 	public static SecretKey decryptCEK(final RSAPrivateKey priv, 
-		                           final byte[] encryptedCEK)
+		                           final byte[] encryptedCEK, final Provider provider)
 		throws JOSEException {
 
 		try {

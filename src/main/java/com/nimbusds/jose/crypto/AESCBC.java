@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.nio.ByteBuffer;
+import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -65,13 +66,14 @@ class AESCBC {
 	 */
 	private static Cipher createAESCBCCipher(final SecretKey secretKey,
 		                                 final boolean forEncryption,
-		                                 final byte[] iv)
+		                                 final byte[] iv,
+		                                 final Provider provider)
 		throws JOSEException {
 
 		Cipher cipher;
 
 		try {
-			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher = CipherHelper.getInstance("AES/CBC/PKCS5Padding", provider);
 
 			SecretKeySpec keyspec = new SecretKeySpec(secretKey.getEncoded(), "AES");
 
@@ -109,10 +111,11 @@ class AESCBC {
 	 */
 	public static byte[] encrypt(final SecretKey secretKey, 
 		                     final byte[] iv,
-		                     final byte[] plainText)
+		                     final byte[] plainText,
+		                     final Provider provider)
 		throws JOSEException {
 
-		Cipher cipher = createAESCBCCipher(secretKey, true, iv);
+		Cipher cipher = createAESCBCCipher(secretKey, true, iv, provider);
 
 		try {
 			return cipher.doFinal(plainText);	
@@ -165,14 +168,15 @@ class AESCBC {
 	public static AuthenticatedCipherText encryptAuthenticated(final SecretKey secretKey,
 		                                                   final byte[] iv,
 		                                                   final byte[] plainText,
-		                                                   final byte[] aad)
+		                                                   final byte[] aad,
+		                                                   final Provider provider)
 		throws JOSEException {
 
 		// Extract MAC + AES/CBC keys from input secret key
 		CompositeKey compositeKey = new CompositeKey(secretKey);
 
 		// Encrypt plain text
-		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText);
+		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText, provider);
 
 		// AAD length to 8 byte array
 		byte[] al = computeAADLength(aad);
@@ -203,10 +207,11 @@ class AESCBC {
 	 */
 	public static byte[] decrypt(final SecretKey secretKey, 
 		                     final byte[] iv,
-		                     final byte[] cipherText)
+		                     final byte[] cipherText,
+		                     final Provider provider)
 		throws JOSEException {
 
-		Cipher cipher = createAESCBCCipher(secretKey, false, iv);
+		Cipher cipher = createAESCBCCipher(secretKey, false, iv, provider);
 
 		try {
 			return cipher.doFinal(cipherText);
@@ -243,7 +248,8 @@ class AESCBC {
 		                                  final byte[] iv,
 		                                  final byte[] cipherText,
 		                                  final byte[] aad,
-		                                  final byte[] authTag)
+		                                  final byte[] authTag,
+		                                  final Provider provider)
 		throws JOSEException {
 
 
@@ -268,7 +274,7 @@ class AESCBC {
 			macCheckPassed = false;
 		}
 
-		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText);
+		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText, provider);
 
 		if (! macCheckPassed) {
 

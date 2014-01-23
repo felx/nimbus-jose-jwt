@@ -137,7 +137,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			SecretKey randomCEK = AES.generateKey(keyLength);
 
 			try {
-				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength);	
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, provider);
 			
 			} catch (Exception e) {
 
@@ -148,28 +148,28 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode());
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), provider);
 
 		} else {
 		
 			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA_OAEP");
-	    	}
+		}
 
-	    	// Compose the AAD
+		// Compose the AAD
 		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
 
-	    	// Decrypt the cipher text according to the JWE enc
-	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		// Decrypt the cipher text according to the JWE enc
+		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-	    	byte[] plainText;
+		byte[] plainText;
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
+			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode());
+			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
 
 		} else {
 
@@ -177,8 +177,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		}
 
 
-	    	// Apply decompression if requested
-	    	return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
+		// Apply decompression if requested
+		return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
 	}
 }
 
