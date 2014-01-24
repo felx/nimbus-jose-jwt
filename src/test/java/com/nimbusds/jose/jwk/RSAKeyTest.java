@@ -495,4 +495,66 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK2.getModulus().decodeToBigInteger());
 		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK2.getPrivateExponent().decodeToBigInteger());
 	}
+
+
+	public void testKeyConversionRoundTripWithCRTParams()
+		throws Exception {
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+		keyGen.initialize(512);
+		KeyPair keyPair = keyGen.genKeyPair();
+		RSAPublicKey rsaPublicKeyIn = (RSAPublicKey)keyPair.getPublic();
+		RSAPrivateCrtKey rsaPrivateKeyIn = (RSAPrivateCrtKey)keyPair.getPrivate();
+
+		RSAKey rsaJWK = new RSAKey(rsaPublicKeyIn, rsaPrivateKeyIn, null, null, null, null, null, null);
+
+		// Compare JWK values with original Java RSA values
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK.getPublicExponent().decodeToBigInteger());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK.getModulus().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK.getPrivateExponent().decodeToBigInteger());
+
+		// Compare CRT params
+		assertEquals(rsaPrivateKeyIn.getPrimeP(), rsaJWK.getFirstPrimeFactor().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeQ(), rsaJWK.getSecondPrimeFactor().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentP(), rsaJWK.getFirstFactorCRTExponent().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentQ(), rsaJWK.getSecondFactorCRTExponent().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getCrtCoefficient(), rsaJWK.getFirstCRTCoefficient().decodeToBigInteger());
+		assertTrue(rsaJWK.getOtherPrimes() == null || rsaJWK.getOtherPrimes().isEmpty());
+
+		// Convert back to Java RSA keys
+		RSAPublicKey rsaPublicKeyOut = rsaJWK.toRSAPublicKey();
+		RSAPrivateCrtKey rsaPrivateKeyOut = (RSAPrivateCrtKey)rsaJWK.toRSAPrivateKey();
+
+		assertEquals(rsaPublicKeyIn.getAlgorithm(), rsaPublicKeyOut.getAlgorithm());
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaPublicKeyOut.getPublicExponent());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaPublicKeyOut.getModulus());
+
+		assertEquals(rsaPrivateKeyIn.getAlgorithm(), rsaPrivateKeyOut.getAlgorithm());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaPrivateKeyOut.getPrivateExponent());
+
+		assertEquals(rsaPrivateKeyIn.getPrimeP(), rsaPrivateKeyOut.getPrimeP());
+		assertEquals(rsaPrivateKeyIn.getPrimeQ(), rsaPrivateKeyOut.getPrimeQ());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentP(), rsaPrivateKeyOut.getPrimeExponentP());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentQ(), rsaPrivateKeyOut.getPrimeExponentQ());
+		assertEquals(rsaPrivateKeyIn.getCrtCoefficient(), rsaPrivateKeyOut.getCrtCoefficient());
+
+		// Compare encoded forms
+		assertEquals("Public RSA", Base64.encode(rsaPublicKeyIn.getEncoded()).toString(), Base64.encode(rsaPublicKeyOut.getEncoded()).toString());
+		assertEquals("Private RSA", Base64.encode(rsaPrivateKeyIn.getEncoded()).toString(), Base64.encode(rsaPrivateKeyOut.getEncoded()).toString());
+
+		RSAKey rsaJWK2 = new RSAKey.Builder(rsaPublicKeyOut).privateKey(rsaPrivateKeyOut).build();
+
+		// Compare JWK values with original Java RSA values
+		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK2.getPublicExponent().decodeToBigInteger());
+		assertEquals(rsaPublicKeyIn.getModulus(), rsaJWK2.getModulus().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrivateExponent(), rsaJWK2.getPrivateExponent().decodeToBigInteger());
+
+		// Compare CRT params
+		assertEquals(rsaPrivateKeyIn.getPrimeP(), rsaJWK2.getFirstPrimeFactor().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeQ(), rsaJWK2.getSecondPrimeFactor().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentP(), rsaJWK2.getFirstFactorCRTExponent().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getPrimeExponentQ(), rsaJWK2.getSecondFactorCRTExponent().decodeToBigInteger());
+		assertEquals(rsaPrivateKeyIn.getCrtCoefficient(), rsaJWK2.getFirstCRTCoefficient().decodeToBigInteger());
+		assertTrue(rsaJWK2.getOtherPrimes() == null || rsaJWK2.getOtherPrimes().isEmpty());
+	}
 }

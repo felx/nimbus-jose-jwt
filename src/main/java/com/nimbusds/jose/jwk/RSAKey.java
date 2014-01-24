@@ -112,7 +112,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-12-22)
+ * @author Cedric Staub
+ * @version $version$ (2014-01-22)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -121,8 +122,6 @@ public final class RSAKey extends JWK {
 	/**
 	 * Other Primes Info, represents the private {@code oth} parameter of a
 	 * RSA JWK. This class is immutable.
-	 *
-	 * @author Justin Richer
 	 */
 	@Immutable
 	public static class OtherPrimesInfo {
@@ -1152,11 +1151,12 @@ public final class RSAKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID. {@code null} if not specified.
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 * @param x5c The X.509 certificate chain, {@code null} if not 
-	 *            specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not
+	 *             specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateCrtKey priv,
 		      final Use use, final Algorithm alg, final String kid,
@@ -1190,11 +1190,12 @@ public final class RSAKey extends JWK {
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID. {@code null} if not specified.
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 * @param x5c The X.509 certificate chain, {@code null} if not 
-	 *            specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not
+	 *             specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAMultiPrimePrivateCrtKey priv,
 		      final Use use, final Algorithm alg, final String kid,
