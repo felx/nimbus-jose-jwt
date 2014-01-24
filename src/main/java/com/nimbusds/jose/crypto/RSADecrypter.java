@@ -46,7 +46,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version $version$ (2014-01-24)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {

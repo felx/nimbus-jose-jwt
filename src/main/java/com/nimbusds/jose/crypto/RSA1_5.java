@@ -19,7 +19,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2014-01-24)
  */
 @ThreadSafe
 class RSA1_5 {
@@ -31,7 +31,8 @@ class RSA1_5 {
 	 * @param pub      The public RSA key. Must not be {@code null}.
 	 * @param cek      The Content Encryption Key (CEK) to encrypt. Must
 	 *                 not be {@code null}.
-	 * @param provider The cryptographic provider to use (or {@code null}).
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
 	 *
 	 * @return The encrypted Content Encryption Key (CEK).
 	 *
@@ -61,7 +62,8 @@ class RSA1_5 {
 	 * @param priv         The private RSA key. Must not be {@code null}.
 	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
 	 *                     decrypt. Must not be {@code null}.
-	 * @param provider The cryptographic provider to use (or {@code null}).
+	 * @param provider     The JCA provider, or {@code null} to use the
+	 *                     default one.
 	 *
 	 * @return The decrypted Content Encryption Key (CEK).
 	 *

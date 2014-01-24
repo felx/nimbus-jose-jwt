@@ -42,8 +42,7 @@ import com.nimbusds.jose.util.StringUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
- *
+ * @version $version$ (2014-01-24)
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
 

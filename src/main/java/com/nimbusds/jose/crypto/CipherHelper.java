@@ -20,10 +20,11 @@ class CipherHelper {
 
 
 	/**
-	 * Instantiates a cipher with an (optional) provider.
+	 * Instantiates a cipher with an (optional) JCA provider.
 	 *
-	 * @param name      The name of the cipher.
-	 * @param provider  The cryptographic provider to use (or {@code null}).
+	 * @param name     The name of the cipher. Must not be {@code null}.
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
 	 */
 	public static Cipher getInstance(String name, Provider provider)
 		throws NoSuchAlgorithmException, NoSuchPaddingException {

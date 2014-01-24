@@ -39,7 +39,7 @@ public interface JWEAlgorithmProvider {
 	/**
 	 * Sets a specific JCA provider for the JWE algorithm provider.
 	 *
-	 * @param provider The JCA provider, {@code null} to use the default
+	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setProvider(final Provider provider);
