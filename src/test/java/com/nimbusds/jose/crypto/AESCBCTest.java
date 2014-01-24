@@ -141,7 +141,7 @@ public class AESCBCTest extends TestCase {
 
 		Assert.assertArrayEquals("Input key", INPUT_KEY_256, inputKey.getEncoded());
 
-		AuthenticatedCipherText act = AESCBC.encryptAuthenticated(inputKey, IV, PLAIN_TEXT, AAD);
+		AuthenticatedCipherText act = AESCBC.encryptAuthenticated(inputKey, IV, PLAIN_TEXT, AAD, null);
 
 		Assert.assertArrayEquals("Cipher text", CIPHER_TEXT_256, act.getCipherText());
 		Assert.assertArrayEquals("Auth tag", AUTH_TAG_256, act.getAuthenticationTag());
@@ -155,7 +155,7 @@ public class AESCBCTest extends TestCase {
 
 		Assert.assertArrayEquals("Input key", INPUT_KEY_512, inputKey.getEncoded());
 
-		AuthenticatedCipherText act = AESCBC.encryptAuthenticated(inputKey, IV, PLAIN_TEXT, AAD);
+		AuthenticatedCipherText act = AESCBC.encryptAuthenticated(inputKey, IV, PLAIN_TEXT, AAD, null);
 
 		Assert.assertArrayEquals("Cipher text", CIPHER_TEXT_512, act.getCipherText());
 		Assert.assertArrayEquals("Auth tag", AUTH_TAG_512, act.getAuthenticationTag());

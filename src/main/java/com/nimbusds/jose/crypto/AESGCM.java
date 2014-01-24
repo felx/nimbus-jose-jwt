@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.Provider;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
@@ -110,7 +111,8 @@ class AESGCM {
 	public static AuthenticatedCipherText encrypt(final SecretKey secretKey, 
 		                                      final byte[] iv,
 		                                      final byte[] plainText, 
-		                                      final byte[] authData)
+		                                      final byte[] authData,
+		                                      final Provider provider)
 		throws JOSEException {
 
 		// Initialise AES/GCM cipher for encryption
@@ -166,7 +168,8 @@ class AESGCM {
 		                     final byte[] iv,
 		                     final byte[] cipherText,
 		                     final byte[] authData,
-		                     final byte[] authTag)
+		                     final byte[] authTag,
+		                     final Provider provider)
 		throws JOSEException {
 
 		// Initialise AES/GCM cipher for decryption

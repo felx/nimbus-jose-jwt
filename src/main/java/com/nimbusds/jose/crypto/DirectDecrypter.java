@@ -133,17 +133,17 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
 
 		// Decrypt the cipher text according to the JWE enc
-	    	EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
 
-	    	byte[] plainText;
+		byte[] plainText;
 
-	    	if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-	    		plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
+			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode());
+			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
 
 		} else {
 
@@ -151,8 +151,8 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		}
 
 
-	    	// Apply decompression if requested
-	    	return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
+		// Apply decompression if requested
+		return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
 	}
 }
 

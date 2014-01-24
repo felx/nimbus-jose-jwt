@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.Provider;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
@@ -27,19 +28,20 @@ class RSA1_5 {
 	/**
 	 * Encrypts the specified Content Encryption Key (CEK).
 	 *
-	 * @param pub The public RSA key. Must not be {@code null}.
-	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
-	 *            {@code null}.
+	 * @param pub      The public RSA key. Must not be {@code null}.
+	 * @param cek      The Content Encryption Key (CEK) to encrypt. Must
+	 *                 not be {@code null}.
+	 * @param provider The cryptographic provider to use (or {@code null}).
 	 *
 	 * @return The encrypted Content Encryption Key (CEK).
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek)
+	public static byte[] encryptCEK(final RSAPublicKey pub, final SecretKey cek, Provider provider)
 		throws JOSEException {
 
 		try {
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher cipher = CipherHelper.getInstance("RSA/ECB/PKCS1Padding", provider);
 			cipher.init(Cipher.ENCRYPT_MODE, pub);
 			return cipher.doFinal(cek.getEncoded());
 
@@ -59,6 +61,7 @@ class RSA1_5 {
 	 * @param priv         The private RSA key. Must not be {@code null}.
 	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
 	 *                     decrypt. Must not be {@code null}.
+	 * @param provider The cryptographic provider to use (or {@code null}).
 	 *
 	 * @return The decrypted Content Encryption Key (CEK).
 	 *
@@ -66,11 +69,12 @@ class RSA1_5 {
 	 */
 	public static SecretKey decryptCEK(final RSAPrivateKey priv, 
 		                           final byte[] encryptedCEK,
-		                           final int keyLength)
+		                           final int keyLength,
+		                           final Provider provider)
 		throws JOSEException {
 
 		try {
-			Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+			Cipher cipher = CipherHelper.getInstance("RSA/ECB/PKCS1Padding", provider);
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			byte[] secretKeyBytes = cipher.doFinal(encryptedCEK);
 

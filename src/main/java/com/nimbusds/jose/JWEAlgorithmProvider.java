@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import java.security.Provider;
 import java.util.Set;
 
 
@@ -33,4 +34,13 @@ public interface JWEAlgorithmProvider {
 	 * @return The supported encryption methods, empty set if none.
 	 */
 	public Set<EncryptionMethod> supportedEncryptionMethods();
+
+
+  /**
+   * Set a specific JCA provider to be used for this algorithm.
+   *
+   * @param provider  The JCA provider to be used.
+   */
+  public void setProvider(final Provider provider);
+
 }
