@@ -59,9 +59,7 @@ public class ECKeyTest extends TestCase {
 
 		public static final ECKey.Curve CRV = ECKey.Curve.P_521;
 		public static final Base64URL X = new Base64URL("AfwEaSkqoPQynn4SdAXOqbyDuK6KsbI04i-6aWvh3GdvREZuHaWFyg791gcvJ4OqG13-gzfYxZxfblPMqfOtQrzk");
-
-		// The parameter includes leading zero padding!
-		public static final Base64URL Y = new Base64URL("eA5mGElvZmKjOSq6IRrRn1J8REltZpoTuoScK6T1VVlpau4pYo3Nlp2ghE-3yHfTmvXgpGjG7wB9XbRf53_ZSmw");
+		public static final Base64URL Y = new Base64URL("AHgOZhhJb2ZiozkquiEa0Z9SfERJbWaaE7qEnCuk9VVZaWruKWKNzZadoIRPt8h305r14KRoxu8AfV20X-d_2Ups");
 	}
 
 
