@@ -13,7 +13,7 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2012-10-16)
+ * @version $version$ (2014-01-24)
  */
 public interface JWEAlgorithmProvider {
 
@@ -36,11 +36,11 @@ public interface JWEAlgorithmProvider {
 	public Set<EncryptionMethod> supportedEncryptionMethods();
 
 
-  /**
-   * Set a specific JCA provider to be used for this algorithm.
-   *
-   * @param provider  The JCA provider to be used.
-   */
-  public void setProvider(final Provider provider);
-
+	/**
+	 * Sets a specific JCA provider for the JWE algorithm provider.
+	 *
+	 * @param provider The JCA provider, {@code null} to use the default
+	 *                 one.
+	 */
+	public void setProvider(final Provider provider);
 }

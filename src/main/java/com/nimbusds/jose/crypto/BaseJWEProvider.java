@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.Provider;
 import java.util.Collections;
 import java.util.Set;
 
@@ -14,7 +15,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-22)
+ * @version $version$ (2014-01-24)
  */
 abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
@@ -29,6 +30,13 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 	 * The supported encryption methods.
 	 */
 	private final Set<EncryptionMethod> encs;
+
+
+	/**
+	 * The underlying cryptographic provider, {@code null} if not specified
+	 * (implies default one).
+	 */
+	protected Provider provider = null;
 
 
 	/**
@@ -67,6 +75,13 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 	public Set<EncryptionMethod> supportedEncryptionMethods() {
 
 		return encs;
+	}
+
+
+	@Override
+	public void setProvider(final Provider provider) {
+
+		this.provider = provider;
 	}
 }
 
