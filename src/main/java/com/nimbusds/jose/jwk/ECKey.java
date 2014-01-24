@@ -1,6 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.List;
 import java.security.KeyFactory;
@@ -25,10 +26,7 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.JSONObjectUtils;
-import com.nimbusds.jose.util.X509CertChainUtils;
+import com.nimbusds.jose.util.*;
 
 
 /**
@@ -67,7 +65,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-12-22)
+ * @version $version$ (2014-01-24)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -227,8 +225,7 @@ public final class ECKey extends JWK {
 		@Override
 		public boolean equals(final Object object) {
 
-			return object != null && 
-			       object instanceof Curve && 
+			return object instanceof Curve &&
 			       this.toString().equals(object.toString());
 		}
 
@@ -411,9 +408,9 @@ public final class ECKey extends JWK {
 		 */
 		public Builder(final Curve crv, final ECPublicKey pub) {
 
-			this(crv, 
-			     Base64URL.encode(pub.getW().getAffineX()), 
-			     Base64URL.encode(pub.getW().getAffineY()));
+			this(crv,
+			     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
+			     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()));
 		}
 
 
@@ -534,6 +531,7 @@ public final class ECKey extends JWK {
 			return this;
 		}
 
+
 		/**
 		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
 		 *
@@ -547,6 +545,7 @@ public final class ECKey extends JWK {
 			this.x5c = x5c;
 			return this;
 		}
+
 
 		/**
 		 * Builds a new octet sequence JWK.
@@ -563,6 +562,38 @@ public final class ECKey extends JWK {
 			// Pair
 			return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
 		}
+	}
+
+
+	/**
+	 * Returns the Base64URL encoding of the specified elliptic curve 'x'
+	 * or 'y' coordinate, with leading zero padding up to the specified
+	 * field size in bits.
+	 *
+	 * @param fieldSize  The field size in bits.
+	 * @param coordinate The elliptic curve coordinate. Must not be
+	 *                   {@code null}.
+	 *
+	 * @return The Base64URL-encoded coordinate, with leading zero padding
+	 *         up to the curve's field size.
+	 */
+	public static Base64URL encodeCoordinate(final int fieldSize, final BigInteger coordinate) {
+
+		byte[] unpadded = BigIntegerUtils.toBytesUnsigned(coordinate);
+
+		int bytesToOutput = (fieldSize + 7)/8;
+
+		if (unpadded.length >= bytesToOutput) {
+			// Greater-than check to prevent exception on malformed
+			// key below
+			return Base64URL.encode(unpadded);
+		}
+
+		byte[] padded = new byte[bytesToOutput];
+
+		System.arraycopy(unpadded, 0, padded, bytesToOutput - unpadded.length, unpadded.length);
+
+		return Base64URL.encode(padded);
 	}
 
 
@@ -721,8 +752,8 @@ public final class ECKey extends JWK {
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv, 
-		     Base64URL.encode(pub.getW().getAffineX()), 
-		     Base64URL.encode(pub.getW().getAffineY()),
+		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
+		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 		     use, alg, kid,
 		     x5u, x5t, x5c);
 	}
@@ -753,8 +784,8 @@ public final class ECKey extends JWK {
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv,
-		     Base64URL.encode(pub.getW().getAffineX()), 
-		     Base64URL.encode(pub.getW().getAffineY()),
+		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
+		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 		     Base64URL.encode(priv.getS()),
 		     use, alg, kid,
 		     x5u, x5t, x5c);
