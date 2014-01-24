@@ -1,6 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.math.BigInteger;
 import java.net.URL;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
@@ -8,6 +9,7 @@ import java.security.interfaces.ECPublicKey;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.nimbusds.jose.util.BigIntegerUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -19,20 +21,77 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-30)
+ * @version $version$ (2014-01-24)
  */
 public class ECKeyTest extends TestCase {
 
 
-	// Test parameters are from JPSK spec
+	// Test parameters are from JWK spec
+	private static final class ExampleKeyP256 {
 
-	private static final String x = "MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4";
+		public static final ECKey.Curve CRV = ECKey.Curve.P_256;
+		public static final Base64URL X = new Base64URL("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4");
+		public static final Base64URL Y = new Base64URL("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM");
+		public static final Base64URL D = new Base64URL("870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE");
+	}
 
 
-	private static final String y = "4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM";
+	// Test parameters are from Anders Rundgren, public only
+	private static final class ExampleKeyP256Alt {
+
+		public static final ECKey.Curve CRV = ECKey.Curve.P_256;
+		public static final Base64URL X = new Base64URL("3l2Da_flYc-AuUTm2QzxgyvJxYM_2TeB9DMlwz7j1PE");
+		public static final Base64URL Y = new Base64URL("-kjT7Wrfhwsi9SG6H4UXiyUiVE9GHCLauslksZ3-_t0");
+	}
 
 
-	private static final String d = "870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE";
+	// Test parameters are from Anders Rundgren, public only
+	private static final class ExampleKeyP384Alt {
+
+		public static final ECKey.Curve CRV = ECKey.Curve.P_384;
+		public static final Base64URL X = new Base64URL("Xy0mn0LmRyDBeHBjZrqH9z5Weu5pzCZYl1FJGHdoEj1utAoCpD4-Wn3VAIT-qgFF");
+		public static final Base64URL Y = new Base64URL("mrZQ1aB1E7JksXe6LXmM3BiGzqtlwCtMN0cpJb5EU62JMSISSK8l7cXSFt84A25z");
+	}
+
+
+	// Test parameters are from Anders Rundgren, public only
+	private static final class ExampleKeyP521Alt {
+
+		public static final ECKey.Curve CRV = ECKey.Curve.P_521;
+		public static final Base64URL X = new Base64URL("AfwEaSkqoPQynn4SdAXOqbyDuK6KsbI04i-6aWvh3GdvREZuHaWFyg791gcvJ4OqG13-gzfYxZxfblPMqfOtQrzk");
+
+		// The parameter includes leading zero padding!
+		public static final Base64URL Y = new Base64URL("eA5mGElvZmKjOSq6IRrRn1J8REltZpoTuoScK6T1VVlpau4pYo3Nlp2ghE-3yHfTmvXgpGjG7wB9XbRf53_ZSmw");
+	}
+
+
+	public void testAltECKeyParamLengths() {
+
+		assertEquals(32, ExampleKeyP256Alt.X.decode().length);
+		assertEquals(32, ExampleKeyP256Alt.Y.decode().length);
+
+		assertEquals(48, ExampleKeyP384Alt.X.decode().length);
+		assertEquals(48, ExampleKeyP384Alt.Y.decode().length);
+
+		assertEquals(66, ExampleKeyP521Alt.X.decode().length);
+		assertEquals(66, ExampleKeyP521Alt.Y.decode().length);
+	}
+
+
+	public void testCoordinateEncoding() {
+
+		byte[] unpadded = {1, 2, 3, 4, 5};
+		BigInteger bigInteger = new BigInteger(1, unpadded);
+
+		// With no padding required
+		int fieldSize = unpadded.length * 8;
+		assertEquals(Base64URL.encode(unpadded), ECKey.encodeCoordinate(fieldSize, bigInteger));
+
+		// With two leading zeros padding required
+		fieldSize = unpadded.length * 8 + 2 * 8;
+		assertEquals(Base64URL.encode(new byte[]{0, 0, 1, 2, 3, 4, 5}), ECKey.encodeCoordinate(fieldSize, bigInteger));
+		assertEquals(bigInteger.toString(), ECKey.encodeCoordinate(fieldSize, bigInteger).decodeToBigInteger().toString());
+	}
 
 
 	public void testFullConstructorAndSerialization()
@@ -43,7 +102,7 @@ public class ECKeyTest extends TestCase {
 		List<Base64> x5c = new LinkedList<Base64>();
 		x5c.add(new Base64("def"));
 
-		ECKey key = new ECKey(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y), new Base64URL(d),
+		ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
 			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
 		
 		// Test getters
@@ -55,9 +114,9 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
 
 		assertTrue(key.isPrivate());
 
@@ -72,9 +131,9 @@ public class ECKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
 
 		assertTrue(key.isPrivate());
 		
@@ -91,8 +150,8 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertNull(key.getD());
 
 		assertFalse(key.isPrivate());
@@ -107,8 +166,8 @@ public class ECKeyTest extends TestCase {
 		List<Base64> x5c = new LinkedList<Base64>();
 		x5c.add(new Base64("def"));
 
-		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y)).
-			d(new Base64URL(d)).
+		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y).
+			d(ExampleKeyP256.D).
 			keyUse(Use.SIGNATURE).
 			algorithm(JWSAlgorithm.ES256).
 			keyID("1").
@@ -126,9 +185,9 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
 
 		assertTrue(key.isPrivate());
 
@@ -143,9 +202,9 @@ public class ECKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
 
 		assertTrue(key.isPrivate());
 		
@@ -162,8 +221,8 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertNull(key.getD());
 
 		assertFalse(key.isPrivate());
@@ -174,88 +233,98 @@ public class ECKeyTest extends TestCase {
 	public void testP256ExportAndImport()
 		throws Exception {
 
+		// Public + private
 
-		ECKey key = new ECKey(ECKey.Curve.P_256, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
-
+		ECKey key = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).d(ExampleKeyP256.D).build();
 
 		// Export
 		KeyPair pair = key.toKeyPair();
 
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
-		assertEquals(new Base64URL(x), Base64URL.encode(pub.getW().getAffineX()));
-		assertEquals(new Base64URL(y), Base64URL.encode(pub.getW().getAffineY()));
+		assertEquals(256, pub.getParams().getCurve().getField().getFieldSize());
+		assertEquals(ExampleKeyP256.X.decodeToBigInteger(), pub.getW().getAffineX());
+		assertEquals(ExampleKeyP256.Y.decodeToBigInteger(), pub.getW().getAffineY());
 
 		ECPrivateKey priv = (ECPrivateKey)pair.getPrivate();
-		assertEquals(new Base64URL(d), Base64URL.encode(priv.getS()));
-
+		assertEquals(256, priv.getParams().getCurve().getField().getFieldSize());
+		assertEquals(ExampleKeyP256.D.decodeToBigInteger(), priv.getS());
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_256, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES256, "1", null, null, null);
+		key = new ECKey.Builder(ECKey.Curve.P_256, pub).privateKey(priv).build();
 		assertEquals(ECKey.Curve.P_256, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
 
 		assertTrue(key.isPrivate());
 	}
 
 
-	public void testP384ExportAndImport()
+	public void testP256AltExportAndImport()
 		throws Exception {
 
-
-		ECKey key = new ECKey(ECKey.Curve.P_384, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES384, "1", null, null, null);
-
+		ECKey key = new ECKey.Builder(ExampleKeyP256Alt.CRV, ExampleKeyP256Alt.X, ExampleKeyP256Alt.Y).build();
 
 		// Export
 		KeyPair pair = key.toKeyPair();
 
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
-		assertEquals(new Base64URL(x), Base64URL.encode(pub.getW().getAffineX()));
-		assertEquals(new Base64URL(y), Base64URL.encode(pub.getW().getAffineY()));
-
-		ECPrivateKey priv = (ECPrivateKey)pair.getPrivate();
-		assertEquals(new Base64URL(d), Base64URL.encode(priv.getS()));
-
+		assertEquals(256, pub.getParams().getCurve().getField().getFieldSize());
+		assertEquals(ExampleKeyP256Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
+		assertEquals(ExampleKeyP256Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_384, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES384, "1", null, null, null);
+		key = new ECKey.Builder(ExampleKeyP256Alt.CRV, pub).build();
+		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(ExampleKeyP256Alt.X, key.getX());
+		assertEquals(ExampleKeyP256Alt.Y, key.getY());
+
+		assertFalse(key.isPrivate());
+	}
+
+
+	public void testP384AltExportAndImport()
+		throws Exception {
+
+		ECKey key = new ECKey.Builder(ExampleKeyP384Alt.CRV, ExampleKeyP384Alt.X, ExampleKeyP384Alt.Y).build();
+
+		// Export
+		KeyPair pair = key.toKeyPair();
+
+		ECPublicKey pub = (ECPublicKey)pair.getPublic();
+		assertEquals(384, pub.getParams().getCurve().getField().getFieldSize());
+		assertEquals(ExampleKeyP384Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
+		assertEquals(ExampleKeyP384Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
+
+		// Import
+		key = new ECKey.Builder(ExampleKeyP384Alt.CRV, pub).build();
 		assertEquals(ECKey.Curve.P_384, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP384Alt.X, key.getX());
+		assertEquals(ExampleKeyP384Alt.Y, key.getY());
 
-		assertTrue(key.isPrivate());
+		assertFalse(key.isPrivate());
 	}
 
 
-	public void testP521ExportAndImport()
+	public void testP521AltExportAndImport()
 		throws Exception {
 
-		ECKey key = new ECKey(ECKey.Curve.P_521, new Base64URL(x), new Base64URL(y), new Base64URL(d),
-			              Use.SIGNATURE, JWSAlgorithm.ES512, "1", null, null, null);
-
+		ECKey key = new ECKey.Builder(ExampleKeyP521Alt.CRV, ExampleKeyP521Alt.X, ExampleKeyP521Alt.Y).build();
 
 		// Export
 		KeyPair pair = key.toKeyPair();
 
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
-		assertEquals(new Base64URL(x), Base64URL.encode(pub.getW().getAffineX()));
-		assertEquals(new Base64URL(y), Base64URL.encode(pub.getW().getAffineY()));
-
-		ECPrivateKey priv = (ECPrivateKey)pair.getPrivate();
-		assertEquals(new Base64URL(d), Base64URL.encode(priv.getS()));
-
+		assertEquals(521, pub.getParams().getCurve().getField().getFieldSize());
+		assertEquals(ExampleKeyP521Alt.X.decodeToBigInteger(), pub.getW().getAffineX());
+		assertEquals(ExampleKeyP521Alt.Y.decodeToBigInteger(), pub.getW().getAffineY());
 
 		// Import
-		key = new ECKey(ECKey.Curve.P_521, pub, priv, Use.SIGNATURE, JWSAlgorithm.ES512, "1", null, null, null);
+		key = new ECKey.Builder(ExampleKeyP521Alt.CRV, pub).build();
 		assertEquals(ECKey.Curve.P_521, key.getCurve());
-		assertEquals(new Base64URL(x), key.getX());
-		assertEquals(new Base64URL(y), key.getY());
-		assertEquals(new Base64URL(d), key.getD());
+		assertEquals(ExampleKeyP521Alt.X, key.getX());
+		assertEquals(ExampleKeyP521Alt.Y, key.getY());
 
-		assertTrue(key.isPrivate());
+		assertFalse(key.isPrivate());
 	}
 }
