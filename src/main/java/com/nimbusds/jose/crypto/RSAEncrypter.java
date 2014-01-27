@@ -129,11 +129,11 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, provider));
+			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, keyEncryptionProvider));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, provider));
+			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, keyEncryptionProvider));
 
 		} else {
 
@@ -155,13 +155,13 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, provider);
+			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			authCipherText = AESGCM.encrypt(cek, iv, plainText, aad, provider);
+			authCipherText = AESGCM.encrypt(cek, iv, plainText, aad, contentEncryptionProvider);
 
 		} else {
 

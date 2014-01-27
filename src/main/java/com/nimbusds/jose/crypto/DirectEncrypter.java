@@ -149,13 +149,13 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, provider);
+			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad, provider);
+			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad, contentEncryptionProvider);
 
 		} else {
 

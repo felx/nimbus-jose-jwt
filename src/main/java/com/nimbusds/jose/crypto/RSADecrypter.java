@@ -137,7 +137,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			SecretKey randomCEK = AES.generateKey(keyLength);
 
 			try {
-				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, provider);
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, keyEncryptionProvider);
 			
 			} catch (Exception e) {
 
@@ -148,7 +148,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), provider);
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
 
 		} else {
 		
@@ -165,11 +165,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
+			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), provider);
+			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider);
 
 		} else {
 

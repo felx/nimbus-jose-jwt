@@ -33,10 +33,12 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	/**
-	 * The underlying cryptographic provider, {@code null} if not specified
-	 * (implies default one).
+	 * The underlying cryptographic providers, {@code null} if not specified
+	 * (implies default one). We have two providers, one for key encryption
+	 * and one for content encryption.
 	 */
-	protected Provider provider = null;
+	protected Provider keyEncryptionProvider = null;
+	protected Provider contentEncryptionProvider = null;
 
 
 	/**
@@ -81,7 +83,22 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 	@Override
 	public void setProvider(final Provider provider) {
 
-		this.provider = provider;
+		setKeyEncryptionProvider(provider);
+		setContentEncryptionProvider(provider);
+	}
+
+
+	@Override
+	public void setKeyEncryptionProvider(final Provider provider) {
+
+		this.keyEncryptionProvider = provider;
+	}
+
+
+	@Override
+	public void setContentEncryptionProvider(final Provider provider) {
+
+		this.contentEncryptionProvider = provider;
 	}
 }
 

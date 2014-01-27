@@ -37,10 +37,27 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider.
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for all operations.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setProvider(final Provider provider);
+
+	/**
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for key encryption.
+	 *
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
+	 */
+	public void setKeyEncryptionProvider(final Provider provider);
+
+	/**
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for content encryption.
+	 *
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
+	 */
+	public void setContentEncryptionProvider(final Provider provider);
+
 }
