@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 
 import javax.crypto.SecretKey;
@@ -134,7 +135,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			int keyLength = readOnlyJWEHeader.getEncryptionMethod().cekBitLength();
 
-			SecretKey randomCEK = AES.generateKey(keyLength);
+			SecureRandom randomGen = getSecureRandom();
+			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
 
 			try {
 				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, keyEncryptionProvider);

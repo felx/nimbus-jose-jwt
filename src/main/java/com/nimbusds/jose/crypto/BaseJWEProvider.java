@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.Provider;
+import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.Set;
 
@@ -39,6 +40,12 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 	 */
 	protected Provider keyEncryptionProvider = null;
 	protected Provider contentEncryptionProvider = null;
+
+
+	/**
+	 * The SecureRandom instance used for encryption/decryption.
+	 */
+	private SecureRandom randomGen = null;
 
 
 	/**
@@ -99,6 +106,24 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 	public void setContentEncryptionProvider(final Provider provider) {
 
 		this.contentEncryptionProvider = provider;
+	}
+
+
+	@Override
+	public void setSecureRandom(final SecureRandom randomGen) {
+
+		this.randomGen = randomGen;
+	}
+
+	protected SecureRandom getSecureRandom() {
+		if (randomGen == null) {
+			// Use default SecureRandom instance for this JVM/platform.
+			this.randomGen = new SecureRandom();
+			return randomGen;
+		} else {
+			// Use the specified instance.
+			return randomGen;
+		}
 	}
 }
 

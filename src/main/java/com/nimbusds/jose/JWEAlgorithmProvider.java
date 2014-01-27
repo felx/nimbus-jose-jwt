@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.security.Provider;
+import java.security.SecureRandom;
 import java.util.Set;
 
 
@@ -59,5 +60,13 @@ public interface JWEAlgorithmProvider {
 	 *                 one.
 	 */
 	public void setContentEncryptionProvider(final Provider provider);
+
+	/**
+	 * Sets a specific SecureRandom instance to be used
+	 *
+	 * @param random The SecureRandom instance, or {@code null} to use the
+	 *               default one.
+	 */
+	public void setSecureRandom(final SecureRandom randomGen);
 
 }
