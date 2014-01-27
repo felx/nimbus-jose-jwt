@@ -172,7 +172,7 @@ public class ECKeyTest extends TestCase {
 			x509CertURL(x5u).
 			x509CertThumbprint(x5t).
 			x509CertChain(x5c).
-		            build();
+		        build();
 		
 		// Test getters
 		assertEquals(Use.SIGNATURE, key.getKeyUse());
@@ -253,6 +253,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
+		assertEquals(32, ExampleKeyP256.D.decode().length);
 
 		assertTrue(key.isPrivate());
 	}

@@ -446,7 +446,7 @@ public final class ECKey extends JWK {
 		public Builder privateKey(final ECPrivateKey priv) {
 
 			if (priv != null) {
-				this.d = Base64URL.encode(priv.getS());	
+				this.d = encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS());
 			}
 			
 			return this;
@@ -566,8 +566,8 @@ public final class ECKey extends JWK {
 
 
 	/**
-	 * Returns the Base64URL encoding of the specified elliptic curve 'x'
-	 * or 'y' coordinate, with leading zero padding up to the specified
+	 * Returns the Base64URL encoding of the specified elliptic curve 'x',
+	 * 'y' or 'd' coordinate, with leading zero padding up to the specified
 	 * field size in bits.
 	 *
 	 * @param fieldSize  The field size in bits.
@@ -786,7 +786,7 @@ public final class ECKey extends JWK {
 		this(crv,
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
-		     Base64URL.encode(priv.getS()),
+		     encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS()),
 		     use, alg, kid,
 		     x5u, x5t, x5c);
 	}
