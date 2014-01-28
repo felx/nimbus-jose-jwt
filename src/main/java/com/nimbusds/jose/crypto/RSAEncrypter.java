@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 
