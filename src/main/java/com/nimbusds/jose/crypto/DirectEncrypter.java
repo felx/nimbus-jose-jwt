@@ -44,31 +44,6 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 
 	/**
-	 * Random byte generator.
-	 */
-	private static SecureRandom randomGen;
-
-
-	/**
-	 * Initialises the secure random byte generator.
-	 *
-	 * @throws JOSEException If the secure random byte generator couldn't 
-	 *                       be instantiated.
-	 */
-	private void initSecureRandom()
-		throws JOSEException {
-
-		try {
-			randomGen = SecureRandom.getInstance("SHA1PRNG");
-
-		} catch(NoSuchAlgorithmException e) {
-
-			throw new JOSEException(e.getMessage(), e);
-		}
-	}
-
-
-	/**
 	 * Creates a new direct encrypter.
 	 *
 	 * @param key The shared symmetric key. Its algorithm must be "AES".
@@ -83,11 +58,6 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		throws JOSEException {
 
 		super(key);
-
-		if (randomGen == null) {
-
-			initSecureRandom();
-		}
 	}
 
 
@@ -106,8 +76,6 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		throws JOSEException {
 
 		super(keyBytes);
-
-		initSecureRandom();
 	}
 
 
@@ -144,18 +112,19 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;
 		AuthenticatedCipherText authCipherText;
+		SecureRandom randomGen = getSecureRandom();
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, provider);
+			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad, provider);
+			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad, contentEncryptionProvider);
 
 		} else {
 

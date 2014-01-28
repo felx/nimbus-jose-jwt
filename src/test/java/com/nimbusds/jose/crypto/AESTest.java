@@ -6,6 +6,8 @@ import javax.crypto.SecretKey;
 
 import junit.framework.TestCase;
 
+import java.security.SecureRandom;
+
 
 /**
  * Tests the AES utility class.
@@ -41,7 +43,7 @@ public class AESTest extends TestCase {
 	private void testGenerateKey(final int bitLength)
 		throws Exception {
 
-		SecretKey aesKey = AES.generateKey(bitLength);
+		SecretKey aesKey = AES.generateKey(bitLength, new SecureRandom());
 
 		assertEquals("AES", aesKey.getAlgorithm());
 		assertEquals(bitLength / 8, aesKey.getEncoded().length);

@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -56,11 +57,12 @@ class AES {
 	 *
 	 * @throws JOSEException If an AES key couldn't be generated.
 	 */
-	public static SecretKey generateKey(final int keyBitLength) 
+	public static SecretKey generateKey(final int keyBitLength,
+		                                final SecureRandom random)
 		throws JOSEException {
 
 		KeyGenerator aesKeyGenerator = createKeyGenerator();
-		aesKeyGenerator.init(keyBitLength);
+		aesKeyGenerator.init(keyBitLength, random);
 		return aesKeyGenerator.generateKey();
 	}
 

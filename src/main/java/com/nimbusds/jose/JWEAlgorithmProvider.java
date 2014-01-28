@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.security.Provider;
+import java.security.SecureRandom;
 import java.util.Set;
 
 
@@ -37,10 +38,35 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider.
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for all operations.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setProvider(final Provider provider);
+
+	/**
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for key encryption.
+	 *
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
+	 */
+	public void setKeyEncryptionProvider(final Provider provider);
+
+	/**
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for content encryption.
+	 *
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
+	 */
+	public void setContentEncryptionProvider(final Provider provider);
+
+	/**
+	 * Sets a specific SecureRandom instance to be used
+	 *
+	 * @param random The SecureRandom instance, or {@code null} to use the
+	 *               default one.
+	 */
+	public void setSecureRandom(final SecureRandom randomGen);
+
 }
