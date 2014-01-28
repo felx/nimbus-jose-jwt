@@ -34,9 +34,9 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	/**
-	 * The underlying cryptographic providers, {@code null} if not specified
-	 * (implies default one). We have two providers, one for key encryption
-	 * and one for content encryption.
+	 * The underlying cryptographic providers, {@code null} if not
+	 * specified (implies default one). We have two providers, one for key
+	 * encryption and one for content encryption.
 	 */
 	protected Provider keyEncryptionProvider = null;
 	protected Provider contentEncryptionProvider = null;
@@ -115,6 +115,12 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 		this.randomGen = randomGen;
 	}
 
+
+	/**
+	 * Returns the secure random generator for this JWE provider.
+	 *
+	 * @return The secure random generator.
+	 */
 	protected SecureRandom getSecureRandom() {
 		if (randomGen == null) {
 			// Use default SecureRandom instance for this JVM/platform.

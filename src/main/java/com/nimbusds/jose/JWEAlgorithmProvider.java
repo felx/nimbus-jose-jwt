@@ -10,7 +10,7 @@ import java.util.Set;
  * Common interface for JSON Web Encryption (JWE) {@link JWEEncrypter 
  * encrypters} and {@link JWEDecrypter decrypters}.
  *
- * <p>Callers can query the JWS provider to determine its algorithm 
+ * <p>Callers can query the JWE provider to determine its algorithm
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
@@ -38,35 +38,40 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for all operations.
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be
+	 * used for all operations.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setProvider(final Provider provider);
 
+
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for key encryption.
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be
+	 * used for key encryption.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setKeyEncryptionProvider(final Provider provider);
 
+
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be used for content encryption.
+	 * Sets a specific JCA provider for the JWE algorithm provider, to be
+	 * used for content encryption.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
 	public void setContentEncryptionProvider(final Provider provider);
 
+
 	/**
-	 * Sets a specific SecureRandom instance to be used
+	 * Sets a specific secure random generator for use in encryption.
 	 *
-	 * @param random The SecureRandom instance, or {@code null} to use the
-	 *               default one.
+	 * @param randomGen The secure random generator, or {@code null} to use
+	 *                  the default one.
 	 */
 	public void setSecureRandom(final SecureRandom randomGen);
-
 }
