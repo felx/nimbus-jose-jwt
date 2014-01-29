@@ -157,17 +157,17 @@ class AESCBC {
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
-	 * @param secretKey    The secret key. Must be 256 or 512 bits long.
-	 *                     Must not be {@code null}.
-	 * @param iv           The initialisation vector (IV). Must not be
-	 *                     {@code null}.
-	 * @param plainText    The plain text. Must not be {@code null}.
-	 * @param aad          The additional authenticated data. Must not be
-	 *                     {@code null}.
-	 * @param ceProvider   The JCA provider for the content encryption, or
-	 *                     {@code null} to use the default one.
-	 * @param hmacProvider The JCA provider for the HMAC computation, or
-	 *                     {@code null} to use the default one.
+	 * @param secretKey   The secret key. Must be 256 or 512 bits long.
+	 *                    Must not be {@code null}.
+	 * @param iv          The initialisation vector (IV). Must not be
+	 *                    {@code null}.
+	 * @param plainText   The plain text. Must not be {@code null}.
+	 * @param aad         The additional authenticated data. Must not be
+	 *                    {@code null}.
+	 * @param ceProvider  The JCA provider for the content encryption, or
+	 *                    {@code null} to use the default one.
+	 * @param macProvider The JCA provider for the MAC computation, or
+	 *                    {@code null} to use the default one.
 	 *
 	 * @return The authenticated cipher text.
 	 *
@@ -178,7 +178,7 @@ class AESCBC {
 		                                                   final byte[] plainText,
 		                                                   final byte[] aad,
 		                                                   final Provider ceProvider,
-								   final Provider hmacProvider)
+								   final Provider macProvider)
 		throws JOSEException {
 
 		// Extract MAC + AES/CBC keys from input secret key
@@ -193,7 +193,7 @@ class AESCBC {
 		// Do MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
 		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
-		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, hmacProvider);
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, macProvider);
 		byte[] authTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
 
 		return new AuthenticatedCipherText(cipherText, authTag);
@@ -240,19 +240,18 @@ class AESCBC {
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
-	 * @param secretKey    The secret key. Must be 256 or 512 bits long.
-	 *                     Must not be {@code null}.
-	 * @param iv           The initialisation vector (IV). Must not be
-	 *                     {@code null}.
-	 * @param cipherText   The cipher text. Must not be {@code null}.
-	 * @param aad          The additional authenticated data. Must not be
-	 *                     {@code null}.
-	 * @param authTag      The authentication tag. Must not be
-	 *                     {@code null}.
-	 * @param ceProvider   The JCA provider for the content encryption, or
-	 *                     {@code null} to use the default one.
-	 * @param hmacProvider The JCA provider for the HMAC computation, or
-	 *                     {@code null} to use the default one.
+	 * @param secretKey   The secret key. Must be 256 or 512 bits long.
+	 *                    Must not be {@code null}.
+	 * @param iv          The initialisation vector (IV). Must not be
+	 *                    {@code null}.
+	 * @param cipherText  The cipher text. Must not be {@code null}.
+	 * @param aad         The additional authenticated data. Must not be
+	 *                    {@code null}.
+	 * @param authTag     The authentication tag. Must not be {@code null}.
+	 * @param ceProvider  The JCA provider for the content encryption, or
+	 *                    {@code null} to use the default one.
+	 * @param macProvider The JCA provider for the MAC computation, or
+	 *                    {@code null} to use the default one.
 	 *
 	 * @return The decrypted plain text.
 	 *
@@ -264,7 +263,7 @@ class AESCBC {
 		                                  final byte[] aad,
 		                                  final byte[] authTag,
 		                                  final Provider ceProvider,
-						  final Provider hmacProvider)
+						  final Provider macProvider)
 		throws JOSEException {
 
 
@@ -277,7 +276,7 @@ class AESCBC {
 		// Check MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
 		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
-		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, hmacProvider);
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, macProvider);
 
 		byte[] expectedAuthTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
 

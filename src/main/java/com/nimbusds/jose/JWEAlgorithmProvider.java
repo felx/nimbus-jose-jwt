@@ -56,13 +56,13 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for HMAC computation (where required by
-	 * by the JWE encryption method).
+	 * Sets a specific JCA provider for MAC computation (where required by
+	 * the JWE encryption method).
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
 	 */
-	public void setHMACProvider(final Provider provider);
+	public void setMACProvider(final Provider provider);
 
 
 	/**

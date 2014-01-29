@@ -48,10 +48,10 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	/**
-	 * The JCA provider for the HMAC computation, {@code null} if not
+	 * The JCA provider for the MAC computation, {@code null} if not
 	 * specified (implies default one).
 	 */
-	protected Provider hmacProvider = null;
+	protected Provider macProvider = null;
 
 
 	/**
@@ -104,7 +104,7 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 		setKeyEncryptionProvider(provider);
 		setContentEncryptionProvider(provider);
-		setHMACProvider(provider);
+		setMACProvider(provider);
 	}
 
 
@@ -123,9 +123,9 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	@Override
-	public void setHMACProvider(final Provider provider) {
+	public void setMACProvider(final Provider provider) {
 
-		hmacProvider = provider;
+		macProvider = provider;
 	}
 
 

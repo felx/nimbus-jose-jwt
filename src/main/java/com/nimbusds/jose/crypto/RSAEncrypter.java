@@ -124,7 +124,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider, hmacProvider);
+			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider, macProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
