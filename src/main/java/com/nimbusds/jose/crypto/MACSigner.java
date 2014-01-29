@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2014-01-28)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -57,9 +57,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 		throws JOSEException {
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-
-		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signingInput);
-
+		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signingInput, provider);
 		return Base64URL.encode(hmac);
 	}
 }

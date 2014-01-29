@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-01-28)
  */
 abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
@@ -34,12 +34,24 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	/**
-	 * The underlying cryptographic providers, {@code null} if not
-	 * specified (implies default one). We have two providers, one for key
-	 * encryption and one for content encryption.
+	 * The JCA provider for the key encryption, {@code null} if not
+	 * specified (implies default one).
 	 */
 	protected Provider keyEncryptionProvider = null;
+
+
+	/**
+	 * The JCA provider for the content encryption, {@code null} if not
+	 * specified (implies default one).
+	 */
 	protected Provider contentEncryptionProvider = null;
+
+
+	/**
+	 * The JCA provider for the HMAC computation, {@code null} if not
+	 * specified (implies default one).
+	 */
+	protected Provider hmacProvider = null;
 
 
 	/**
@@ -92,20 +104,28 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 		setKeyEncryptionProvider(provider);
 		setContentEncryptionProvider(provider);
+		setHMACProvider(provider);
 	}
 
 
 	@Override
 	public void setKeyEncryptionProvider(final Provider provider) {
 
-		this.keyEncryptionProvider = provider;
+		keyEncryptionProvider = provider;
 	}
 
 
 	@Override
 	public void setContentEncryptionProvider(final Provider provider) {
 
-		this.contentEncryptionProvider = provider;
+		contentEncryptionProvider = provider;
+	}
+
+
+	@Override
+	public void setHMACProvider(final Provider provider) {
+
+		hmacProvider = provider;
 	}
 
 

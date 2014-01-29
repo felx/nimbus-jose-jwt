@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-01-28)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -124,7 +124,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider);
+			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider, hmacProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 

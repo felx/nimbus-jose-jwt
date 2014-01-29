@@ -14,9 +14,9 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-01-28)
  */
-public interface JWEAlgorithmProvider {
+public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
@@ -38,18 +38,7 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be
-	 * used for all operations.
-	 *
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *                 one.
-	 */
-	public void setProvider(final Provider provider);
-
-
-	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be
-	 * used for key encryption.
+	 * Sets a specific JCA provider for the key encryption.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
@@ -58,8 +47,7 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the JWE algorithm provider, to be
-	 * used for content encryption.
+	 * Sets a specific JCA provider for the content encryption.
 	 *
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
@@ -68,7 +56,18 @@ public interface JWEAlgorithmProvider {
 
 
 	/**
-	 * Sets a specific secure random generator for use in encryption.
+	 * Sets a specific JCA provider for HMAC computation (where required by
+	 * by the JWE encryption method).
+	 *
+	 * @param provider The JCA provider, or {@code null} to use the default
+	 *                 one.
+	 */
+	public void setHMACProvider(final Provider provider);
+
+
+	/**
+	 * Sets a specific secure random generator for the initialisation
+	 * vector and other purposes requiring a random number.
 	 *
 	 * @param randomGen The secure random generator, or {@code null} to use
 	 *                  the default one.

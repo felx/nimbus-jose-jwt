@@ -24,7 +24,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-05-07)
+ * @version $version$ (2014-01-28)
  */
 @ThreadSafe
 class AESCBC {
@@ -61,6 +61,8 @@ class AESCBC {
 	 *                      else creates a decryption cipher.
 	 * @param iv            The initialisation vector (IV). Must not be
 	 *                      {@code null}.
+	 * @param provider      The JCA provider, or {@code null} to use the
+	 *                      default one.
 	 *
 	 * @return The AES/CBC/PKCS5Padding cipher.
 	 */
@@ -104,6 +106,8 @@ class AESCBC {
 	 * @param iv        The initialisation vector (IV). Must not be
 	 *                  {@code null}.
 	 * @param plainText The plain text. Must not be {@code null}.
+	 * @param provider  The JCA provider, or {@code null} to use the
+	 *                  default one.
 	 *
 	 * @return The cipher text.
 	 *
@@ -153,13 +157,17 @@ class AESCBC {
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
-	 * @param secretKey The secret key. Must be 256 or 512 bits long. Must
-	 *                  not be {@code null}.
-	 * @param iv        The initialisation vector (IV). Must not be
-	 *                  {@code null}.
-	 * @param plainText The plain text. Must not be {@code null}.
-	 * @param aad       The additional authenticated data. Must not be
-	 *                  {@code null}.
+	 * @param secretKey    The secret key. Must be 256 or 512 bits long.
+	 *                     Must not be {@code null}.
+	 * @param iv           The initialisation vector (IV). Must not be
+	 *                     {@code null}.
+	 * @param plainText    The plain text. Must not be {@code null}.
+	 * @param aad          The additional authenticated data. Must not be
+	 *                     {@code null}.
+	 * @param ceProvider   The JCA provider for the content encryption, or
+	 *                     {@code null} to use the default one.
+	 * @param hmacProvider The JCA provider for the HMAC computation, or
+	 *                     {@code null} to use the default one.
 	 *
 	 * @return The authenticated cipher text.
 	 *
@@ -169,14 +177,15 @@ class AESCBC {
 		                                                   final byte[] iv,
 		                                                   final byte[] plainText,
 		                                                   final byte[] aad,
-		                                                   final Provider provider)
+		                                                   final Provider ceProvider,
+								   final Provider hmacProvider)
 		throws JOSEException {
 
 		// Extract MAC + AES/CBC keys from input secret key
 		CompositeKey compositeKey = new CompositeKey(secretKey);
 
 		// Encrypt plain text
-		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText, provider);
+		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText, ceProvider);
 
 		// AAD length to 8 byte array
 		byte[] al = computeAADLength(aad);
@@ -184,9 +193,7 @@ class AESCBC {
 		// Do MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
 		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
-
-		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput);
-
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, hmacProvider);
 		byte[] authTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
 
 		return new AuthenticatedCipherText(cipherText, authTag);
@@ -200,6 +207,8 @@ class AESCBC {
 	 * @param iv         The initialisation vector (IV). Must not be
 	 *                   {@code null}.
 	 * @param cipherText The cipher text. Must not be {@code null}.
+	 * @param provider   The JCA provider, or {@code null} to use the
+	 *                   default one.
 	 *
 	 * @return The decrypted plain text.
 	 *
@@ -231,14 +240,19 @@ class AESCBC {
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
-	 * @param secretKey  The secret key. Must be 256 or 512 bits long. Must
-	 *                   not be {@code null}.
-	 * @param iv         The initialisation vector (IV). Must not be
-	 *                   {@code null}.
-	 * @param cipherText The cipher text. Must not be {@code null}.
-	 * @param aad        The additional authenticated data. Must not be
-	 *                   {@code null}.
-	 * @param authTag    The authentication tag. Must not be {@code null}.
+	 * @param secretKey    The secret key. Must be 256 or 512 bits long.
+	 *                     Must not be {@code null}.
+	 * @param iv           The initialisation vector (IV). Must not be
+	 *                     {@code null}.
+	 * @param cipherText   The cipher text. Must not be {@code null}.
+	 * @param aad          The additional authenticated data. Must not be
+	 *                     {@code null}.
+	 * @param authTag      The authentication tag. Must not be
+	 *                     {@code null}.
+	 * @param ceProvider   The JCA provider for the content encryption, or
+	 *                     {@code null} to use the default one.
+	 * @param hmacProvider The JCA provider for the HMAC computation, or
+	 *                     {@code null} to use the default one.
 	 *
 	 * @return The decrypted plain text.
 	 *
@@ -249,7 +263,8 @@ class AESCBC {
 		                                  final byte[] cipherText,
 		                                  final byte[] aad,
 		                                  final byte[] authTag,
-		                                  final Provider provider)
+		                                  final Provider ceProvider,
+						  final Provider hmacProvider)
 		throws JOSEException {
 
 
@@ -262,8 +277,7 @@ class AESCBC {
 		// Check MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
 		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
-
-		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput);
+		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, hmacProvider);
 
 		byte[] expectedAuthTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
 
@@ -274,7 +288,7 @@ class AESCBC {
 			macCheckPassed = false;
 		}
 
-		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText, provider);
+		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText, ceProvider);
 
 		if (! macCheckPassed) {
 

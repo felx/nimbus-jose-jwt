@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * header parameters, or to allow custom JWS header parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-01-28)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -49,7 +49,6 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	public MACVerifier(final byte[] sharedSecret) {
 
 		super(sharedSecret);
-
 		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
@@ -63,7 +62,6 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	public MACVerifier(final String sharedSecretString) {
 
 		super(sharedSecretString);
-
 		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
@@ -82,18 +80,8 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		throws JOSEException {
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-
-		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signedContent);
-
+		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
 		Base64URL expectedSignature = Base64URL.encode(hmac);
-
-		if (expectedSignature.equals(signature)) {
-
-			return true;
-
-		} else {
-
-			return false;
-		}
+		return expectedSignature.equals(signature);
 	}
 }

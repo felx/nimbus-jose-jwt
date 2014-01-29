@@ -97,7 +97,7 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
-		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm());
+		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), provider);
 
 		try {
 			verifier.initVerify(publicKey);

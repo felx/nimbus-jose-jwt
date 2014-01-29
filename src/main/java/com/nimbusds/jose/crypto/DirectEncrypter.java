@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-01-28)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -117,7 +117,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, contentEncryptionProvider);
+			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, contentEncryptionProvider, hmacProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
