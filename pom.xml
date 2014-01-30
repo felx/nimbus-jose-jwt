@@ -253,7 +253,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package>com.nimbusds.jose,com.nimbusds.jwt,com.nimbusds.jose.util,com.nimbusds.jose.jwk</Export-Package>
+            <Export-Package>com.nimbusds.jose.*</Export-Package>
           </instructions>
         </configuration>
         <executions>
