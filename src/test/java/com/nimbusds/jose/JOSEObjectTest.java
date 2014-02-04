@@ -17,19 +17,6 @@ import com.nimbusds.jose.util.Base64URL;
 public class JOSEObjectTest extends TestCase {
 	
 	
-	public void testMIMETypes()
-		throws Exception {
-
-		assertTrue(PlainObject.MIME_TYPE_COMPACT.match("application/jose"));
-		assertTrue(PlainObject.MIME_TYPE_COMPACT.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
-		assertEquals(1, PlainObject.MIME_TYPE_COMPACT.getParameterList().size());
-
-		assertTrue(PlainObject.MIME_TYPE_JS.match("application/jose+json"));
-		assertTrue(PlainObject.MIME_TYPE_JS.getParameterList().get("charset").equalsIgnoreCase("UTF-8"));
-		assertEquals(1, PlainObject.MIME_TYPE_JS.getParameterList().size());
-	}
-
-
 	public void testSplitThreeParts() {
 
 		// Implies JWS

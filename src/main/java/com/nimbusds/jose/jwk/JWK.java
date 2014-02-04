@@ -6,9 +6,6 @@ import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParameterList;
-
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
@@ -54,16 +51,7 @@ public abstract class JWK implements JSONAware {
 	 * The MIME type of JWK objects: 
 	 * {@code application/jwk+json; charset=UTF-8}
 	 */
-	public static final ContentType MIME_TYPE;
-
-
-	static {
-
-		final ParameterList params = new ParameterList();
-		params.set("charset", "UTF-8");
-
-		MIME_TYPE = new ContentType("application", "jwk+json", params);
-	}
+	public static final String MIME_TYPE = "application/jwk+json; charset=UTF-8";
 
 
 	/**
