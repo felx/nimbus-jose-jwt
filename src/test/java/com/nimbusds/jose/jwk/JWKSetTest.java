@@ -18,7 +18,7 @@ import net.minidev.json.JSONObject;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-09-20)
+ * @version $version$ (2014-02-04)
  */
 public class JWKSetTest extends TestCase {
 
@@ -541,5 +541,11 @@ public class JWKSetTest extends TestCase {
 		JWKSet publicSet = privateSet.toPublicJWKSet();
 
 		assertEquals(0, publicSet.getKeys().size());
+	}
+
+
+	public void testMIMEType() {
+
+		assertEquals("application/jwk-set+json; charset=UTF-8", JWKSet.MIME_TYPE);
 	}
 }

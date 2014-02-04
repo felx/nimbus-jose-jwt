@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JOSE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-02-04)
  */
 public class JOSEObjectTest extends TestCase {
 	
@@ -152,5 +152,12 @@ public class JOSEObjectTest extends TestCase {
 
 			// ok
 		}
+	}
+
+
+	public void testMIMETypes() {
+
+		assertEquals("application/jose; charset=UTF-8", JOSEObject.MIME_TYPE_COMPACT);
+		assertEquals("application/jose+json; charset=UTF-8", JOSEObject.MIME_TYPE_JS);
 	}
 }
