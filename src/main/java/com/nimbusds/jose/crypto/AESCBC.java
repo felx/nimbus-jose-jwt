@@ -24,7 +24,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-02)
  */
 @ThreadSafe
 class AESCBC {
@@ -282,7 +282,7 @@ class AESCBC {
 
 		boolean macCheckPassed = true;
 
-		if (! org.bouncycastle.util.Arrays.constantTimeAreEqual(expectedAuthTag, authTag)) {
+		if (! ArrayUtils.constantTimeAreEqual(expectedAuthTag, authTag)) {
 			// Thwart timing attacks by delaying exception until after decryption
 			macCheckPassed = false;
 		}
