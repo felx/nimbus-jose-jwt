@@ -3,6 +3,7 @@ package com.nimbusds.jose.crypto;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
@@ -30,7 +31,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-06)
+ * @version $version$ (2014-01-28)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
@@ -79,7 +80,8 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	protected static Signature getRSASignerAndVerifier(final JWSAlgorithm alg)
+	protected static Signature getRSASignerAndVerifier(final JWSAlgorithm alg,
+							   final Provider provider)
 		throws JOSEException {
 
 		// The JCE crypto provider uses different alg names
@@ -129,7 +131,11 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 		Signature signature;
 
 		try {
-			 signature = Signature.getInstance(internalAlgName);
+			if (provider != null) {
+				signature = Signature.getInstance(internalAlgName, provider);
+			} else {
+				signature = Signature.getInstance(internalAlgName);
+			}
 
 		} catch (NoSuchAlgorithmException e) {
 

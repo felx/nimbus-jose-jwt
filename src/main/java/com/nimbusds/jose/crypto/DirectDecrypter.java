@@ -42,7 +42,7 @@ import com.nimbusds.jose.util.StringUtils;
  * parameters.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-01-28)
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
 
@@ -138,7 +138,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider);
+			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider, macProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 

@@ -58,7 +58,7 @@ class AES {
 	 * @throws JOSEException If an AES key couldn't be generated.
 	 */
 	public static SecretKey generateKey(final int keyBitLength,
-		                                final SecureRandom random)
+					    final SecureRandom random)
 		throws JOSEException {
 
 		KeyGenerator aesKeyGenerator = createKeyGenerator();

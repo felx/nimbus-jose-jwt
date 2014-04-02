@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.Provider;
 import java.util.Collections;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import com.nimbusds.jose.JWSAlgorithmProvider;
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-02-22)
+ * @version $version$ (2014-01-28)
  */
 abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 
@@ -21,6 +22,13 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 	 * The supported algorithms.
 	 */
 	private final Set<JWSAlgorithm> algs;
+
+
+	/**
+	 * The underlying cryptographic provider, {@code null} if not specified
+	 * (implies default one).
+	 */
+	protected Provider provider = null;
 
 
 	/**
@@ -43,6 +51,13 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 	public Set<JWSAlgorithm> supportedAlgorithms() {
 
 		return algs;
+	}
+
+
+	@Override
+	public void setProvider(final Provider provider) {
+
+		this.provider = provider;
 	}
 }
 

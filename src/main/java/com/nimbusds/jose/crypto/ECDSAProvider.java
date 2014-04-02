@@ -114,25 +114,25 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	protected static ECDSAParameters getECDSAParameters(final JWSAlgorithm alg)
 		throws JOSEException {
 
-		ASN1ObjectIdentifier oid = null;
-		Digest digest = null;
+		ASN1ObjectIdentifier oid;
+		Digest digest;
 
 		if (alg.equals(JWSAlgorithm.ES256)) {
 
 			oid = SECObjectIdentifiers.secp256r1;
 			digest = new SHA256Digest();
-		}
-		else if (alg.equals(JWSAlgorithm.ES384)) {
+
+		} else if (alg.equals(JWSAlgorithm.ES384)) {
 
 			oid = SECObjectIdentifiers.secp384r1;
 			digest = new SHA384Digest();
-		}
-		else if (alg.equals(JWSAlgorithm.ES512)) {
+
+		} else if (alg.equals(JWSAlgorithm.ES512)) {
 
 			oid = SECObjectIdentifiers.secp521r1;
 			digest = new SHA512Digest();
-		}
-		else {
+
+		} else {
 			throw new JOSEException("Unsupported ECDSA algorithm, must be ES256, ES384 or ES512");
 		}
 
