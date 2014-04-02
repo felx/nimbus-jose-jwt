@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
     
@@ -14,17 +16,17 @@
 	<version>2.22.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
     
-	<name>NimbusDS JOSE+JWT</name>
-	<description>Nimbus JOSE+JWT is a Java library that implements the 
-		Javascript Object Signing and Encryption (JOSE) spec suite and 
-		the closely related JSON Web Token (JWT) spec. 
+	<name>Nimbus JOSE+JWT</name>
+	<description>
+        Java library for Javascript Object Signing and Encryption (JOSE) and
+        JSON Web Tokens (JWT)
 	</description>
 
-	<url>https://bitbucket.org/nimbusds/nimbus-jose-jwt</url>
+	<url>https://bitbucket.org/connect2id/nimbus-jose-jwt</url>
 
 	<organization>
-		<name>NimbusDS</name>
-		<url>http://www.nimbusds.com</url>
+		<name>Connect2id Ltd.</name>
+		<url>http://connect2id.com</url>
 	</organization>
     
 	<licenses>
@@ -36,9 +38,9 @@
 	</licenses>
     
 	<scm>
-		<connection>scm:git:https://bitbucket.org/nimbusds/nimbus-jose-jwt.git</connection>
-		<developerConnection>scm:git:git@bitbucket.org:nimbusds/nimbus-jose-jwt.git</developerConnection>
-		<url>https://bitbucket.org/nimbusds/nimbus-jose-jwt</url>
+		<connection>scm:git:https://bitbucket.org/connect2id/nimbus-jose-jwt.git</connection>
+		<developerConnection>scm:git:git@bitbucket.org:connect2id/nimbus-jose-jwt.git</developerConnection>
+		<url>https://bitbucket.org/connect2id/nimbus-jose-jwt</url>
 		<tag>HEAD</tag>
 	</scm>
     
@@ -46,7 +48,7 @@
 		<developer>
 			<id>vdzhuvinov</id>
 			<name>Vladimir Dzhuvinov</name>
-			<email>vladimir@nimbusds.com</email>
+			<email>vladimir@dzhuvinov.com</email>
 		</developer>
 	</developers>
     
