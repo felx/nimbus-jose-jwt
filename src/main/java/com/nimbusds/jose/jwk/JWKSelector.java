@@ -38,7 +38,7 @@ public class JWKSelector {
 	/**
 	 * The selected key uses.
 	 */
-	private Set<Use> uses;
+	private Set<KeyUse> uses;
 
 
 	/**
@@ -118,7 +118,7 @@ public class JWKSelector {
 	 *
 	 * @return The key uses, {@code null} if not specified.
 	 */
-	public Set<Use> getKeyUses() {
+	public Set<KeyUse> getKeyUses() {
 
 		return uses;
 	}
@@ -129,12 +129,12 @@ public class JWKSelector {
 	 *
 	 * @param use The key use, {@code null} if not specified.
 	 */
-	public void setKeyUse(final Use use) {
+	public void setKeyUse(final KeyUse use) {
 
 		if (use == null) {
 			uses = null;
 		} else {
-			uses = new HashSet<Use>(Arrays.asList(use));
+			uses = new HashSet<KeyUse>(Arrays.asList(use));
 		}
 	}
 
@@ -144,9 +144,9 @@ public class JWKSelector {
 	 *
 	 * @param uses The key uses.
 	 */
-	public void setKeyUses(final Use ... uses) {
+	public void setKeyUses(final KeyUse... uses) {
 
-		setKeyUses(new HashSet<Use>(Arrays.asList(uses)));
+		setKeyUses(new HashSet<KeyUse>(Arrays.asList(uses)));
 	}
 
 
@@ -155,7 +155,7 @@ public class JWKSelector {
 	 *
 	 * @param uses The key uses, {@code null} if not specified.
 	 */
-	public void setKeyUses(final Set<Use> uses) {
+	public void setKeyUses(final Set<KeyUse> uses) {
 
 		this.uses = uses;
 	}

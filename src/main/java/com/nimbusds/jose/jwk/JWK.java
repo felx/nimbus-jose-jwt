@@ -3,8 +3,10 @@ package com.nimbusds.jose.jwk;
 
 import java.net.URL;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
@@ -24,6 +26,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <ul>
  *     <li>{@link #getKeyType kty} (required)
  *     <li>{@link #getKeyUse use} (optional)
+ *     <li>{@link #getKeyOperations key_ops} (optional)
  *     <li>{@link #getKeyID kid} (optional)
  * </ul>
  *
@@ -42,7 +45,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-05-29)
+ * @version $version$ (2014-04-02)
  */
 public abstract class JWK implements JSONAware {
 
@@ -61,9 +64,15 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * The key use, optional.
+	 * The public key use, optional.
 	 */
-	private final Use use;
+	private final KeyUse use;
+
+
+	/**
+	 * The key operations, optional.
+	 */
+	private final Set<KeyOperation> ops;
 
 
 	/**
@@ -100,8 +109,9 @@ public abstract class JWK implements JSONAware {
 	 * Creates a new JSON Web Key (JWK).
 	 *
 	 * @param kty The key type. Must not be {@code null}.
-	 * @param use The key use, {@code null} if not specified or if the key 
-	 *            is intended for signing as well as encryption.
+	 * @param use The public key use, {@code null} if not specified or if
+	 *            the key is intended for signing as well as encryption.
+	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
@@ -111,15 +121,28 @@ public abstract class JWK implements JSONAware {
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
 	 */
-	public JWK(final KeyType kty, final Use use, final Algorithm alg, final String kid,
-		   final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+	public JWK(final KeyType kty,
+		   final KeyUse use,
+		   final Set<KeyOperation> ops,
+		   final Algorithm alg,
+		   final String kid,
+		   final URL x5u,
+		   final Base64URL x5t,
+		   final List<Base64> x5c) {
 
 		if (kty == null) {
-			throw new IllegalArgumentException("The key type \"kty\" must not be null");
+			throw new IllegalArgumentException("The key type \"kty\" parameter must not be null");
 		}
 
 		this.kty = kty;
+
+		if (use != null && ops != null) {
+			throw new IllegalArgumentException("They key use \"use\" and key options \"key_opts\" parameters cannot be set together");
+		}
+
 		this.use = use;
+		this.ops = ops;
+
 		this.alg = alg;
 		this.kid = kid;
 
@@ -141,14 +164,25 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Gets the use ({@code use}) of this JWK.
+	 * Gets the public use ({@code use}) of this JWK.
 	 *
-	 * @return The key use, {@code null} if not specified or if the key is
-	 *         intended for signing as well as encryption.
+	 * @return The public key use, {@code null} if not specified or if the
+	 *         key is intended for signing as well as encryption.
 	 */
-	public Use getKeyUse() {
+	public KeyUse getKeyUse() {
 
 		return use;
+	}
+
+
+	/**
+	 * Gets the operations ({@code key_ops}) for this JWK.
+	 *
+	 * @return The key operations, {@code null} if not specified.
+	 */
+	public Set<KeyOperation> getKeyOperations() {
+
+		return ops;
 	}
 
 
@@ -259,14 +293,18 @@ public abstract class JWK implements JSONAware {
 		o.put("kty", kty.getValue());
 
 		if (use != null) {
+			o.put("use", use.identifier());
+		}
 
-			if (use == Use.SIGNATURE) {
-				o.put("use", "sig");
+		if (ops != null) {
+
+			List<String> sl = new ArrayList<String>(ops.size());
+
+			for (KeyOperation op: ops) {
+				sl.add(op.identifier());
 			}
 
-			if (use == Use.ENCRYPTION) {
-				o.put("use", "enc");
-			}
+			o.put("key_ops", sl);
 		}
 
 		if (alg != null) {

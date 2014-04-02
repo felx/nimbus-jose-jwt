@@ -15,6 +15,7 @@ import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 
@@ -65,7 +66,7 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-01-24)
+ * @version $version$ (2014-04-02)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -327,9 +328,15 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * The key use, optional.
+		 * The public key use, optional.
 		 */
-		private Use use;
+		private KeyUse use;
+
+
+		/**
+		 * The key operations, optional.
+		 */
+		private Set<KeyOperation> ops;
 
 
 		/**
@@ -454,7 +461,7 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * Sets the use ({@code use}) of the JWK.
+		 * Sets the use ({@code use}) of the JWK (for a public key).
 		 *
 		 * @param use The key use, {@code null} if not specified or if 
 		 *            the key is intended for signing as well as 
@@ -462,9 +469,25 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder keyUse(final Use use) {
+		public Builder keyUse(final KeyUse use) {
 
 			this.use = use;
+			return this;
+		}
+
+
+		/**
+		 * Sets the operations ({@code key_ops}) of the JWK (for a
+		 * non-public key).
+		 *
+		 * @param ops The key operations, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keyOperations(final Set<KeyOperation> ops) {
+
+			this.ops = ops;
 			return this;
 		}
 
@@ -551,16 +574,25 @@ public final class ECKey extends JWK {
 		 * Builds a new octet sequence JWK.
 		 *
 		 * @return The octet sequence JWK.
+		 *
+		 * @throws IllegalStateException If the JWK parameters were
+		 *                               inconsistently specified.
 		 */
 		public ECKey build() {
 
-			if (d == null) {
-				// Public key
-				return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);
-			}
+			try {
+				if (d == null) {
+					// Public key
+					return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c);
+				}
 
-			// Pair
-			return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
+				// Pair
+				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c);
+
+			} catch (IllegalArgumentException e) {
+
+				throw new IllegalStateException(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -634,7 +666,9 @@ public final class ECKey extends JWK {
 	 *            It is represented as the Base64URL encoding of the 
 	 *            coordinate's big endian representation. Must not be 
 	 *            {@code null}.
-	 * @param use The key use, {@code null} if not specified.
+	 * @param use The public key use, {@code null} if not specified or if
+	 *            the key is intended for signing as well as encryption.
+	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
@@ -645,10 +679,10 @@ public final class ECKey extends JWK {
 	 *            specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
-		     final Use use, final Algorithm alg, final String kid,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		super(KeyType.EC, use, alg, kid, x5u, x5t, x5c);
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
 
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
@@ -689,7 +723,9 @@ public final class ECKey extends JWK {
 	 *            It is represented as the Base64URL encoding of the 
 	 *            coordinate's big endian representation. Must not be 
 	 *            {@code null}.
-	 * @param use The key use, {@code null} if not specified.
+	 * @param use The public key use, {@code null} if not specified or if
+	 *            the key is intended for signing as well as encryption.
+	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
@@ -700,10 +736,10 @@ public final class ECKey extends JWK {
 	 *            specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final Base64URL d,
-		     final Use use, final Algorithm alg, final String kid,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		super(KeyType.EC, use, alg, kid, x5u, x5t, x5c);
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
 
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
@@ -737,7 +773,9 @@ public final class ECKey extends JWK {
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
 	 * @param pub The public EC key to represent. Must not be {@code null}.
-	 * @param use The key use, {@code null} if not specified.
+	 * @param use The public key use, {@code null} if not specified or if
+	 *            the key is intended for signing as well as encryption.
+	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID, {@code null} if not specified.
@@ -748,13 +786,13 @@ public final class ECKey extends JWK {
 	 *            specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, 
-		     final Use use, final Algorithm alg, final String kid,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv, 
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
-		     use, alg, kid,
+		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
 	}
 
@@ -768,7 +806,9 @@ public final class ECKey extends JWK {
 	 *             {@code null}.
 	 * @param priv The private EC key to represent. Must not be 
 	 *             {@code null}.
-	 * @param use  The key use, {@code null} if not specified.
+	 * @param use  The public key use, {@code null} if not specified or if
+	 *             the key is intended for signing as well as encryption.
+	 * @param ops  The key operations, {@code null} if not specified.
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
 	 * @param kid  The key ID, {@code null} if not specified.
@@ -780,14 +820,14 @@ public final class ECKey extends JWK {
 	 *             specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, final ECPrivateKey priv, 
-		     final Use use, final Algorithm alg, final String kid,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv,
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 		     encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS()),
-		     use, alg, kid,
+		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
 	}
 
@@ -960,7 +1000,8 @@ public final class ECKey extends JWK {
 	@Override
 	public ECKey toPublicJWK() {
 
-		return new ECKey(getCurve(), getX(), getY(), getKeyUse(), getAlgorithm(), getKeyID(),
+		return new ECKey(getCurve(), getX(), getY(),
+			         getKeyUse(), getKeyOperations(), getAlgorithm(), getKeyID(),
 			         getX509CertURL(), getX509CertThumbprint(), getX509CertChain());
 	}
 	
@@ -1028,17 +1069,24 @@ public final class ECKey extends JWK {
 			throw new ParseException("The key type \"kty\" must be EC", 0);
 		}
 		
-		// optional private key
+		// Get optional private key
 		Base64URL d = null;
 		if (jsonObject.get("d") != null) {
 			d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
 		}
 		
 		// Get optional key use
-		Use use = null;
+		KeyUse use = null;
 
 		if (jsonObject.containsKey("use")) {
-			use = Use.parse(JSONObjectUtils.getString(jsonObject, "use"));
+			use = KeyUse.parse(JSONObjectUtils.getString(jsonObject, "use"));
+		}
+
+		// Get optional key operations
+		Set<KeyOperation> ops = null;
+
+		if (jsonObject.containsKey("key_ops")) {
+			ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
 		}
 
 		// Get optional intended algorithm
@@ -1076,13 +1124,20 @@ public final class ECKey extends JWK {
 			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
 		}
 
-		if (d == null) {
-			// Public key
-			return new ECKey(crv, x, y, use, alg, kid, x5u, x5t, x5c);
+		try {
+			if (d == null) {
+				// Public key
+				return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c);
 
-		} else {
-			// Key pair
-			return new ECKey(crv, x, y, d, use, alg, kid, x5u, x5t, x5c);
+			} else {
+				// Key pair
+				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c);
+			}
+
+		} catch (IllegalArgumentException ex) {
+
+			// Conflicting 'use' and 'key_ops'
+			throw new ParseException(ex.getMessage(), 0);
 		}
 	}
 }

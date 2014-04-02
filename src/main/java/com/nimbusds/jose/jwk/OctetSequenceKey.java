@@ -4,6 +4,7 @@ package com.nimbusds.jose.jwk;
 import java.net.URL;
 import java.util.List;
 import java.text.ParseException;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 
@@ -32,7 +33,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-12-22)
+ * @version $version$ (2014-04-02)
  */
 @Immutable
 public class OctetSequenceKey extends JWK {
@@ -65,9 +66,9 @@ public class OctetSequenceKey extends JWK {
 
 
 		/**
-		 * The key use, optional.
+		 * The key operations, optional.
 		 */
-		private Use use;
+		private Set<KeyOperation> ops;
 
 
 		/**
@@ -118,17 +119,17 @@ public class OctetSequenceKey extends JWK {
 
 
 		/**
-		 * Sets the use ({@code use}) of the JWK.
+		 * Sets the operations ({@code key_ops}) of the JWK (for a
+		 * non-public key).
 		 *
-		 * @param use The key use, {@code null} if not specified or if 
-		 *            the key is intended for signing as well as 
-		 *            encryption.
+		 * @param ops The key operations, {@code null} if not
+		 *            specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder keyUse(final Use use) {
+		public Builder keyOperations(final Set<KeyOperation> ops) {
 
-			this.use = use;
+			this.ops = ops;
 			return this;
 		}
 
@@ -213,10 +214,19 @@ public class OctetSequenceKey extends JWK {
 		 * Builds a new octet sequence JWK.
 		 *
 		 * @return The octet sequence JWK.
+		 *
+		 * @throws IllegalStateException If the JWK parameters were
+		 *                               inconsistently specified.
 		 */
 		public OctetSequenceKey build() {
 
-			return new OctetSequenceKey(k, use, alg, kid, x5u, x5t, x5c);
+			try {
+				return new OctetSequenceKey(k, ops, alg, kid, x5u, x5t, x5c);
+
+			} catch (IllegalArgumentException e) {
+
+				throw new IllegalStateException(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -228,7 +238,7 @@ public class OctetSequenceKey extends JWK {
 	 * @param k   The key value. It is represented as the Base64URL 
 	 *            encoding of value's big endian representation. Must not 
 	 *            be {@code null}.
-	 * @param use The key use. {@code null} if not specified.
+	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
 	 * @param kid The key ID. {@code null} if not specified.
@@ -238,10 +248,11 @@ public class OctetSequenceKey extends JWK {
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
 	 */
-	public OctetSequenceKey(final Base64URL k, final Use use, final Algorithm alg, final String kid,
+	public OctetSequenceKey(final Base64URL k,
+				final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		                final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	
-		super(KeyType.OCT, use, alg, kid, x5u, x5t, x5c);
+		super(KeyType.OCT, null, ops, alg, kid, x5u, x5t, x5c);
 
 		if (k == null) {
 			throw new IllegalArgumentException("The key value must not be null");
@@ -355,12 +366,12 @@ public class OctetSequenceKey extends JWK {
 
 			throw new ParseException("The key type \"kty\" must be oct", 0);
 		}
-		
-		// Get optional key use
-		Use use = null;
 
-		if (jsonObject.containsKey("use")) {
-			use = Use.parse(JSONObjectUtils.getString(jsonObject, "use"));
+		// Get optional key operations
+		Set<KeyOperation> ops = null;
+
+		if (jsonObject.containsKey("key_ops")) {
+			ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
 		}
 
 		// Get optional intended algorithm
@@ -398,6 +409,6 @@ public class OctetSequenceKey extends JWK {
 			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
 		}
 
-		return new OctetSequenceKey(k, use, alg, kid, x5u, x5t, x5c);
+		return new OctetSequenceKey(k, ops, alg, kid, x5u, x5t, x5c);
 	}
 }

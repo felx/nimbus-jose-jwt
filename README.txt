@@ -70,7 +70,7 @@ Related IETF drafts:
 
     [JWE] draft-ietf-jose-json-web-encryption-18
 
-    [JWK] draft-ietf-jose-json-web-key-18
+    [JWK] draft-ietf-jose-json-web-key-25
 
     [JWT] draft-ietf-oauth-json-web-token-13
 

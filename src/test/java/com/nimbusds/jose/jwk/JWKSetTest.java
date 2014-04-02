@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.nimbusds.jose.Algorithm;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWEAlgorithm;
@@ -62,7 +61,7 @@ public class JWKSetTest extends TestCase {
 
 		assertTrue(key instanceof ECKey);
 		assertEquals("1", key.getKeyID());
-		assertEquals(Use.ENCRYPTION, key.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
 		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
@@ -97,14 +96,14 @@ public class JWKSetTest extends TestCase {
 		ECKey ecKey = new ECKey(ECKey.Curve.P_256, 
 				new Base64URL("abc"), 
 				new Base64URL("def"),
-				Use.ENCRYPTION,
+				KeyUse.ENCRYPTION,
 				JWEAlgorithm.ECDH_ES,
 				"1234",
 				null, null, null);
 
 		RSAKey rsaKey = new RSAKey(new Base64URL("abc"),
 				new Base64URL("def"),
-				Use.SIGNATURE,
+				KeyUse.SIGNATURE,
 				JWSAlgorithm.RS256,
 				"5678",
 				null, null, null);
@@ -133,7 +132,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
 		assertEquals("abc", ecKey.getX().toString());
 		assertEquals("def", ecKey.getY().toString());
-		assertEquals(Use.ENCRYPTION, ecKey.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
 		assertEquals(JWEAlgorithm.ECDH_ES, ecKey.getAlgorithm());
 		assertEquals("1234", ecKey.getKeyID());
 
@@ -142,7 +141,7 @@ public class JWKSetTest extends TestCase {
 		assertNotNull(rsaKey);
 		assertEquals("abc", rsaKey.getModulus().toString());
 		assertEquals("def", rsaKey.getPublicExponent().toString());
-		assertEquals(Use.SIGNATURE, rsaKey.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals(JWSAlgorithm.RS256, rsaKey.getAlgorithm());
 		assertEquals("5678", rsaKey.getKeyID());
 
@@ -259,7 +258,7 @@ public class JWKSetTest extends TestCase {
 		// Check EC key
 		JWK key = keyList.get(0);
 		assertTrue(key instanceof ECKey);
-		assertEquals(Use.ENCRYPTION, key.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 		assertNull(key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 
@@ -409,7 +408,7 @@ public class JWKSetTest extends TestCase {
 
 		assertTrue(key instanceof ECKey);
 		assertEquals("1", key.getKeyID());
-		assertEquals(Use.ENCRYPTION, key.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
 		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
@@ -470,7 +469,7 @@ public class JWKSetTest extends TestCase {
 
 		assertTrue(key instanceof ECKey);
 		assertEquals("1", key.getKeyID());
-		assertEquals(Use.ENCRYPTION, key.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
 		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());

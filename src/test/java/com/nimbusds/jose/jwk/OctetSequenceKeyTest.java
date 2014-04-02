@@ -30,10 +30,10 @@ public class OctetSequenceKeyTest extends TestCase {
 		List<Base64> x5c = new LinkedList<Base64>();
 		x5c.add(new Base64("def"));
 
-		OctetSequenceKey key = new OctetSequenceKey(k, Use.SIGNATURE, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
+		OctetSequenceKey key = new OctetSequenceKey(k, KeyUse.SIGNATURE, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -61,7 +61,7 @@ public class OctetSequenceKeyTest extends TestCase {
 
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -94,7 +94,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		x5c.add(new Base64("def"));
 
 		OctetSequenceKey key = new OctetSequenceKey.Builder(k).
-			keyUse(Use.SIGNATURE).
+			keyUse(KeyUse.SIGNATURE).
 			algorithm(JWSAlgorithm.HS256).
 			keyID("1").
 			x509CertURL(x5u).
@@ -103,7 +103,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		                       build();
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -131,7 +131,7 @@ public class OctetSequenceKeyTest extends TestCase {
 
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());

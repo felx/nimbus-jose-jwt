@@ -9,7 +9,6 @@ import java.security.interfaces.ECPublicKey;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.nimbusds.jose.util.BigIntegerUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -101,10 +100,10 @@ public class ECKeyTest extends TestCase {
 		x5c.add(new Base64("def"));
 
 		ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
-			              Use.SIGNATURE, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
+			              KeyUse.SIGNATURE, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
 		
 		// Test getters
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -124,7 +123,7 @@ public class ECKeyTest extends TestCase {
 		key = ECKey.parse(jwkString);
 
 		// Test getters
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 
@@ -140,7 +139,7 @@ public class ECKeyTest extends TestCase {
 
 		key = key.toPublicJWK();
 		
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -166,7 +165,7 @@ public class ECKeyTest extends TestCase {
 
 		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y).
 			d(ExampleKeyP256.D).
-			keyUse(Use.SIGNATURE).
+			keyUse(KeyUse.SIGNATURE).
 			algorithm(JWSAlgorithm.ES256).
 			keyID("1").
 			x509CertURL(x5u).
@@ -175,7 +174,7 @@ public class ECKeyTest extends TestCase {
 		        build();
 		
 		// Test getters
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -195,7 +194,7 @@ public class ECKeyTest extends TestCase {
 		key = ECKey.parse(jwkString);
 
 		// Test getters
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 
@@ -211,7 +210,7 @@ public class ECKeyTest extends TestCase {
 
 		key = key.toPublicJWK();
 		
-		assertEquals(Use.SIGNATURE, key.getKeyUse());
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());

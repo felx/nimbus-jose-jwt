@@ -10,7 +10,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.Use;
+import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -86,7 +86,7 @@ public class JWEHeaderTest extends TestCase {
 
 		final Base64URL mod = new Base64URL("abc123");
 		final Base64URL exp = new Base64URL("def456");
-		final Use use = Use.ENCRYPTION;
+		final KeyUse use = KeyUse.ENCRYPTION;
 		final String kid = "1234";
 
 		RSAKey jwk = new RSAKey(mod, exp, use, JWEAlgorithm.RSA1_5, kid, null, null, null);
@@ -125,7 +125,7 @@ public class JWEHeaderTest extends TestCase {
 		assertNotNull(jwk);
 		assertEquals(new Base64URL("abc123"), jwk.getModulus());
 		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
-		assertEquals(Use.ENCRYPTION, jwk.getKeyUse());
+		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
 		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
 		assertEquals("1234", jwk.getKeyID());
 
