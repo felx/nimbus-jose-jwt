@@ -12,10 +12,11 @@ import com.nimbusds.jose.Algorithm;
  * <p>Supports key selection by:
  *
  * <ul>
- *     <li>Any, unspecified, one or more key types.
- *     <li>Any, unspecified, one or more key uses.
- *     <li>Any, unspecified, one or more key algorithms.
- *     <li>Any, unspecified, one or more key identifiers.
+ *     <li>Any, unspecified, one or more key types (typ).
+ *     <li>Any, unspecified, one or more key uses (use).
+ *     <li>Any, unspecified, one or more key operations (key_ops).
+ *     <li>Any, unspecified, one or more key algorithms (alg).
+ *     <li>Any, unspecified, one or more key identifiers (kid).
  *     <li>Private only key.
  *     <li>Public only key.
  * </ul>
@@ -24,7 +25,7 @@ import com.nimbusds.jose.Algorithm;
  * supported.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-17)
+ * @version $version$ (2014-04-03)
  */
 public class JWKSelector {
 
@@ -36,9 +37,15 @@ public class JWKSelector {
 
 
 	/**
-	 * The selected key uses.
+	 * The selected public key uses.
 	 */
 	private Set<KeyUse> uses;
+
+
+	/**
+	 * The selected key operations.
+	 */
+	private Set<KeyOperation> ops;
 
 
 	/**
@@ -114,9 +121,9 @@ public class JWKSelector {
 
 
 	/**
-	 * Gets the selected key uses.
+	 * Gets the selected public key uses.
 	 *
-	 * @return The key uses, {@code null} if not specified.
+	 * @return The public key uses, {@code null} if not specified.
 	 */
 	public Set<KeyUse> getKeyUses() {
 
@@ -125,9 +132,9 @@ public class JWKSelector {
 
 
 	/**
-	 * Sets a singled selected key use.
+	 * Sets a single selected public key use.
 	 *
-	 * @param use The key use, {@code null} if not specified.
+	 * @param use The public key use, {@code null} if not specified.
 	 */
 	public void setKeyUse(final KeyUse use) {
 
@@ -140,9 +147,9 @@ public class JWKSelector {
 
 
 	/**
-	 * Sets the selected key uses.
+	 * Sets the selected public key uses.
 	 *
-	 * @param uses The key uses.
+	 * @param uses The public key uses.
 	 */
 	public void setKeyUses(final KeyUse... uses) {
 
@@ -151,13 +158,61 @@ public class JWKSelector {
 
 
 	/**
-	 * Sets the selected key uses.
+	 * Sets the selected public key uses.
 	 *
-	 * @param uses The key uses, {@code null} if not specified.
+	 * @param uses The public key uses, {@code null} if not specified.
 	 */
 	public void setKeyUses(final Set<KeyUse> uses) {
 
 		this.uses = uses;
+	}
+
+
+	/**
+	 * Gets the selected key operations.
+	 *
+	 * @return The key operations, {@code null} if not specified.
+	 */
+	public Set<KeyOperation> getKeyOperations() {
+
+		return ops;
+	}
+
+
+	/**
+	 * Sets a single selected key operation.
+	 *
+	 * @param op The key operation, {@code null} if not specified.
+	 */
+	public void setKeyOperation(final KeyOperation op) {
+
+		if (op == null) {
+			ops = null;
+		} else {
+			ops = new HashSet<KeyOperation>(Arrays.asList(op));
+		}
+	}
+
+
+	/**
+	 * Sets the selected key operations.
+	 *
+	 * @param ops The key operations.
+	 */
+	public void setKeyOperations(final KeyOperation... ops) {
+
+		setKeyOperations(new HashSet<KeyOperation>(Arrays.asList(ops)));
+	}
+
+
+	/**
+	 * Sets the selected key operations.
+	 *
+	 * @param ops The key operations, {@code null} if not specified.
+	 */
+	public void setKeyOperations(final Set<KeyOperation> ops) {
+
+		this.ops = ops;
 	}
 
 
@@ -331,6 +386,17 @@ public class JWKSelector {
 
 			if (uses != null && ! uses.contains(key.getKeyUse()))
 				continue;
+
+			if (ops != null) {
+
+				if (ops.contains(null) && key.getKeyOperations() == null) {
+					// pass
+				} else if (key.getKeyOperations() != null && ops.containsAll(key.getKeyOperations())) {
+					// pass
+				} else {
+					continue;
+				}
+			}
 
 			if (algs != null && ! algs.contains(key.getAlgorithm()))
 				continue;
