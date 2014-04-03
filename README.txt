@@ -1,25 +1,23 @@
-Nimbus JOSE+JWT
+Nimbus JOSE + JWT
 
 
-Nimbus JOSE+JWT is an open source (Apache 2.0) Java library that implements the
-Javascript Object Signing and Encryption (JOSE) spec suite and the closely
+Nimbus JOSE + JWT is an open source (Apache 2.0) Java library that implements
+the Javascript Object Signing and Encryption (JOSE) spec suite and the closely
 related JSON Web Token (JWT) spec.
 
 
 The library supports creating, querying, serialising and parsing of the
 following JOSE and JWT objects:
 
-    Plain (unsecured) JOSE objects.
+* Plain (unsecured) JOSE objects.
 
-    JSON Web Signature (JWS) objects.
+* JSON Web Signature (JWS) objects.
 
-    JSON Web Encryption (JWE) objects.
+* JSON Web Encryption (JWE) objects.
 
-    JSON Web Key (JWK) objects and JSON Web Key (JWK) Sets.
+* JSON Web Key (JWK) objects and JSON Web Key (JWK) Sets.
 
-    Plain, signed and encrypted JSON Web Tokens (JWTs).
-
-
+* Plain, signed and encrypted JSON Web Tokens (JWTs).
 
 
 The JOSE and JWT object representation is completely decoupled from JSON Web
@@ -31,24 +29,24 @@ standard algorithm implementations or plug their own.
 The library currently ships a ready implementation of the following standard
 algorithms:
 
-    HMAC integrity with HS256, HS384 and HS512.
+* HMAC integrity with HS256, HS384 and HS512.
 
-    RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
+* RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
 
-    RSASSA-PSS signatures with PS256, PS384 and PS512.
+* RSASSA-PSS signatures with PS256, PS384 and PS512.
 
-    EC signatures with ES256, ES384 and ES512.
+* EC signatures with ES256, ES384 and ES512.
 
-    RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384,
-    A256CBC-HS512, A128GCM, A192GCM and A256GCM.
+* RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384,
+  A256CBC-HS512, A128GCM, A192GCM and A256GCM.
 
-    RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
-    A128GCM, A192GCM and A256GCM.
+* RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
+  A128GCM, A192GCM and A256GCM.
 
-    Direct shared symmetric key encryption with A128CBC-HS256, A192CBC-HS384,
-    A256CBC-HS512, A128GCM, A192GCM and A256GCM.
+* Direct shared symmetric key encryption with A128CBC-HS256, A192CBC-HS384,
+  A256CBC-HS512, A128GCM, A192GCM and A256GCM.
 
-    JWE Compression with DEFLATE.
+* JWE Compression with DEFLATE.
 
 
 AES Key Wray and ECDH-ES encryption is on the roadmap, you're welcome to
@@ -64,30 +62,29 @@ http://nimbusds.com/files/jose-jwt/javadoc/
 
 Related IETF drafts:
 
-    [JWA] draft-ietf-jose-json-web-algorithms-18
+* [JWA] draft-ietf-jose-json-web-algorithms-25
 
-    [JWS] draft-ietf-jose-json-web-signature-18
+* [JWS] draft-ietf-jose-json-web-signature-25
 
-    [JWE] draft-ietf-jose-json-web-encryption-18
+* [JWE] draft-ietf-jose-json-web-encryption-25
 
-    [JWK] draft-ietf-jose-json-web-key-25
+* [JWK] draft-ietf-jose-json-web-key-25
 
-    [JWT] draft-ietf-oauth-json-web-token-13
+* [JWT] draft-ietf-oauth-json-web-token-19
 
 
-Dependencies:
+Dependencies
 
 The Nimbus JOSE+JWT library has minimal dependencies.
 
-    Apache Commons Codec for Base64 and Base64URL encoding and decoding.
+* Apache Commons Codec for Base64 and Base64URL encoding and decoding.
 
-    javax.mail for MIME type handling.
+* JSON Smart for highly efficient parsing and serialisation of JSON.
 
-    JSON Smart for highly efficient parsing and serialisation of JSON.
+* JCIP for concurrency annotations.
 
-    JCIP for concurrency annotations.
-
-    [optional] The BouncyCastle.org cryptography provider for Java, for ECDSA signing and verification.
+* [optional] The BouncyCastle.org cryptography provider for Java, for ECDSA
+  signing and verification.
 
 
 For Maven add:
@@ -95,17 +92,17 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.22</version>
+    <version>2.23</version>
 </dependency>
 
 
 Uses
 
-    JWT bearer tokens in OAuth 2.0
+* JWT bearer tokens in OAuth 2.0
 
-    OpenID Connect
+* OpenID Connect
 
-    XMPP
+* XMPP
 
 
 JWK generator
