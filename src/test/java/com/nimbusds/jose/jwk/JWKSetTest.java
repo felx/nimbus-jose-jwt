@@ -7,17 +7,18 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import net.minidev.json.JSONObject;
+
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
-import net.minidev.json.JSONObject;
 
 
 /**
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-02-04)
+ * @version $version$ (2014-04-02)
  */
 public class JWKSetTest extends TestCase {
 
@@ -97,6 +98,7 @@ public class JWKSetTest extends TestCase {
 				new Base64URL("abc"), 
 				new Base64URL("def"),
 				KeyUse.ENCRYPTION,
+			        null,
 				JWEAlgorithm.ECDH_ES,
 				"1234",
 				null, null, null);
@@ -104,6 +106,7 @@ public class JWKSetTest extends TestCase {
 		RSAKey rsaKey = new RSAKey(new Base64URL("abc"),
 				new Base64URL("def"),
 				KeyUse.SIGNATURE,
+			        null,
 				JWSAlgorithm.RS256,
 				"5678",
 				null, null, null);
@@ -133,6 +136,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals("abc", ecKey.getX().toString());
 		assertEquals("def", ecKey.getY().toString());
 		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
+		assertNull(ecKey.getKeyOperations());
 		assertEquals(JWEAlgorithm.ECDH_ES, ecKey.getAlgorithm());
 		assertEquals("1234", ecKey.getKeyID());
 
@@ -142,6 +146,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals("abc", rsaKey.getModulus().toString());
 		assertEquals("def", rsaKey.getPublicExponent().toString());
 		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
+		assertNull(rsaKey.getKeyOperations());
 		assertEquals(JWSAlgorithm.RS256, rsaKey.getAlgorithm());
 		assertEquals("5678", rsaKey.getKeyID());
 
@@ -187,6 +192,7 @@ public class JWKSetTest extends TestCase {
 		assertTrue(key instanceof OctetSequenceKey);
 		assertEquals(KeyType.OCT, key.getKeyType());
 		assertNull(key.getKeyUse());
+		assertNull(key.getKeyOperations());
 		assertNull(key.getAlgorithm());
 		assertEquals("HMAC key used in JWS A.1 example", key.getKeyID());
 		assertEquals(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"), ((OctetSequenceKey)key).getKeyValue());
@@ -276,6 +282,7 @@ public class JWKSetTest extends TestCase {
 		key = keyList.get(1);
 		assertTrue(key instanceof RSAKey);
 		assertNull(key.getKeyUse());
+		assertNull(key.getKeyOperations());
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 		assertEquals("2011-04-29", key.getKeyID());
 
@@ -409,6 +416,7 @@ public class JWKSetTest extends TestCase {
 		assertTrue(key instanceof ECKey);
 		assertEquals("1", key.getKeyID());
 		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
+		assertNull(key.getKeyOperations());
 
 		ECKey ecKey = (ECKey)key;
 		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
@@ -422,6 +430,7 @@ public class JWKSetTest extends TestCase {
 		assertTrue(key instanceof RSAKey);
 		assertEquals("2011-04-29", key.getKeyID());
 		assertNull(key.getKeyUse());
+		assertNull(key.getKeyOperations());
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 
 		RSAKey rsaKey = (RSAKey)key;
@@ -483,6 +492,7 @@ public class JWKSetTest extends TestCase {
 		assertTrue(key instanceof RSAKey);
 		assertEquals("2011-04-29", key.getKeyID());
 		assertNull(key.getKeyUse());
+		assertNull(key.getKeyOperations());
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 
 		RSAKey rsaKey = (RSAKey)key;

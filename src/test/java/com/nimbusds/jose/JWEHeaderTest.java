@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version $version$ (2014-04-03)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -89,7 +89,7 @@ public class JWEHeaderTest extends TestCase {
 		final KeyUse use = KeyUse.ENCRYPTION;
 		final String kid = "1234";
 
-		RSAKey jwk = new RSAKey(mod, exp, use, JWEAlgorithm.RSA1_5, kid, null, null, null);
+		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
 
 		h.setJWK(jwk);
 		h.setX509CertURL(new URL("https://example/cert.b64"));

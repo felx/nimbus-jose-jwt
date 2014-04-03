@@ -142,17 +142,26 @@ public enum KeyOperation {
 
 		for (String s: sl) {
 
+			if (s == null) {
+				// skip
+				continue;
+			}
+
+			KeyOperation parsedOp = null;
+
 			for (KeyOperation op: KeyOperation.values()) {
 
-				if (s == null) {
-					continue;
-				}
-
 				if (s.equals(op.identifier())) {
-					keyOps.add(op);
-				} else {
-					throw new ParseException("Invalid JWK operation: " + s, 0);
+					parsedOp = op;
+					break;
 				}
+			}
+
+			if (parsedOp != null) {
+				keyOps.add(parsedOp);
+			}
+			else {
+				throw new ParseException("Invalid JWK operation: " + s, 0);
 			}
 		}
 

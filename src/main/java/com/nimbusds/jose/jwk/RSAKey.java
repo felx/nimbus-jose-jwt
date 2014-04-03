@@ -895,7 +895,7 @@ public final class RSAKey extends JWK {
 	 *            specified.
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
-		      final Set<KeyOperation> ops, final KeyUse use, final Algorithm alg, final String kid,
+		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		// Call the full constructor, the second private representation 
@@ -1164,13 +1164,13 @@ public final class RSAKey extends JWK {
 	 *             specified.
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateKey priv,
-		      final Set<KeyOperation> ops, final KeyUse use, final Algorithm alg, final String kid,
+		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
 		     Base64URL.encode(priv.getPrivateExponent()),
-		     ops, use, alg, kid,
+		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
 	}
 

@@ -2,8 +2,7 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -16,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-30)
+ * @version $version$ (2014-04-02)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -30,10 +29,15 @@ public class OctetSequenceKeyTest extends TestCase {
 		List<Base64> x5c = new LinkedList<Base64>();
 		x5c.add(new Base64("def"));
 
-		OctetSequenceKey key = new OctetSequenceKey(k, KeyUse.SIGNATURE, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
+		Set<KeyOperation> ops = new LinkedHashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+
+		OctetSequenceKey key = new OctetSequenceKey(k, ops, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyUse());
+		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		assertEquals(2, key.getKeyOperations().size());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -45,23 +49,22 @@ public class OctetSequenceKeyTest extends TestCase {
 		byte[] keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-
 			assertEquals(keyBytes[i], key.toByteArray()[i]);
-
 		}
 
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
 
-
 		String jwkString = key.toJSONObject().toString();
 
 		key = OctetSequenceKey.parse(jwkString);
 
-
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyUse());
+		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		assertEquals(2, key.getKeyOperations().size());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -93,17 +96,22 @@ public class OctetSequenceKeyTest extends TestCase {
 		List<Base64> x5c = new LinkedList<Base64>();
 		x5c.add(new Base64("def"));
 
+		Set<KeyOperation> ops = new LinkedHashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+
 		OctetSequenceKey key = new OctetSequenceKey.Builder(k).
-			keyUse(KeyUse.SIGNATURE).
+			keyOperations(ops).
 			algorithm(JWSAlgorithm.HS256).
 			keyID("1").
 			x509CertURL(x5u).
 			x509CertThumbprint(x5t).
 			x509CertChain(x5c).
-		                       build();
+			build();
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyUse());
+		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		assertEquals(2, key.getKeyOperations().size());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -115,9 +123,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		byte[] keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-
 			assertEquals(keyBytes[i], key.toByteArray()[i]);
-
 		}
 
 		assertNull(key.toPublicJWK());
@@ -131,7 +137,10 @@ public class OctetSequenceKeyTest extends TestCase {
 
 
 		assertEquals(KeyType.OCT, key.getKeyType());
-		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyUse());
+		assertTrue(key.getKeyOperations().contains(KeyOperation.SIGN));
+		assertTrue(key.getKeyOperations().contains(KeyOperation.VERIFY));
+		assertEquals(2, key.getKeyOperations().size());
 		assertEquals(JWSAlgorithm.HS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
@@ -143,9 +152,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		keyBytes = k.decode();
 
 		for (int i=0; i < keyBytes.length; i++) {
-
 			assertEquals(keyBytes[i], key.toByteArray()[i]);
-
 		}
 
 		assertNull(key.toPublicJWK());

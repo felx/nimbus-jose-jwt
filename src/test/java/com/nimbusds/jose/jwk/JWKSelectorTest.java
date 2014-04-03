@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Vladimir Dzhuvinov
  */
-public class JWTSelectorTest extends TestCase {
+public class JWKSelectorTest extends TestCase {
 
 
 	public void testConstructor() {
