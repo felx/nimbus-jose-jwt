@@ -256,3 +256,14 @@ version 2.22.1 (2014-01-17)
     * Fixes JWKSelector behaviour on null type, alg, use or kid.
     * Plain, JWS and JWE object constructors switch to read-only header
       arguments.
+
+version 2.23 (2014-04-03)
+    * Adds support for "key_ops" JWK parameter.
+    * Adds java.security.Provider setters to AlgorithmProvider and
+      sub-interfaces.
+    * Ensures EC 'x', 'y' and 'd' parameters are leading zero padded up to the
+      curve field size (issues 77 and 78).
+    * Fixes loss of CRT params on RSA keys (issue 75).
+    * Removes javax.mail dependency.
+    * Upgrades to BouncyCastle 1.50.
+    * Upgrades to Apache Commons Codec 1.9.
