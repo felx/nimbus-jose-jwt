@@ -74,7 +74,7 @@ import java.util.Arrays;
  * @author Vladimir Dzhuvinov
  * @version 2.2 (original)
  */
-final class Base64Utils {
+final class Base64Codec {
 
 
 	private static final char[] CA = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
