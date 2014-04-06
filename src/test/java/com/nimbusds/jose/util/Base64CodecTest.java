@@ -7,9 +7,9 @@ import junit.framework.TestCase;
 
 
 /**
- * Tests the base64 utility.
+ * Tests the base 64 codec.
  */
-public class Base64UtilsTest extends TestCase {
+public class Base64CodecTest extends TestCase {
 
 
 	public void testComputeEncodedLength() {
@@ -57,5 +57,16 @@ public class Base64UtilsTest extends TestCase {
 		assertEquals("Zm9vYg", Base64Codec.encodeToString("foob".getBytes(Charset.forName("utf-8")), true));
 		assertEquals("Zm9vYmE", Base64Codec.encodeToString("fooba".getBytes(Charset.forName("utf-8")), true));
 		assertEquals("Zm9vYmFy", Base64Codec.encodeToString("foobar".getBytes(Charset.forName("utf-8")), true));
+	}
+
+
+	public void testCondition() {
+
+		assertEquals("Zg==", new String(Base64Codec.condition("Zg")));
+		assertEquals("Zm8=", new String(Base64Codec.condition("Zm8")));
+		assertEquals("Zm9v", new String(Base64Codec.condition("Zm9v")));
+		assertEquals("Zm9vYg==", new String(Base64Codec.condition("Zm9vYg")));
+		assertEquals("Zm9vYmE=", new String(Base64Codec.condition("Zm9vYmE")));
+		assertEquals("Zm9vYmFy", new String(Base64Codec.condition("Zm9vYmFy")));
 	}
 }
