@@ -5,45 +5,15 @@ import java.util.Arrays;
 
 
 /**
- * A very fast and memory efficient class to encode and decode to and from
- * BASE64 in full accordance with RFC 2045.
+ * Base 64 and base 64 URL-safe encoder and decoder.
  *
- * <p>On byte arrays the encoder is about 20% faster than Jakarta Commons
- * Base64 Codec for encode and about 50% faster for decoding large arrays. This
- * implementation is about twice as fast on very small arrays (&lt 30 bytes).
- * If source/destination is a <code>String</code> this version is about three
- * times as fast due to the fact that the Commons Codec result has to be
- * recoded to a <code>String</code> from <code>byte[]</code>, which is very
- * expensive.
+ * <p>Based on Mikael Grev's MiG base 64 encoder / decoder, with modifications
+ * to support URL-safe encoding and decoding.
  *
- * <p>This encode/decode algorithm doesn't create any temporary arrays as many
- * other codecs do, it only allocates the resulting array. This produces less
- * garbage and it is possible to handle arrays twice as large as algorithms
- * that create a temporary array. (E.g. Jakarta Commons Codec). It is unknown
- * whether Sun's <code>sun.misc.Encoder()/Decoder()</code> produce temporary
- * arrays but since performance is quite low it probably does.
+ * <p>Original licence:
  *
- * <p>The encoder produces the same output as the Sun one except that the Sun's
- * encoder appends a trailing line separator if the last character isn't a pad.
- * Unclear why but it only adds to the length and is probably a side effect.
- * Both are in conformance with RFC 2045 though. Commons codec seem to always
- * add a trailing line separator.
- *
- * <p><b>Note!</b> The encode/decode method pairs (types) come in three
- * versions with the <b>exact</b> same algorithm and thus a lot of code
- * redundancy. This is to not create any temporary arrays for transcoding
- * to/from different format types. The methods not used can simply be commented
- * out.
- *
- * <p>There is also a "fast" version of all decode methods that works the same
- * way as the normal ones, but has a few demands on the decoded input. Normally
- * though, these fast versions should be used if the source if the input is
- * known and it hasn't bee tampered with.
- *
- * <p>If you find the code useful or you find a bug, please send me a note at
- * base64 @ miginfocom . com.
- *
- * Licence (BSD): ==============
+ * <pre>
+ * Licence (BSD):
  *
  * Copyright (c) 2004, Mikael Grev, MiG InfoCom AB. (base64 @ miginfocom . com)
  * All rights reserved.
@@ -69,10 +39,11 @@ import java.util.Arrays;
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
+ * </pre>
  *
- * @author Mikael Grev Date: 2004-aug-02 Time: 11:31:11
+ * @author Mikael Grev
+ * @author Jaap Beetstra
  * @author Vladimir Dzhuvinov
- * @version 2.2 (original)
  */
 final class Base64Codec {
 
@@ -89,6 +60,9 @@ final class Base64Codec {
 	private static final char[] CA_URL_SAFE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_".toCharArray();
 
 
+	/**
+	 * Maps base 64 characters to their respective byte values.
+	 */
 	private static final int[] IA = new int[256];
 
 
@@ -132,20 +106,32 @@ final class Base64Codec {
 	}
 
 
-	public static char[] condition(final String value) {
+	/**
+	 * Normalises a base 64 encoded string by ensuring any URL-safe
+	 * characters are replaced with their regular base64 representation and
+	 * any truncated '=' padding is restored.
+	 *
+	 * @param value The base 64 or base 64 URL-safe encoded string. Must
+	 *              not be {@code null}.
+	 *
+	 * @return The normalised base 64 encoded string.
+	 */
+	public static String normalizeEncodedString(final String value) {
 
 		int len = value.length();
 
-		int added = len % 4 == 0 ? 0 : 4 - (len % 4);
+		// Restore padding if missing
+		int padLength = len % 4 == 0 ? 0 : 4 - (len % 4);
 
-		char[] chars = new char[len + added];
+		char[] chars = new char[len + padLength];
 
 		value.getChars(0, len, chars, 0);
 
-		for (int i = 0; i < added; i++) {
+		for (int i = 0; i < padLength; i++) {
 			chars[len + i] = '=';
 		}
 
+		// Replace URL-safe chars
 		for (int i = 0; i < len; i++) {
 			if (chars[i] == '_') {
 				chars[i] = '/';
@@ -154,13 +140,12 @@ final class Base64Codec {
 			}
 		}
 
-		return chars;
+		return new String(chars);
 	}
 
 
 	/**
-	 * Encodes a raw byte array into a base 64 encoded character array
-	 * representation in accordance with RFC 2045.
+	 * Encodes a byte array into a base 64 encoded character array.
 	 *
 	 * @param sArr    The bytes to convert. If {@code null} or length 0 an
 	 *                empty array will be returned.
@@ -202,7 +187,8 @@ final class Base64Codec {
 			}
 		}
 
-		// Pad and encode last bits if source isn't even 24 bits.
+		// Pad and encode last bits if source isn't even 24 bits
+		// according to URL-safe switch
 		int left = sLen - eLen; // 0 - 2.
 		if (left > 0) {
 			// Prepare the int
@@ -220,7 +206,7 @@ final class Base64Codec {
 					out[dLen - 1] = CA_URL_SAFE[(i >>> 6) & 0x3f];
 				}
 			} else {
-				// Original Mig code
+				// Original Mig code with padding
 				out[dLen - 4] = CA[i >> 12];
 				out[dLen - 3] = CA[(i >>> 6) & 0x3f];
 				out[dLen - 2] = left == 2 ? CA[i & 0x3f] : '=';
@@ -233,79 +219,83 @@ final class Base64Codec {
 
 
 	/**
-	 * Encodes a raw byte array into a BASE64 <code>String</code>
-	 * representation i accordance with RFC 2045.
+	 * Encodes a byte array into a base 64 encoded string.
 	 *
-	 * @param sArr    The bytes to convert. If <code>null</code> or length 0
-	 *                an empty array will be returned.
+	 * @param sArr    The bytes to convert. If {@code null} or length 0 an
+	 *                empty array will be returned.
+	 * @param urlSafe If {@code true} to apply URL-safe encoding (padding
+	 *                still included and not to spec).
 	 *
-	 * @return A BASE64 encoded array. Never <code>null</code>.
+	 * @return The base 64 encoded string. Never {@code null}.
 	 */
 	public final static String encodeToString(byte[] sArr, final boolean urlSafe) {
+
 		// Reuse char[] since we can't create a String incrementally
-		// anyway and StringBuffer/Builder would be slower.
+		// and StringBuffer/Builder would be slower
 		return new String(encodeToChar(sArr, urlSafe));
 	}
 
 
 	/**
-	 * Decodes a BASE64 encoded <code>String</code>. All illegal characters
-	 * will be ignored and can handle both strings with and without line
-	 * separators.<br> <b>Note!</b> It can be up to about 2x the speed to
-	 * call <code>decode(str.toCharArray())</code> instead. That will create
-	 * a temporary array though. This version will use
-	 * <code>str.charAt(i)</code> to iterate the string.
+	 * Decodes a base 64 or base 64 URL-safe encoded string. May contain
+	 * line separators. Any illegal characters are ignored.
 	 *
-	 * @param str The source string. <code>null</code> or length 0 will
-	 *            return an empty array.
+	 * @param str The base 64 or base 64 URL-safe encoded string. May be
+	 *            empty or {@code null}.
 	 *
-	 * @return The decoded array of bytes. May be of length 0. Will be
-	 * <code>null</code> if the legal characters (including '=') isn't
-	 * dividable by 4.  (I.e. definitely corrupted).
+	 * @return The decoded byte array, empty if the input base 64 encoded
+	 *         string is empty, {@code null} or corrupted.
 	 */
-	public final static byte[] decode(String str) {
+	public final static byte[] decode(final String str) {
 
-		// Check special null or empty case
+		// Check special case
 		if (str == null || str.isEmpty()) {
 			return new byte[0];
 		}
 
-		String conditionedStr = new String(condition(str));
+		String nStr = normalizeEncodedString(str);
 
-		int sLen = conditionedStr.length();
+		int sLen = nStr.length();
 
-		// Count illegal characters (including '\r', '\n') to know what size the returned array will be,
-		// so we don't have to reallocate & copy it later.
-		int sepCnt = 0; // Number of separator characters. (Actually illegal characters, but that's a bonus...)
-		for (int i = 0; i < sLen; i++)  // If input is "pure" (I.e. no line separators or illegal chars) base64 this loop can be commented out.
-			if (IA[conditionedStr.charAt(i)] < 0)
+		// Count illegal characters (including '\r', '\n') to determine
+		// the size of the byte array to return
+		int sepCnt = 0; // Number of separator and illegal characters
+		for (int i = 0; i < sLen; i++) {
+
+			if (IA[nStr.charAt(i)] < 0) {
 				sepCnt++;
+			}
+		}
 
-		// Check so that legal chars (including '=') are evenly
-		// dividable by 4 as specified in RFC 2045.
+		// Ensure the legal chars (including '=' padding) are dividable
+		// by 4 as specified in RFC 2045.
 		if ((sLen - sepCnt) % 4 != 0) {
-			System.out.println("Illegal Base 64!!!");
-			return null;
+			// The string is corrupted
+			return new byte[0];
 		}
 
 		// Count '=' at end
 		int pad = 0;
 
-		for (int i = sLen; i > 1 && IA[conditionedStr.charAt(--i)] <= 0; ) {
-			if (conditionedStr.charAt(i) == '=') {
+		for (int i = sLen; i > 1 && IA[nStr.charAt(--i)] <= 0; ) {
+			if (nStr.charAt(i) == '=') {
 				pad++;
 			}
 		}
 
 		int len = ((sLen - sepCnt) * 6 >> 3) - pad;
 
-		byte[] dArr = new byte[len];       // Preallocate byte[] of exact length
+		// Preallocate byte[] of final length
+		byte[] dArr = new byte[len];
 
 		for (int s = 0, d = 0; d < len; ) {
-			// Assemble three bytes into an int from four "valid" characters.
+			// Assemble three bytes into an int from four base 64
+			// characters
 			int i = 0;
-			for (int j = 0; j < 4; j++) {   // j only increased if a valid char was found.
-				int c = IA[conditionedStr.charAt(s++)];
+
+			for (int j = 0; j < 4; j++) {
+				// j only increased if a valid char was found
+				int c = IA[nStr.charAt(s++)];
 				if (c >= 0) {
 					i |= c << (18 - j * 6);
 				} else {
@@ -321,6 +311,7 @@ final class Base64Codec {
 				}
 			}
 		}
+
 		return dArr;
 	}
 }

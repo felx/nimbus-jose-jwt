@@ -60,13 +60,37 @@ public class Base64CodecTest extends TestCase {
 	}
 
 
-	public void testCondition() {
+	public void testNormalize(){
 
-		assertEquals("Zg==", new String(Base64Codec.condition("Zg")));
-		assertEquals("Zm8=", new String(Base64Codec.condition("Zm8")));
-		assertEquals("Zm9v", new String(Base64Codec.condition("Zm9v")));
-		assertEquals("Zm9vYg==", new String(Base64Codec.condition("Zm9vYg")));
-		assertEquals("Zm9vYmE=", new String(Base64Codec.condition("Zm9vYmE")));
-		assertEquals("Zm9vYmFy", new String(Base64Codec.condition("Zm9vYmFy")));
+		assertEquals("Zg==", Base64Codec.normalizeEncodedString("Zg"));
+		assertEquals("Zm8=", Base64Codec.normalizeEncodedString("Zm8"));
+		assertEquals("Zm9v", Base64Codec.normalizeEncodedString("Zm9v"));
+		assertEquals("Zm9vYg==", Base64Codec.normalizeEncodedString("Zm9vYg"));
+		assertEquals("Zm9vYmE=", Base64Codec.normalizeEncodedString("Zm9vYmE"));
+		assertEquals("Zm9vYmFy", Base64Codec.normalizeEncodedString("Zm9vYmFy"));
+	}
+
+
+	public void testDecode() {
+
+		assertEquals("", new String(Base64Codec.decode(""), Charset.forName("utf-8")));
+		assertEquals("f", new String(Base64Codec.decode("Zg=="), Charset.forName("utf-8")));
+		assertEquals("fo", new String(Base64Codec.decode("Zm8="), Charset.forName("utf-8")));
+		assertEquals("foo", new String(Base64Codec.decode("Zm9v"), Charset.forName("utf-8")));
+		assertEquals("foob", new String(Base64Codec.decode("Zm9vYg=="), Charset.forName("utf-8")));
+		assertEquals("fooba", new String(Base64Codec.decode("Zm9vYmE="), Charset.forName("utf-8")));
+		assertEquals("foobar", new String(Base64Codec.decode("Zm9vYmFy"), Charset.forName("utf-8")));
+	}
+
+
+	public void testDecodeUrlSafe() {
+
+		assertEquals("", new String(Base64Codec.decode(""), Charset.forName("utf-8")));
+		assertEquals("f", new String(Base64Codec.decode("Zg"), Charset.forName("utf-8")));
+		assertEquals("fo", new String(Base64Codec.decode("Zm8"), Charset.forName("utf-8")));
+		assertEquals("foo", new String(Base64Codec.decode("Zm9v"), Charset.forName("utf-8")));
+		assertEquals("foob", new String(Base64Codec.decode("Zm9vYg"), Charset.forName("utf-8")));
+		assertEquals("fooba", new String(Base64Codec.decode("Zm9vYmE"), Charset.forName("utf-8")));
+		assertEquals("foobar", new String(Base64Codec.decode("Zm9vYmFy"), Charset.forName("utf-8")));
 	}
 }
