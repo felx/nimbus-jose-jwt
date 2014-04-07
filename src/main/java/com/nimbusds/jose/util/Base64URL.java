@@ -61,7 +61,7 @@ public class Base64URL extends Base64 {
 	 */
 	public static Base64URL encode(final byte[] bytes) {
 
-		return new Base64URL(org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(bytes));
+		return new Base64URL(Base64Codec.encodeToString(bytes, true));
 	}
 
 

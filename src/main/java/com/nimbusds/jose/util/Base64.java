@@ -57,7 +57,7 @@ public class Base64 implements JSONAware {
 	 */
 	public byte[] decode() {
 
-		return org.apache.commons.codec.binary.Base64.decodeBase64(value);
+		return Base64Codec.decode(value);
 	}
 
 
@@ -149,7 +149,7 @@ public class Base64 implements JSONAware {
 	 */
 	public static Base64 encode(final byte[] bytes) {
 
-		return new Base64(org.apache.commons.codec.binary.Base64.encodeBase64String(bytes));
+		return new Base64(Base64Codec.encodeToString(bytes, false));
 	}
 
 
