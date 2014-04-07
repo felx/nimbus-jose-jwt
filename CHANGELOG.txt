@@ -267,3 +267,7 @@ version 2.23 (2014-04-03)
     * Removes javax.mail dependency.
     * Upgrades to BouncyCastle 1.50.
     * Upgrades to Apache Commons Codec 1.9.
+
+version 2.24 (2014-04-07)
+    * Removes Apache Commons Codec dependency, switches to internal base 64 and
+      base 64 URL-safe encoder and decoder (based on MiG encoder code).

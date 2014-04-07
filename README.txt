@@ -77,8 +77,6 @@ Dependencies
 
 The Nimbus JOSE+JWT library has minimal dependencies.
 
-* Apache Commons Codec for Base64 and Base64URL encoding and decoding.
-
 * JSON Smart for highly efficient parsing and serialisation of JSON.
 
 * JCIP for concurrency annotations.
@@ -92,7 +90,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.23</version>
+    <version>2.24</version>
 </dependency>
 
 
