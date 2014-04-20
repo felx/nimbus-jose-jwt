@@ -2,6 +2,8 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -17,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-25)
+ * @version $version$ (2014-04-20)
  */
 public class ECDSASpecVectorsTest extends TestCase {
 
@@ -72,9 +74,62 @@ public class ECDSASpecVectorsTest extends TestCase {
 			"pmWQxfKTUJqPP3-Kg6NU1Q");
 
 
+	public void testSupportedAlgorithms() {
+
+		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
+
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
+
+		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+
+		assertEquals(3, verifier.supportedAlgorithms().size());
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.ES384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.ES512));
+	}
+
+
+	public void testGetAcceptedAlgorithms() {
+
+		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+
+		assertEquals(3, verifier.getAcceptedAlgorithms().size());
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES384));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES512));
+	}
+
+
+	public void testSetAcceptedAlgorithms() {
+
+		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+
+		try {
+			verifier.setAcceptedAlgorithms(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.HS256)));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES256));
+		assertEquals(1, verifier.getAcceptedAlgorithms().size());
+	}
+
+
 
 	public void testSignAndVerify()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
@@ -87,10 +142,6 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
 		assertEquals("Private key check", new BigInteger(1, d), signer.getPrivateKey());
-		assertEquals(3, signer.supportedAlgorithms().size());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
 
 		jwsObject.sign(signer);
 
@@ -100,10 +151,6 @@ public class ECDSASpecVectorsTest extends TestCase {
 		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
 		assertEquals("X check", new BigInteger(1, x), verifier.getX());
 		assertEquals("Y check", new BigInteger(1, y), verifier.getY());
-		assertEquals(3, signer.supportedAlgorithms().size());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.ES512));
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -114,7 +161,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 
 	public void testSignWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		// http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-05#section-3.4
 		//
@@ -129,7 +176,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 
 	public void testVerifyWithReadyVector()
-			throws Exception {
+		throws Exception {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
@@ -142,7 +189,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 
 	public void testParseAndVerify()
-			throws Exception {
+		throws Exception {
 
 		String s = b64header.toString() + "." + payload.toBase64URL().toString() + "." + b64sig.toString();
 

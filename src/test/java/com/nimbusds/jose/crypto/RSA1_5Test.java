@@ -7,6 +7,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -25,7 +27,7 @@ import com.nimbusds.jose.Payload;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version $version$ (2014-04-20)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -135,6 +137,120 @@ public class RSA1_5Test extends TestCase {
 
 			System.err.println(e);
 		}
+	}
+
+
+	public void testSupportedAlgorithms()
+		throws Exception {
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		assertEquals(2, encrypter.supportedAlgorithms().size());
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(2, decrypter.supportedAlgorithms().size());
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+	}
+
+
+	public void testSupportedEncryptionMethods()
+		throws Exception {
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		assertEquals(6, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(6, decrypter.supportedEncryptionMethods().size());
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testGetAcceptedAlgorithms() {
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(2, decrypter.getAcceptedAlgorithms().size());
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+	}
+
+
+	public void testGetAcceptedEncryptionMethods() {
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		assertEquals(6, decrypter.getAcceptedEncryptionMethods().size());
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testSetAcceptedAlgorithms() {
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		try {
+			decrypter.setAcceptedAlgorithms(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.RSA1_5)));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
+	}
+
+
+	public void testSetAcceptedEncryptionMethods() {
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		try {
+			decrypter.setAcceptedEncryptionMethods(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(new EncryptionMethod("unsupported"))));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(EncryptionMethod.A128GCM)));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
 
 

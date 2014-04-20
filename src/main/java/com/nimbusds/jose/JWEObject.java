@@ -345,32 +345,18 @@ public class JWEObject extends JOSEObject {
 	private void ensureJWEDecrypterAcceptance(final JWEDecrypter decrypter)
 		throws JOSEException {
 
-		JWEHeaderFilter filter = decrypter.getJWEHeaderFilter();
 
-		if (filter == null) {
-
-			return;
-		}
-
-
-		if (! filter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
+		if (! decrypter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
 					        "\" algorithm is not accepted by the JWE decrypter");
 		}
 
 
-		if (! filter.getAcceptedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
+		if (! decrypter.getAcceptedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
 
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
 					        "\" encryption method is not accepted by the JWE decrypter");
-		}		
-
-		// Header params
-
-		if (! filter.getAcceptedParameters().containsAll(getHeader().getIncludedParameters())) {
-
-			throw new JOSEException("One or more header parameters not accepted by the JWE decrypter");
 		}
 	}
 

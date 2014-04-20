@@ -3,15 +3,15 @@ package com.nimbusds.jose.crypto;
 
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.DefaultJWEHeaderFilter;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEHeaderFilter;
 import com.nimbusds.jose.ReadOnlyJWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
@@ -40,23 +40,31 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
- * registered JWE header parameters}. Modify the {@link #getJWEHeaderFilter
- * header filter} properties to restrict the acceptable JWE algorithms, 
- * encryption methods and header parameters, or to allow custom JWE header 
- * parameters.
+ * registered JWE header parameters}. Use {@link #setAcceptedAlgorithms} and
+ * {@link #setAcceptedEncryptionMethods} to restrict the acceptable JWE
+ * algorithms and encryption methods.
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-20)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	/**
-	 * The JWE header filter.
+	 * The accepted JWE algorithms.
 	 */
-	private final DefaultJWEHeaderFilter headerFilter;
+	private Set<JWEAlgorithm> acceptedAlgs =
+		new HashSet<JWEAlgorithm>(supportedAlgorithms());
+
+
+	/**
+	 * The accepted encryption methods.
+	 */
+	private Set<EncryptionMethod> acceptedEncs =
+		new HashSet<EncryptionMethod>(supportedEncryptionMethods());
+
 
 
 	/**
@@ -78,8 +86,6 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		}
 
 		this.privateKey = privateKey;
-
-		headerFilter = new DefaultJWEHeaderFilter(supportedAlgorithms(), supportedEncryptionMethods());
 	}
 
 
@@ -95,9 +101,45 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	@Override
-	public JWEHeaderFilter getJWEHeaderFilter() {
+	public Set<JWEAlgorithm> getAcceptedAlgorithms() {
 
-		return headerFilter;
+		return acceptedAlgs;
+	}
+
+
+	@Override
+	public void setAcceptedAlgorithms(final Set<JWEAlgorithm> acceptedAlgs) {
+
+		if (acceptedAlgs == null) {
+			throw new IllegalArgumentException("The accepted JWE algorithms must not be null");
+		}
+
+		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
+			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
+		}
+
+		this.acceptedAlgs = acceptedAlgs;
+	}
+
+
+	@Override
+	public Set<EncryptionMethod> getAcceptedEncryptionMethods() {
+
+		return acceptedEncs;
+	}
+
+
+	@Override
+	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs) {
+
+		if (acceptedEncs == null)
+			throw new IllegalArgumentException("The accepted encryption methods must not be null");
+
+		if (!supportedEncryptionMethods().containsAll(acceptedEncs)) {
+			throw new IllegalArgumentException("Unsupported encryption method(s)");
+		}
+
+		this.acceptedEncs = acceptedEncs;
 	}
 
 

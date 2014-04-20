@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.util.Set;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -12,24 +14,29 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2014-04-20)
  */
 public interface JWSVerifier extends JWSAlgorithmProvider {
 
 
 	/**
-	 * Gets the JWS header filter associated with the verifier. Specifies 
-	 * the names of those {@link #supportedAlgorithms supported JWS 
-	 * algorithms} and header parameters that the verifier is configured to
-	 * accept.
+	 * Gets the names of the accepted JWS algorithms. These correspond to
+	 * the {@code alg} JWS header parameter.
 	 *
-	 * <p>Attempting to {@link #verify verify} a JWS object signature with 
-	 * an algorithm or header parameter that is not accepted must result in
-	 * a {@link JOSEException}.
-	 *
-	 * @return The JWS header filter.
+	 * @return The accepted JWS algorithms, as a read-only set, empty set
+	 *         if none.
 	 */
-	public JWSHeaderFilter getJWSHeaderFilter();
+	public Set<JWSAlgorithm> getAcceptedAlgorithms();
+
+
+	/**
+	 * Sets the names of the accepted JWS algorithms. These correspond to
+	 * the {@code alg} JWS header parameter.
+	 *
+	 * @param acceptedAlgs The accepted JWS algorithms. Must be a subset of
+	 *                     the supported algorithms and not {@code null}.
+	 */
+	public void setAcceptedAlgorithms(Set<JWSAlgorithm> acceptedAlgs);
 
 
 	/**

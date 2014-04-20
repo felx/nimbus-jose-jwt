@@ -14,13 +14,13 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-20)
  */
 public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Returns the names of the supported JWE algorithms. These correspond 
+	 * Returns the names of the supported JWE algorithms. These correspond
 	 * to the {@code alg} JWE header parameter.
 	 *
 	 * @return The supported JWE algorithms, empty set if none.
@@ -29,7 +29,7 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Returns the names of the supported encryption methods. These 
+	 * Returns the names of the supported encryption methods. These
 	 * correspond to the {@code enc} JWE header parameter.
 	 *
 	 * @return The supported encryption methods, empty set if none.

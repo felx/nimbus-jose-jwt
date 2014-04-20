@@ -2,6 +2,8 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -12,9 +14,8 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
-import com.nimbusds.jose.DefaultJWSHeaderFilter;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSHeaderFilter;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.ReadOnlyJWSHeader;
 import com.nimbusds.jose.util.Base64URL;
@@ -33,22 +34,22 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Modify the {@link #getJWSHeaderFilter
- * header filter} properties to restrict the acceptable JWS algorithms and
- * header parameters, or to allow custom JWS header parameters.
+ * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
+ * restrict the acceptable JWS algorithms.
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-04-20)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	/**
-	 * The JWS header filter.
+	 * The accepted JWS algorithms.
 	 */
-	private final DefaultJWSHeaderFilter headerFilter;
+	private Set<JWSAlgorithm> acceptedAlgs =
+		new HashSet<JWSAlgorithm>(supportedAlgorithms());
 
 
 	/**
@@ -88,8 +89,6 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 		}
 
 		this.y = y;
-
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
@@ -116,9 +115,24 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	@Override
-	public JWSHeaderFilter getJWSHeaderFilter() {
+	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
 
-		return headerFilter;
+		return acceptedAlgs;
+	}
+
+
+	@Override
+	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+
+		if (acceptedAlgs == null) {
+			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
+		}
+
+		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
+			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
+		}
+
+		this.acceptedAlgs = acceptedAlgs;
 	}
 
 

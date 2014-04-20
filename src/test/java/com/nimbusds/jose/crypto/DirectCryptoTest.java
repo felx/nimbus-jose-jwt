@@ -1,6 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.CompressionAlgorithm;
@@ -17,7 +20,7 @@ import com.nimbusds.jose.Payload;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version $version$ (2014-04-20)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -72,6 +75,120 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals(256, key256.length * 8);
 		assertEquals(384, key384.length * 8);
 		assertEquals(512, key512.length * 8);
+	}
+
+
+	public void testSupportedAlgorithms()
+		throws Exception {
+
+		JWEEncrypter encrypter = new DirectEncrypter(key128);
+
+		assertEquals(1, encrypter.supportedAlgorithms().size());
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		assertEquals(1, decrypter.supportedAlgorithms().size());
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+	}
+
+
+	public void testSupportedEncryptionMethods()
+		throws Exception {
+
+		JWEEncrypter encrypter = new DirectEncrypter(key128);
+
+		assertEquals(6, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		assertEquals(6, decrypter.supportedEncryptionMethods().size());
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testGetAcceptedAlgorithms()
+		throws Exception {
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.DIR));
+	}
+
+
+	public void testGetAcceptedEncryptionMethods()
+		throws Exception {
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		assertEquals(6, decrypter.getAcceptedEncryptionMethods().size());
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testSetAcceptedAlgorithms()
+		throws Exception {
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		try {
+			decrypter.setAcceptedAlgorithms(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>());
+		assertTrue(decrypter.getAcceptedAlgorithms().isEmpty());
+	}
+
+
+	public void testSetAcceptedEncryptionMethods()
+		throws Exception {
+
+		JWEDecrypter decrypter = new DirectDecrypter(key128);
+
+		try {
+			decrypter.setAcceptedEncryptionMethods(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(new EncryptionMethod("unsupported"))));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(EncryptionMethod.A128GCM)));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
 	}
 
 

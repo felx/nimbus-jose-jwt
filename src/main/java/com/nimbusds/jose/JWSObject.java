@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-12-17)
+ * @version $version$ (2014-04-20)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -295,22 +295,10 @@ public class JWSObject extends JOSEObject {
 	private void ensureJWSVerifierAcceptance(final JWSVerifier verifier)
 		throws JOSEException {
 
-		JWSHeaderFilter filter = verifier.getJWSHeaderFilter();
-
-		if (filter == null) {
-			return;
-		}
-
-		if (! filter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
+		if (! verifier.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
 					"\" algorithm is not accepted by the JWS verifier");
-		}
-
-
-		if (! filter.getAcceptedParameters().containsAll(getHeader().getIncludedParameters())) {
-
-			throw new JOSEException("One or more header parameters not accepted by the JWS verifier");
 		}
 	}
 

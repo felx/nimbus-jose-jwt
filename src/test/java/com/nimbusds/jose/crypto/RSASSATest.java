@@ -7,6 +7,8 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import com.nimbusds.jose.jwk.RSAKey;
 import junit.framework.TestCase;
@@ -21,11 +23,11 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Tests RSASSA JWS signing and verfication. Uses test RSA keys and vectors
+ * Tests RSASSA JWS signing and verification. Uses test RSA keys and vectors
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-17)
+ * @version $version$ (2014-04-20)
  */
 public class RSASSATest extends TestCase {
 
@@ -161,6 +163,67 @@ public class RSASSATest extends TestCase {
 		"p0igcN_IoypGlUPQGe77Rw");
 
 
+	public void testSupportedAlgorithms() {
+
+		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
+
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, signer.supportedAlgorithms().size());
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, verifier.supportedAlgorithms().size());
+	}
+
+
+	public void testGetAcceptedAlgorithms() {
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, verifier.supportedAlgorithms().size());
+	}
+
+
+	public void testSetAcceptedAlgorithms() {
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		try {
+			verifier.setAcceptedAlgorithms(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.RS256)));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS256));
+		assertEquals(1, verifier.getAcceptedAlgorithms().size());
+	}
+
 
 	public void testSignAndVerify()
 		throws Exception {
@@ -176,13 +239,6 @@ public class RSASSATest extends TestCase {
 
 		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
 		assertNotNull("Private key check", signer.getPrivateKey());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, signer.supportedAlgorithms().size());
 
 		jwsObject.sign(signer);
 
@@ -191,13 +247,6 @@ public class RSASSATest extends TestCase {
 
 		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
 		assertNotNull("Public key check", verifier.getPublicKey());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, signer.supportedAlgorithms().size());
 
 		boolean verified = jwsObject.verify(verifier);
 

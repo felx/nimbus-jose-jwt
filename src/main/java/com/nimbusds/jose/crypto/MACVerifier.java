@@ -1,13 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.DefaultJWSHeaderFilter;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSHeaderFilter;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.ReadOnlyJWSHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -24,9 +23,8 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Modify the {@link #getJWSHeaderFilter
- * header filter} properties to restrict the acceptable JWS algorithms and
- * header parameters, or to allow custom JWS header parameters.
+ * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
+ * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-01-28)
@@ -36,9 +34,10 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
-	 * The JWS header filter.
+	 * The accepted JWS algorithms.
 	 */
-	private final DefaultJWSHeaderFilter headerFilter;
+	private Set<JWSAlgorithm> acceptedAlgs =
+		new HashSet<JWSAlgorithm>(supportedAlgorithms());
 
 
 	/**
@@ -49,7 +48,6 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	public MACVerifier(final byte[] sharedSecret) {
 
 		super(sharedSecret);
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
@@ -62,15 +60,30 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	public MACVerifier(final String sharedSecretString) {
 
 		super(sharedSecretString);
-		headerFilter = new DefaultJWSHeaderFilter(supportedAlgorithms());
 	}
 
 
 	@Override
-	public JWSHeaderFilter getJWSHeaderFilter() {
+	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
 
-		return headerFilter;
+		return acceptedAlgs;
 	}
+
+
+	@Override
+	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+
+		if (acceptedAlgs == null) {
+			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
+		}
+
+		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
+			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
+		}
+
+		this.acceptedAlgs = acceptedAlgs;
+	}
+
 
 
 	@Override

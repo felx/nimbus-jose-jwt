@@ -12,7 +12,7 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-20)
  */
 public interface JWSAlgorithmProvider extends AlgorithmProvider {
 

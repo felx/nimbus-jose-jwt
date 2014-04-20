@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.util.Set;
+
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -12,24 +14,50 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2014-04-20)
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
 
 	/**
-	 * Gets the JWE header filter associated with the decrypter. Specifies 
-	 * the names of those {@link #supportedAlgorithms supported JWE 
-	 * algorithms} and header parameters that the decrypter is configured to
-	 * accept.
+	 * Gets the names of the accepted JWE algorithms. These correspond to
+	 * the {@code alg} JWE header parameter.
 	 *
-	 * <p>Attempting to {@link #decrypt decrypt} a JWE object with an
-	 * algorithm or header parameter that is not accepted must result in a 
-	 * {@link JOSEException}.
-	 *
-	 * @return The JWE header filter.
+	 * @return The accepted JWE algorithms, as a read-only set, empty set
+	 *         if none.
 	 */
-	public JWEHeaderFilter getJWEHeaderFilter();
+	public Set<JWEAlgorithm> getAcceptedAlgorithms();
+
+
+	/**
+	 * Sets the names of the accepted JWE algorithms. These correspond to
+	 * the {@code alg} JWE header parameter.
+	 *
+	 * @param acceptedAlgs The accepted JWE algorithms. Must be a subset of
+	 *                     the supported algorithms and not {@code null}.
+	 */
+	public void setAcceptedAlgorithms(Set<JWEAlgorithm> acceptedAlgs);
+
+
+	/**
+	 * Gets the names of the accepted encryption methods. These correspond
+	 * to the {@code enc} JWE header parameter.
+	 *
+	 * @return The accepted encryption methods, as a read-only set, empty
+	 *         set if none.
+	 */
+	public Set<EncryptionMethod> getAcceptedEncryptionMethods();
+
+
+	/**
+	 * Sets the names of the accepted encryption methods. These correspond
+	 * to the {@code enc} JWE header parameter.
+	 *
+	 * @param acceptedEncs The accepted encryption methods. Must be a
+	 *                     subset of the supported encryption methods and
+	 *                     not {@code null}.
+	 */
+	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs);
 
 
 	/**

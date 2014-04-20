@@ -2,6 +2,9 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -19,7 +22,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-12-10)
+ * @version $version$ (2014-04-20)
  */
 public class MACTest extends TestCase {
 
@@ -53,6 +56,60 @@ public class MACTest extends TestCase {
 
 
 
+	public void testSupportedAlgorithms() {
+
+		MACSigner signer = new MACSigner(sharedSecret);
+
+		assertEquals(3, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+
+		MACVerifier verifier = new MACVerifier(sharedSecret);
+
+		assertEquals(3, verifier.supportedAlgorithms().size());
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+	}
+
+
+	public void testGetAcceptedAlgorithms() {
+
+		MACVerifier verifier = new MACVerifier(sharedSecret);
+
+		assertEquals(3, verifier.getAcceptedAlgorithms().size());
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.HS512));
+	}
+
+
+	public void testSetAcceptedAlgorithms() {
+
+		MACVerifier verifier = new MACVerifier(sharedSecret);
+
+		try {
+			verifier.setAcceptedAlgorithms(null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		try {
+			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+			fail();
+		} catch (IllegalArgumentException e) {
+			// ok
+		}
+
+		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.HS256)));
+		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.HS256));
+		assertEquals(1, verifier.getAcceptedAlgorithms().size());
+	}
+
+
+
 	public void testSignAndVerify()
 		throws Exception {
 
@@ -68,10 +125,6 @@ public class MACTest extends TestCase {
 
 		MACSigner signer = new MACSigner(sharedSecret);
 		assertEquals("Shared secret check", sharedSecret, signer.getSharedSecret());
-		assertEquals(3, signer.supportedAlgorithms().size());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
 		jwsObject.sign(signer);
 
@@ -80,10 +133,6 @@ public class MACTest extends TestCase {
 
 		MACVerifier verifier = new MACVerifier(sharedSecret);
 		assertEquals("Shared secret check", sharedSecret, verifier.getSharedSecret());
-		assertEquals(3, verifier.supportedAlgorithms().size());
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -143,10 +192,6 @@ public class MACTest extends TestCase {
 
 		MACSigner signer = new MACSigner(stringSecret);
 		assertEquals("Shared secret string check", stringSecret, signer.getSharedSecretString());
-		assertEquals(3, signer.supportedAlgorithms().size());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
 		jwsObject.sign(signer);
 
@@ -155,10 +200,6 @@ public class MACTest extends TestCase {
 
 		MACVerifier verifier = new MACVerifier(stringSecret);
 		assertEquals("Shared secret string check", stringSecret, verifier.getSharedSecretString());
-		assertEquals(3, verifier.supportedAlgorithms().size());
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
 
 		boolean verified = jwsObject.verify(verifier);
 
