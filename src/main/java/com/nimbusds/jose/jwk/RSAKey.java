@@ -347,7 +347,7 @@ public final class RSAKey extends JWK {
 
 
 		/**
-		 * The public key use, optional.
+		 * The key use, optional.
 		 */
 		private KeyUse use;
 
@@ -846,8 +846,8 @@ public final class RSAKey extends JWK {
 	 * @param e   The exponent value for the public RSA key. It is 
 	 *            represented as the Base64URL encoding of value's big 
 	 *            endian representation. Must not be {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -882,8 +882,8 @@ public final class RSAKey extends JWK {
 	 * @param d   The private exponent. It is represented as the Base64URL 
 	 *            encoding of the value's big endian representation. Must 
 	 *            not be {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -937,8 +937,8 @@ public final class RSAKey extends JWK {
 	 *            endian representation. Must not be {@code null}.
 	 * @param oth The other primes information, should they exist,
 	 *            {@code null} or an empty list if not specified.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -1022,8 +1022,8 @@ public final class RSAKey extends JWK {
 	 *            endian representation. May be {@code null}.
 	 * @param oth The other primes information, should they exist,
 	 *            {@code null} or an empty list if not specified.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -1118,8 +1118,8 @@ public final class RSAKey extends JWK {
 	 * 
 	 * @param pub The public RSA key to represent. Must not be 
 	 *            {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -1150,8 +1150,8 @@ public final class RSAKey extends JWK {
 	 *             {@code null}.
 	 * @param priv The private RSA key to represent. Must not be
 	 *             {@code null}.
-	 * @param use  The public key use, {@code null} if not specified or if
-	 *             the key is intended for signing as well as encryption.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
 	 * @param ops  The key operations, {@code null} if not specified.
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
@@ -1184,8 +1184,8 @@ public final class RSAKey extends JWK {
 	 *             {@code null}.
 	 * @param priv The private RSA key to represent. Must not be
 	 *             {@code null}.
-	 * @param use  The public key use, {@code null} if not specified or if
-	 *             the key is intended for signing as well as encryption.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
 	 * @param ops  The key operations, {@code null} if not specified.
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.
@@ -1225,8 +1225,8 @@ public final class RSAKey extends JWK {
 	 *             {@code null}.
 	 * @param priv The private RSA key to represent. Must not be
 	 *             {@code null}.
-	 * @param use  The public key use, {@code null} if not specified or if
-	 *             the key is intended for signing as well as encryption.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
 	 * @param ops  The key operations, {@code null} if not specified.
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.

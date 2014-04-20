@@ -328,7 +328,7 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * The public key use, optional.
+		 * The key use, optional.
 		 */
 		private KeyUse use;
 
@@ -461,7 +461,7 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * Sets the use ({@code use}) of the JWK (for a public key).
+		 * Sets the use ({@code use}) of the JWK.
 		 *
 		 * @param use The key use, {@code null} if not specified or if 
 		 *            the key is intended for signing as well as 
@@ -477,8 +477,7 @@ public final class ECKey extends JWK {
 
 
 		/**
-		 * Sets the operations ({@code key_ops}) of the JWK (for a
-		 * non-public key).
+		 * Sets the operations ({@code key_ops}) of the JWK.
 		 *
 		 * @param ops The key operations, {@code null} if not
 		 *            specified.
@@ -666,8 +665,8 @@ public final class ECKey extends JWK {
 	 *            It is represented as the Base64URL encoding of the 
 	 *            coordinate's big endian representation. Must not be 
 	 *            {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -723,8 +722,8 @@ public final class ECKey extends JWK {
 	 *            It is represented as the Base64URL encoding of the 
 	 *            coordinate's big endian representation. Must not be 
 	 *            {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -773,8 +772,8 @@ public final class ECKey extends JWK {
 	 *
 	 * @param crv The cryptographic curve. Must not be {@code null}.
 	 * @param pub The public EC key to represent. Must not be {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -806,8 +805,8 @@ public final class ECKey extends JWK {
 	 *             {@code null}.
 	 * @param priv The private EC key to represent. Must not be 
 	 *             {@code null}.
-	 * @param use  The public key use, {@code null} if not specified or if
-	 *             the key is intended for signing as well as encryption.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
 	 * @param ops  The key operations, {@code null} if not specified.
 	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
 	 *             not specified.

@@ -64,7 +64,7 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * The public key use, optional.
+	 * The key use, optional.
 	 */
 	private final KeyUse use;
 
@@ -109,8 +109,8 @@ public abstract class JWK implements JSONAware {
 	 * Creates a new JSON Web Key (JWK).
 	 *
 	 * @param kty The key type. Must not be {@code null}.
-	 * @param use The public key use, {@code null} if not specified or if
-	 *            the key is intended for signing as well as encryption.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
 	 * @param alg The intended JOSE algorithm for the key, {@code null} if
 	 *            not specified.
@@ -164,10 +164,10 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
-	 * Gets the public use ({@code use}) of this JWK.
+	 * Gets the use ({@code use}) of this JWK.
 	 *
-	 * @return The public key use, {@code null} if not specified or if the
-	 *         key is intended for signing as well as encryption.
+	 * @return The key use, {@code null} if not specified or if the key is
+	 *         intended for signing as well as encryption.
 	 */
 	public KeyUse getKeyUse() {
 
