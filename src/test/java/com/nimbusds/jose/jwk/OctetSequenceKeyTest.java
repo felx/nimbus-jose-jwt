@@ -4,6 +4,7 @@ package com.nimbusds.jose.jwk;
 import java.net.URL;
 import java.util.*;
 
+import com.nimbusds.jose.EncryptionMethod;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -235,7 +236,7 @@ public class OctetSequenceKeyTest extends TestCase {
 	}
 
 
-	public void testCookbookExample()
+	public void testCookbookHMACKeyExample()
 		throws Exception {
 
 		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.1
@@ -254,5 +255,29 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
 
 		assertEquals("hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg", jwk.getKeyValue().toString());
+	}
+
+
+	public void testCookbookAESKeyExample()
+		throws Exception {
+
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.6.1
+
+		String json ="{"+
+			"\"kty\":\"oct\","+
+			"\"kid\":\"77c7e2b8-6e13-45cf-8672-617b5b45243a\","+
+			"\"use\":\"enc\","+
+			"\"alg\":\"A128GCM\","+
+			"\"k\":\"XctOhJAkA-pD9Lh7ZgW_2A\""+
+			"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+
+		assertEquals(KeyType.OCT, jwk.getKeyType());
+		assertEquals("77c7e2b8-6e13-45cf-8672-617b5b45243a", jwk.getKeyID());
+		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
+		assertEquals(EncryptionMethod.A128GCM, jwk.getAlgorithm());
+
+		assertEquals("XctOhJAkA-pD9Lh7ZgW_2A", jwk.getKeyValue().toString());
 	}
 }
