@@ -599,6 +599,8 @@ public class RSAKeyTest extends TestCase {
 	public void testParseCookbookExample()
 		throws Exception {
 
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.1.1
+
 		String json = "{" +
 			"\"kty\": \"RSA\"," +
 			"\"kid\": \"bilbo.baggins@hobbiton.example\"," +
