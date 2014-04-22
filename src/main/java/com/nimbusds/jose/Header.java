@@ -30,7 +30,7 @@ public abstract class Header implements ReadOnlyHeader {
 	/**
 	 * The algorithm ({@code alg}) parameter.
 	 */
-	final protected Algorithm alg;
+	protected final Algorithm alg;
 
 
 	/**

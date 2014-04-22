@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
@@ -50,6 +50,13 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs =
 		new HashSet<JWSAlgorithm>(supportedAlgorithms());
+
+
+	/**
+	 * The critical header parameter checker.
+	 */
+	private final CriticalHeaderParameterChecker critParamChecker =
+		new CriticalHeaderParameterChecker();
 
 
 	/**
@@ -137,10 +144,28 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	@Override
+	public Set<String> getIgnoredCriticalHeaderParameters() {
+
+		return critParamChecker.getIgnoredCriticalHeaders();
+	}
+
+
+	@Override
+	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
+
+		critParamChecker.setIgnoredCriticalHeaders(headers);
+	}
+
+
+	@Override
 	public boolean verify(final ReadOnlyJWSHeader header, 
 		              final byte[] signedContent, 
 		              final Base64URL signature)
 		throws JOSEException {
+
+		if (! critParamChecker.headerPasses(header)) {
+			return false;
+		}
 
 		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();

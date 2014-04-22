@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.StringUtils;
  * algorithms and encryption methods.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-22)
  */
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
 
@@ -58,6 +58,13 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 */
 	private Set<EncryptionMethod> acceptedEncs =
 		new HashSet<EncryptionMethod>(supportedEncryptionMethods());
+
+
+	/**
+	 * The critical header parameter checker.
+	 */
+	private final CriticalHeaderParameterChecker critParamChecker =
+		new CriticalHeaderParameterChecker();
 
 
 	/**
@@ -136,7 +143,21 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 
 	@Override
-	public byte[] decrypt(final ReadOnlyJWEHeader readOnlyJWEHeader,
+	public Set<String> getIgnoredCriticalHeaderParameters() {
+
+		return critParamChecker.getIgnoredCriticalHeaders();
+	}
+
+
+	@Override
+	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
+
+		critParamChecker.setIgnoredCriticalHeaders(headers);
+	}
+
+
+	@Override
+	public byte[] decrypt(final ReadOnlyJWEHeader header,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,
@@ -160,18 +181,23 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		}
 		
 
-		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
+		JWEAlgorithm alg = header.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
 
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
+		if (! critParamChecker.headerPasses(header)) {
+
+			throw new JOSEException("Unsupported critical header parameter");
+		}
+
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
+		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
 
 		// Decrypt the cipher text according to the JWE enc
-		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		EncryptionMethod enc = header.getEncryptionMethod();
 
 		byte[] plainText;
 
@@ -190,7 +216,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 
 		// Apply decompression if requested
-		return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
+		return DeflateHelper.applyDecompression(header, plainText);
 	}
 }
 

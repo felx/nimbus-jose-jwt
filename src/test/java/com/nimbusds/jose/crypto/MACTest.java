@@ -295,4 +295,59 @@ public class MACTest extends TestCase {
 			"b24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXigJlzIG5vIGtub3dpbmcgd2hlcm" +
 			"UgeW91IG1pZ2h0IGJlIHN3ZXB0IG9mZiB0by4", jwsObject.getPayload().toBase64URL().toString());
 	}
+
+
+	public void testCritHeaderParamIgnore()
+		throws Exception {
+
+		final String stringSecret = "3eae8196ad1b";
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		JWSObject jwsObject = new JWSObject(header, payload);
+
+		MACSigner signer = new MACSigner(stringSecret);
+
+		jwsObject.sign(signer);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		MACVerifier verifier = new MACVerifier(stringSecret);
+		verifier.getIgnoredCriticalHeaderParameters().add("exp");
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testCritHeaderParamReject()
+		throws Exception {
+
+		final String stringSecret = "3eae8196ad1b";
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		JWSObject jwsObject = new JWSObject(header, payload);
+
+		MACSigner signer = new MACSigner(stringSecret);
+
+		jwsObject.sign(signer);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		MACVerifier verifier = new MACVerifier(stringSecret);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+	}
 }

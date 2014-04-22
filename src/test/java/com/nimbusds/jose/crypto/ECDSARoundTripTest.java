@@ -11,6 +11,8 @@ import java.security.spec.ECFieldFp;
 import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -27,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests round-trip ES256, EC384 and EC512 JWS signing and verification.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version $version$ (2014-04-22)
  */
 public class ECDSARoundTripTest extends TestCase {
 
@@ -209,5 +211,68 @@ public class ECDSARoundTripTest extends TestCase {
 		boolean verified = jwsObject.verify(verifier);
 
 		assertTrue("EC512 signature verified", verified);
+	}
+
+
+	public void testCritHeaderParamIgnore()
+		throws Exception {
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.ES512);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		KeyPair keyPair = createECKeyPair(EC512SPEC);
+		ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
+		ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+
+		JWSObject jwsObject = new JWSObject(header, new Payload("Hello world!"));
+
+		JWSSigner signer = new ECDSASigner(privateKey.getS());
+
+		jwsObject.sign(signer);
+
+		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
+
+		BigInteger x = publicKey.getW().getAffineX();
+		BigInteger y = publicKey.getW().getAffineY();
+		JWSVerifier verifier = new ECDSAVerifier(x, y);
+		verifier.getIgnoredCriticalHeaderParameters().add("exp");
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testCritHeaderParamReject()
+		throws Exception {
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.ES512);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		KeyPair keyPair = createECKeyPair(EC512SPEC);
+		ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
+		ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+
+		JWSObject jwsObject = new JWSObject(header, new Payload("Hello world!"));
+
+		JWSSigner signer = new ECDSASigner(privateKey.getS());
+
+		jwsObject.sign(signer);
+
+		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
+
+		BigInteger x = publicKey.getW().getAffineX();
+		BigInteger y = publicKey.getW().getAffineY();
+		JWSVerifier verifier = new ECDSAVerifier(x, y);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 	}
 }

@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
@@ -58,6 +58,30 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                     not {@code null}.
 	 */
 	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs);
+
+
+	/**
+	 * Gets the names of the critical JWE header parameters to ignore.
+	 * These are indicated by the {@code crit} header parameter. The JWE
+	 * decrypter should not ignore critical headers by default.
+	 *
+	 * @return The names of the critical JWS header parameters to ignore,
+	 *         empty or {@code null} if none.
+	 */
+	public Set<String> getIgnoredCriticalHeaderParameters();
+
+
+	/**
+	 * Sets the names of the critical JWE header parameters to ignore.
+	 * These are indicated by the {@code crit} header parameter. The JWE
+	 * decrypter should not ignore critical headers by default. Use this
+	 * setter to delegate processing of selected critical headers to the
+	 * application.
+	 *
+	 * @param headers The names of the critical JWS header parameters to
+	 *                ignore, empty or {@code null} if none.
+	 */
+	public void setIgnoredCriticalHeaderParameters(final Set<String> headers);
 
 
 	/**

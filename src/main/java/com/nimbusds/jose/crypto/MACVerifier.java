@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-04-22)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -38,6 +38,13 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs =
 		new HashSet<JWSAlgorithm>(supportedAlgorithms());
+
+
+	/**
+	 * The critical header parameter checker.
+	 */
+	private final CriticalHeaderParameterChecker critParamChecker =
+		new CriticalHeaderParameterChecker();
 
 
 	/**
@@ -85,6 +92,19 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	}
 
 
+	@Override
+	public Set<String> getIgnoredCriticalHeaderParameters() {
+
+		return critParamChecker.getIgnoredCriticalHeaders();
+	}
+
+
+	@Override
+	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
+
+		critParamChecker.setIgnoredCriticalHeaders(headers);
+	}
+
 
 	@Override
 	public boolean verify(final ReadOnlyJWSHeader header, 
@@ -93,6 +113,11 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		throws JOSEException {
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
+
+		if (! critParamChecker.headerPasses(header)) {
+			return false;
+		}
+
 		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
 		Base64URL expectedSignature = Base64URL.encode(hmac);
 		return expectedSignature.equals(signature);

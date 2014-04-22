@@ -46,7 +46,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -65,6 +65,12 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	private Set<EncryptionMethod> acceptedEncs =
 		new HashSet<EncryptionMethod>(supportedEncryptionMethods());
 
+
+	/**
+	 * The critical header parameter checker.
+	 */
+	private final CriticalHeaderParameterChecker critParamChecker =
+		new CriticalHeaderParameterChecker();
 
 
 	/**
@@ -144,7 +150,21 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	@Override
-	public byte[] decrypt(final ReadOnlyJWEHeader readOnlyJWEHeader,
+	public Set<String> getIgnoredCriticalHeaderParameters() {
+
+		return critParamChecker.getIgnoredCriticalHeaders();
+	}
+
+
+	@Override
+	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
+
+		critParamChecker.setIgnoredCriticalHeaders(headers);
+	}
+
+
+	@Override
+	public byte[] decrypt(final ReadOnlyJWEHeader header,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,
@@ -166,16 +186,21 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			throw new JOSEException("The authentication tag must not be null");
 		}
+
+		if (! critParamChecker.headerPasses(header)) {
+
+			throw new JOSEException("Unsupported critical header parameter");
+		}
 		
 
 		// Derive the content encryption key
-		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
+		JWEAlgorithm alg = header.getAlgorithm();
 
 		SecretKey cek;
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			int keyLength = readOnlyJWEHeader.getEncryptionMethod().cekBitLength();
+			int keyLength = header.getEncryptionMethod().cekBitLength();
 
 			SecureRandom randomGen = getSecureRandom();
 			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
@@ -200,10 +225,10 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		}
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
+		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
 
 		// Decrypt the cipher text according to the JWE enc
-		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		EncryptionMethod enc = header.getEncryptionMethod();
 
 		byte[] plainText;
 
@@ -222,7 +247,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 		// Apply decompression if requested
-		return DeflateHelper.applyDecompression(readOnlyJWEHeader, plainText);
+		return DeflateHelper.applyDecompression(header, plainText);
 	}
 }
 

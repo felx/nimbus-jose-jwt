@@ -10,17 +10,9 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
 import junit.framework.TestCase;
-
-import com.nimbusds.jose.CompressionAlgorithm;
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.JWEObject;
-import com.nimbusds.jose.Payload;
 
 
 /**
@@ -632,5 +624,66 @@ public class RSA1_5Test extends TestCase {
 		jweObject.decrypt(decrypter);
 
 		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
+	}
+
+
+	public void testCritHeaderParamIgnore()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getIgnoredCriticalHeaderParameters().add("exp");
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testCritHeaderParamReject()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		try {
+			jweObject.decrypt(decrypter);
+			fail();
+		} catch (JOSEException e) {
+			// ok
+			assertEquals("Unsupported critical header parameter", e.getMessage());
+		}
 	}
 }

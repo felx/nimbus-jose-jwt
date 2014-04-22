@@ -660,4 +660,51 @@ public class RSASSATest extends TestCase {
 			"b24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXigJlzIG5vIGtub3dpbmcgd2hlcm" +
 			"UgeW91IG1pZ2h0IGJlIHN3ZXB0IG9mZiB0by4", jwsObject.getPayload().toBase64URL().toString());
 	}
+
+
+	public void testCritHeaderParamIgnore()
+		throws Exception {
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
+
+		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
+
+		jwsObject.sign(signer);
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+		verifier.getIgnoredCriticalHeaderParameters().add("exp");
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testCritHeaderParamReject()
+		throws Exception {
+
+		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
+		header.setCustomParameter("exp", "2014-04-24");
+		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+
+		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
+
+		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
+
+		jwsObject.sign(signer);
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+	}
 }
