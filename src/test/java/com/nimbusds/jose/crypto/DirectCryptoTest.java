@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.CompressionAlgorithm;
@@ -20,7 +21,7 @@ import com.nimbusds.jose.Payload;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -428,5 +429,48 @@ public class DirectCryptoTest extends TestCase {
 		payload = jweObject.getPayload();
 
 		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testCookbookExample()
+		throws Exception {
+
+		String json ="{"+
+			"\"kty\":\"oct\","+
+			"\"kid\":\"77c7e2b8-6e13-45cf-8672-617b5b45243a\","+
+			"\"use\":\"enc\","+
+			"\"alg\":\"A128GCM\","+
+			"\"k\":\"XctOhJAkA-pD9Lh7ZgW_2A\""+
+			"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+
+
+		String jwe = "eyJhbGciOiJkaXIiLCJraWQiOiI3N2M3ZTJiOC02ZTEzLTQ1Y2YtODY3Mi02MT"+
+			"diNWI0NTI0M2EiLCJlbmMiOiJBMTI4R0NNIn0"+
+			"."+
+			"."+
+			"refa467QzzKx6QAB"+
+			"."+
+			"JW_i_f52hww_ELQPGaYyeAB6HYGcR559l9TYnSovc23XJoBcW29rHP8yZOZG7Y"+
+			"hLpT1bjFuvZPjQS-m0IFtVcXkZXdH_lr_FrdYt9HRUYkshtrMmIUAyGmUnd9zM"+
+			"DB2n0cRDIHAzFVeJUDxkUwVAE7_YGRPdcqMyiBoCO-FBdE-Nceb4h3-FtBP-c_"+
+			"BIwCPTjb9o0SbdcdREEMJMyZBH8ySWMVi1gPD9yxi-aQpGbSv_F9N4IZAxscj5"+
+			"g-NJsUPbjk29-s7LJAGb15wEBtXphVCgyy53CoIKLHHeJHXex45Uz9aKZSRSIn"+
+			"ZI-wjsY0yu3cT4_aQ3i1o-tiE-F8Ios61EKgyIQ4CWao8PFMj8TTnp"+
+			"."+
+			"vbb32Xvllea2OtmHAdccRQ";
+
+		JWEObject jweObject = JWEObject.parse(jwe);
+
+		assertEquals(JWEAlgorithm.DIR, jweObject.getHeader().getAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
+		assertEquals("77c7e2b8-6e13-45cf-8672-617b5b45243a", jweObject.getHeader().getKeyID());
+
+		JWEDecrypter decrypter = new DirectDecrypter(jwk.toByteArray());
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
 	}
 }
