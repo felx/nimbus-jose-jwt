@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-03)
+ * @version $version$ (2014-04-22)
  */
 public class ECKeyTest extends TestCase {
 
@@ -428,5 +428,56 @@ public class ECKeyTest extends TestCase {
 		} catch (IllegalStateException e) {
 			// ok
 		}
+	}
+	
+	
+	public void testCookbookExampleKey()
+		throws Exception {
+		
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.3.1
+		
+		String json = "{"+
+			"\"kty\":\"EC\","+
+			"\"kid\":\"bilbo.baggins@hobbiton.example\","+
+			"\"use\":\"sig\","+
+			"\"crv\":\"P-521\","+
+			"\"x\":\"AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9"+
+			"A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt\","+
+			"\"y\":\"AdymlHvOiLxXkEhayXQnNCvDX4h9htZaCJN34kfmC6pV5OhQHiraVy"+
+			"SsUdaQkAgDPrwQrJmbnX9cwlGfP-HqHZR1\","+
+			"\"d\":\"AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb"+
+			"KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt\""+
+			"}";
+
+		ECKey jwk = ECKey.parse(json);
+
+		assertEquals(KeyType.EC, jwk.getKeyType());
+		assertEquals("bilbo.baggins@hobbiton.example", jwk.getKeyID());
+		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
+		assertEquals(ECKey.Curve.P_521, jwk.getCurve());
+
+		assertEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
+			"A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
+
+		assertEquals("AdymlHvOiLxXkEhayXQnNCvDX4h9htZaCJN34kfmC6pV5OhQHiraVy"+
+			"SsUdaQkAgDPrwQrJmbnX9cwlGfP-HqHZR1", jwk.getY().toString());
+
+		assertEquals("AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb" +
+			"KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt", jwk.getD().toString());
+
+		// Convert to Java EC key object
+		ECPublicKey ecPublicKey = jwk.toECPublicKey();
+		ECPrivateKey ecPrivateKey = jwk.toECPrivateKey();
+
+		jwk = new ECKey.Builder(ECKey.Curve.P_521, ecPublicKey).privateKey(ecPrivateKey).build();
+
+		assertEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
+			"A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
+
+		assertEquals("AdymlHvOiLxXkEhayXQnNCvDX4h9htZaCJN34kfmC6pV5OhQHiraVy"+
+			"SsUdaQkAgDPrwQrJmbnX9cwlGfP-HqHZR1", jwk.getY().toString());
+
+		assertEquals("AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb" +
+			"KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt", jwk.getD().toString());
 	}
 }
