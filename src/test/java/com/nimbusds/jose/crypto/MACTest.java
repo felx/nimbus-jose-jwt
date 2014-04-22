@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JOSEObjectType;
@@ -22,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  */
 public class MACTest extends TestCase {
 
@@ -253,5 +254,45 @@ public class MACTest extends TestCase {
 		assertTrue("Signature check", verified);
 
 		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testCookbookExample()
+		throws Exception {
+
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.3
+
+		String json ="{"+
+			"\"kty\":\"oct\","+
+			"\"kid\":\"018c0ae5-4d9b-471b-bfd6-eef314bc7037\","+
+			"\"use\":\"sig\","+
+			"\"k\":\"hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg\""+
+			"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+
+		String jws = "eyJhbGciOiJIUzI1NiIsImtpZCI6IjAxOGMwYWU1LTRkOWItNDcxYi1iZmQ2LW"+
+			"VlZjMxNGJjNzAzNyJ9"+
+			"."+
+			"SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywgZ29pbmcgb3V0IH"+
+			"lvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9hZCwgYW5kIGlmIHlvdSBk"+
+			"b24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXigJlzIG5vIGtub3dpbmcgd2hlcm"+
+			"UgeW91IG1pZ2h0IGJlIHN3ZXB0IG9mZiB0by4"+
+			"."+
+			"s0h6KThzkfBBBkLspW1h84VsJZFTsPPqMDA7g1Md7p0";
+
+		JWSObject jwsObject = JWSObject.parse(jws);
+
+		assertEquals(JWSAlgorithm.HS256, jwsObject.getHeader().getAlgorithm());
+		assertEquals("018c0ae5-4d9b-471b-bfd6-eef314bc7037", jwsObject.getHeader().getKeyID());
+
+		JWSVerifier verifier = new MACVerifier(jwk.toByteArray());
+
+		assertTrue(jwsObject.verify(verifier));
+
+		assertEquals("SXTigJlzIGEgZGFuZ2Vyb3VzIGJ1c2luZXNzLCBGcm9kbywgZ29pbmcgb3V0IH" +
+			"lvdXIgZG9vci4gWW91IHN0ZXAgb250byB0aGUgcm9hZCwgYW5kIGlmIHlvdSBk" +
+			"b24ndCBrZWVwIHlvdXIgZmVldCwgdGhlcmXigJlzIG5vIGtub3dpbmcgd2hlcm" +
+			"UgeW91IG1pZ2h0IGJlIHN3ZXB0IG9mZiB0by4", jwsObject.getPayload().toBase64URL().toString());
 	}
 }
