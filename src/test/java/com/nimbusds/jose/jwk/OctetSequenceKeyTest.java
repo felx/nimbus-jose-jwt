@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-04-22)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -232,5 +232,27 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
+	}
+
+
+	public void testCookbookExample()
+		throws Exception {
+
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.1
+		
+		String json ="{"+
+			"\"kty\":\"oct\","+
+			"\"kid\":\"018c0ae5-4d9b-471b-bfd6-eef314bc7037\","+
+			"\"use\":\"sig\","+
+			"\"k\":\"hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg\""+
+			"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+
+		assertEquals(KeyType.OCT, jwk.getKeyType());
+		assertEquals("018c0ae5-4d9b-471b-bfd6-eef314bc7037", jwk.getKeyID());
+		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
+
+		assertEquals("hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg", jwk.getKeyValue().toString());
 	}
 }
