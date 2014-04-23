@@ -1,13 +1,21 @@
 Nimbus JOSE + JWT
 
+* The most popular Java library for signed and encrypted JSON Web Tokens (JWT)
 
-Nimbus JOSE + JWT is an open source (Apache 2.0) Java library that implements
-the Javascript Object Signing and Encryption (JOSE) spec suite and the closely
+* Full JWS algorithm and RSA encryption support
+
+* Open source (Apache 2.0 licence)
+
+
+Nimbus JOSE + JWT is an open source Java library which implements the
+Javascript Object Signing and Encryption (JOSE) spec suite and the closely
 related JSON Web Token (JWT) spec.
 
 
-The library supports creating, querying, serialising and parsing of the
-following JOSE and JWT objects:
+Supported JOSE and JWT objects
+
+The library can create, examine, serialise and parse the following JOSE and JWT
+objects (in compact format):
 
 * Plain (unsecured) JOSE objects.
 
@@ -19,11 +27,6 @@ following JOSE and JWT objects:
 
 * Plain, signed and encrypted JSON Web Tokens (JWTs).
 
-
-The JOSE and JWT object representation is completely decoupled from JSON Web
-Algorithm (JWA) implementations through a set of simple interfaces for signing,
-verifying, encrypting and decrypting the objects. Developers can use the
-standard algorithm implementations or plug their own.
 
 
 The library currently ships a ready implementation of the following standard
@@ -49,15 +52,8 @@ algorithms:
 * JWE Compression with DEFLATE.
 
 
-AES Key Wray and ECDH-ES encryption is on the roadmap, you're welcome to
+AES Key Wrap and ECDH-ES encryption is on the roadmap, you're welcome to
 contribute in their development.
-
-
-The library code comes with complete JavaDocs which can help you discover and
-make use of many special features. The JavaDocs are included in the download
-package. You can also browse them online.
-
-http://nimbusds.com/files/jose-jwt/javadoc/
 
 
 Related IETF drafts:
@@ -90,51 +86,18 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.24</version>
+    <version>2.25</version>
 </dependency>
-
-
-Uses
-
-* JWT bearer tokens in OAuth 2.0
-
-* OpenID Connect
-
-* XMPP
-
-
-JWK generator
-
-A generator for symmetric and RSA - based JSON Web Keys (JWKs), including a
-command-line utility, is available at
-
-https://github.com/mitreid-connect/json-web-key-generator
-
-
-Licensing
-
-The library source code is provided under the Apache 2.0 licence.
-
-
-The principal maintainer of this library is Nimbus Directory Services
-[http://NimbusDS.com]. The initial code was based on JWS/JWE/JWT crypto classes
-factored out of the OpenInfoCard project. A rewrite to fully decouple JOSE +
-JWT object representation from crypto algorithm implementation led to the next
-major 2.0 release in October 2012.
-
-The library has received numerous contributions and is now on the way to have
-all standard JWAs fully implemented. You're welcome to join us if you wish to
-help out with that.
 
 
 To post bug reports and suggestions:
 
-https://bitbucket.org/nimbusds/nimbus-jose-jwt/issues
+https://bitbucket.org/connect2id/nimbus-jose-jwt/issues
 
 
 Follow us on Twitter:
 
-https://twitter.com/NimbusDS
+https://twitter.com/connect2id
 
 
 
