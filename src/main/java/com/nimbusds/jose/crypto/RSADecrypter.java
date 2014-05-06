@@ -26,6 +26,7 @@ import com.nimbusds.jose.util.StringUtils;
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP_256}
  * </ul>
  *
  * <p>Supports the following encryption methods:
@@ -219,6 +220,10 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
 
+		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
+			
+			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
+			
 		} else {
 		
 			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA_OAEP");

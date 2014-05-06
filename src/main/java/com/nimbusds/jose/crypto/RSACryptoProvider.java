@@ -18,6 +18,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP_256}
  * </ul>
  *
  * <p>Supports the following encryption methods:
@@ -58,6 +59,7 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
 		algs.add(JWEAlgorithm.RSA1_5);
 		algs.add(JWEAlgorithm.RSA_OAEP);
+		algs.add(JWEAlgorithm.RSA_OAEP_256);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
 		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
