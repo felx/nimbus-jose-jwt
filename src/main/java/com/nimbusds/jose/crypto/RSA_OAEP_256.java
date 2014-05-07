@@ -1,13 +1,17 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.AlgorithmParameters;
 import java.security.Provider;
-import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.AlgorithmParameterSpec;
+import java.security.spec.MGF1ParameterSpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
@@ -44,8 +48,11 @@ class RSA_OAEP_256 {
 		throws JOSEException {
 
 		try {
+			AlgorithmParameters algp = AlgorithmParametersHelper.getInstance("OAEP", provider);
+			AlgorithmParameterSpec paramSpec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
+			algp.init(paramSpec);
 			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding", provider);
-			cipher.init(Cipher.ENCRYPT_MODE, pub, new SecureRandom());
+			cipher.init(Cipher.ENCRYPT_MODE, pub, algp);
 			return cipher.doFinal(cek.getEncoded());
 
 		} catch (Exception e) {
@@ -77,8 +84,11 @@ class RSA_OAEP_256 {
 		throws JOSEException {
 
 		try {
+			AlgorithmParameters algp = AlgorithmParametersHelper.getInstance("OAEP", provider);
+			AlgorithmParameterSpec paramSpec = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
+			algp.init(paramSpec);
 			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding", provider);
-			cipher.init(Cipher.DECRYPT_MODE, priv);
+			cipher.init(Cipher.DECRYPT_MODE, priv, algp);
 			return new SecretKeySpec(cipher.doFinal(encryptedCEK), "AES");
 
 		} catch (Exception e) {

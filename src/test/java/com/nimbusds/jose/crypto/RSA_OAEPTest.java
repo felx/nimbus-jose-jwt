@@ -3,14 +3,15 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
+import java.security.Provider;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.jwk.RSAKey;
 import junit.framework.TestCase;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -19,6 +20,7 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jwk.RSAKey;
 
 
 /**
@@ -410,7 +412,7 @@ public class RSA_OAEPTest extends TestCase {
 		
 		RSAKey jwk = RSAKey.parse(jwkString);
 		
-		String jweString = "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.Oyeg4hbq2HjtHOcXduK9UhhIXervPzOTLAqKphCyeK55cFgKtF32DhD26sfnG6h9az3Ogrn4QwYJeZkjJK36teyjl9oKIW_9ItP8cYhOriDOOZFho53Bsttqj8pc0UPrMJ448yQsgkgyqmfWZQs3u_qCaSLXpegE3o-YJ520-Xu_ElS5pNy_vfSME1CeP5unPQPf06Xc6iMVWx9-K_7lxC7acYI_fSSUwuFw-vxrVJMRKf0NDikdmcoI5WW7h5gLXSu4EZvW8xHxA_QoEFnSeYgg8NQNOGLf_PaBddAdn8ck_mhtJdgfc0W251nTviMAwPAjsG0FMnPox7GdtzTdmA.3DJSCmGDd9WI-DI3sBRm8Q.ncFI9vUEdKkuhPR0h3nOJP5dBgKrcS5f9Q7Z58AZTTdTV53FlzJIHwdme-1xipwDifTOL8yi7beuEEiXg_CSzw.UmNlvrfeCGnhWT9qyuUSSA";
+		String jweString = "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.fL5IL5cMCjjU9G9_ZjsD2XO0HIwTOwbVwulcZVw31_rx2qTcHzbYhIvrvbcVLTfJzn8xbQ3UEL442ZgZ1PcFYKENYePXiEyvYxPN8dmvj_OfLSJDEqR6kvwOb6nghGtxfzdB_VRvFt2eehbCA3gWpiOYHHvSTFdBPGx2KZHQisLz3oZR8EWiZ1woEpHy8a7FoQ2zzuDlZEJQOUrh09b_EJxmcE2jL6wmEtgabyxy3VgWg3GqSPUISlJZV9HThuVJezzktJdpntRDnAPUqjc8IwByGpMleIQcPuBUseRRPr_OsroOJ6eTl5DuFCmBOKb-eNNw5v-GEcVYr1w7X9oXoA.0frdIwx8P8UAzh1s9_PgOA.RAzILH0xfs0yxzML1CzzGExCfE2_wzWKs0FVuXfM8R5H68yTqTbqIqRCp2feAH5GSvluzmztk2_CkGNSjAyoaw.4nMUXOgmgWvM-08tIZ-h5w";
 		
 		JWEObject jweObject = JWEObject.parse(jweString);
 		
@@ -418,6 +420,12 @@ public class RSA_OAEPTest extends TestCase {
 		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
 		
 		JWEDecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
+		
+		// install bouncycastle for the test
+		Provider provider = new BouncyCastleProvider();
+		decrypter.setKeyEncryptionProvider(provider);
+		decrypter.setContentEncryptionProvider(provider);
+		decrypter.setMACProvider(provider);
 		
 		jweObject.decrypt(decrypter);
 		
