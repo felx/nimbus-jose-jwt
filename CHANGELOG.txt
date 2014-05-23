@@ -278,3 +278,10 @@ version 2.25 (2014-04-22)
     * Removes JWS and JWE header parameter filter (issue #86).
     * Restores 'use' in octet sequence JWK class.
     * Extends JUnit tests with examples from draft-ietf-jose-cookbook-02.
+
+version 2.26 (2014-05-23)
+    * Adds experimental support for RSA-OAEP encryption SHA-256 and MGF1 with
+      SHA-256, with an "RSA-OAEP-256" algorithm identifier.
+    * Reintroduces A128CBC+HS256 and A256CBC+HS512 encryption (deprecated in
+      JOSE draft suite 09) to enable support of legacy applications.
+    * Fixes a manifest bug that affected OSGi support (issue #89).
