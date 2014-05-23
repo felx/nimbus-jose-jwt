@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * RSAES OAEP methods for Content Encryption Key (CEK) encryption and 
+ * RSAES OAEP (SHA-256) methods for Content Encryption Key (CEK) encryption and
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe
  *
  * @author Vladimir Dzhuvinov

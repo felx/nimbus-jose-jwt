@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Also supports the deprecated AES/CBC/HMAC encryption using a custom
  * concat KDF (JOSE draft suite 08).
  *
- * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
+ * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
@@ -158,7 +158,7 @@ class AESCBC {
 	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
@@ -303,7 +303,7 @@ class AESCBC {
 	 * Decrypts the specified cipher text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-18, section 5.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *

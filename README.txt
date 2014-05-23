@@ -41,10 +41,12 @@ algorithms:
 * EC signatures with ES256, ES384 and ES512.
 
 * RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384,
-  A256CBC-HS512, A128GCM, A192GCM and A256GCM.
+  A256CBC-HS512, A128GCM, A192GCM and A256GCM (the deprecated A128CBC+HS256 and
+  A256CBC+HS512 are also supported).
 
 * RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
-  A128GCM, A192GCM and A256GCM.
+  A128GCM, A192GCM and A256GCM (the deprecated A128CBC+HS256 and A256CBC+HS512
+  are also supported).
 
 * Direct shared symmetric key encryption with A128CBC-HS256, A192CBC-HS384,
   A256CBC-HS512, A128GCM, A192GCM and A256GCM.
@@ -58,15 +60,15 @@ contribute in their development.
 
 Related IETF drafts:
 
-* [JWA] draft-ietf-jose-json-web-algorithms-25
+* [JWA] draft-ietf-jose-json-web-algorithms-26
 
-* [JWS] draft-ietf-jose-json-web-signature-25
+* [JWS] draft-ietf-jose-json-web-signature-26
 
-* [JWE] draft-ietf-jose-json-web-encryption-25
+* [JWE] draft-ietf-jose-json-web-encryption-26
 
-* [JWK] draft-ietf-jose-json-web-key-25
+* [JWK] draft-ietf-jose-json-web-key-26
 
-* [JWT] draft-ietf-oauth-json-web-token-19
+* [JWT] draft-ietf-oauth-json-web-token-20
 
 
 Dependencies
@@ -77,8 +79,8 @@ The Nimbus JOSE+JWT library has minimal dependencies.
 
 * JCIP for concurrency annotations.
 
-* [optional] The BouncyCastle.org cryptography provider for Java, for ECDSA
-  signing and verification.
+* [optional] The BouncyCastle.org library, for ECDSA signing and verification,
+  and for AES/CBC and AES/GCM encryption.
 
 
 For Maven add:
@@ -86,7 +88,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.25</version>
+    <version>2.26</version>
 </dependency>
 
 

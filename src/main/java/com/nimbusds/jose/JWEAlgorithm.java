@@ -47,15 +47,15 @@ public final class JWEAlgorithm extends Algorithm {
 	 * with the default parameters specified by RFC 3447 in section A.2.1
 	 * (recommended).
 	 */
-	public static final JWEAlgorithm RSA_OAEP = new JWEAlgorithm("RSA-OAEP", Requirement.RECOMMENDED);
+	public static final JWEAlgorithm RSA_OAEP = new JWEAlgorithm("RSA-OAEP", Requirement.OPTIONAL);
 
 
 	/**
-	 * RSAES using Optimal Asymmetric Encryption Padding (OAEP) (RFC 3447), with
-	 * the SHA-256 hash function and the MGF1 with SHA-256 mask generation
-	 * function (recommended).
+	 * RSAES using Optimal Asymmetric Encryption Padding (OAEP) (RFC 3447),
+	 * with the SHA-256 hash function and the MGF1 with SHA-256 mask
+	 * generation function (recommended).
 	 */
-	public static final JWEAlgorithm RSA_OAEP_256 = new JWEAlgorithm("RSA-OAEP-256", Requirement.RECOMMENDED);
+	public static final JWEAlgorithm RSA_OAEP_256 = new JWEAlgorithm("RSA-OAEP-256", Requirement.OPTIONAL);
 
 
 	/**
