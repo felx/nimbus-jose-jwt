@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-05-23)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -155,20 +155,24 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
-		assertEquals(6, encrypter.supportedEncryptionMethods().size());
+		assertEquals(8, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(6, decrypter.supportedEncryptionMethods().size());
+		assertEquals(8, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
@@ -189,13 +193,15 @@ public class RSA1_5Test extends TestCase {
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(6, decrypter.getAcceptedEncryptionMethods().size());
+		assertEquals(8, decrypter.getAcceptedEncryptionMethods().size());
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 	}
 
 
@@ -685,5 +691,106 @@ public class RSA1_5Test extends TestCase {
 			// ok
 			assertEquals("Unsupported critical header parameter", e.getMessage());
 		}
+	}
+
+
+	public void testWithDeprecatedA128CBC_HS256()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithDeprecatedA256CBC_HS512()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testExampleDecryptDeprecatedA128CBC_HS256()
+		throws Exception {
+
+		// From JWE spec draft-ietf-jose-json-web-encryption-08#appendix-A.2
+
+		String jweString =
+			"eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDK0hTMjU2In0." +
+			"ZmnlqWgjXyqwjr7cXHys8F79anIUI6J2UWdAyRQEcGBU-KPHsePM910_RoTDGu1I" +
+			"W40Dn0dvcdVEjpJcPPNIbzWcMxDi131Ejeg-b8ViW5YX5oRdYdiR4gMSDDB3mbkI" +
+			"nMNUFT-PK5CuZRnHB2rUK5fhPuF6XFqLLZCG5Q_rJm6Evex-XLcNQAJNa1-6CIU1" +
+			"2Wj3mPExxw9vbnsQDU7B4BfmhdyiflLA7Ae5ZGoVRl3A__yLPXxRjHFhpOeDp_ad" +
+			"x8NyejF5cz9yDKULugNsDMdlHeJQOMGVLYaSZt3KP6aWNSqFA1PHDg-10ceuTEtq" +
+			"_vPE4-Gtev4N4K4Eudlj4Q." +
+			"AxY8DCtDaGlsbGljb3RoZQ." +
+			"Rxsjg6PIExcmGSF7LnSEkDqWIKfAw1wZz2XpabV5PwQsolKwEauWYZNE9Q1hZJEZ." +
+			"8LXqMd0JLGsxMaB5uoNaMpg7uUW_p40RlaZHCwMIyzk";
+
+		JWEObject jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		Payload payload = jweObject.getPayload();
+
+		assertEquals("No matter where you go, there you are.", payload.toString());
 	}
 }

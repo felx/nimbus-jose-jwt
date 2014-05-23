@@ -29,11 +29,13 @@ import com.nimbusds.jose.JWEAlgorithm;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version $version$ (2014-05-23)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -67,6 +69,8 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 		methods.add(EncryptionMethod.A128GCM);
 		methods.add(EncryptionMethod.A192GCM);
 		methods.add(EncryptionMethod.A256GCM);
+		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
 		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
 

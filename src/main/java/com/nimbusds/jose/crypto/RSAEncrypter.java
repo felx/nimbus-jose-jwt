@@ -37,11 +37,13 @@ import com.nimbusds.jose.util.StringUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-05-23)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -84,15 +86,15 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 	@Override
-	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
+	public JWECryptoParts encrypt(final ReadOnlyJWEHeader header, final byte[] bytes)
 		throws JOSEException {
 
-		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
-		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		final JWEAlgorithm alg = header.getAlgorithm();
+		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Generate and encrypt the CEK according to the enc method
-		SecureRandom randomGen = getSecureRandom();
-		SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
+		final SecureRandom randomGen = getSecureRandom();
+		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
 
 		Base64URL encryptedKey; // The second JWE part
 
@@ -111,26 +113,43 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
+		byte[] plainText = DeflateHelper.applyCompression(header, bytes);
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
+		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
 
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;
 		AuthenticatedCipherText authCipherText;
 		
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
+		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
+		    enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(cek, iv, plainText, aad, contentEncryptionProvider, macProvider);
+			authCipherText = AESCBC.encryptAuthenticated(
+				cek, iv, plainText, aad,
+				contentEncryptionProvider, macProvider);
 
-		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+		} else if (enc.equals(EncryptionMethod.A128GCM) ||
+			   enc.equals(EncryptionMethod.A192GCM) ||
+			   enc.equals(EncryptionMethod.A256GCM)    ) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			authCipherText = AESGCM.encrypt(cek, iv, plainText, aad, contentEncryptionProvider);
+			authCipherText = AESGCM.encrypt(
+				cek, iv, plainText, aad,
+				contentEncryptionProvider);
+
+		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
+			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
+
+			iv = AESCBC.generateIV(randomGen);
+
+			authCipherText = AESCBC.encryptWithConcatKDF(
+				header, cek, encryptedKey, iv, plainText,
+				contentEncryptionProvider, macProvider);
 
 		} else {
 

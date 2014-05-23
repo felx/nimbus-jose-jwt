@@ -37,6 +37,8 @@ import com.nimbusds.jose.util.StringUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  *
  * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
@@ -46,7 +48,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-05-23)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -232,13 +234,43 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		byte[] plainText;
 
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
+		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
+		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
+		    enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
 
-			plainText = AESCBC.decryptAuthenticated(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider, macProvider);
+			plainText = AESCBC.decryptAuthenticated(
+				cek,
+				iv.decode(),
+				cipherText.decode(),
+				aad,
+				authTag.decode(),
+				contentEncryptionProvider,
+				macProvider);
 
-		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
+		} else if (enc.equals(EncryptionMethod.A128GCM) ||
+			   enc.equals(EncryptionMethod.A192GCM) ||
+			   enc.equals(EncryptionMethod.A256GCM)    ) {
 
-			plainText = AESGCM.decrypt(cek, iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider);
+			plainText = AESGCM.decrypt(
+				cek,
+				iv.decode(),
+				cipherText.decode(),
+				aad,
+				authTag.decode(),
+				contentEncryptionProvider);
+
+		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
+			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
+
+			plainText = AESCBC.decryptWithConcatKDF(
+				header,
+				cek,
+				encryptedKey,
+				iv,
+				cipherText,
+				authTag,
+				contentEncryptionProvider,
+				macProvider);
 
 		} else {
 
