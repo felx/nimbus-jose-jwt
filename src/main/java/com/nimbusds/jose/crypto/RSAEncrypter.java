@@ -109,7 +109,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
 			
-			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, keyEncryptionProvider));
+			encryptedKey = Base64URL.encode(RSA_OAEP_256.encryptCEK(publicKey, cek, keyEncryptionProvider));
 			
 		} else {
 
