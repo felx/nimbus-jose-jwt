@@ -13,6 +13,7 @@ import net.jcip.annotations.Immutable;
  * <ul>
  *     <li>{@link #RSA1_5}
  *     <li>{@link #RSA_OAEP RSA-OAEP}
+ *     <li>{@link #RSA_OAEP_256 RSA-OAEP-256}
  *     <li>{@link #A128KW}
  *     <li>{@link #A192KW}
  *     <li>{@link #A256KW}
@@ -42,11 +43,19 @@ public final class JWEAlgorithm extends Algorithm {
 
 
 	/**
-	 * RSAES using Optimal Assymetric Encryption Padding (OAEP) (RFC 3447),
+	 * RSAES using Optimal Asymmetric Encryption Padding (OAEP) (RFC 3447),
 	 * with the default parameters specified by RFC 3447 in section A.2.1
 	 * (recommended).
 	 */
 	public static final JWEAlgorithm RSA_OAEP = new JWEAlgorithm("RSA-OAEP", Requirement.RECOMMENDED);
+
+
+	/**
+	 * RSAES using Optimal Asymmetric Encryption Padding (OAEP) (RFC 3447), with
+	 * the SHA-256 hash function and the MGF1 with SHA-256 mask generation
+	 * function (recommended).
+	 */
+	public static final JWEAlgorithm RSA_OAEP_256 = new JWEAlgorithm("RSA-OAEP-256", Requirement.RECOMMENDED);
 
 
 	/**

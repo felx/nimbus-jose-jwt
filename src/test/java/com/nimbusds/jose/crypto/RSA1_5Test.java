@@ -138,15 +138,17 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
-		assertEquals(2, encrypter.supportedAlgorithms().size());
+		assertEquals(3, encrypter.supportedAlgorithms().size());
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(2, decrypter.supportedAlgorithms().size());
+		assertEquals(3, decrypter.supportedAlgorithms().size());
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 	}
 
 
@@ -183,9 +185,10 @@ public class RSA1_5Test extends TestCase {
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(2, decrypter.getAcceptedAlgorithms().size());
+		assertEquals(3, decrypter.getAcceptedAlgorithms().size());
 		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
 		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 	}
 
 
