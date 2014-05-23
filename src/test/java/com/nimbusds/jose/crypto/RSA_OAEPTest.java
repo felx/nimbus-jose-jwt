@@ -421,8 +421,8 @@ public class RSA_OAEPTest extends TestCase {
 		
 		JWEDecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
 		
-		// install bouncycastle for the test
-		Provider provider = new BouncyCastleProvider();
+		// Get bouncycastle for the test
+		Provider provider = BouncyCastleProviderSingleton.getInstance();
 		decrypter.setKeyEncryptionProvider(provider);
 		decrypter.setContentEncryptionProvider(provider);
 		decrypter.setMACProvider(provider);
