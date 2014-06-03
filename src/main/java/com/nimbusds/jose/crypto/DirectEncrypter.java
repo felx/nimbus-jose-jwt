@@ -46,8 +46,9 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 * Creates a new direct encrypter.
 	 *
 	 * @param key The shared symmetric key. Its algorithm must be "AES".
-	 *            Must be 128 bits (16 bytes), 256 bits (32 bytes) or 512 
-	 *            bits (64 bytes) long. Must not be {@code null}.
+	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
+	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
+	 *            (64 bytes) long. Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the key length or algorithm are unexpected,
 	 *                       or if the underlying secure random generator 
@@ -64,8 +65,9 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 * Creates a new direct encrypter.
 	 *
 	 * @param keyBytes The shared symmetric key, as a byte array. Must be 
-	 *                 128 bits (16 bytes), 256 bits (32 bytes) or 512 bits
-	 *                 (64 bytes) long. Must not be {@code null}.
+	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
+	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
+	 *                 bytes) long. Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the key length or algorithm are unexpected,
 	 *                       or if the underlying secure random generator 

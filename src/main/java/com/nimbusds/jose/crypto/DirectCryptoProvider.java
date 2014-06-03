@@ -114,9 +114,10 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Creates a new direct encryption / decryption provider.
 	 *
-	 * @param keyBytes The shared symmetric key, as a byte array. Must be 
-	 *                 128 bits (16 bytes), 256 bits (32 bytes) or 512 bits
-	 *                 (64 bytes) long. Must not be {@code null}.
+	 * @param keyBytes The shared symmetric key, as a byte array. Must be
+	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
+	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
+	 *                 bytes) long. Must not be {@code null}.
 	 */
 	protected DirectCryptoProvider(final byte[] keyBytes)
 		throws JOSEException {
