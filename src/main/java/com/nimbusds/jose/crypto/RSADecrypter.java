@@ -205,16 +205,22 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			int keyLength = header.getEncryptionMethod().cekBitLength();
 
+			// Protect against MMA attack by generating random CEK on failure,
+			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
 			SecureRandom randomGen = getSecureRandom();
 			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
 
 			try {
 				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, keyEncryptionProvider);
-			
-			} catch (Exception e) {
 
-				// Protect against MMA attack by generating random CEK on failure, 
-				// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
+				if (cek == null) {
+					// CEK length mismatch, signalled by null instead of
+					// exception to prevent MMA attack
+					cek = randomCEK;
+				}
+
+			} catch (Exception e) {
+				// continue
 				cek = randomCEK;
 			}
 		
