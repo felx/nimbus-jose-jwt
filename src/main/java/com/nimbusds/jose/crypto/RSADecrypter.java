@@ -79,7 +79,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	/**
 	 * The private RSA key.
 	 */
-	private RSAPrivateKey privateKey;
+	private final RSAPrivateKey privateKey;
 
 
 	/**
