@@ -93,6 +93,7 @@ class RSA1_5 {
 			// java.security.NoSuchAlgorithmException
 			// java.security.InvalidKeyException
 			// javax.crypto.IllegalBlockSizeException
+			// javax.crypto.BadPaddingException
 			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
