@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @version $version$ (2014-04-20)
  */
 @Immutable
-public class OctetSequenceKey extends JWK {
+public final class OctetSequenceKey extends JWK {
 
 
 	/**
