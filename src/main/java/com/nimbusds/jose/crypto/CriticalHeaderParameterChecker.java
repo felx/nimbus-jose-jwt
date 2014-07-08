@@ -4,14 +4,14 @@ package com.nimbusds.jose.crypto;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nimbusds.jose.ReadOnlyHeader;
+import com.nimbusds.jose.Header;
 
 
 /**
  * Critical header parameter checker.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 class CriticalHeaderParameterChecker {
 
@@ -57,7 +57,7 @@ class CriticalHeaderParameterChecker {
 	 *         header contains one or more critical header parameters which
 	 *         must not be ignored.
 	 */
-	public boolean headerPasses(final ReadOnlyHeader header) {
+	public boolean headerPasses(final Header header) {
 
 		Set<String> crit = header.getCriticalHeaders();
 

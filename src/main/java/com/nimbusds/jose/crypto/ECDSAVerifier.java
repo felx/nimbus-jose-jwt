@@ -17,7 +17,7 @@ import org.bouncycastle.math.ec.ECPoint;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
@@ -158,7 +158,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	@Override
-	public boolean verify(final ReadOnlyJWSHeader header, 
+	public boolean verify(final JWSHeader header,
 		              final byte[] signedContent, 
 		              final Base64URL signature)
 		throws JOSEException {

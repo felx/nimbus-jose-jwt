@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plaintext (unsecured) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-17)
+ * @version $version$ (2014-04-08)
  */
 @ThreadSafe
 public class PlainObject extends JOSEObject {
@@ -21,7 +21,7 @@ public class PlainObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final ReadOnlyPlainHeader header;
+	private final PlainHeader header;
 
 
 	/**
@@ -50,7 +50,7 @@ public class PlainObject extends JOSEObject {
 	 * @param header  The plaintext header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public PlainObject(final ReadOnlyPlainHeader header, final Payload payload) {
+	public PlainObject(final PlainHeader header, final Payload payload) {
 
 		if (header == null) {
 
@@ -107,7 +107,7 @@ public class PlainObject extends JOSEObject {
 
 
 	@Override
-	public ReadOnlyPlainHeader getHeader() {
+	public PlainHeader getHeader() {
 
 		return header;
 	}

@@ -3,7 +3,7 @@ package com.nimbusds.jwt;
 
 import java.text.ParseException;
 
-import com.nimbusds.jose.ReadOnlyHeader;
+import com.nimbusds.jose.Header;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Token (JWT) interface.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2014-07-08)
  */
 public interface JWT {
 
@@ -21,7 +21,7 @@ public interface JWT {
 	 *
 	 * @return The header.
 	 */
-	public ReadOnlyHeader getHeader();
+	public Header getHeader();
 
 
 	/**

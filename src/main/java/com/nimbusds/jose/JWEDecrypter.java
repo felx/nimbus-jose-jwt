@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
@@ -106,7 +106,7 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                       header parameter is not accepted, or if
 	 *                       decryption failed for some other reason.
 	 */
-	public byte[] decrypt(final ReadOnlyJWEHeader header, 
+	public byte[] decrypt(final JWEHeader header,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,

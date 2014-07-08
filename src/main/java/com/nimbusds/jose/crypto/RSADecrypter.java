@@ -12,7 +12,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.ReadOnlyJWEHeader;
+import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version $version$ (2014-07-08)
  *
  */
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
@@ -167,7 +167,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	@Override
-	public byte[] decrypt(final ReadOnlyJWEHeader header,
+	public byte[] decrypt(final JWEHeader header,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,

@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-07-08)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -47,7 +47,7 @@ public class JWSObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final ReadOnlyJWSHeader header;
+	private final JWSHeader header;
 
 
 	/**
@@ -82,7 +82,7 @@ public class JWSObject extends JOSEObject {
 	 * @param header  The JWS header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public JWSObject(final ReadOnlyJWSHeader header, final Payload payload) {
+	public JWSObject(final JWSHeader header, final Payload payload) {
 
 		if (header == null) {
 
@@ -158,7 +158,7 @@ public class JWSObject extends JOSEObject {
 
 
 	@Override
-	public ReadOnlyJWSHeader getHeader() {
+	public JWSHeader getHeader() {
 
 		return header;
 	}

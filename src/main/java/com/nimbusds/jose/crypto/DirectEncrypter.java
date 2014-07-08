@@ -10,7 +10,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.ReadOnlyJWEHeader;
+import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-07-08)
  */
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
@@ -81,7 +81,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 
 	@Override
-	public JWECryptoParts encrypt(final ReadOnlyJWEHeader readOnlyJWEHeader, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader readOnlyJWEHeader, final byte[] bytes)
 		throws JOSEException {
 
 		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();

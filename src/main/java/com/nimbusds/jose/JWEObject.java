@@ -46,7 +46,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * The header.
 	 */
-	private final ReadOnlyJWEHeader header;
+	private final JWEHeader header;
 
 
 	/** 
@@ -88,7 +88,7 @@ public class JWEObject extends JOSEObject {
 	 * @param header  The JWE header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
-	public JWEObject(final ReadOnlyJWEHeader header, final Payload payload) {
+	public JWEObject(final JWEHeader header, final Payload payload) {
 
 		if (header == null) {
 
@@ -192,7 +192,7 @@ public class JWEObject extends JOSEObject {
 
 
 	@Override
-	public ReadOnlyJWEHeader getHeader() {
+	public JWEHeader getHeader() {
 
 		return header;
 	}

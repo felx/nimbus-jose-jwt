@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 public interface JWSVerifier extends JWSAlgorithmProvider {
 
@@ -36,7 +36,7 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 * @param acceptedAlgs The accepted JWS algorithms. Must be a subset of
 	 *                     the supported algorithms and not {@code null}.
 	 */
-	public void setAcceptedAlgorithms(Set<JWSAlgorithm> acceptedAlgs);
+	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs);
 
 
 	/**
@@ -83,6 +83,8 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 *                       signature verification failed for some other
 	 *                       reason.
 	 */
-	public boolean verify(final ReadOnlyJWSHeader header, final byte[] signingInput, final Base64URL signature)
+	public boolean verify(final JWSHeader header,
+			      final byte[] signingInput,
+			      final Base64URL signature)
 		throws JOSEException;
 }
