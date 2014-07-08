@@ -26,7 +26,7 @@ public abstract class Header {
 	/**
 	 * The algorithm ({@code alg}) parameter.
 	 */
-	protected final Algorithm alg;
+	private final Algorithm alg;
 
 
 	/**
@@ -119,6 +119,17 @@ public abstract class Header {
 		}
 
 		this.parsedBase64URL = parsedBase64URL;
+	}
+
+
+	/**
+	 * Gets the algorithm ({@code alg}) parameter.
+	 *
+	 * @return The algorithm parameter.
+	 */
+	protected Algorithm getAlgorithm() {
+
+		return alg;
 	}
 
 

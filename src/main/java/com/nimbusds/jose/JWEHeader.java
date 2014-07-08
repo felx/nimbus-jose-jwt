@@ -5,6 +5,8 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
 
+import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.jwk.ECKey;
@@ -56,7 +58,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-08)
  */
-public class JWEHeader extends CommonSEHeader {
+@Immutable
+public final class JWEHeader extends CommonSEHeader {
 
 
 	/**
@@ -262,7 +265,7 @@ public class JWEHeader extends CommonSEHeader {
 	 */
 	public JWEAlgorithm getAlgorithm() {
 
-		return (JWEAlgorithm)alg;
+		return (JWEAlgorithm)super.getAlgorithm();
 	}
 
 

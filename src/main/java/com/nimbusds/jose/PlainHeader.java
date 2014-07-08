@@ -4,6 +4,8 @@ package com.nimbusds.jose;
 import java.text.ParseException;
 import java.util.*;
 
+import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -37,7 +39,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-08)
  */
-public class PlainHeader extends Header {
+@Immutable
+public final class PlainHeader extends Header {
 
 
 	/**
@@ -115,7 +118,7 @@ public class PlainHeader extends Header {
 	 */
 	public Algorithm getAlgorithm() {
 
-		return alg;
+		return Algorithm.NONE;
 	}
 
 

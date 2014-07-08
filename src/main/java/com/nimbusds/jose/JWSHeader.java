@@ -5,10 +5,12 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.Base64;
+import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jose.util.X509CertChainUtils;
@@ -48,7 +50,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-08)
  */
-public class JWSHeader extends CommonSEHeader {
+@Immutable
+public final class JWSHeader extends CommonSEHeader {
 
 
 	/**
@@ -165,7 +168,7 @@ public class JWSHeader extends CommonSEHeader {
 	 */
 	public JWSAlgorithm getAlgorithm() {
 
-		return (JWSAlgorithm)alg;
+		return (JWSAlgorithm)super.getAlgorithm();
 	}
 
 

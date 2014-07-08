@@ -259,7 +259,7 @@ public abstract class JOSEObject {
 
 		Base64URL[] parts = split(s);
 
-		JSONObject jsonObject = null;
+		JSONObject jsonObject;
 
 		try {
 			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
