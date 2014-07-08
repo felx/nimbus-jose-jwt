@@ -2,12 +2,8 @@ package com.nimbusds.jose;
 
 
 import java.net.URL;
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.jwk.JWK;
@@ -35,61 +31,121 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-07-08)
  */
-abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
+abstract class CommonSEHeader extends Header {
 
 
 	/**
 	 * JWK Set URL, {@code null} if not specified.
 	 */
-	private URL jku;
+	private final URL jku;
 
 
 	/**
 	 * JWK, {@code null} if not specified.
 	 */
-	private JWK jwk;
+	private final JWK jwk;
 
 
 	/**
 	 * X.509 certificate URL, {@code null} if not specified.
 	 */
-	private URL x5u;
+	private final URL x5u;
 
 
 	/**
 	 * X.509 certificate thumbprint, {@code null} if not specified.
 	 */
-	private Base64URL x5t;
+	private final Base64URL x5t;
 
 
 	/**
 	 * The X.509 certificate chain corresponding to the key used to sign or 
 	 * encrypt the JWS / JWE object, {@code null} if not specified.
 	 */
-	private List<Base64> x5c;
+	private final List<Base64> x5c;
+
+
+	/**
+	 * Empty X.509 certificate chain constant.
+	 */
+	private static final List<Base64> EMPTY_X5C =
+		Collections.unmodifiableList(new ArrayList<Base64>());
 
 
 	/**
 	 * Key ID, {@code null} if not specified.
 	 */
-	private String kid;
+	private final String kid;
 
 
 	/**
-	 * Creates a new common JWS and JWE header with the specified algorithm 
-	 * ({@code alg}) parameter.
+	 * Creates a new common JWS and JWE header.
 	 *
-	 * @param alg The algorithm parameter. Must not be {@code null}.
+	 * @param alg             The algorithm ({@code alg}) parameter. Must
+	 *                        not be {@code null}.
+	 * @param typ             The type ({@code typ}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param cty             The content type ({@code cty}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param crit            The names of the critical header
+	 *                        ({@code crit}) parameters, empty set or
+	 *                        {@code null} if none.
+	 * @param jku             The JSON Web Key (JWK) Set URL ({@code jku})
+	 *                        parameter, {@code null} if not specified.
+	 * @param jwk             The X.509 certificate URL ({@code jwk})
+	 *                        parameter, {@code null} if not specified.
+	 * @param x5u             The X.509 certificate URL parameter
+	 *                        ({@code x5u}), {@code null} if not specified.
+	 * @param x5t             The X.509 certificate thumbprint
+	 *                        ({@code x5t}) parameter, {@code null} if not
+	 *                        specified.
+	 * @param x5c             The X.509 certificate chain ({@code x5c})
+	 *                        parameter, {@code null} if not specified.
+	 * @param kid             The key ID ({@code kid}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param customParams    The custom parameters, empty map or
+	 *                        {@code null} if none.
+	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the
+	 *                        header is created from scratch.
 	 */
-	protected CommonSEHeader(final Algorithm alg) {
+	protected CommonSEHeader(final Algorithm alg,
+				 final JOSEObjectType typ,
+				 final String cty,
+				 final Set<String> crit,
+				 final URL jku,
+				 final JWK jwk,
+				 final URL x5u,
+				 final Base64URL x5t,
+				 final List<Base64> x5c,
+				 final String kid,
+				 final Map<String,Object> customParams,
+				 final Base64URL parsedBase64URL) {
 
-		super(alg);
+		super(alg, typ, cty, crit, customParams, parsedBase64URL);
+
+		this.jku = jku;
+		this.jwk = jwk;
+		this.x5u = x5u;
+		this.x5t = x5t;
+
+		if (x5c != null) {
+			this.x5c = x5c;
+		} else {
+			this.x5c = EMPTY_X5C;
+		}
+
+		this.kid = kid;
 	}
 
 
-	@Override
+	/**
+	 * Gets the JSON Web Key (JWK) Set URL ({@code jku}) parameter.
+	 *
+	 * @return The JSON Web Key (JWK) Set URL parameter, {@code null} if
+	 *         not specified.
+	 */
 	public URL getJWKURL() {
 
 		return jku;
@@ -97,18 +153,11 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	/**
-	 * Sets the JSON Web Key (JWK) Set URL ({@code jku}) parameter.
+	 * Gets the JSON Web Key (JWK) ({@code jwk}) parameter.
 	 *
-	 * @param jku The JSON Web Key (JWK) Set URL parameter, {@code null} if 
-	 *            not specified.
+	 * @return The JSON Web Key (JWK) parameter, {@code null} if not
+	 *         specified.
 	 */
-	public void setJWKURL(final URL jku) {
-
-		this.jku = jku;
-	}
-
-
-	@Override
 	public JWK getJWK() {
 
 		return jwk;
@@ -116,18 +165,11 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	/**
-	 * Sets the JSON Web Key (JWK) ({@code jwk}) parameter.
+	 * Gets the X.509 certificate URL ({@code x5u}) parameter.
 	 *
-	 * @param jwk The JSON Web Key (JWK) ({@code jwk}) parameter, 
-	 *            {@code null} if not specified.
+	 * @return The X.509 certificate URL parameter, {@code null} if not
+	 *         specified.
 	 */
-	public void setJWK(final JWK jwk) {
-
-		this.jwk = jwk;
-	}
-
-
-	@Override
 	public URL getX509CertURL() {
 
 		return x5u;
@@ -135,18 +177,11 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	/**
-	 * Sets the X.509 certificate URL ({@code x5u}) parameter.
+	 * Gets the X.509 certificate thumbprint ({@code x5t}) parameter.
 	 *
-	 * @param x5u The X.509 certificate URL parameter, {@code null} if not 
-	 *            specified.
+	 * @return The X.509 certificate thumbprint parameter, {@code null} if
+	 *         not specified.
 	 */
-	public void setX509CertURL(final URL x5u) {
-
-		this.x5u = x5u;
-	}
-
-
-	@Override
 	public Base64URL getX509CertThumbprint() {
 
 		return x5t;
@@ -154,56 +189,60 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 
 
 	/**
-	 * Sets the X.509 certificate thumbprint ({@code x5t}) parameter.
+	 * Gets the X.509 certificate chain ({@code x5c}) parameter
+	 * corresponding to the key used to sign or encrypt the JWS / JWE
+	 * object.
 	 *
-	 * @param x5t The X.509 certificate thumbprint parameter, {@code null}  
-	 *            if not specified.
+	 * @return The X.509 certificate chain parameter as a unmodifiable
+	 *         list, {@code null} if not specified.
 	 */
-	public void setX509CertThumbprint(final Base64URL x5t) {
-
-		this.x5t = x5t;
-	}
-
-
-	@Override
 	public List<Base64> getX509CertChain() {
 
-		return x5c;
+		return Collections.unmodifiableList(x5c);
 	}
 
 
 	/**
-	 * Sets the X.509 certificate chain parameter ({@code x5c}) 
-	 * corresponding to the key used to sign or encrypt the JWS / JWE 
-	 * object.
+	 * Gets the key ID ({@code kid}) parameter.
 	 *
-	 * @param x5c The X.509 certificate chain parameter, {@code null} if 
-	 *            not specified.
+	 * @return The key ID parameter, {@code null} if not specified.
 	 */
-	public void setX509CertChain(final List<Base64> x5c) {
-
-		if (x5c == null)
-			return;
-
-		this.x5c = Collections.unmodifiableList(x5c);
-	}
-
-
-	@Override
 	public String getKeyID() {
 
 		return kid;
 	}
 
 
-	/**
-	 * Sets the key ID ({@code kid}) parameter.
-	 *
-	 * @param kid The key ID parameter, {@code null} if not specified.
-	 */
-	public void setKeyID(final String kid) {
+	@Override
+	public Set<String> getIncludedParameters() {
 
-		this.kid = kid;
+		Set<String> includedParameters = super.getIncludedParameters();
+
+		if (getJWKURL() != null) {
+			includedParameters.add("jku");
+		}
+
+		if (getJWK() != null) {
+			includedParameters.add("jwk");
+		}
+
+		if (getX509CertURL() != null) {
+			includedParameters.add("x5u");
+		}
+
+		if (getX509CertThumbprint() != null) {
+			includedParameters.add("x5t");
+		}
+
+		if (getX509CertChain() != null) {
+			includedParameters.add("x5c");
+		}
+
+		if (getKeyID() != null) {
+			includedParameters.add("kid");
+		}
+
+		return includedParameters;
 	}
 
 
@@ -228,7 +267,7 @@ abstract class CommonSEHeader extends Header implements ReadOnlyCommonSEHeader {
 			o.put("x5t", x5t.toString());
 		}
 
-		if (x5c != null) {
+		if (x5c != null && ! x5c.isEmpty()) {
 			o.put("x5c", x5c);
 		}
 
