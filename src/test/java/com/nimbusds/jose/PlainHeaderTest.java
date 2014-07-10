@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-07-10)
  */
 public class PlainHeaderTest extends TestCase {
 
@@ -28,7 +28,7 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertTrue(h.getCriticalHeaders().isEmpty());
+		assertNull(h.getCriticalHeaders());
 		assertNull(h.getParsedBase64URL());
 
 		Base64URL b64url = h.toBase64URL();
@@ -39,7 +39,7 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertTrue(h.getCriticalHeaders().isEmpty());
+		assertNull(h.getCriticalHeaders());
 		assertEquals(b64url, h.getParsedBase64URL());
 		assertEquals(b64url, h.toBase64URL());
 	}
@@ -142,6 +142,22 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(in, header.toBase64URL());
 
 		assertEquals(Algorithm.NONE, header.getAlgorithm());
+	}
+
+
+	public void testBuilderWithCustomParams() {
+
+		Map<String,Object> customParams = new HashMap<String,Object>();
+		customParams.put("x", "1");
+		customParams.put("y", "2");
+
+		PlainHeader h = new PlainHeader.Builder().
+			customParameters(customParams).
+			build();
+
+		assertEquals("1", (String)h.getCustomParameter("x"));
+		assertEquals("2", (String)h.getCustomParameter("y"));
+		assertEquals(2, h.getCustomParameters().size());
 	}
 }
 

@@ -948,11 +948,7 @@ public final class JWEHeader extends CommonSEHeader {
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
 
-			if (name.equals("alg")) {
-				continue; // skip
-			} else if (name.equals("enc")) {
-				continue; // skip
-			} else if (name.equals("typ")) {
+			if (name.equals("typ")) {
 				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
 			} else if (name.equals("cty")) {
 				cty = JSONObjectUtils.getString(jsonObject, name);

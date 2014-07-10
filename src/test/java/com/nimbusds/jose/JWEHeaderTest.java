@@ -2,11 +2,9 @@ package com.nimbusds.jose;
 
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.jwk.RSAKey;
@@ -19,9 +17,33 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-09)
+ * @version $version$ (2014-07-10)
  */
 public class JWEHeaderTest extends TestCase {
+
+
+	public void testMinimalConstructor() {
+
+		JWEHeader h = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM);
+
+		assertEquals(JWEAlgorithm.A128KW, h.getAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, h.getEncryptionMethod());
+		assertNull(h.getJWKURL());
+		assertNull(h.getJWK());
+		assertNull(h.getX509CertURL());
+		assertNull(h.getX509CertThumbprint());
+		assertNull(h.getX509CertChain());
+		assertNull(h.getType());
+		assertNull(h.getContentType());
+		assertNull(h.getCriticalHeaders());
+		assertNull(h.getEphemeralPublicKey());
+		assertNull(h.getCompressionAlgorithm());
+		assertNull(h.getAgreementPartyUInfo());
+		assertNull(h.getAgreementPartyVInfo());
+		assertNull(h.getPBES2Salt());
+		assertEquals(0, h.getPBES2Count());
+		assertTrue(h.getCustomParameters().isEmpty());
+	}
 
 
 	public void testParse1()
@@ -198,5 +220,90 @@ public class JWEHeaderTest extends TestCase {
 
 			// ok
 		}
+	}
+
+
+	public void testBuilder()
+		throws Exception {
+
+		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
+			type(JOSEObjectType.JWS).
+			contentType("application/json").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp", "nbf"))).
+			jwkURL(new URL("http://example.com/jwk.json")).
+			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
+			x509CertURL(new URL("http://example.com/cert.pem")).
+			x509CertThumbprint(new Base64URL("abc")).
+			x509CertChain(Arrays.asList(new Base64("abc"), new Base64("def"))).
+			keyID("123").
+			compressionAlgorithm(CompressionAlgorithm.DEF).
+			agreementPartyUInfo(new Base64URL("qwe")).
+			agreementPartyVInfo(new Base64URL("rty")).
+			pbes2Salt(new Base64URL("uiop")).
+			pbes2Count(1000).
+			customParameter("exp", 123).
+			customParameter("nbf", 456).
+			build();
+
+		assertEquals(JWEAlgorithm.A128KW, h.getAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, h.getEncryptionMethod());
+		assertEquals(JOSEObjectType.JWS, h.getType());
+		assertEquals("application/json", h.getContentType());
+		assertTrue(h.getCriticalHeaders().contains("exp"));
+		assertTrue(h.getCriticalHeaders().contains("nbf"));
+		assertEquals(2, h.getCriticalHeaders().size());
+		assertEquals("http://example.com/jwk.json", h.getJWKURL().toString());
+		assertEquals("xyz", ((OctetSequenceKey)h.getJWK()).getKeyValue().toString());
+		assertEquals("http://example.com/cert.pem", h.getX509CertURL().toString());
+		assertEquals("abc", h.getX509CertThumbprint().toString());
+		assertEquals("abc", h.getX509CertChain().get(0).toString());
+		assertEquals("def", h.getX509CertChain().get(1).toString());
+		assertEquals(2, h.getX509CertChain().size());
+		assertEquals("123", h.getKeyID());
+		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
+		assertEquals("qwe", h.getAgreementPartyUInfo().toString());
+		assertEquals("rty", h.getAgreementPartyVInfo().toString());
+		assertEquals("uiop", h.getPBES2Salt().toString());
+		assertEquals(1000, h.getPBES2Count());
+		assertEquals(123, ((Integer)h.getCustomParameter("exp")).intValue());
+		assertEquals(456, ((Integer)h.getCustomParameter("nbf")).intValue());
+		assertEquals(2, h.getCustomParameters().size());
+		assertNull(h.getParsedBase64URL());
+
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("enc"));
+		assertTrue(h.getIncludedParameters().contains("typ"));
+		assertTrue(h.getIncludedParameters().contains("cty"));
+		assertTrue(h.getIncludedParameters().contains("crit"));
+		assertTrue(h.getIncludedParameters().contains("jku"));
+		assertTrue(h.getIncludedParameters().contains("jwk"));
+		assertTrue(h.getIncludedParameters().contains("x5u"));
+		assertTrue(h.getIncludedParameters().contains("x5t"));
+		assertTrue(h.getIncludedParameters().contains("x5c"));
+		assertTrue(h.getIncludedParameters().contains("kid"));
+		assertTrue(h.getIncludedParameters().contains("zip"));
+		assertTrue(h.getIncludedParameters().contains("apu"));
+		assertTrue(h.getIncludedParameters().contains("apv"));
+		assertTrue(h.getIncludedParameters().contains("p2s"));
+		assertTrue(h.getIncludedParameters().contains("p2c"));
+		assertTrue(h.getIncludedParameters().contains("exp"));
+		assertTrue(h.getIncludedParameters().contains("nbf"));
+		assertEquals(18, h.getIncludedParameters().size());
+	}
+
+
+	public void testBuilderWithCustomParams() {
+
+		Map<String,Object> customParams = new HashMap<String,Object>();
+		customParams.put("x", "1");
+		customParams.put("y", "2");
+
+		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
+			customParameters(customParams).
+			build();
+
+		assertEquals("1", (String)h.getCustomParameter("x"));
+		assertEquals("2", (String)h.getCustomParameter("y"));
+		assertEquals(2, h.getCustomParameters().size());
 	}
 }

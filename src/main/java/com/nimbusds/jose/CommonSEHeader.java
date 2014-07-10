@@ -68,13 +68,6 @@ abstract class CommonSEHeader extends Header {
 
 
 	/**
-	 * Empty X.509 certificate chain constant.
-	 */
-	private static final List<Base64> EMPTY_X5C =
-		Collections.unmodifiableList(new ArrayList<Base64>());
-
-
-	/**
 	 * Key ID, {@code null} if not specified.
 	 */
 	private final String kid;
@@ -131,9 +124,10 @@ abstract class CommonSEHeader extends Header {
 		this.x5t = x5t;
 
 		if (x5c != null) {
-			this.x5c = x5c;
+			// Copy and make unmodifiable
+			this.x5c = Collections.unmodifiableList(new ArrayList<Base64>(x5c));
 		} else {
-			this.x5c = EMPTY_X5C;
+			this.x5c = null;
 		}
 
 		this.kid = kid;
@@ -198,7 +192,7 @@ abstract class CommonSEHeader extends Header {
 	 */
 	public List<Base64> getX509CertChain() {
 
-		return Collections.unmodifiableList(x5c);
+		return x5c;
 	}
 
 

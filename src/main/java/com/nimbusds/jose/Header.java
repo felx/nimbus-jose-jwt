@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-07-10)
  */
 public abstract class Header {
 
@@ -45,13 +45,6 @@ public abstract class Header {
 	 * The critical headers ({@code crit}) parameter.
 	 */
 	private final Set<String> crit;
-
-
-	/**
-	 * Empty critical headers constant.
-	 */
-	private static final Set<String> EMPTY_CRIT =
-		Collections.unmodifiableSet(new HashSet<String>());
 
 
 	/**
@@ -107,13 +100,15 @@ public abstract class Header {
 		this.cty = cty;
 
 		if (crit != null) {
-			this.crit = crit;
+			// Copy and make unmodifiable
+			this.crit = Collections.unmodifiableSet(new HashSet<String>(crit));
 		} else {
-			this.crit = EMPTY_CRIT;
+			this.crit = null;
 		}
 
 		if (customParams != null) {
-			this.customParams = customParams;
+			// Copy and make unmodifiable
+			this.customParams = Collections.unmodifiableMap(new HashMap<String,Object>(customParams));
 		} else {
 			this.customParams = EMPTY_CUSTOM_PARAMS;
 		}
@@ -158,12 +153,12 @@ public abstract class Header {
 	/**
 	 * Gets the critical headers ({@code crit}) parameter.
 	 *
-	 * @return The names of the critical header parameters, empty set if
-	 *         none.
+	 * @return The names of the critical header parameters, as a
+	 *         unmodifiable set, {@code null} if not specified.
 	 */
 	public Set<String> getCriticalHeaders() {
 
-		return Collections.unmodifiableSet(crit);
+		return crit;
 	}
 
 
@@ -189,7 +184,7 @@ public abstract class Header {
 	 */
 	public Map<String,Object> getCustomParameters() {
 
-		return Collections.unmodifiableMap(customParams);
+		return customParams;
 	}
 
 
