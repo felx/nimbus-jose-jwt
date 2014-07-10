@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-03)
+ * @version $version$ (2014-07-09)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -77,13 +77,6 @@ public class JWEHeaderTest extends TestCase {
 	public void testSerializeAndParse()
 		throws Exception {
 
-		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
-
-		h.setType(new JOSEObjectType("JWT"));
-		h.setCompressionAlgorithm(CompressionAlgorithm.DEF);
-		h.setJWKURL(new URL("https://example.com/jku.json"));
-		h.setKeyID("1234");
-
 		final Base64URL mod = new Base64URL("abc123");
 		final Base64URL exp = new Base64URL("def456");
 		final KeyUse use = KeyUse.ENCRYPTION;
@@ -91,22 +84,25 @@ public class JWEHeaderTest extends TestCase {
 
 		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
 
-		h.setJWK(jwk);
-		h.setX509CertURL(new URL("https://example/cert.b64"));
-		h.setX509CertThumbprint(new Base64URL("789iop"));
-
 		List<Base64> certChain = new LinkedList<Base64>();
 		certChain.add(new Base64("asd"));
 		certChain.add(new Base64("fgh"));
 		certChain.add(new Base64("jkl"));
 
-		h.setX509CertChain(certChain);
-
-		h.setAgreementPartyUInfo(new Base64URL("abc"));
-		h.setAgreementPartyVInfo(new Base64URL("xyz"));
-
-		h.setPBES2Salt(new Base64URL("omg"));
-		h.setPBES2Count(1000);
+		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM).
+			type(new JOSEObjectType("JWT")).
+			compressionAlgorithm(CompressionAlgorithm.DEF).
+			jwkURL(new URL("https://example.com/jku.json")).
+			jwk(jwk).
+			x509CertURL(new URL("https://example/cert.b64")).
+			x509CertThumbprint(new Base64URL("789iop")).
+			x509CertChain(certChain).
+			keyID("1234").
+			agreementPartyUInfo(new Base64URL("abc")).
+			agreementPartyVInfo(new Base64URL("xyz")).
+			pbes2Salt(new Base64URL("omg")).
+			pbes2Count(1000).
+			build();
 
 
 		String s = h.toString();
@@ -165,16 +161,14 @@ public class JWEHeaderTest extends TestCase {
 	public void testCrit()
 		throws Exception {
 
-		JWEHeader h = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
-
 		Set<String> crit = new HashSet<String>();
 		crit.add("iat");
 		crit.add("exp");
 		crit.add("nbf");
 
-		assertNull(h.getCriticalHeaders());
-
-		h.setCriticalHeaders(crit);
+		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
+			criticalHeaders(crit).
+			build();
 
 		assertEquals(3, h.getCriticalHeaders().size());
 

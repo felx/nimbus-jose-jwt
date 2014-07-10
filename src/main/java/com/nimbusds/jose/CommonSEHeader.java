@@ -31,7 +31,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-07-10)
  */
 abstract class CommonSEHeader extends Header {
 
@@ -218,27 +218,27 @@ abstract class CommonSEHeader extends Header {
 
 		Set<String> includedParameters = super.getIncludedParameters();
 
-		if (getJWKURL() != null) {
+		if (jku != null) {
 			includedParameters.add("jku");
 		}
 
-		if (getJWK() != null) {
+		if (jwk != null) {
 			includedParameters.add("jwk");
 		}
 
-		if (getX509CertURL() != null) {
+		if (x5u != null) {
 			includedParameters.add("x5u");
 		}
 
-		if (getX509CertThumbprint() != null) {
+		if (x5t != null) {
 			includedParameters.add("x5t");
 		}
 
-		if (getX509CertChain() != null) {
+		if (x5c != null && ! x5c.isEmpty()) {
 			includedParameters.add("x5c");
 		}
 
-		if (getKeyID() != null) {
+		if (kid != null) {
 			includedParameters.add("kid");
 		}
 

@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests plaintext JOSE object parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-07-08)
  */
 public class PlainObjectTest extends TestCase {
 
@@ -23,7 +23,7 @@ public class PlainObjectTest extends TestCase {
 		assertNotNull(p.getHeader());
 		assertEquals("Hello world!", p.getPayload().toString());
 
-		ReadOnlyPlainHeader h = p.getHeader();
+		PlainHeader h = p.getHeader();
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());

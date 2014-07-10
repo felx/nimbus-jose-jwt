@@ -1,7 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-08)
+ * @version $version$ (2014-07-09)
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -36,6 +35,9 @@ public class JWSHeaderTest extends TestCase {
 
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
+
+		System.out.println("Included parameters: " + h.getIncludedParameters());
+
 		assertEquals(2, h.getIncludedParameters().size());
 	}
 
@@ -60,16 +62,14 @@ public class JWSHeaderTest extends TestCase {
 	public void testCrit()
 		throws Exception {
 
-		JWSHeader h = new JWSHeader(JWSAlgorithm.RS256);
-
 		Set<String> crit = new HashSet<String>();
 		crit.add("iat");
 		crit.add("exp");
 		crit.add("nbf");
 
-		assertNull(h.getCriticalHeaders());
-
-		h.setCriticalHeaders(crit);
+		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			criticalHeaders(crit).
+			build();
 
 		assertEquals(3, h.getCriticalHeaders().size());
 

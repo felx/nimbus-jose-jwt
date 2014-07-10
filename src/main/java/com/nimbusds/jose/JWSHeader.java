@@ -48,7 +48,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-07-09)
  */
 @Immutable
 public final class JWSHeader extends CommonSEHeader {
@@ -82,7 +82,305 @@ public final class JWSHeader extends CommonSEHeader {
 
 
 	/**
-	 * Creates a new JSON Web Signature (JWS) header.
+	 * Builder for constructing JSON Web Signature (JWS) headers.
+	 *
+	 * <p>Example use:
+	 *
+	 * <pre>
+	 * JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256).
+	 *                    contentType("text/plain").
+	 *                    customParameter("exp", new Date().getTime()).
+	 *                    build();
+	 * </pre>
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The JWS algorithm.
+		 */
+		private final JWSAlgorithm alg;
+
+
+		/**
+		 * The JOSE object type.
+		 */
+		private JOSEObjectType typ;
+
+
+		/**
+		 * The content type.
+		 */
+		private String cty;
+
+
+		/**
+		 * The critical headers.
+		 */
+		private Set<String> crit;
+
+
+		/**
+		 * JWK Set URL.
+		 */
+		private URL jku;
+
+
+		/**
+		 * JWK.
+		 */
+		private JWK jwk;
+
+
+		/**
+		 * X.509 certificate URL.
+		 */
+		private URL x5u;
+
+
+		/**
+		 * X.509 certificate thumbprint.
+		 */
+		private Base64URL x5t;
+
+
+		/**
+		 * The X.509 certificate chain corresponding to the key used to
+		 * sign the JWS object.
+		 */
+		private List<Base64> x5c;
+
+
+		/**
+		 * Key ID.
+		 */
+		private String kid;
+
+
+		/**
+		 * Custom header parameters.
+		 */
+		private Map<String,Object> customParams;
+
+
+		/**
+		 * Creates a new JWS header builder.
+		 *
+		 * @param alg The JWS algorithm ({@code alg}) parameter. Must
+		 *            not be "none" or {@code null}.
+		 */
+		public Builder(final JWSAlgorithm alg) {
+
+			if (alg.getName().equals(Algorithm.NONE.getName())) {
+				throw new IllegalArgumentException("The JWS algorithm \"alg\" cannot be \"none\"");
+			}
+
+			this.alg = alg;
+		}
+
+
+		/**
+		 * Sets the type ({@code typ}) parameter.
+		 *
+		 * @param typ The type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder type(final JOSEObjectType typ) {
+
+			this.typ = typ;
+			return this;
+		}
+
+
+		/**
+		 * Sets the content type ({@code cty}) parameter.
+		 *
+		 * @param cty The content type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder contentType(final String cty) {
+
+			this.cty = cty;
+			return this;
+		}
+
+
+		/**
+		 * Sets the critical headers ({@code crit}) parameter.
+		 *
+		 * @param crit The names of the critical header parameters,
+		 *             empty set or {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder criticalHeaders(final Set<String> crit) {
+
+			this.crit = crit;
+			return this;
+		}
+
+
+		/**
+		 * Sets the JSON Web Key (JWK) Set URL ({@code jku}) parameter.
+		 *
+		 * @param jku The JSON Web Key (JWK) Set URL parameter,
+		 *            {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder jwkURL(final URL jku) {
+
+			this.jku = jku;
+			return this;
+		}
+
+
+		/**
+		 * Sets the JSON Web Key (JWK) ({@code jwk}) parameter.
+		 *
+		 * @param jwk The JSON Web Key (JWK) ({@code jwk}) parameter,
+		 *            {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder jwk(final JWK jwk) {
+
+			this.jwk = jwk;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate URL ({@code x5u}) parameter.
+		 *
+		 * @param x5u The X.509 certificate URL parameter, {@code null}
+		 *            if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder x509CertURL(final URL x5u) {
+
+			this.x5u = x5u;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate thumbprint ({@code x5t})
+		 * parameter.
+		 *
+		 * @param x5t The X.509 certificate thumbprint parameter,
+		 *            {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder x509CertThumbprint(final Base64URL x5t) {
+
+			this.x5t = x5t;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate chain parameter ({@code x5c})
+		 * corresponding to the key used to sign the JWS object.
+		 *
+		 * @param x5c The X.509 certificate chain parameter,
+		 *            {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder x509CertChain(final List<Base64> x5c) {
+
+			this.x5c = x5c;
+			return this;
+		}
+
+
+		/**
+		 * Sets the key ID ({@code kid}) parameter.
+		 *
+		 * @param kid The key ID parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keyID(final String kid) {
+
+			this.kid = kid;
+			return this;
+		}
+
+
+		/**
+		 * Sets a custom (non-registered) parameter.
+		 *
+		 * @param name  The name of the custom parameter. Must not
+		 *              match a registered parameter name and must not
+		 *              be {@code null}.
+		 * @param value The value of the custom parameter, should map
+		 *              to a valid JSON entity, {@code null} if not
+		 *              specified.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws IllegalArgumentException If the specified parameter
+		 *                                  name matches a registered
+		 *                                  parameter name.
+		 */
+		public Builder customParameter(final String name, final Object value) {
+
+			if (getRegisteredParameterNames().contains(name)) {
+				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
+			}
+
+			if (customParams == null) {
+				customParams = new HashMap<String,Object>();
+			}
+
+			customParams.put(name, value);
+
+			return this;
+		}
+
+
+		/**
+		 * Sets the custom (non-registered) parameters. The values must
+		 * be serialisable to a JSON entity, otherwise will be ignored.
+		 *
+		 * @param customParameters The custom parameters, empty map or
+		 *                         {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder customParameters(final Map<String,Object> customParameters) {
+
+			this.customParams = customParameters;
+			return this;
+		}
+
+
+		/**
+		 * Builds a new JWS header.
+		 *
+		 * @return The JWS header.
+		 */
+		public JWSHeader build() {
+
+			return new JWSHeader(
+				alg, typ, cty, crit,
+				jku, jwk, x5u, x5t, x5c, kid,
+				customParams, null);
+		}
+	}
+
+
+	/**
+	 * Creates a new minimal JSON Web Signature (JWS) header.
 	 *
 	 * <p>Note: Use {@link PlainHeader} to create a header with algorithm
 	 * {@link Algorithm#NONE none}.
@@ -145,7 +443,7 @@ public final class JWSHeader extends CommonSEHeader {
 		super(alg, typ, cty, crit, jku, jwk, x5u, x5t, x5c, kid, customParams, parsedBase64URL);
 
 		if (alg.getName().equals(Algorithm.NONE.getName())) {
-			throw new IllegalArgumentException("The JWS algorithm cannot be \"none\"");
+			throw new IllegalArgumentException("The JWS algorithm \"alg\" cannot be \"none\"");
 		}
 	}
 
@@ -166,321 +464,10 @@ public final class JWSHeader extends CommonSEHeader {
 	 *
 	 * @return The algorithm parameter.
 	 */
+	@Override
 	public JWSAlgorithm getAlgorithm() {
 
 		return (JWSAlgorithm)super.getAlgorithm();
-	}
-
-
-	/**
-	 * Sets the type ({@code typ}) parameter.
-	 *
-	 * @param typ The type parameter, {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setType(final JOSEObjectType typ) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			typ,
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the content type ({@code cty}) parameter.
-	 *
-	 * @param cty The content type parameter, {@code null} if not
-	 *            specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setContentType(final String cty) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			cty,
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the critical headers ({@code crit}) parameter.
-	 *
-	 * @param crit The names of the critical header parameters, empty set
-	 *             or {@code null} if none.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setCriticalHeaders(final Set<String> crit) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			crit,
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the JSON Web Key (JWK) Set URL ({@code jku}) parameter.
-	 *
-	 * @param jku The JSON Web Key (JWK) Set URL parameter, {@code null} if
-	 *            not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setJWKURL(final URL jku) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			jku,
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the JSON Web Key (JWK) ({@code jwk}) parameter.
-	 *
-	 * @param jwk The JSON Web Key (JWK) ({@code jwk}) parameter,
-	 *            {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setJWK(final JWK jwk) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			jwk,
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the X.509 certificate URL ({@code x5u}) parameter.
-	 *
-	 * @param x5u The X.509 certificate URL parameter, {@code null} if not
-	 *            specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setX509CertURL(final URL x5u) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			x5u,
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the X.509 certificate thumbprint ({@code x5t}) parameter.
-	 *
-	 * @param x5t The X.509 certificate thumbprint parameter, {@code null}
-	 *            if not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setX509CertThumbprint(final Base64URL x5t) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			x5t,
-			getX509CertChain(),
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the X.509 certificate chain parameter ({@code x5c})
-	 * corresponding to the key used to sign or encrypt the JWS / JWE
-	 * object.
-	 *
-	 * @param x5c The X.509 certificate chain parameter, {@code null} if
-	 *            not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setX509CertChain(final List<Base64> x5c) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			x5c,
-			getKeyID(),
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the key ID ({@code kid}) parameter.
-	 *
-	 * @param kid The key ID parameter, {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setKeyID(final String kid) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			kid,
-			getCustomParameters(),
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets a custom (non-registered) parameter.
-	 *
-	 * @param name  The name of the custom parameter. Must not match a
-	 *              registered parameter name and must not be {@code null}.
-	 * @param value The value of the custom parameter, should map to a
-	 *              valid JSON entity, {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 *
-	 * @throws IllegalArgumentException If the specified parameter name
-	 *                                  matches a registered parameter
-	 *                                  name.
-	 */
-	public JWSHeader setCustomParameter(final String name, final Object value) {
-
-		if (getRegisteredParameterNames().contains(name)) {
-			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
-		}
-
-		Map<String,Object> params = new HashMap<String,Object>();
-		params.putAll(getCustomParameters());
-		params.put(name, value);
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			params,
-			getParsedBase64URL()
-		);
-	}
-
-
-	/**
-	 * Sets the custom (non-registered) parameters. The values must be
-	 * serialisable to a JSON entity, otherwise will be ignored.
-	 *
-	 * @param customParameters The custom parameters, empty map or
-	 *                         {@code null} if none.
-	 *
-	 * @return The new header.
-	 */
-	public JWSHeader setCustomParameters(final Map<String,Object> customParameters) {
-
-		return new JWSHeader(
-			getAlgorithm(),
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			getJWKURL(),
-			getJWK(),
-			getX509CertURL(),
-			getX509CertThumbprint(),
-			getX509CertChain(),
-			getKeyID(),
-			customParameters,
-			getParsedBase64URL()
-		);
 	}
 
 

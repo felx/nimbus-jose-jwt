@@ -8,12 +8,12 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
-import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -38,9 +38,10 @@ public class SignedJWTTest extends TestCase {
 		claimsSet.setIssuer("https://c2id.com");
 		claimsSet.setCustomClaim("scope", "openid");
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setKeyID("1");
-		header.setJWKURL(new URL("https://c2id.com/jwks.json"));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			keyID("1").
+			jwkURL(new URL("https://c2id.com/jwks.json")).
+			build();
 
 		SignedJWT signedJWT = new SignedJWT(header, claimsSet);
 

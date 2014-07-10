@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>crit
  * </ul>
  *
- * <p>The header may also carry {@link #setCustomParameters custom parameters};
+ * <p>The header may also carry {@link #getCustomParameters custom parameters};
  * these will be serialised and parsed along the registered ones.
  *
  * <p>Example:
@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-07-09)
  */
 @Immutable
 public final class PlainHeader extends Header {
@@ -65,7 +65,159 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Creates a new plain header with algorithm
+	 * Builder for constructing plain headers.
+	 *
+	 * <p>Example use:
+	 *
+	 * <pre>
+	 * PlainHeader header = new PlainHeader.Builder().
+	 *                      contentType("text/plain").
+	 *                      customParameter("exp", new Date().getTime()).
+	 *                      build();
+	 * </pre>
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The JOSE object type.
+		 */
+		private JOSEObjectType typ;
+
+
+		/**
+		 * The content type.
+		 */
+		private String cty;
+
+
+		/**
+		 * The critical headers.
+		 */
+		private Set<String> crit;
+
+
+		/**
+		 * Custom header parameters.
+		 */
+		private Map<String,Object> customParams;
+
+
+		/**
+		 * Creates a new plain header builder.
+		 */
+		public Builder() {
+
+		}
+
+
+		/**
+		 * Sets the type ({@code typ}) parameter.
+		 *
+		 * @param typ The type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder type(final JOSEObjectType typ) {
+
+			this.typ = typ;
+			return this;
+		}
+
+
+		/**
+		 * Sets the content type ({@code cty}) parameter.
+		 *
+		 * @param cty The content type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder contentType(final String cty) {
+
+			this.cty = cty;
+			return this;
+		}
+
+
+		/**
+		 * Sets the critical headers ({@code crit}) parameter.
+		 *
+		 * @param crit The names of the critical header parameters,
+		 *             empty set or {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder criticalHeaders(final Set<String> crit) {
+
+			this.crit = crit;
+			return this;
+		}
+
+
+		/**
+		 * Sets a custom (non-registered) parameter.
+		 *
+		 * @param name  The name of the custom parameter. Must not
+		 *              match a registered parameter name and must not
+		 *              be {@code null}.
+		 * @param value The value of the custom parameter, should map
+		 *              to a valid JSON entity, {@code null} if not
+		 *              specified.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws IllegalArgumentException If the specified parameter
+		 *                                  name matches a registered
+		 *                                  parameter name.
+		 */
+		public Builder customParameter(final String name, final Object value) {
+
+			if (getRegisteredParameterNames().contains(name)) {
+				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
+			}
+
+			if (customParams == null) {
+				customParams = new HashMap<String,Object>();
+			}
+
+			customParams.put(name, value);
+
+			return this;
+		}
+
+
+		/**
+		 * Sets the custom (non-registered) parameters. The values must
+		 * be serialisable to a JSON entity, otherwise will be ignored.
+		 *
+		 * @param customParameters The custom parameters, empty map or
+		 *                         {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder customParameters(final Map<String,Object> customParameters) {
+
+			this.customParams = customParameters;
+			return this;
+		}
+
+
+		/**
+		 * Builds a new plain header.
+		 *
+		 * @return The plain header.
+		 */
+		public PlainHeader build() {
+
+			return new PlainHeader(typ, cty, crit, customParams, null);
+		}
+	}
+
+
+	/**
+	 * Creates a new minimal plain header with algorithm
 	 * {@link Algorithm#NONE none}.
 	 */
 	public PlainHeader() {
@@ -116,122 +268,10 @@ public final class PlainHeader extends Header {
 	 *
 	 * @return {@link Algorithm#NONE}.
 	 */
+	@Override
 	public Algorithm getAlgorithm() {
 
 		return Algorithm.NONE;
-	}
-
-
-	/**
-	 * Sets the type ({@code typ}) parameter.
-	 *
-	 * @param typ The type parameter, {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 */
-	public PlainHeader setType(final JOSEObjectType typ) {
-
-		return new PlainHeader(
-			typ,
-			getContentType(),
-			getCriticalHeaders(),
-			getCustomParameters(),
-			getParsedBase64URL()
-			);
-	}
-
-
-	/**
-	 * Sets the content type ({@code cty}) parameter.
-	 *
-	 * @param cty The content type parameter, {@code null} if not
-	 *            specified.
-	 *
-	 * @return The new header.
-	 */
-	public PlainHeader setContentType(final String cty) {
-
-		return new PlainHeader(
-			getType(),
-			cty,
-			getCriticalHeaders(),
-			getCustomParameters(),
-			getParsedBase64URL()
-			);
-	}
-
-
-	/**
-	 * Sets the critical headers ({@code crit}) parameter.
-	 *
-	 * @param crit The names of the critical header parameters, empty set
-	 *             or {@code null} if none.
-	 *
-	 * @return The new header.
-	 */
-	public PlainHeader setCriticalHeaders(final Set<String> crit) {
-
-		return new PlainHeader(
-			getType(),
-			getContentType(),
-			crit,
-			getCustomParameters(),
-			getParsedBase64URL()
-			);
-	}
-
-
-	/**
-	 * Sets a custom (non-registered) parameter.
-	 *
-	 * @param name  The name of the custom parameter. Must not match a
-	 *              registered parameter name and must not be {@code null}.
-	 * @param value The value of the custom parameter, should map to a
-	 *              valid JSON entity, {@code null} if not specified.
-	 *
-	 * @return The new header.
-	 *
-	 * @throws IllegalArgumentException If the specified parameter name
-	 *                                  matches a registered parameter
-	 *                                  name.
-	 */
-	public PlainHeader setCustomParameter(final String name, final Object value) {
-
-		if (getRegisteredParameterNames().contains(name)) {
-			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
-		}
-
-		Map<String,Object> params = new HashMap<String,Object>();
-		params.putAll(getCustomParameters());
-		params.put(name, value);
-
-		return new PlainHeader(
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			params,
-			getParsedBase64URL());
-	}
-
-
-	/**
-	 * Sets the custom (non-registered) parameters. The values must be
-	 * serialisable to a JSON entity, otherwise will be ignored.
-	 *
-	 * @param customParameters The custom parameters, empty map or
-	 *                         {@code null} if none.
-	 *
-	 * @return The new header.
-	 */
-	public PlainHeader setCustomParameters(final Map<String,Object> customParameters) {
-
-		return new PlainHeader(
-			getType(),
-			getContentType(),
-			getCriticalHeaders(),
-			customParameters,
-			getParsedBase64URL()
-		);
 	}
 
 

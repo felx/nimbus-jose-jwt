@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version $version$ (2014-07-10)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -519,8 +519,10 @@ public class RSA1_5Test extends TestCase {
 	public void testWithCompression()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
-		header.setCompressionAlgorithm(CompressionAlgorithm.DEF);
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
+			compressionAlgorithm(CompressionAlgorithm.DEF).
+			build();
+
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
@@ -639,9 +641,11 @@ public class RSA1_5Test extends TestCase {
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
+
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
@@ -670,9 +674,11 @@ public class RSA1_5Test extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
+
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);

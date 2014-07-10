@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-17)
+ * @version $version$ (2014-07-09)
  */
 public class JWSObjectTest extends TestCase {
 
@@ -38,7 +38,7 @@ public class JWSObjectTest extends TestCase {
 	}
 
 
-	public void testForImmutableHeader()
+	public void testSignAndSerialize()
 		throws Exception {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
@@ -47,15 +47,11 @@ public class JWSObjectTest extends TestCase {
 
 		Base64URL signingInput = Base64URL.encode(jwsObject.getSigningInput());
 
-		header.setKeyID("1");
-
 		assertTrue(signingInput.equals(Base64URL.encode(jwsObject.getSigningInput())));
 
 		jwsObject.sign(new MACSigner("1234567890abc"));
 
 		String output = jwsObject.serialize();
-
-		header.setKeyID("2");
 
 		assertEquals(output, jwsObject.serialize());
 	}

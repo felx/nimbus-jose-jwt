@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2014-07-10)
  */
 public class RSASSATest extends TestCase {
 
@@ -665,9 +665,10 @@ public class RSASSATest extends TestCase {
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
 
@@ -689,9 +690,10 @@ public class RSASSATest extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
 
