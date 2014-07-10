@@ -23,6 +23,8 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 * Gets the names of the accepted JWS algorithms. These correspond to
 	 * the {@code alg} JWS header parameter.
 	 *
+	 * @see #setAcceptedAlgorithms
+	 *
 	 * @return The accepted JWS algorithms, as a read-only set, empty set
 	 *         if none.
 	 */
@@ -32,6 +34,10 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	/**
 	 * Sets the names of the accepted JWS algorithms. These correspond to
 	 * the {@code alg} JWS header parameter.
+	 *
+	 * <p>For JWS verifiers that support multiple JWS algorithms this
+	 * method can be used to indicate that only a subset should be accepted
+	 * for processing.
 	 *
 	 * @param acceptedAlgs The accepted JWS algorithms. Must be a subset of
 	 *                     the supported algorithms and not {@code null}.
