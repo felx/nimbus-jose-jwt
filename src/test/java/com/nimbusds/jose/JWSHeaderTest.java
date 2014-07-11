@@ -6,6 +6,8 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.jwk.KeyUse;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
@@ -15,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2014-07-11)
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -34,6 +36,90 @@ public class JWSHeaderTest extends TestCase {
 		assertNull(h.getContentType());
 		assertNull(h.getCriticalHeaders());
 		assertTrue(h.getCustomParameters().isEmpty());
+	}
+
+
+	public void testSerializeAndParse()
+		throws Exception {
+
+		Set<String> crit = new HashSet<String>();
+		crit.add("iat");
+		crit.add("exp");
+		crit.add("nbf");
+
+		final Base64URL mod = new Base64URL("abc123");
+		final Base64URL exp = new Base64URL("def456");
+		final KeyUse use = KeyUse.ENCRYPTION;
+		final String kid = "1234";
+
+		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
+
+		List<Base64> certChain = new LinkedList<Base64>();
+		certChain.add(new Base64("asd"));
+		certChain.add(new Base64("fgh"));
+		certChain.add(new Base64("jkl"));
+
+		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			type(new JOSEObjectType("JWT")).
+			contentType("application/json").
+			criticalHeaders(crit).
+			jwkURL(new URL("https://example.com/jku.json")).
+			jwk(jwk).
+			x509CertURL(new URL("https://example/cert.b64")).
+			x509CertThumbprint(new Base64URL("789iop")).
+			x509CertChain(certChain).
+			keyID("1234").
+			customParameter("xCustom", "+++").
+			build();
+
+
+		String s = h.toString();
+
+		// Parse back
+		h = JWSHeader.parse(s);
+
+		assertEquals(JWSAlgorithm.RS256, h.getAlgorithm());
+		assertEquals(new JOSEObjectType("JWT"), h.getType());
+		assertTrue(h.getCriticalHeaders().contains("iat"));
+		assertTrue(h.getCriticalHeaders().contains("exp"));
+		assertTrue(h.getCriticalHeaders().contains("nbf"));
+		assertEquals(3, h.getCriticalHeaders().size());
+		assertEquals("application/json", h.getContentType());
+		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
+		assertEquals("1234", h.getKeyID());
+
+		jwk = (RSAKey)h.getJWK();
+		assertNotNull(jwk);
+		assertEquals(new Base64URL("abc123"), jwk.getModulus());
+		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
+		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
+		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
+		assertEquals("1234", jwk.getKeyID());
+
+		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
+		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
+
+		certChain = h.getX509CertChain();
+		assertEquals(3, certChain.size());
+		assertEquals(new Base64("asd"), certChain.get(0));
+		assertEquals(new Base64("fgh"), certChain.get(1));
+		assertEquals(new Base64("jkl"), certChain.get(2));
+
+		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
+		assertEquals(1, h.getCustomParameters().size());
+
+		assertTrue(h.getIncludedParameters().contains("alg"));
+		assertTrue(h.getIncludedParameters().contains("typ"));
+		assertTrue(h.getIncludedParameters().contains("cty"));
+		assertTrue(h.getIncludedParameters().contains("crit"));
+		assertTrue(h.getIncludedParameters().contains("jku"));
+		assertTrue(h.getIncludedParameters().contains("jwk"));
+		assertTrue(h.getIncludedParameters().contains("kid"));
+		assertTrue(h.getIncludedParameters().contains("x5u"));
+		assertTrue(h.getIncludedParameters().contains("x5t"));
+		assertTrue(h.getIncludedParameters().contains("x5c"));
+		assertTrue(h.getIncludedParameters().contains("xCustom"));
+		assertEquals(11, h.getIncludedParameters().size());
 	}
 
 
