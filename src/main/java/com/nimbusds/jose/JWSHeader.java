@@ -180,6 +180,32 @@ public final class JWSHeader extends CommonSEHeader {
 
 
 		/**
+		 * Creates a new JWS header builder with the parameters from
+		 * the specified header.
+		 *
+		 * @param jwsHeader The JWS header to use. Must not not be
+		 *                  {@code null}.
+		 */
+		public Builder(final JWSHeader jwsHeader) {
+
+			this(jwsHeader.getAlgorithm());
+
+			typ = jwsHeader.getType();
+			cty = jwsHeader.getContentType();
+			crit = jwsHeader.getCriticalHeaders();
+			customParams = jwsHeader.getCustomParameters();
+
+			jku = jwsHeader.getJWKURL();
+			jwk = jwsHeader.getJWK();
+			x5u = jwsHeader.getX509CertURL();
+			x5t = jwsHeader.getX509CertThumbprint();
+			x5c = jwsHeader.getX509CertChain();
+			kid = jwsHeader.getKeyID();
+			customParams = jwsHeader.getCustomParameters();
+		}
+
+
+		/**
 		 * Sets the type ({@code typ}) parameter.
 		 *
 		 * @param typ The type parameter, {@code null} if not

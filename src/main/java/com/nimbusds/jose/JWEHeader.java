@@ -260,6 +260,42 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
+		 * Creates a new JWE header builder with the parameters from
+		 * the specified header.
+		 *
+		 * @param jweHeader The JWE header to use. Must not not be 
+		 *                  {@code null}.              
+		 */
+		public Builder(final JWEHeader jweHeader) {
+
+			this(jweHeader.getAlgorithm(), jweHeader.getEncryptionMethod());
+
+			typ = jweHeader.getType();
+			cty = jweHeader.getContentType();
+			crit = jweHeader.getCriticalHeaders();
+			customParams = jweHeader.getCustomParameters();
+
+			jku = jweHeader.getJWKURL();
+			jwk = jweHeader.getJWK();
+			x5u = jweHeader.getX509CertURL();
+			x5t = jweHeader.getX509CertThumbprint();
+			x5c = jweHeader.getX509CertChain();
+			kid = jweHeader.getKeyID();
+
+			epk = jweHeader.getEphemeralPublicKey();
+			zip = jweHeader.getCompressionAlgorithm();
+			apu = jweHeader.getAgreementPartyUInfo();
+			apv = jweHeader.getAgreementPartyVInfo();
+			p2s = jweHeader.getPBES2Salt();
+			p2c = jweHeader.getPBES2Count();
+			iv = jweHeader.getIV();
+			tag = jweHeader.getAuthenticationTag();
+
+			customParams = jweHeader.getCustomParameters();
+		}
+
+
+		/**
 		 * Sets the type ({@code typ}) parameter.
 		 *
 		 * @param typ The type parameter, {@code null} if not

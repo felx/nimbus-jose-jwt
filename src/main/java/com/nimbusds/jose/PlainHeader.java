@@ -112,6 +112,22 @@ public final class PlainHeader extends Header {
 
 
 		/**
+		 * Creates a new plain header builder with the parameters from
+		 * the specified header.
+		 *
+		 * @param plainHeader The plain header to use. Must not be
+		 *                    {@code null}.
+		 */
+		public Builder(final PlainHeader plainHeader) {
+
+			typ = plainHeader.getType();
+			cty = plainHeader.getContentType();
+			crit = plainHeader.getCriticalHeaders();
+			customParams = plainHeader.getCustomParameters();
+		}
+
+
+		/**
 		 * Sets the type ({@code typ}) parameter.
 		 *
 		 * @param typ The type parameter, {@code null} if not
