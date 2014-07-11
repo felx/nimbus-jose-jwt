@@ -758,6 +758,39 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 	/**
+	 * Deep copy constructor.
+	 *
+	 * @param jweHeader The JWE header to copy. Must not be {@code null}.
+	 */
+	public JWEHeader(final JWEHeader jweHeader) {
+
+		this(
+			jweHeader.getAlgorithm(),
+			jweHeader.getEncryptionMethod(),
+			jweHeader.getType(),
+			jweHeader.getContentType(),
+			jweHeader.getCriticalHeaders(),
+			jweHeader.getJWKURL(),
+			jweHeader.getJWK(),
+			jweHeader.getX509CertURL(),
+			jweHeader.getX509CertThumbprint(),
+			jweHeader.getX509CertChain(),
+			jweHeader.getKeyID(),
+			jweHeader.getEphemeralPublicKey(),
+			jweHeader.getCompressionAlgorithm(),
+			jweHeader.getAgreementPartyUInfo(),
+			jweHeader.getAgreementPartyVInfo(),
+			jweHeader.getPBES2Salt(),
+			jweHeader.getPBES2Count(),
+			jweHeader.getIV(),
+			jweHeader.getAuthenticationTag(),
+			jweHeader.getCustomParameters(),
+			jweHeader.getParsedBase64URL()
+		);
+	}
+
+
+	/**
 	 * Gets the registered parameter names for JWE headers.
 	 *
 	 * @return The registered parameter names, as an unmodifiable set.

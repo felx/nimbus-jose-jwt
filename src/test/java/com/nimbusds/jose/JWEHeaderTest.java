@@ -132,10 +132,10 @@ public class JWEHeaderTest extends TestCase {
 			build();
 
 
-		String s = h.toString();
+		Base64URL base64URL = h.toBase64URL();
 
 		// Parse back
-		h = JWEHeader.parse(s);
+		h = JWEHeader.parse(base64URL);
 
 		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
@@ -173,6 +173,8 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
 		assertEquals(1, h.getCustomParameters().size());
 
+		assertEquals(base64URL, h.getParsedBase64URL());
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
@@ -191,6 +193,47 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("tag"));
 		assertTrue(h.getIncludedParameters().contains("xCustom"));
 		assertEquals(17, h.getIncludedParameters().size());
+
+		// Test copy constructor
+		h = new JWEHeader(h);
+
+		assertEquals(JWEAlgorithm.RSA1_5, h.getAlgorithm());
+		assertEquals(new JOSEObjectType("JWT"), h.getType());
+		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
+		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
+		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
+		assertEquals("1234", h.getKeyID());
+
+		jwk = (RSAKey)h.getJWK();
+		assertNotNull(jwk);
+		assertEquals(new Base64URL("abc123"), jwk.getModulus());
+		assertEquals(new Base64URL("def456"), jwk.getPublicExponent());
+		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
+		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
+		assertEquals("1234", jwk.getKeyID());
+
+		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
+		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
+
+		certChain = h.getX509CertChain();
+		assertEquals(3, certChain.size());
+		assertEquals(new Base64("asd"), certChain.get(0));
+		assertEquals(new Base64("fgh"), certChain.get(1));
+		assertEquals(new Base64("jkl"), certChain.get(2));
+
+		assertEquals(new Base64URL("abc"), h.getAgreementPartyUInfo());
+		assertEquals(new Base64URL("xyz"), h.getAgreementPartyVInfo());
+
+		assertEquals(new Base64URL("omg"), h.getPBES2Salt());
+		assertEquals(1000, h.getPBES2Count());
+
+		assertEquals(new Base64URL("101010"), h.getIV());
+		assertEquals(new Base64URL("202020"), h.getAuthenticationTag());
+
+		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
+		assertEquals(1, h.getCustomParameters().size());
+
+		assertEquals(base64URL, h.getParsedBase64URL());
 	}
 
 

@@ -45,7 +45,7 @@ public class PlainHeaderTest extends TestCase {
 	}
 
 
-	public void testFullConstructor()
+	public void testFullAndCopyConstructors()
 		throws Exception {
 
 		Set<String> crit = new HashSet<String>();
@@ -76,6 +76,7 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(3, h.getCriticalHeaders().size());
 		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
 		assertEquals(1, h.getCustomParameters().size());
+		assertNull(h.getParsedBase64URL());
 
 		Base64URL b64url = h.toBase64URL();
 
@@ -90,6 +91,18 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(3, h.getCriticalHeaders().size());
 		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
 		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(b64url, h.getParsedBase64URL());
+
+		// Copy
+		h = new PlainHeader(h);
+
+		assertEquals(Algorithm.NONE, h.getAlgorithm());
+		assertEquals(new JOSEObjectType("JWT"), h.getType());
+		assertEquals("application/jwt", h.getContentType());
+		assertEquals(3, h.getCriticalHeaders().size());
+		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
+		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(b64url, h.getParsedBase64URL());
 	}
 
 

@@ -253,6 +253,24 @@ public final class PlainHeader extends Header {
 
 
 	/**
+	 * Deep copy constructor.
+	 *
+	 * @param plainHeader The plain header to copy. Must not be
+	 *                    {@code null}.
+	 */
+	public PlainHeader(final PlainHeader plainHeader) {
+
+		this(
+			plainHeader.getType(),
+			plainHeader.getContentType(),
+			plainHeader.getCriticalHeaders(),
+			plainHeader.getCustomParameters(),
+			plainHeader.getParsedBase64URL()
+		);
+	}
+
+
+	/**
 	 * Gets the registered parameter names for plain headers.
 	 *
 	 * @return The registered parameter names, as an unmodifiable set.

@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2014-07-11)
  */
 public abstract class Header {
 
@@ -114,6 +114,23 @@ public abstract class Header {
 		}
 
 		this.parsedBase64URL = parsedBase64URL;
+	}
+
+
+	/**
+	 * Deep copy constructor.
+	 *
+	 * @param header The header to copy. Must not be {@code null}.
+	 */
+	protected Header(final Header header) {
+
+		this(
+			header.getAlgorithm(),
+			header.getType(),
+			header.getContentType(),
+			header.getCriticalHeaders(),
+			header.getCustomParameters(),
+			header.getParsedBase64URL());
 	}
 
 

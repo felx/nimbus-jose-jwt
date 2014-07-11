@@ -449,6 +449,30 @@ public final class JWSHeader extends CommonSEHeader {
 
 
 	/**
+	 * Deep copy constructor.
+	 *
+	 * @param jwsHeader The JWS header to copy. Must not be {@code null}.
+	 */
+	public JWSHeader(final JWSHeader jwsHeader) {
+
+		this(
+			jwsHeader.getAlgorithm(),
+			jwsHeader.getType(),
+			jwsHeader.getContentType(),
+			jwsHeader.getCriticalHeaders(),
+			jwsHeader.getJWKURL(),
+			jwsHeader.getJWK(),
+			jwsHeader.getX509CertURL(),
+			jwsHeader.getX509CertThumbprint(),
+			jwsHeader.getX509CertChain(),
+			jwsHeader.getKeyID(),
+			jwsHeader.getCustomParameters(),
+			jwsHeader.getParsedBase64URL()
+		);
+	}
+
+
+	/**
 	 * Gets the registered parameter names for JWS headers.
 	 *
 	 * @return The registered parameter names, as an unmodifiable set.
