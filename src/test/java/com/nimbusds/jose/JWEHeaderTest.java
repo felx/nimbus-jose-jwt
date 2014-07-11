@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2014-07-11)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -41,6 +41,8 @@ public class JWEHeaderTest extends TestCase {
 		assertNull(h.getAgreementPartyUInfo());
 		assertNull(h.getAgreementPartyVInfo());
 		assertNull(h.getPBES2Salt());
+		assertNull(h.getIV());
+		assertNull(h.getAuthenticationTag());
 		assertEquals(0, h.getPBES2Count());
 		assertTrue(h.getCustomParameters().isEmpty());
 	}
@@ -124,6 +126,8 @@ public class JWEHeaderTest extends TestCase {
 			agreementPartyVInfo(new Base64URL("xyz")).
 			pbes2Salt(new Base64URL("omg")).
 			pbes2Count(1000).
+			iv(new Base64URL("101010")).
+			tag(new Base64URL("202020")).
 			build();
 
 
@@ -162,6 +166,9 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64URL("omg"), h.getPBES2Salt());
 		assertEquals(1000, h.getPBES2Count());
 
+		assertEquals(new Base64URL("101010"), h.getIV());
+		assertEquals(new Base64URL("202020"), h.getAuthenticationTag());
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
@@ -176,7 +183,9 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("apv"));
 		assertTrue(h.getIncludedParameters().contains("p2s"));
 		assertTrue(h.getIncludedParameters().contains("p2c"));
-		assertEquals(14, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("iv"));
+		assertTrue(h.getIncludedParameters().contains("tag"));
+		assertEquals(16, h.getIncludedParameters().size());
 	}
 
 
@@ -241,6 +250,8 @@ public class JWEHeaderTest extends TestCase {
 			agreementPartyVInfo(new Base64URL("rty")).
 			pbes2Salt(new Base64URL("uiop")).
 			pbes2Count(1000).
+			iv(new Base64URL("101010")).
+			tag(new Base64URL("202020")).
 			customParameter("exp", 123).
 			customParameter("nbf", 456).
 			build();
@@ -265,6 +276,8 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals("rty", h.getAgreementPartyVInfo().toString());
 		assertEquals("uiop", h.getPBES2Salt().toString());
 		assertEquals(1000, h.getPBES2Count());
+		assertEquals("101010", h.getIV().toString());
+		assertEquals("202020", h.getAuthenticationTag().toString());
 		assertEquals(123, ((Integer)h.getCustomParameter("exp")).intValue());
 		assertEquals(456, ((Integer)h.getCustomParameter("nbf")).intValue());
 		assertEquals(2, h.getCustomParameters().size());
@@ -286,9 +299,11 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("apv"));
 		assertTrue(h.getIncludedParameters().contains("p2s"));
 		assertTrue(h.getIncludedParameters().contains("p2c"));
+		assertTrue(h.getIncludedParameters().contains("iv"));
+		assertTrue(h.getIncludedParameters().contains("tag"));
 		assertTrue(h.getIncludedParameters().contains("exp"));
 		assertTrue(h.getIncludedParameters().contains("nbf"));
-		assertEquals(18, h.getIncludedParameters().size());
+		assertEquals(20, h.getIncludedParameters().size());
 	}
 
 

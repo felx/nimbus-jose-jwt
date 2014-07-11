@@ -41,6 +41,8 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>apv
  *     <li>p2s
  *     <li>p2c
+ *     <li>iv
+ *     <li>tag
  * </ul>
  *
  * <p>The header may also include {@link #getCustomParameters custom
@@ -56,7 +58,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-09)
+ * @version $version$ (2014-07-11)
  */
 @Immutable
 public final class JWEHeader extends CommonSEHeader {
@@ -91,6 +93,8 @@ public final class JWEHeader extends CommonSEHeader {
 		p.add("apv");
 		p.add("p2s");
 		p.add("p2c");
+		p.add("iv");
+		p.add("tag");
 
 		REGISTERED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -212,6 +216,18 @@ public final class JWEHeader extends CommonSEHeader {
 		 * The PBES2 count.
 		 */
 		private int p2c;
+
+
+		/**
+		 * The initialisation vector.
+		 */
+		private Base64URL iv;
+
+
+		/**
+		 * The authentication tag.
+		 */
+		private Base64URL tag;
 
 
 		/**
@@ -474,6 +490,36 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
+		 * Sets the initialisation vector ({@code iv}) parameter.
+		 *
+		 * @param iv The initialisation vector, {@code null} if not
+		 *           specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder iv(final Base64URL iv) {
+
+			this.iv = iv;
+			return this;
+		}
+
+
+		/**
+		 * Sets the authentication tag ({@code tag}) parameter.
+		 *
+		 * @param tag The authentication tag, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder tag(final Base64URL tag) {
+
+			this.tag = tag;
+			return this;
+		}
+
+
+		/**
 		 * Sets a custom (non-registered) parameter.
 		 *
 		 * @param name  The name of the custom parameter. Must not
@@ -531,7 +577,9 @@ public final class JWEHeader extends CommonSEHeader {
 			return new JWEHeader(
 				alg, enc, typ, cty, crit,
 				jku, jwk, x5u, x5t, x5c, kid,
-				epk, zip, apu, apv, p2s, p2c, customParams, null
+				epk, zip, apu, apv, p2s, p2c,
+				iv, tag,
+				customParams, null
 			);
 		}
 	}
@@ -580,6 +628,18 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 	/**
+	 * The initialisation vector ({@code iv}) parameter.
+	 */
+	private final Base64URL iv;
+
+
+	/**
+	 * The authentication tag ({@code tag}) parameter.
+	 */
+	private final Base64URL tag;
+
+
+	/**
 	 * Creates a new minimal JSON Web Encryption (JWE) header.
 	 *
 	 * <p>Note: Use {@link PlainHeader} to create a header with algorithm
@@ -596,6 +656,7 @@ public final class JWEHeader extends CommonSEHeader {
 			alg, enc,
 			null, null, null, null, null, null, null, null, null,
 			null, null, null, null, null, 0,
+			null, null,
 			null, null);
 	}
 
@@ -642,6 +703,10 @@ public final class JWEHeader extends CommonSEHeader {
 	 *                        {@code null} if not specified.
 	 * @param p2c             The PBES2 count ({@code p2c}) parameter, zero
 	 *                        if not specified. Must not be negative.
+	 * @param iv              The initialisation vector ({@code iv})
+	 *                        parameter, {@code null} if not specified.
+	 * @param tag             The authentication tag ({@code tag})
+	 *                        parameter, {@code null} if not specified.
 	 * @param customParams    The custom parameters, empty map or
 	 *                        {@code null} if none.
 	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the
@@ -664,6 +729,8 @@ public final class JWEHeader extends CommonSEHeader {
 			 final Base64URL apv,
 			 final Base64URL p2s,
 			 final int p2c,
+			 final Base64URL iv,
+			 final Base64URL tag,
 			 final Map<String,Object> customParams,
 			 final Base64URL parsedBase64URL) {
 
@@ -685,6 +752,8 @@ public final class JWEHeader extends CommonSEHeader {
 		this.apv = apv;
 		this.p2s = p2s;
 		this.p2c = p2c;
+		this.iv = iv;
+		this.tag = tag;
 	}
 
 
@@ -791,6 +860,28 @@ public final class JWEHeader extends CommonSEHeader {
 	}
 
 
+	/**
+	 * Gets the initialisation vector ({@code iv}) parameter.
+	 *
+	 * @return The initialisation vector, {@code null} if not specified.
+	 */
+	public Base64URL getIV() {
+
+		return iv;
+	}
+
+
+	/**
+	 * Gets the authentication tag ({@code tag}) parameter.
+	 *
+	 * @return The authentication tag, {@code null} if not specified.
+	 */
+	public Base64URL getAuthenticationTag() {
+
+		return tag;
+	}
+
+
 	@Override
 	public Set<String> getIncludedParameters() {
 
@@ -822,6 +913,14 @@ public final class JWEHeader extends CommonSEHeader {
 
 		if (p2c > 0) {
 			includedParameters.add("p2c");
+		}
+
+		if (iv != null) {
+			includedParameters.add("iv");
+		}
+
+		if (tag != null) {
+			includedParameters.add("tag");
 		}
 
 		return includedParameters;
@@ -859,6 +958,14 @@ public final class JWEHeader extends CommonSEHeader {
 
 		if (p2c > 0) {
 			o.put("p2c", p2c);
+		}
+
+		if (iv != null) {
+			o.put("iv", iv.toString());
+		}
+
+		if (tag != null) {
+			o.put("tag", tag.toString());
 		}
 
 		return o;
@@ -943,11 +1050,12 @@ public final class JWEHeader extends CommonSEHeader {
 		Base64URL apv = null;
 		Base64URL p2s = null;
 		int p2c = 0;
+		Base64URL iv = null;
+		Base64URL tag = null;
 		Map<String,Object> customParams = new HashMap<String,Object>();
 
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
-
 			if (name.equals("typ")) {
 				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
 			} else if (name.equals("cty")) {
@@ -978,6 +1086,10 @@ public final class JWEHeader extends CommonSEHeader {
 				p2s = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
 			} else if (name.equals("p2c")) {
 				p2c = JSONObjectUtils.getInt(jsonObject, name);
+			} else if (name.equals("iv")) {
+				iv = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+			} else if (name.equals("tag")) {
+				tag = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
 			} else {
 				customParams.put(name, jsonObject.get(name));
 			}
@@ -986,6 +1098,7 @@ public final class JWEHeader extends CommonSEHeader {
 		return new JWEHeader(
 			alg, enc, typ, cty, crit, jku, jwk, x5u, x5t, x5c, kid,
 			epk, zip, apu, apv, p2s, p2c,
+			iv, tag,
 			customParams, parsedBase64URL
 		);
 	}
