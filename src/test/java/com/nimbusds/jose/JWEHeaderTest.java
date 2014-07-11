@@ -128,6 +128,7 @@ public class JWEHeaderTest extends TestCase {
 			pbes2Count(1000).
 			iv(new Base64URL("101010")).
 			tag(new Base64URL("202020")).
+			customParameter("xCustom", "+++").
 			build();
 
 
@@ -169,6 +170,9 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new Base64URL("101010"), h.getIV());
 		assertEquals(new Base64URL("202020"), h.getAuthenticationTag());
 
+		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
+		assertEquals(1, h.getCustomParameters().size());
+
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
 		assertTrue(h.getIncludedParameters().contains("enc"));
@@ -185,7 +189,8 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("p2c"));
 		assertTrue(h.getIncludedParameters().contains("iv"));
 		assertTrue(h.getIncludedParameters().contains("tag"));
-		assertEquals(16, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParameters().contains("xCustom"));
+		assertEquals(17, h.getIncludedParameters().size());
 	}
 
 
