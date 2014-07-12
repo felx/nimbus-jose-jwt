@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -14,7 +15,7 @@ import com.nimbusds.jose.*;
  * Tests A256GCMKW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-06-17)
+ * @version $version$ (2014-07-12)
  */
 public class A256GCMKWTest extends TestCase {
 
@@ -463,7 +464,7 @@ public class A256GCMKWTest extends TestCase {
 			customParameter("exp", "2014-04-24").
 			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
 			build();
-		
+
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
@@ -553,6 +554,55 @@ public class A256GCMKWTest extends TestCase {
 		payload = jweObject.getPayload();
 
 		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	// http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.7
+	public void testDecryptCookbookExample()
+		throws Exception {
+
+		String jweString = "eyJhbGciOiJBMjU2R0NNS1ciLCJraWQiOiIxOGVjMDhlMS1iZmE5LTRkOTUtYj" +
+			"IwNS0yYjRkZDFkNDMyMWQiLCJ0YWciOiJrZlBkdVZRM1QzSDZ2bmV3dC0ta3N3" +
+			"IiwiaXYiOiJLa1lUMEdYXzJqSGxmcU5fIiwiZW5jIjoiQTEyOENCQy1IUzI1Ni" +
+			"J9" +
+			"." +
+			"lJf3HbOApxMEBkCMOoTnnABxs_CvTWUmZQ2ElLvYNok" +
+			"." +
+			"gz6NjyEFNm_vm8Gj6FwoFQ" +
+			"." +
+			"Jf5p9-ZhJlJy_IQ_byKFmI0Ro7w7G1QiaZpI8OaiVgD8EqoDZHyFKFBupS8iaE" +
+			"eVIgMqWmsuJKuoVgzR3YfzoMd3GxEm3VxNhzWyWtZKX0gxKdy6HgLvqoGNbZCz" +
+			"LjqcpDiF8q2_62EVAbr2uSc2oaxFmFuIQHLcqAHxy51449xkjZ7ewzZaGV3eFq" +
+			"hpco8o4DijXaG5_7kp3h2cajRfDgymuxUbWgLqaeNQaJtvJmSMFuEOSAzw9Hde" +
+			"b6yhdTynCRmu-kqtO5Dec4lT2OMZKpnxc_F1_4yDJFcqb5CiDSmA-psB2k0Jtj" +
+			"xAj4UPI61oONK7zzFIu4gBfjJCndsZfdvG7h8wGjV98QhrKEnR7xKZ3KCr0_qR" +
+			"1B-gxpNk3xWU" +
+			"." +
+			"DKW7jrb4WaRSNfbXVPlT5g";
+
+		JWEObject jweObject = JWEObject.parse(jweString);
+
+		assertEquals(JWEAlgorithm.A256GCMKW, jweObject.getHeader().getAlgorithm());
+		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
+
+
+		String jwkString = "{" +
+			"\"kty\": \"oct\"," +
+			"\"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\"," +
+			"\"use\": \"enc\"," +
+			"\"alg\": \"A256GCMKW\"," +
+			"\"k\": \"qC57l_uxcm7Nm3K-ct4GFjx8tM1U8CZ0NLBvdQstiS8\"" +
+			"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(jwkString);
+
+		AESDecrypter decrypter = new AESDecrypter(jwk.getKeyValue().decode());
+
+		jweObject.decrypt(decrypter);
+
+		String message = "You can trust us to stick with you through thick and thin–to the bitter end. And you can trust us to keep any secret of yours–closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.";
+
+		assertEquals(message, jweObject.getPayload().toString());
 	}
 }
 
