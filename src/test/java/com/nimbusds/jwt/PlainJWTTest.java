@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-01)
+ * @version $version$ (2014-07-13)
  */
 public class PlainJWTTest extends TestCase {
 
@@ -62,5 +62,25 @@ public class PlainJWTTest extends TestCase {
 		assertEquals("joe", cs.getIssuer());
 		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
+	}
+
+
+
+
+
+	public void testExampleKristina()
+		throws Exception {
+
+		String jwtString = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0=" +
+			".eyJleHAiOjM3NzQ4NjQwNSwiYXpwIjoiRFAwMWd5M1Frd1ZHR2RJZWpJSmdMWEN0UlRnYSIsInN1" +
+			"YiI6ImFkbWluQGNhcmJvbi5zdXBlciIsImF1ZCI6IkRQMDFneTNRa3dWR0dkSWVqSUpnTFhDdFJU" +
+			"Z2EiLCJpc3MiOiJodHRwczpcL1wvbG9jYWxob3N0Ojk0NDNcL29hdXRoMmVuZHBvaW50c1wvdG9r" +
+			"ZW4iLCJpYXQiOjM3Mzg4NjQwNX0=" +
+			".";
+
+		PlainJWT plainJWT = PlainJWT.parse(jwtString);
+
+		System.out.println(plainJWT.getHeader().toJSONObject());
+		System.out.println(plainJWT.getJWTClaimsSet().toJSONObject());
 	}
 }
