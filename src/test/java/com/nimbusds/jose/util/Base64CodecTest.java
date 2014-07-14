@@ -71,6 +71,17 @@ public class Base64CodecTest extends TestCase {
 	}
 
 
+	public void testNormalizeWithIllegalChars(){
+
+		assertEquals("Zg\n==", Base64Codec.normalizeEncodedString("Zg\n"));
+		assertEquals("Zm\n8=", Base64Codec.normalizeEncodedString("Zm\n8"));
+		assertEquals("Zm\n9v\n", Base64Codec.normalizeEncodedString("Zm\n9v\n"));
+		assertEquals("Zm\n9v\nYg\n==", Base64Codec.normalizeEncodedString("Zm\n9v\nYg\n"));
+		assertEquals("Zm\n9v\nYm\nE=", Base64Codec.normalizeEncodedString("Zm\n9v\nYm\nE"));
+		assertEquals("Zm\n9v\nYm\nFy", Base64Codec.normalizeEncodedString("Zm\n9v\nYm\nFy"));
+	}
+
+
 	public void testDecode() {
 
 		assertEquals("", new String(Base64Codec.decode(""), Charset.forName("utf-8")));
@@ -83,6 +94,18 @@ public class Base64CodecTest extends TestCase {
 	}
 
 
+	public void testDecodeWithIllegalChars() {
+
+		assertEquals("", new String(Base64Codec.decode("\n"), Charset.forName("utf-8")));
+		assertEquals("f", new String(Base64Codec.decode("Zg==\n"), Charset.forName("utf-8")));
+		assertEquals("fo", new String(Base64Codec.decode("Zm8=\n"), Charset.forName("utf-8")));
+		assertEquals("foo", new String(Base64Codec.decode("Zm9v\n"), Charset.forName("utf-8")));
+		assertEquals("foob", new String(Base64Codec.decode("Zm9vYg==\n"), Charset.forName("utf-8")));
+		assertEquals("fooba", new String(Base64Codec.decode("Zm9vYmE=\n"), Charset.forName("utf-8")));
+		assertEquals("foobar", new String(Base64Codec.decode("Zm9vYmFy\n"), Charset.forName("utf-8")));
+	}
+
+
 	public void testDecodeUrlSafe() {
 
 		assertEquals("", new String(Base64Codec.decode(""), Charset.forName("utf-8")));
@@ -92,5 +115,34 @@ public class Base64CodecTest extends TestCase {
 		assertEquals("foob", new String(Base64Codec.decode("Zm9vYg"), Charset.forName("utf-8")));
 		assertEquals("fooba", new String(Base64Codec.decode("Zm9vYmE"), Charset.forName("utf-8")));
 		assertEquals("foobar", new String(Base64Codec.decode("Zm9vYmFy"), Charset.forName("utf-8")));
+	}
+
+
+	public void testDecodeUrlSafeWithIllegalChars() {
+
+		assertEquals("", new String(Base64Codec.decode("\n"), Charset.forName("utf-8")));
+		assertEquals("f", new String(Base64Codec.decode("Zg\n"), Charset.forName("utf-8")));
+		assertEquals("fo", new String(Base64Codec.decode("Zm8\n"), Charset.forName("utf-8")));
+		assertEquals("foo", new String(Base64Codec.decode("Zm9v\n"), Charset.forName("utf-8")));
+		assertEquals("foob", new String(Base64Codec.decode("Zm9vYg\n"), Charset.forName("utf-8")));
+		assertEquals("fooba", new String(Base64Codec.decode("Zm9vYmE\n"), Charset.forName("utf-8")));
+		assertEquals("foobar", new String(Base64Codec.decode("Zm9vYmFy\n"), Charset.forName("utf-8")));
+	}
+
+
+	public void testCountIllegalChars() {
+
+		assertEquals(0, Base64Codec.countIllegalChars(""));
+		assertEquals(0, Base64Codec.countIllegalChars("Zg"));
+		assertEquals(1, Base64Codec.countIllegalChars("Zg\n"));
+		assertEquals(2, Base64Codec.countIllegalChars("Zg\r\n"));
+
+		assertEquals(0, Base64Codec.countIllegalChars("Zg=="));
+		assertEquals(1, Base64Codec.countIllegalChars("Zg==\n"));
+		assertEquals(2, Base64Codec.countIllegalChars("Zg==\r\n"));
+
+		assertEquals(0, Base64Codec.countIllegalChars("Zm9vYmFy"));
+		assertEquals(2, Base64Codec.countIllegalChars("Zm9v\nYmFy\n"));
+		assertEquals(4, Base64Codec.countIllegalChars("Zm9v\r\nYmFy\r\n"));
 	}
 }

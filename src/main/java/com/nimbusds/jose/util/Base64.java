@@ -14,7 +14,6 @@ import net.minidev.json.JSONValue;
  * Base64-encoded object.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
  */
 @Immutable
 public class Base64 implements JSONAware {

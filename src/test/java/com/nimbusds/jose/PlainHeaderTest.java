@@ -1,7 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
