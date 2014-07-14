@@ -3,6 +3,7 @@ package com.nimbusds.jwt;
 
 import java.util.Date;
 
+import com.nimbusds.jose.JOSEObjectType;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
@@ -65,22 +66,28 @@ public class PlainJWTTest extends TestCase {
 	}
 
 
-
-
-
 	public void testExampleKristina()
 		throws Exception {
 
-		String jwtString = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0=" +
-			".eyJleHAiOjM3NzQ4NjQwNSwiYXpwIjoiRFAwMWd5M1Frd1ZHR2RJZWpJSmdMWEN0UlRnYSIsInN1" +
-			"YiI6ImFkbWluQGNhcmJvbi5zdXBlciIsImF1ZCI6IkRQMDFneTNRa3dWR0dkSWVqSUpnTFhDdFJU" +
-			"Z2EiLCJpc3MiOiJodHRwczpcL1wvbG9jYWxob3N0Ojk0NDNcL29hdXRoMmVuZHBvaW50c1wvdG9r" +
-			"ZW4iLCJpYXQiOjM3Mzg4NjQwNX0=" +
+		String jwtString = "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0=\n" +
+			".eyJleHAiOjM3NzQ4NjQwNSwiYXpwIjoiRFAwMWd5M1Frd1ZHR2RJZWpJSmdMWEN0UlRnYSIsInN1\n" +
+			"YiI6ImFkbWluQGNhcmJvbi5zdXBlciIsImF1ZCI6IkRQMDFneTNRa3dWR0dkSWVqSUpnTFhDdFJU\n" +
+			"Z2EiLCJpc3MiOiJodHRwczpcL1wvbG9jYWxob3N0Ojk0NDNcL29hdXRoMmVuZHBvaW50c1wvdG9r\n" +
+			"ZW4iLCJpYXQiOjM3Mzg4NjQwNX0=\n" +
 			".";
 
 		PlainJWT plainJWT = PlainJWT.parse(jwtString);
 
-		System.out.println(plainJWT.getHeader().toJSONObject());
-		System.out.println(plainJWT.getJWTClaimsSet().toJSONObject());
+		// Header
+		assertEquals(Algorithm.NONE, plainJWT.getHeader().getAlgorithm());
+		assertEquals(new JOSEObjectType("JWT"), plainJWT.getHeader().getType());
+
+		// Claims
+		assertEquals(new Date(377486405l * 1000), plainJWT.getJWTClaimsSet().getExpirationTime());
+		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getClaim("azp"));
+		assertEquals("admin@carbon.super", plainJWT.getJWTClaimsSet().getSubject());
+		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getAudience().get(0));
+		assertEquals("https://localhost:9443/oauth2endpoints/token", plainJWT.getJWTClaimsSet().getIssuer());
+		assertEquals(new Date(373886405l * 1000), plainJWT.getJWTClaimsSet().getIssueTime());
 	}
 }
