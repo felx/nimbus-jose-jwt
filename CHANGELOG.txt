@@ -285,3 +285,9 @@ version 2.26 (2014-05-23)
     * Reintroduces A128CBC+HS256 and A256CBC+HS512 encryption (deprecated in
       JOSE draft suite 09) to enable support of legacy applications.
     * Fixes a manifest bug that affected OSGi support (issue #89).
+
+version 2.26.1 (2014-07-14)
+    * Removes checked exception from RSA1_5.decryptCEK(...) to minimise
+      exposure to timing attacks (issue #91).
+    * BASE64 and BASE64URL decoder successfully ignores separator (\r, \n) and
+      other illegal characters (issue #96).
