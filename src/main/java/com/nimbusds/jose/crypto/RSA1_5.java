@@ -65,7 +65,8 @@ class RSA1_5 {
 	 * @param provider     The JCA provider, or {@code null} to use the
 	 *                     default one.
 	 *
-	 * @return The decrypted Content Encryption Key (CEK).
+	 * @return The decrypted Content Encryption Key (CEK), {@code null} if
+	 *         there was a CEK key length mismatch.
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
@@ -81,9 +82,8 @@ class RSA1_5 {
 			byte[] secretKeyBytes = cipher.doFinal(encryptedCEK);
 
 			if (8 * secretKeyBytes.length != keyLength) {
-
-				throw new JOSEException("CEK key length mismatch: " + 
-					                secretKeyBytes.length + " != " + keyLength);
+				// CEK key length mismatch
+				return null;
 			}
 
 			return new SecretKeySpec(secretKeyBytes, "AES");
@@ -93,6 +93,7 @@ class RSA1_5 {
 			// java.security.NoSuchAlgorithmException
 			// java.security.InvalidKeyException
 			// javax.crypto.IllegalBlockSizeException
+			// javax.crypto.BadPaddingException
 			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
