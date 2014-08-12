@@ -7,7 +7,7 @@ Nimbus JOSE + JWT
 * Open source (Apache 2.0 licence)
 
 
-Nimbus JOSE + JWT is an open source Java library which implements the
+Nimbus JOSE + JWT is an open source Java 7+ library which implements the
 Javascript Object Signing and Encryption (JOSE) spec suite and the closely
 related JSON Web Token (JWT) spec.
 
@@ -71,9 +71,9 @@ Related IETF drafts:
 * [JWT] draft-ietf-oauth-json-web-token-20
 
 
-Dependencies
+System requirements and dependencies
 
-The Nimbus JOSE+JWT library has minimal dependencies.
+The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
 * JSON Smart for highly efficient parsing and serialisation of JSON.
 
@@ -88,7 +88,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>2.26</version>
+    <version>3.0</version>
 </dependency>
 
 
