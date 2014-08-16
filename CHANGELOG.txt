@@ -291,3 +291,10 @@ version 2.26.1 (2014-07-14)
       exposure to timing attacks (issue #91).
     * BASE64 and BASE64URL decoder successfully ignores separator (\r, \n) and
       other illegal characters (issue #96).
+
+version 3.0 (2014-08-16)
+    * Makes Plain, JWS and JWE headers immutable, removes read-only header
+      interfaces, adds header builders.
+    * Adds 'iv' and 'tag' parameters to JWEHeader.
+    * Adds A128CGMKW, A192CGMKW and A256CGMKW encryption support.
+    * Upgrades to BouncyCastle 1.51.
