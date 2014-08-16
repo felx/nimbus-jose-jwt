@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-11-18)
+ * @version $version$ (2014-08-16)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -494,5 +494,36 @@ public class JWTClaimsSetTest extends TestCase {
 		// {"long":"37.3956","lat":"-122.076"}
 		assertEquals("37.3956", (String)geoLoc.get("long"));
 		assertEquals("-122.076", (String)geoLoc.get("lat"));
+	}
+
+
+	public void testSingleValuedAudienceSetter() {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		assertNull(claimsSet.getAudience());
+
+		claimsSet.setAudience("123");
+		assertEquals("123", claimsSet.getAudience().get(0));
+		assertEquals(1, claimsSet.getAudience().size());
+
+		claimsSet.setAudience((String)null);
+		assertNull(claimsSet.getAudience());
+	}
+
+
+	public void testSerializeSingleValuedAudience()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setAudience("123");
+
+		JSONObject jsonObject = claimsSet.toJSONObject();
+
+		assertEquals("123", (String)jsonObject.get("aud"));
+		assertEquals(1, jsonObject.size());
+
+		claimsSet = JWTClaimsSet.parse(jsonObject.toJSONString());
+		assertEquals("123", claimsSet.getAudience().get(0));
+		assertEquals(1, claimsSet.getAudience().size());
 	}
 }

@@ -2,14 +2,7 @@ package com.nimbusds.jwt;
 
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -39,7 +32,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-08-16)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -224,6 +217,21 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	public void setAudience(final List<String> aud) {
 
 		this.aud = aud;
+	}
+
+
+	/**
+	 * Sets a single-valued audience ({@code aud}) claim.
+	 *
+	 * @param aud The audience claim, {@code null} if not specified.
+	 */
+	public void setAudience(final String aud) {
+
+		if (aud == null) {
+			this.aud = null;
+		} else {
+			this.aud = Arrays.asList(aud);
+		}
 	}
 
 
@@ -594,10 +602,15 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			o.put(SUBJECT_CLAIM, sub);
 		}
 
-		if (aud != null) {
-			JSONArray audArray = new JSONArray();
-			audArray.addAll(aud);
-			o.put(AUDIENCE_CLAIM, audArray);
+		if (aud != null && ! aud.isEmpty()) {
+
+			if (aud.size() == 1) {
+				o.put(AUDIENCE_CLAIM, aud.get(0));
+			} else {
+				JSONArray audArray = new JSONArray();
+				audArray.addAll(aud);
+				o.put(AUDIENCE_CLAIM, audArray);
+			}
 		}
 
 		if (exp != null) {
