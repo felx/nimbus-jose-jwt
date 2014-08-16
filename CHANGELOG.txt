@@ -296,5 +296,6 @@ version 3.0 (2014-08-16)
     * Makes Plain, JWS and JWE headers immutable, removes read-only header
       interfaces, adds header builders.
     * Adds 'iv' and 'tag' parameters to JWEHeader.
+    * Adds support for serialising single-valued JWT audience (aud) claims.
     * Adds A128CGMKW, A192CGMKW and A256CGMKW encryption support.
     * Upgrades to BouncyCastle 1.51.

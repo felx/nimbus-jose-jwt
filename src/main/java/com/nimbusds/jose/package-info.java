@@ -19,7 +19,5 @@
  * <ul>
  *     <li>http://tools.ietf.org/wg/jose/
  * </ul>
- *
- * @version $version$ ($version-date$)
  */
 package com.nimbusds.jose;

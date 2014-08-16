@@ -10,7 +10,5 @@
  *     <li>http://tools.ietf.org/html/draft-ietf-jose-json-web-key-26
  *     <li>http://tools.ietf.org/wg/jose/
  * </ul>
- *
- * @version $version$ ($version-date$)
  */
 package com.nimbusds.jose.jwk;

@@ -7,17 +7,17 @@
  * Signature (JWS) algorithms:
  *
  * <ul>
- *     <li>For HMAC signature algorithms HS256, HS384 and HS512:
+ *     <li>For HMAC algorithms HS256, HS384 and HS512:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.MACSigner}
  *             <li>{@link com.nimbusds.jose.crypto.MACVerifier}
  *         </ul>
- *     <li>For RSA-SSA signature algorithms RS256, RS384 and RS512:
+ *     <li>For RSA-SSA signatures RS256, RS384, RS512, PS256, PS384 and PS512:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.RSASSASigner}
  *             <li>{@link com.nimbusds.jose.crypto.RSASSAVerifier}
  *         </ul>
- *      <li>For ECDSA signature algorithms ES256, ES384 and ES512:
+ *      <li>For ECDSA signatures ES256, ES384 and ES512:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.ECDSASigner}
  *             <li>{@link com.nimbusds.jose.crypto.ECDSAVerifier}
@@ -35,6 +35,12 @@
  *             <li>{@link com.nimbusds.jose.crypto.RSAEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.RSADecrypter}
  *         </ul>
+ *     <li>For AES GCM with A128CBC-HS256, A192CBC-HS384,
+ *         A256CBC-HS512, A128GCM, A192GCM and A256GCM encryption:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.AESEncrypter}
+ *             <li>{@link com.nimbusds.jose.crypto.AESDecrypter}
+ *         </ul>
  *     <li>For direct A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM,
  *         A192GCM and A256GCM encryption (using a shared symmetric key):
  *         <ul>
@@ -42,7 +48,5 @@
  *             <li>{@link com.nimbusds.jose.crypto.DirectDecrypter}
  *         </ul>
  * </ul>
- *
- * @version $version$ ($version-date$)
  */
 package com.nimbusds.jose.crypto;

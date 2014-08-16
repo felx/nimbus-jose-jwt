@@ -32,24 +32,27 @@ objects (in compact format):
 The library currently ships a ready implementation of the following standard
 algorithms:
 
-* HMAC integrity with HS256, HS384 and HS512.
+* HMAC integrity protection: HS256, HS384 and HS512
 
-* RSASSA-PKCS1-V1_5 signatures with RS256, RS384 and RS512.
+* RSASSA-PKCS1-V1_5 signatures: RS256, RS384 and RS512
 
-* RSASSA-PSS signatures with PS256, PS384 and PS512.
+* RSASSA-PSS signatures: PS256, PS384 and PS512
 
-* EC signatures with ES256, ES384 and ES512.
+* EC signatures: ES256, ES384 and ES512
 
-* RSAES-PKCS1-V1_5 encryption with A128CBC-HS256, A192CBC-HS384,
-  A256CBC-HS512, A128GCM, A192GCM and A256GCM (the deprecated A128CBC+HS256 and
-  A256CBC+HS512 are also supported).
+* Key encryption with RSAES-PKCS1-V1_5: RSA1_5
 
-* RSAES OAEP encryption with A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
-  A128GCM, A192GCM and A256GCM (the deprecated A128CBC+HS256 and A256CBC+HS512
-  are also supported).
+* Key encryption with RSAES OAEP: RSA-OAEP and RSA-OAEP-256
 
-* Direct shared symmetric key encryption with A128CBC-HS256, A192CBC-HS384,
-  A256CBC-HS512, A128GCM, A192GCM and A256GCM.
+* Key encryption with AES GCM: A128CGMKW, A192CGMKW and A256CGMKW
+
+* Direct shared symmetric key encryption: dir
+
+* Content encryption with AES_CBC_HMAC_SHA2: A128CBC-HS256, A192CBC-HS384,
+  A256CBC-HS512, the deprecated A128CBC+HS256 and A256CBC+HS512 are also
+  supported
+
+* Content encryption with AES GCM: A128GCM, A192GCM and A256GCM
 
 * JWE Compression with DEFLATE.
 
@@ -60,15 +63,15 @@ contribute in their development.
 
 Related IETF drafts:
 
-* [JWA] draft-ietf-jose-json-web-algorithms-26
+* [JWA] draft-ietf-jose-json-web-algorithms-31
 
-* [JWS] draft-ietf-jose-json-web-signature-26
+* [JWS] draft-ietf-jose-json-web-signature-30
 
-* [JWE] draft-ietf-jose-json-web-encryption-26
+* [JWE] draft-ietf-jose-json-web-encryption-30
 
-* [JWK] draft-ietf-jose-json-web-key-26
+* [JWK] draft-ietf-jose-json-web-key-30
 
-* [JWT] draft-ietf-oauth-json-web-token-20
+* [JWT] draft-ietf-oauth-json-web-token-25
 
 
 System requirements and dependencies

@@ -13,9 +13,7 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-13
+ *     <li>http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25
  * </ul>
- *
- * @version $version$ ($version-date$)
  */
 package com.nimbusds.jwt;

@@ -33,39 +33,39 @@
 		
 		<p>The library currently ships ready {@link com.nimbusds.jose.crypto implementations} 
 		of the following standard algorithms:</p>
-		
+
+        <p>JWS algorithms:</p>
 		<ul>
-			<li>JWS:
-				<ul>
-					<li>HMAC signatures with HS256, HS384 and HS512.</li>
-					<li>RSA signatures with RS256, RS384, RS512, PS256, PS384
-                        and PS512.</li>
-					<li>EC signatures with ES256, ES384 and ES512.</li>
-				</ul>
-			</li>
-			<li>JWE:
-				<ul>
-					<li>RSAES-PKCS1-V1_5 encryption with A128CBC_HS256,
-                        A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM and
-                        A256GCM methods.</li>
-					<li>RSAES OAEP encryption with A128CBC_HS256,
-                        A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM and
-                        A256GCM methods.</li>
-					<li>Direct encryption with A128CBC_HS256, A192CBC_HS384,
-                        A256CBC_HS512, A128GCM, A192GCM and A256GCM
-                        methods.</li>
-				</ul>
-			</li>
+			<li>HMAC protection: HS256, HS384 and HS512</li>
+			<li>RSA signatures: RS256, RS384, RS512, PS256, PS384 and PS512.</li>
+			<li>EC signatures: ES256, ES384 and ES512</li>
 		</ul>
+
+        <p>JWE key management algorithms:</p>
+
+        <ul>
+            <li>Key encryption with RSAES-PKCS1-V1_5: RSA1_5</li>
+            <li>Key encryption with RSAES OAEP: RSA-OAEP and RSA-OAEP-256</li>
+            <li>Key Encryption with AES GCM: A128CGMKW, A192CGMKW and A256CGMKW</li>
+            <li>Direct Encryption with a Shared Symmetric Key: dir</li>
+        </ul>
+
+        <p>JWE content encryption algorithms:</p>
+
+        <ul>
+            <li>AES_CBC_HMAC_SHA2: A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
+                the deprecated A128CBC+HS256 and A256CBC+HS512 are also supported</li>
+            <li>AES GCM: A128GCM, A192GCM and A256GCM</li>
+        </ul>
 		
 		<p>Related IETF drafts:</p>
 		
 		<ul>
-			<li>[JWA] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-26">draft-ietf-jose-json-web-algorithms-26</a></li>
-			<li>[JWS] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-26">draft-ietf-jose-json-web-signature-26</a></li>
-			<li>[JWE] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-26">draft-ietf-jose-json-web-encryption-26</a></li>
-			<li>[JWK] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-26">draft-ietf-jose-json-web-key-26</a></li>
-			<li>[JWT] <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-20">draft-ietf-oauth-json-web-token-20</a></li>
+			<li>[JWA] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31">draft-ietf-jose-json-web-algorithms-31</a></li>
+			<li>[JWS] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-30">draft-ietf-jose-json-web-signature-30</a></li>
+			<li>[JWE] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-encryption-30">draft-ietf-jose-json-web-encryption-30</a></li>
+			<li>[JWK] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-key-30">draft-ietf-jose-json-web-key-30</a></li>
+			<li>[JWT] <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25">draft-ietf-oauth-json-web-token-25</a></li>
 		</ul>
 		
 		<p>Dependencies (see the pom.xml for details):</p>
