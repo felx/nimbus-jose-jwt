@@ -2,9 +2,9 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
+import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
 
@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>crit
  * </ul>
  *
- * <p>The header may also carry {@link #setCustomParameters custom parameters};
+ * <p>The header may also carry {@link #getCustomParameters custom parameters};
  * these will be serialised and parsed along the registered ones.
  *
  * <p>Example:
@@ -37,9 +37,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-07-10)
  */
-public class PlainHeader extends Header implements ReadOnlyPlainHeader {
+@Immutable
+public final class PlainHeader extends Header {
 
 
 	/**
@@ -64,12 +65,224 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 
 
 	/**
-	 * Creates a new plain header with algorithm 
+	 * Builder for constructing plain headers.
+	 *
+	 * <p>Example use:
+	 *
+	 * <pre>
+	 * PlainHeader header = new PlainHeader.Builder().
+	 *                      contentType("text/plain").
+	 *                      customParameter("exp", new Date().getTime()).
+	 *                      build();
+	 * </pre>
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The JOSE object type.
+		 */
+		private JOSEObjectType typ;
+
+
+		/**
+		 * The content type.
+		 */
+		private String cty;
+
+
+		/**
+		 * The critical headers.
+		 */
+		private Set<String> crit;
+
+
+		/**
+		 * Custom header parameters.
+		 */
+		private Map<String,Object> customParams;
+
+
+		/**
+		 * Creates a new plain header builder.
+		 */
+		public Builder() {
+
+		}
+
+
+		/**
+		 * Creates a new plain header builder with the parameters from
+		 * the specified header.
+		 *
+		 * @param plainHeader The plain header to use. Must not be
+		 *                    {@code null}.
+		 */
+		public Builder(final PlainHeader plainHeader) {
+
+			typ = plainHeader.getType();
+			cty = plainHeader.getContentType();
+			crit = plainHeader.getCriticalHeaders();
+			customParams = plainHeader.getCustomParameters();
+		}
+
+
+		/**
+		 * Sets the type ({@code typ}) parameter.
+		 *
+		 * @param typ The type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder type(final JOSEObjectType typ) {
+
+			this.typ = typ;
+			return this;
+		}
+
+
+		/**
+		 * Sets the content type ({@code cty}) parameter.
+		 *
+		 * @param cty The content type parameter, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder contentType(final String cty) {
+
+			this.cty = cty;
+			return this;
+		}
+
+
+		/**
+		 * Sets the critical headers ({@code crit}) parameter.
+		 *
+		 * @param crit The names of the critical header parameters,
+		 *             empty set or {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder criticalHeaders(final Set<String> crit) {
+
+			this.crit = crit;
+			return this;
+		}
+
+
+		/**
+		 * Sets a custom (non-registered) parameter.
+		 *
+		 * @param name  The name of the custom parameter. Must not
+		 *              match a registered parameter name and must not
+		 *              be {@code null}.
+		 * @param value The value of the custom parameter, should map
+		 *              to a valid JSON entity, {@code null} if not
+		 *              specified.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws IllegalArgumentException If the specified parameter
+		 *                                  name matches a registered
+		 *                                  parameter name.
+		 */
+		public Builder customParameter(final String name, final Object value) {
+
+			if (getRegisteredParameterNames().contains(name)) {
+				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
+			}
+
+			if (customParams == null) {
+				customParams = new HashMap<String,Object>();
+			}
+
+			customParams.put(name, value);
+
+			return this;
+		}
+
+
+		/**
+		 * Sets the custom (non-registered) parameters. The values must
+		 * be serialisable to a JSON entity, otherwise will be ignored.
+		 *
+		 * @param customParameters The custom parameters, empty map or
+		 *                         {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder customParameters(final Map<String,Object> customParameters) {
+
+			this.customParams = customParameters;
+			return this;
+		}
+
+
+		/**
+		 * Builds a new plain header.
+		 *
+		 * @return The plain header.
+		 */
+		public PlainHeader build() {
+
+			return new PlainHeader(typ, cty, crit, customParams, null);
+		}
+	}
+
+
+	/**
+	 * Creates a new minimal plain header with algorithm
 	 * {@link Algorithm#NONE none}.
 	 */
 	public PlainHeader() {
 
-		super(Algorithm.NONE);
+		this(null, null, null, null, null);
+	}
+
+
+	/**
+	 * Creates a new plain header with algorithm
+	 * {@link Algorithm#NONE none}.
+	 *
+	 * @param typ             The type ({@code typ}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param cty             The content type ({@code cty}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param crit            The names of the critical header
+	 *                        ({@code crit}) parameters, empty set or
+	 *                        {@code null} if none.
+	 * @param customParams    The custom parameters, empty map or
+	 *                        {@code null} if none.
+	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the
+	 *                        header is created from scratch.
+	 */
+	public PlainHeader(final JOSEObjectType typ,
+			   final String cty,
+			   final Set<String> crit,
+			   final Map<String, Object> customParams,
+			   final Base64URL parsedBase64URL) {
+
+		super(Algorithm.NONE, typ, cty, crit, customParams, parsedBase64URL);
+	}
+
+
+	/**
+	 * Deep copy constructor.
+	 *
+	 * @param plainHeader The plain header to copy. Must not be
+	 *                    {@code null}.
+	 */
+	public PlainHeader(final PlainHeader plainHeader) {
+
+		this(
+			plainHeader.getType(),
+			plainHeader.getContentType(),
+			plainHeader.getCriticalHeaders(),
+			plainHeader.getCustomParameters(),
+			plainHeader.getParsedBase64URL()
+		);
 	}
 
 
@@ -84,114 +297,123 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	}
 
 
+	/**
+	 * Gets the algorithm ({@code alg}) parameter.
+	 *
+	 * @return {@link Algorithm#NONE}.
+	 */
 	@Override
 	public Algorithm getAlgorithm() {
 
-		return alg;
-	}
-
-
-	/**
-	 * @throws IllegalArgumentException If the specified parameter name
-	 *                                  matches a registered parameter
-	 *                                  name.
-	 */
-	@Override
-	public void setCustomParameter(final String name, final Object value) {
-
-		if (getRegisteredParameterNames().contains(name)) {
-			throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
-		}
-
-		super.setCustomParameter(name, value);
-	}
-
-
-	@Override
-	public Set<String> getIncludedParameters() {
-
-		Set<String> includedParameters = 
-			new HashSet<String>(getCustomParameters().keySet());
-
-		includedParameters.add("alg");
-
-		if (getType() != null) {
-			includedParameters.add("typ");
-		}
-
-		if (getContentType() != null) {
-			includedParameters.add("cty");
-		}
-
-		if (getCriticalHeaders() != null && ! getCriticalHeaders().isEmpty()) {
-			includedParameters.add("crit");
-		}
-
-		return includedParameters;
+		return Algorithm.NONE;
 	}
 
 
 	/**
 	 * Parses a plain header from the specified JSON object.
 	 *
-	 * @param json The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject      The JSON object to parse. Must not be
+	 *                        {@code null}.
 	 *
 	 * @return The plain header.
 	 *
 	 * @throws ParseException If the specified JSON object doesn't
 	 *                        represent a valid plain header.
 	 */
-	public static PlainHeader parse(final JSONObject json)
+	public static PlainHeader parse(final JSONObject jsonObject)
+		throws ParseException {
+
+		return parse(jsonObject, null);
+	}
+
+
+	/**
+	 * Parses a plain header from the specified JSON object.
+	 *
+	 * @param jsonObject      The JSON object to parse. Must not be
+	 *                        {@code null}.
+	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
+	 *                        if not applicable.
+	 *
+	 * @return The plain header.
+	 *
+	 * @throws ParseException If the specified JSON object doesn't
+	 *                        represent a valid plain header.
+	 */
+	public static PlainHeader parse(final JSONObject jsonObject,
+					final Base64URL parsedBase64URL)
 		throws ParseException {
 
 		// Get the "alg" parameter
-		Algorithm alg = Header.parseAlgorithm(json);
+		Algorithm alg = Header.parseAlgorithm(jsonObject);
 
 		if (alg != Algorithm.NONE) {
 			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"", 0);
 		}
 
 
-		// Create a minimal header, type may be set later
-		PlainHeader h = new PlainHeader();
+		JOSEObjectType typ = null;
+		String cty = null;
+		Set<String> crit = null;
+		Map<String,Object> customParams = new HashMap<String,Object>();
 
 
 		// Parse optional + custom parameters
-		for(final String name: json.keySet()) {
+		for(final String name: jsonObject.keySet()) {
 
 			if (name.equals("alg")) {
-				continue; // skip
+				// skip
 			} else if (name.equals("typ")) {
-				h.setType(new JOSEObjectType(JSONObjectUtils.getString(json, name)));
+				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
 			} else if (name.equals("cty")) {
-				h.setContentType(JSONObjectUtils.getString(json, name));
+				cty = JSONObjectUtils.getString(jsonObject, name);
 			} else if (name.equals("crit")) {
-				h.setCriticalHeaders(new HashSet<String>(JSONObjectUtils.getStringList(json, name)));
+				crit = new HashSet<String>(JSONObjectUtils.getStringList(jsonObject, name));
 			} else {
-				h.setCustomParameter(name, json.get(name));
+				customParams.put(name, jsonObject.get(name));
 			}
 		}
 
-		return h;
+		return new PlainHeader(typ, cty, crit, customParams, parsedBase64URL);
 	}
 
 
 	/**
 	 * Parses a plain header from the specified JSON string.
 	 *
-	 * @param s The JSON string to parse. Must not be {@code null}.
+	 * @param jsonString The JSON string to parse. Must not be
+	 *                   {@code null}.
+	 *
+	 * @return The plain header.
+	 *
+	 * @throws ParseException If the specified JSON string doesn't
+	 *                        represent a valid plain header.
+	 */
+	public static PlainHeader parse(final String jsonString)
+		throws ParseException {
+
+		return parse(jsonString, null);
+	}
+
+
+	/**
+	 * Parses a plain header from the specified JSON string.
+	 *
+	 * @param jsonString      The JSON string to parse. Must not be
+	 *                        {@code null}.
+	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
+	 *                        if not applicable.
 	 *
 	 * @return The plain header.
 	 *
 	 * @throws ParseException If the specified JSON string doesn't 
 	 *                        represent a valid plain header.
 	 */
-	public static PlainHeader parse(final String s)
+	public static PlainHeader parse(final String jsonString,
+					final Base64URL parsedBase64URL)
 		throws ParseException {
 
-		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
-
-		return parse(jsonObject);
+		return parse(JSONObjectUtils.parseJSONObject(jsonString), parsedBase64URL);
 	}
 
 
@@ -208,12 +430,6 @@ public class PlainHeader extends Header implements ReadOnlyPlainHeader {
 	public static PlainHeader parse(final Base64URL base64URL)
 		throws ParseException {
 
-		if (base64URL == null) {
-			throw new ParseException("The Base64URL must not be null", 0);
-		}
-
-		PlainHeader header = parse(base64URL.decodeToString());
-		header.setParsedBase64URL(base64URL);
-		return header;
+		return parse(base64URL.decodeToString(), base64URL);
 	}
 }

@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests round-trip ES256, EC384 and EC512 JWS signing and verification.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-10)
  */
 public class ECDSARoundTripTest extends TestCase {
 
@@ -120,8 +120,9 @@ public class ECDSARoundTripTest extends TestCase {
 
 	private static JWSObject createInitialJWSObject(final JWSAlgorithm alg) {
 
-		JWSHeader header = new JWSHeader(alg);
-		header.setContentType("text/plain");
+		JWSHeader header = new JWSHeader.Builder(alg).
+			contentType("text/plain").
+			build();
 
 		return new JWSObject(header, new Payload("Hello world!"));
 	}
@@ -217,9 +218,10 @@ public class ECDSARoundTripTest extends TestCase {
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.ES512);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
 		ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
@@ -249,9 +251,10 @@ public class ECDSARoundTripTest extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.ES512);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
 		ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();

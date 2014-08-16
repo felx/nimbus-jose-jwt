@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version $version$ (2013-05-16)
  */
 @Immutable
-public class Payload {
+public final class Payload {
 
 
 	/**

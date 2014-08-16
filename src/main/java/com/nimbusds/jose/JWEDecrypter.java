@@ -9,12 +9,12 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Interface for decrypting JSON Web Encryption (JWE) objects.
  *
- * <p>Callers can query the decrypter to determine its algorithm capabilities as
- * well as the JWE algorithms and header parameters that are accepted for 
+ * <p>Callers can query the decrypter to determine its algorithm capabilities
+ * as well as the JWE algorithms and header parameters that are accepted for
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 public interface JWEDecrypter extends JWEAlgorithmProvider {
 
@@ -22,6 +22,8 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	/**
 	 * Gets the names of the accepted JWE algorithms. These correspond to
 	 * the {@code alg} JWE header parameter.
+	 *
+	 * @see #setAcceptedAlgorithms
 	 *
 	 * @return The accepted JWE algorithms, as a read-only set, empty set
 	 *         if none.
@@ -33,6 +35,10 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 * Sets the names of the accepted JWE algorithms. These correspond to
 	 * the {@code alg} JWE header parameter.
 	 *
+	 * <p>For JWE decrypters that support multiple JWE algorithms this
+	 * method can be used to indicate that only a subset should be accepted
+	 * for processing.
+	 *
 	 * @param acceptedAlgs The accepted JWE algorithms. Must be a subset of
 	 *                     the supported algorithms and not {@code null}.
 	 */
@@ -43,6 +49,8 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 * Gets the names of the accepted encryption methods. These correspond
 	 * to the {@code enc} JWE header parameter.
 	 *
+	 * @see #setAcceptedEncryptionMethods
+	 *
 	 * @return The accepted encryption methods, as a read-only set, empty
 	 *         set if none.
 	 */
@@ -52,6 +60,10 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	/**
 	 * Sets the names of the accepted encryption methods. These correspond
 	 * to the {@code enc} JWE header parameter.
+	 *
+	 * <p>For JWE decrypters that support multiple encryption methods this
+	 * method can be used to indicate that only a subset should be accepted
+	 * for processing.
 	 *
 	 * @param acceptedEncs The accepted encryption methods. Must be a
 	 *                     subset of the supported encryption methods and
@@ -106,7 +118,7 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                       header parameter is not accepted, or if
 	 *                       decryption failed for some other reason.
 	 */
-	public byte[] decrypt(final ReadOnlyJWEHeader header, 
+	public byte[] decrypt(final JWEHeader header,
 		              final Base64URL encryptedKey,
 		              final Base64URL iv,
 		              final Base64URL cipherText,

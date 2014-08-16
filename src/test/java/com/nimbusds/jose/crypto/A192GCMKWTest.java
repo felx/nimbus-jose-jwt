@@ -4,24 +4,20 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import com.nimbusds.jose.*;
-import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
+import org.junit.Assert;
+
+import com.nimbusds.jose.*;
 
 
 /**
- * Tests direct JWE encryption and decryption.
+ * Tests A192GCMKW JWE encryption and decryption. 
  *
- * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @author Melisa Halsband 
+ * @version $version$ (2014-07-11)
  */
-public class DirectCryptoTest extends TestCase {
+public class A192GCMKWTest extends TestCase {
 
-
-	// 128-bit shared symmetric key
-	private final static byte[] key128 = { 
-		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121, 
-		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226 };
 
 	// 192-bit shared symmetric key
 	private final static byte[] key192 = {
@@ -30,81 +26,54 @@ public class DirectCryptoTest extends TestCase {
 		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61 };
 
 
-	// 256-bit shared symmetric key
-	private final static byte[] key256 = { 
-		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121, 
-		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
-		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61, 
-		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234 };
+	public void testKeyLength() {
 
-
-	// 384-bit shared symmetric key
-	private final static byte[] key384 = {
-		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121,
-		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
-		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61,
-		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234,
-		(byte) 60, (byte)181, (byte) 90, (byte) 85, (byte) 51, (byte)123, (byte)  6, (byte)224,
-		(byte)  4, (byte)122, (byte) 29, (byte)230, (byte)151, (byte) 12, (byte)244, (byte)127 };
-
-
-	// 512-bit shared symmetric key
-	private final static byte[] key512 = { 
-		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121, 
-		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
-		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61, 
-		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234,
-		(byte) 60, (byte)181, (byte) 90, (byte) 85, (byte) 51, (byte)123, (byte)  6, (byte)224, 
-		(byte)  4, (byte)122, (byte) 29, (byte)230, (byte)151, (byte) 12, (byte)244, (byte)127, 
-		(byte)121, (byte) 25, (byte)  4, (byte) 85, (byte)220, (byte)144, (byte)215, (byte)110, 
-		(byte)130, (byte) 17, (byte) 68, (byte)228, (byte)129, (byte)138, (byte)  7, (byte)130 };
-
-
-
-	public void testKeyLengths() {
-
-		assertEquals(128, key128.length * 8);
 		assertEquals(192, key192.length * 8);
-		assertEquals(256, key256.length * 8);
-		assertEquals(384, key384.length * 8);
-		assertEquals(512, key512.length * 8);
 	}
 
 
 	public void testSupportedAlgorithms()
 		throws Exception {
 
-		JWEEncrypter encrypter = new DirectEncrypter(key128);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
 
-		assertEquals(1, encrypter.supportedAlgorithms().size());
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+		assertEquals(3, encrypter.supportedAlgorithms().size());
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
-		assertEquals(1, decrypter.supportedAlgorithms().size());
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+		assertEquals(3, decrypter.supportedAlgorithms().size());
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 	}
 
 
 	public void testSupportedEncryptionMethods()
 		throws Exception {
 
-		JWEEncrypter encrypter = new DirectEncrypter(key128);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
 
-		assertEquals(6, encrypter.supportedEncryptionMethods().size());
+		assertEquals(8, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
-		assertEquals(6, decrypter.supportedEncryptionMethods().size());
+		assertEquals(8, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
@@ -114,32 +83,34 @@ public class DirectCryptoTest extends TestCase {
 	public void testGetAcceptedAlgorithms()
 		throws Exception {
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
 		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.DIR));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 	}
 
 
 	public void testGetAcceptedEncryptionMethods()
 		throws Exception {
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
-		assertEquals(6, decrypter.getAcceptedEncryptionMethods().size());
+		assertEquals(8, decrypter.getAcceptedEncryptionMethods().size());
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 	}
 
 
 	public void testSetAcceptedAlgorithms()
 		throws Exception {
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
 		try {
 			decrypter.setAcceptedAlgorithms(null);
@@ -155,15 +126,16 @@ public class DirectCryptoTest extends TestCase {
 			// ok
 		}
 
-		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>());
-		assertTrue(decrypter.getAcceptedAlgorithms().isEmpty());
+		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A192GCMKW)));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
 	}
 
 
 	public void testSetAcceptedEncryptionMethods()
 		throws Exception {
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
 		try {
 			decrypter.setAcceptedEncryptionMethods(null);
@@ -181,21 +153,23 @@ public class DirectCryptoTest extends TestCase {
 
 		decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(EncryptionMethod.A128GCM)));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
+		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
 
 
 	public void testWithA128CBC_HS256()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -207,7 +181,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -218,18 +194,19 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals("Hello world!", payload.toString());
 	}
 
-
 	public void testWithA192CBC_HS384()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A192CBC_HS384);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key384);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -241,7 +218,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key384);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -256,14 +235,16 @@ public class DirectCryptoTest extends TestCase {
 	public void testWithA256CBC_HS512()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256CBC_HS512);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A256CBC_HS512);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key512);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -275,7 +256,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key512);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -290,14 +273,16 @@ public class DirectCryptoTest extends TestCase {
 	public void testWithA128GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key128);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -309,7 +294,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -324,14 +311,16 @@ public class DirectCryptoTest extends TestCase {
 	public void testWithA192GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A192GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A192GCM);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key192);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -343,7 +332,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key192);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -358,14 +349,16 @@ public class DirectCryptoTest extends TestCase {
 	public void testWithA256GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -377,7 +370,9 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -388,11 +383,10 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals("I think therefore I am.", payload.toString());
 	}
 
-
 	public void testWithCompression()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			compressionAlgorithm(CompressionAlgorithm.DEF).
 			build();
 
@@ -402,7 +396,7 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
 
 		jweObject.encrypt(encrypter);
 
@@ -414,7 +408,7 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
 		jweObject.decrypt(decrypter);
 
@@ -426,53 +420,10 @@ public class DirectCryptoTest extends TestCase {
 	}
 
 
-	public void testCookbookExample()
-		throws Exception {
-
-		String json ="{"+
-			"\"kty\":\"oct\","+
-			"\"kid\":\"77c7e2b8-6e13-45cf-8672-617b5b45243a\","+
-			"\"use\":\"enc\","+
-			"\"alg\":\"A128GCM\","+
-			"\"k\":\"XctOhJAkA-pD9Lh7ZgW_2A\""+
-			"}";
-
-		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
-
-
-		String jwe = "eyJhbGciOiJkaXIiLCJraWQiOiI3N2M3ZTJiOC02ZTEzLTQ1Y2YtODY3Mi02MT"+
-			"diNWI0NTI0M2EiLCJlbmMiOiJBMTI4R0NNIn0"+
-			"."+
-			"."+
-			"refa467QzzKx6QAB"+
-			"."+
-			"JW_i_f52hww_ELQPGaYyeAB6HYGcR559l9TYnSovc23XJoBcW29rHP8yZOZG7Y"+
-			"hLpT1bjFuvZPjQS-m0IFtVcXkZXdH_lr_FrdYt9HRUYkshtrMmIUAyGmUnd9zM"+
-			"DB2n0cRDIHAzFVeJUDxkUwVAE7_YGRPdcqMyiBoCO-FBdE-Nceb4h3-FtBP-c_"+
-			"BIwCPTjb9o0SbdcdREEMJMyZBH8ySWMVi1gPD9yxi-aQpGbSv_F9N4IZAxscj5"+
-			"g-NJsUPbjk29-s7LJAGb15wEBtXphVCgyy53CoIKLHHeJHXex45Uz9aKZSRSIn"+
-			"ZI-wjsY0yu3cT4_aQ3i1o-tiE-F8Ios61EKgyIQ4CWao8PFMj8TTnp"+
-			"."+
-			"vbb32Xvllea2OtmHAdccRQ";
-
-		JWEObject jweObject = JWEObject.parse(jwe);
-
-		assertEquals(JWEAlgorithm.DIR, jweObject.getHeader().getAlgorithm());
-		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
-		assertEquals("77c7e2b8-6e13-45cf-8672-617b5b45243a", jweObject.getHeader().getKeyID());
-
-		JWEDecrypter decrypter = new DirectDecrypter(jwk.toByteArray());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
-	}
-
-
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
 			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
 			build();
@@ -481,7 +432,7 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
 
 		jweObject.encrypt(encrypter);
 
@@ -489,7 +440,7 @@ public class DirectCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 		decrypter.getIgnoredCriticalHeaderParameters().add("exp");
 
 		jweObject.decrypt(decrypter);
@@ -505,7 +456,7 @@ public class DirectCryptoTest extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
 			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
 			build();
@@ -514,7 +465,7 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key192);
 
 		jweObject.encrypt(encrypter);
 
@@ -522,7 +473,7 @@ public class DirectCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key192);
 
 		try {
 			jweObject.decrypt(decrypter);
@@ -531,5 +482,73 @@ public class DirectCryptoTest extends TestCase {
 			// ok
 			assertEquals("Unsupported critical header parameter", e.getMessage());
 		}
+	}
+
+
+	public void testWithDeprecatedA128CBC_HS256()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
+	}
+
+
+	public void testWithDeprecatedA256CBC_HS512()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A192GCMKW, EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		Payload payload = new Payload("Hello world!");
+
+		JWEObject jweObject = new JWEObject(header, payload);
+
+		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
+
+		JWEEncrypter encrypter = new AESEncrypter(key192);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		JWEDecrypter decrypter = new AESDecrypter(key192);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		payload = jweObject.getPayload();
+
+		assertEquals("Hello world!", payload.toString());
 	}
 }

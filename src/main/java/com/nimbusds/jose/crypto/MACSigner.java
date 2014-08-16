@@ -5,7 +5,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2014-07-08)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -53,7 +53,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 
 	@Override
-	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signingInput)
+	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());

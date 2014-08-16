@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-07-08)
  */
 public abstract class JOSEObject {
 	
@@ -76,7 +76,7 @@ public abstract class JOSEObject {
 	 *
 	 * @return The header.
 	 */
-	public abstract ReadOnlyHeader getHeader();
+	public abstract Header getHeader();
 
 
 	/**
@@ -259,7 +259,7 @@ public abstract class JOSEObject {
 
 		Base64URL[] parts = split(s);
 
-		JSONObject jsonObject = null;
+		JSONObject jsonObject;
 
 		try {
 			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());

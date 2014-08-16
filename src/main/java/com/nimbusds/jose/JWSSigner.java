@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Callers can query the signer to determine its algorithm capabilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2014-07-08)
  */
 public interface JWSSigner extends JWSAlgorithmProvider {
 
@@ -29,6 +29,6 @@ public interface JWSSigner extends JWSAlgorithmProvider {
 	 * @throws JOSEException If the JWS algorithm is not supported or if
 	 *                       signing failed for some other reason.
 	 */
-	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signingInput)
+	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException;
 }

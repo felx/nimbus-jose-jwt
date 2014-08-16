@@ -8,15 +8,21 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
- * an immutable simple wrapper for returning the cipher text, initialisation 
- * vector (IV), encrypted key and authentication tag from {@link JWEEncrypter} 
+ * an immutable wrapper for returning the cipher text, initialisation vector
+ * (IV), encrypted key and authentication tag from {@link JWEEncrypter}
  * implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-05-05)
+ * @version $version$ (2014-07-11)
  */
 @Immutable
 public final class JWECryptoParts {
+
+
+	/**
+	 * The modified JWE header (optional).
+	 */
+	private final JWEHeader header;
 
 
 	/**
@@ -44,7 +50,7 @@ public final class JWECryptoParts {
 
 
 	/**
-	 * Creates a new cryptograhic JWE parts instance.
+	 * Creates a new cryptographic JWE parts instance.
 	 *
 	 * @param encryptedKey      The encrypted key, {@code null} if not
 	 *                          required by the encryption algorithm.
@@ -61,6 +67,33 @@ public final class JWECryptoParts {
 		              final Base64URL cipherText, 
 		              final Base64URL authenticationTag) {
 
+		this(null, encryptedKey, iv, cipherText, authenticationTag);
+	}
+
+
+	/**
+	 * Creates a new cryptographic JWE parts instance.
+	 *
+	 * @param header            The modified JWE header, {@code null} if
+	 *                          not.
+	 * @param encryptedKey      The encrypted key, {@code null} if not
+	 *                          required by the encryption algorithm.
+	 * @param iv                The initialisation vector (IV),
+	 *                          {@code null} if not required by the
+	 *                          encryption algorithm.
+	 * @param cipherText        The cipher text. Must not be {@code null}.
+	 * @param authenticationTag The authentication tag, {@code null} if the
+	 *                          JWE algorithm provides built-in integrity
+	 *                          check.
+	 */
+	public JWECryptoParts(final JWEHeader header,
+			      final Base64URL encryptedKey,
+			      final Base64URL iv,
+			      final Base64URL cipherText,
+			      final Base64URL authenticationTag) {
+
+		this.header = header;
+
 		this.encryptedKey = encryptedKey;
 
 		this.iv = iv;
@@ -73,6 +106,17 @@ public final class JWECryptoParts {
 		this.cipherText = cipherText;
 
 		this.authenticationTag = authenticationTag;
+	}
+
+
+	/**
+	 * Gets the modified JWE header.
+	 *
+	 * @return The modified JWE header, {@code null} of not.
+	 */
+	public JWEHeader getHeader() {
+
+		return header;
 	}
 
 

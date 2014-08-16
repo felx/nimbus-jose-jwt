@@ -1,12 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.SecureRandom;
-import java.security.interfaces.RSAPrivateKey;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -18,15 +18,15 @@ import com.nimbusds.jose.util.StringUtils;
 
 
 /**
- * RSA decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
+ * AES decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
  * is thread-safe.
  *
  * <p>Supports the following JWE algorithms:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
- *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
- *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP_256}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A128GCMKW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A192GCMKW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A256GCMKW}
  * </ul>
  *
  * <p>Supports the following encryption methods:
@@ -46,20 +46,17 @@ import com.nimbusds.jose.util.StringUtils;
  * registered JWE header parameters}. Use {@link #setAcceptedAlgorithms} and
  * {@link #setAcceptedEncryptionMethods} to restrict the acceptable JWE
  * algorithms and encryption methods.
- * 
- * @author David Ortiz
- * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
  *
+ * @author Melisa Halsband 
+ * @version $version$ (2014-07-11)
  */
-public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
+public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 
 	/**
 	 * The accepted JWE algorithms.
 	 */
-	private Set<JWEAlgorithm> acceptedAlgs =
-		new HashSet<JWEAlgorithm>(supportedAlgorithms());
+	private Set<JWEAlgorithm> acceptedAlgs;
 
 
 	/**
@@ -77,35 +74,71 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	/**
-	 * The private RSA key.
+	 * The key encrypting key.
 	 */
-	private final RSAPrivateKey privateKey;
+	private final SecretKey kek;
 
 
 	/**
-	 * Creates a new RSA decrypter.
+	 * Creates a new AES decrypter.
 	 *
-	 * @param privateKey The private RSA key. Must not be {@code null}.
+	 * @param kek The Key Encrypting Key. Must be 128 bits (16 bytes), 192
+	 *            bits (24 bytes) or 256 bits (32 bytes). Must not be
+	 *            {@code null}.
+	 *
+	 * @throws IllegalArgumentException If called with a null parameter or
+	 *                                  unsupported key length
 	 */
-	public RSADecrypter(final RSAPrivateKey privateKey) {
+	public AESDecrypter(final SecretKey kek) {
 
-		if (privateKey == null) {
+		if (kek == null) {
 
-			throw new IllegalArgumentException("The private RSA key must not be null");
+			throw new IllegalArgumentException("The Key Encrypting Key must not be null");
 		}
 
-		this.privateKey = privateKey;
+		switch (kek.getEncoded().length) {
+			case 16:
+				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128GCMKW));
+				break;
+			case 24:
+				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A192GCMKW));
+				break;
+			case 32:
+				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A256GCMKW));
+				break;
+			default:
+				throw new IllegalArgumentException("The Key Encrypting Key must be 128, 192 or 256 bits long");
+		}
+
+		this.kek = kek;
 	}
 
 
 	/**
-	 * Gets the private RSA key.
+	 * Creates a new AES decrypter.
 	 *
-	 * @return The private RSA key.
+	 * @param keyBytes The Key Encrypting Key, as a byte array. Must be 128
+	 *                 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32
+	 *                 bytes). Must not be {@code null}.
+	 *
+	 * @throws IllegalArgumentException If called with a null parameter or
+	 *                                  unsupported key length
 	 */
-	public RSAPrivateKey getPrivateKey() {
+	public AESDecrypter(final byte[] keyBytes)
+		throws IllegalArgumentException {
 
-		return privateKey;
+		this(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	/**
+	 * Gets the Key Encrypting Key.
+	 *
+	 * @return The Key Encrypting Key.
+	 */
+	public SecretKey getKey() {
+
+		return kek;
 	}
 
 
@@ -123,7 +156,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			throw new IllegalArgumentException("The accepted JWE algorithms must not be null");
 		}
 
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
+		if (!supportedAlgorithms().containsAll(acceptedAlgs)) {
 			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
 		}
 
@@ -168,17 +201,17 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 	@Override
 	public byte[] decrypt(final JWEHeader header,
-		              final Base64URL encryptedKey,
-		              final Base64URL iv,
-		              final Base64URL cipherText,
-		              final Base64URL authTag) 
+			      final Base64URL encryptedKey,
+			      final Base64URL iv,
+			      final Base64URL cipherText,
+			      final Base64URL authTag)
 		throws JOSEException {
 
 		// Validate required JWE parts
 		if (encryptedKey == null) {
 
 			throw new JOSEException("The encrypted key must not be null");
-		}	
+		}
 
 		if (iv == null) {
 
@@ -190,51 +223,30 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 			throw new JOSEException("The authentication tag must not be null");
 		}
 
-		if (! critParamChecker.headerPasses(header)) {
+		if (!critParamChecker.headerPasses(header)) {
 
 			throw new JOSEException("Unsupported critical header parameter");
 		}
-		
+
 
 		// Derive the content encryption key
 		JWEAlgorithm alg = header.getAlgorithm();
+		int keyLength = header.getEncryptionMethod().cekBitLength();
 
 		SecretKey cek;
 
-		if (alg.equals(JWEAlgorithm.RSA1_5)) {
+		if (alg.equals(JWEAlgorithm.A128GCMKW) ||
+			alg.equals(JWEAlgorithm.A192GCMKW) ||
+			alg.equals(JWEAlgorithm.A256GCMKW)) {
 
-			int keyLength = header.getEncryptionMethod().cekBitLength();
+			byte[] keyIV = header.getIV().decode();
+			byte[] keyTag = header.getAuthenticationTag().decode();
+			AuthenticatedCipherText authEncrCEK = new AuthenticatedCipherText(encryptedKey.decode(), keyTag);
+			cek = AESGCMKW.decryptCEK(kek, keyIV, authEncrCEK, keyLength, keyEncryptionProvider);
 
-			// Protect against MMA attack by generating random CEK on failure,
-			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
-			SecureRandom randomGen = getSecureRandom();
-			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
-
-			try {
-				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, keyEncryptionProvider);
-
-				if (cek == null) {
-					// CEK length mismatch, signalled by null instead of
-					// exception to prevent MMA attack
-					cek = randomCEK;
-				}
-
-			} catch (Exception e) {
-				// continue
-				cek = randomCEK;
-			}
-		
-		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
-
-			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
-
-		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
-			
-			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
-			
 		} else {
-		
-			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5 or RSA_OAEP");
+
+			throw new JOSEException("Unsupported JWE algorithm, must be AESGCMKW");
 		}
 
 		// Compose the AAD
@@ -246,8 +258,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		byte[] plainText;
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
-		    enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
+			enc.equals(EncryptionMethod.A192CBC_HS384) ||
+			enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			plainText = AESCBC.decryptAuthenticated(
 				cek,
@@ -259,8 +271,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				macProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			   enc.equals(EncryptionMethod.A192GCM) ||
-			   enc.equals(EncryptionMethod.A256GCM)    ) {
+			enc.equals(EncryptionMethod.A192GCM) ||
+			enc.equals(EncryptionMethod.A256GCM)) {
 
 			plainText = AESGCM.decrypt(
 				cek,
@@ -271,7 +283,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
+			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)) {
 
 			plainText = AESCBC.decryptWithConcatKDF(
 				header,
@@ -293,4 +305,3 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		return DeflateHelper.applyDecompression(header, plainText);
 	}
 }
-

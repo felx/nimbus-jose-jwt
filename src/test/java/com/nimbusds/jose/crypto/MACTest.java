@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-08-10)
  */
 public class MACTest extends TestCase {
 
@@ -302,9 +302,10 @@ public class MACTest extends TestCase {
 
 		final String stringSecret = "3eae8196ad1b";
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);
 
@@ -330,9 +331,10 @@ public class MACTest extends TestCase {
 
 		final String stringSecret = "3eae8196ad1b";
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);
 

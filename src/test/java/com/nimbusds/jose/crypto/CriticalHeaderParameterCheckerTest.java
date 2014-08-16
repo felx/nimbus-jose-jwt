@@ -13,7 +13,7 @@ import junit.framework.TestCase;
  * Tests the critical parameters checker.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-10)
  */
 public class CriticalHeaderParameterCheckerTest extends TestCase {
 
@@ -43,8 +43,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setKeyID("1");
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).keyID("1").build();
 
 		assertTrue(checker.headerPasses(header));
 	}
@@ -55,10 +54,11 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
 		checker.getIgnoredCriticalHeaders().add("exp");
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setKeyID("1");
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			keyID("1").
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		assertTrue(checker.headerPasses(header));
 	}
@@ -68,10 +68,11 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
 
-		JWSHeader header = new JWSHeader(JWSAlgorithm.RS256);
-		header.setKeyID("1");
-		header.setCustomParameter("exp", "2014-04-24");
-		header.setCriticalHeaders(new HashSet<String>(Arrays.asList("exp")));
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
+			keyID("1").
+			customParameter("exp", "2014-04-24").
+			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			build();
 
 		assertFalse(checker.headerPasses(header));
 	}

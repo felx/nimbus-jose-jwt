@@ -11,7 +11,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.ReadOnlyJWEHeader;
+import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -44,7 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version $version$ (2014-07-08)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -87,7 +87,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 	@Override
-	public JWECryptoParts encrypt(final ReadOnlyJWEHeader header, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();

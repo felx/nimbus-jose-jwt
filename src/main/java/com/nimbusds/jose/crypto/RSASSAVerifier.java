@@ -13,7 +13,7 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -127,7 +127,7 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 
 	@Override
-	public boolean verify(final ReadOnlyJWSHeader header, 
+	public boolean verify(final JWSHeader header,
 		              final byte[] signedContent, 
 		              final Base64URL signature)
 		throws JOSEException {

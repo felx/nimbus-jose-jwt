@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2014-07-08)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -107,7 +107,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	@Override
-	public boolean verify(final ReadOnlyJWSHeader header, 
+	public boolean verify(final JWSHeader header,
 		              final byte[] signedContent, 
 		              final Base64URL signature)
 		throws JOSEException {

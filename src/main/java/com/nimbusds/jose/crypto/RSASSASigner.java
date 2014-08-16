@@ -10,7 +10,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.ReadOnlyJWSHeader;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -71,7 +71,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
 
 	@Override
-	public Base64URL sign(final ReadOnlyJWSHeader header, final byte[] signingInput)
+	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
 		Signature signer = getRSASignerAndVerifier(header.getAlgorithm(), provider);

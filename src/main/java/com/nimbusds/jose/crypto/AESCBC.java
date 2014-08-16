@@ -14,7 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.ReadOnlyJWEHeader;
+import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2014-05-23)
+ * @version $version$ (2014-07-08)
  */
 @ThreadSafe
 class AESCBC {
@@ -225,7 +225,7 @@ class AESCBC {
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static AuthenticatedCipherText encryptWithConcatKDF(final ReadOnlyJWEHeader header,
+	public static AuthenticatedCipherText encryptWithConcatKDF(final JWEHeader header,
 		                                                   final SecretKey secretKey,
 								   final Base64URL encryptedKey,
 								   final byte[] iv,
@@ -386,7 +386,7 @@ class AESCBC {
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
-	public static byte[] decryptWithConcatKDF(final ReadOnlyJWEHeader header,
+	public static byte[] decryptWithConcatKDF(final JWEHeader header,
 						  final SecretKey secretKey,
 						  final Base64URL encryptedKey,
 						  final Base64URL iv,

@@ -2,11 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import net.minidev.json.JSONObject;
 
@@ -18,69 +14,142 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * The base abstract class for plaintext, JSON Web Signature (JWS) and JSON Web 
  * Encryption (JWE) headers.
  *
- * <p>The header may also carry {@link #setCustomParameters custom parameters};
- * these will be serialised and parsed along the registered ones.
+ * <p>The header may also include {@link #getCustomParameters custom
+ * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-10-07)
+ * @version $version$ (2014-07-11)
  */
-public abstract class Header implements ReadOnlyHeader {
+public abstract class Header {
 
 
 	/**
 	 * The algorithm ({@code alg}) parameter.
 	 */
-	protected final Algorithm alg;
+	private final Algorithm alg;
 
 
 	/**
 	 * The JOSE object type ({@code typ}) parameter.
 	 */
-	private JOSEObjectType typ;
+	private final JOSEObjectType typ;
 
 
 	/**
 	 * The content type ({@code cty}) parameter.
 	 */
-	private String cty;
+	private final String cty;
 
 
 	/**
 	 * The critical headers ({@code crit}) parameter.
 	 */
-	private Set<String> crit;
+	private final Set<String> crit;
 
 
 	/**
 	 * Custom header parameters.
 	 */
-	private Map<String,Object> customParameters = new HashMap<String,Object>();
+	private final Map<String,Object> customParams;
+
+
+	/**
+	 * Empty custom parameters constant.
+	 */
+	private static final Map<String,Object> EMPTY_CUSTOM_PARAMS =
+		Collections.unmodifiableMap(new HashMap<String,Object>());
 
 
 	/**
 	 * The original parsed Base64URL, {@code null} if the header was 
 	 * created from scratch.
 	 */
-	private Base64URL parsedBase64URL;
+	private final Base64URL parsedBase64URL;
 
 
 	/**
-	 * Creates a new header with the specified algorithm ({@code alg}) 
-	 * parameter.
+	 * Creates a new abstract header.
 	 *
-	 * @param alg The algorithm parameter. Must not be {@code null}.
+	 * @param alg             The algorithm ({@code alg}) parameter. Must
+	 *                        not be {@code null}.
+	 * @param typ             The type ({@code typ}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param cty             The content type ({@code cty}) parameter,
+	 *                        {@code null} if not specified.
+	 * @param crit            The names of the critical header
+	 *                        ({@code crit}) parameters, empty set or
+	 *                        {@code null} if none.
+	 * @param customParams    The custom parameters, empty map or
+	 *                        {@code null} if none.
+	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the
+	 *                        header is created from scratch.
 	 */
-	protected Header(final Algorithm alg) {
+	protected Header(final Algorithm alg,
+			 final JOSEObjectType typ,
+			 final String cty, Set<String> crit,
+			 final Map<String,Object> customParams,
+			 final Base64URL parsedBase64URL) {
 
 		if (alg == null) {
 			throw new IllegalArgumentException("The algorithm \"alg\" header parameter must not be null");
 		}
 
 		this.alg = alg;
+
+		this.typ = typ;
+		this.cty = cty;
+
+		if (crit != null) {
+			// Copy and make unmodifiable
+			this.crit = Collections.unmodifiableSet(new HashSet<String>(crit));
+		} else {
+			this.crit = null;
+		}
+
+		if (customParams != null) {
+			// Copy and make unmodifiable
+			this.customParams = Collections.unmodifiableMap(new HashMap<String,Object>(customParams));
+		} else {
+			this.customParams = EMPTY_CUSTOM_PARAMS;
+		}
+
+		this.parsedBase64URL = parsedBase64URL;
 	}
 
 
-	@Override
+	/**
+	 * Deep copy constructor.
+	 *
+	 * @param header The header to copy. Must not be {@code null}.
+	 */
+	protected Header(final Header header) {
+
+		this(
+			header.getAlgorithm(),
+			header.getType(),
+			header.getContentType(),
+			header.getCriticalHeaders(),
+			header.getCustomParameters(),
+			header.getParsedBase64URL());
+	}
+
+
+	/**
+	 * Gets the algorithm ({@code alg}) parameter.
+	 *
+	 * @return The algorithm parameter.
+	 */
+	protected Algorithm getAlgorithm() {
+
+		return alg;
+	}
+
+
+	/**
+	 * Gets the type ({@code typ}) parameter.
+	 *
+	 * @return The type parameter, {@code null} if not specified.
+	 */
 	public JOSEObjectType getType() {
 
 		return typ;
@@ -88,17 +157,10 @@ public abstract class Header implements ReadOnlyHeader {
 
 
 	/**
-	 * Sets the type ({@code typ}) parameter.
+	 * Gets the content type ({@code cty}) parameter.
 	 *
-	 * @param typ The type parameter, {@code null} if not specified.
+	 * @return The content type parameter, {@code null} if not specified.
 	 */
-	public void setType(final JOSEObjectType typ) {
-
-		this.typ = typ;
-	}
-
-
-	@Override
 	public String getContentType() {
 
 		return cty;
@@ -106,102 +168,96 @@ public abstract class Header implements ReadOnlyHeader {
 
 
 	/**
-	 * Sets the content type ({@code cty}) parameter.
+	 * Gets the critical headers ({@code crit}) parameter.
 	 *
-	 * @param cty The content type parameter, {@code null} if not
-	 *            specified.
+	 * @return The names of the critical header parameters, as a
+	 *         unmodifiable set, {@code null} if not specified.
 	 */
-	public void setContentType(final String cty) {
-
-		this.cty = cty;
-	}
-
-
-	@Override
 	public Set<String> getCriticalHeaders() {
 
 		return crit;
 	}
 
 
-
 	/**
-	 * Sets the critical headers ({@code crit}) parameter.
+	 * Gets a custom (non-registered) parameter.
 	 *
-	 * @param crit The names of the critical header parameters, empty set 
-	 *             {@code null} if none.
+	 * @param name The name of the custom parameter. Must not be
+	 *             {@code null}.
+	 *
+	 * @return The custom parameter, {@code null} if not specified.
 	 */
-	public void setCriticalHeaders(Set<String> crit) {
-
-		this.crit = crit;
-	}
-
-
-	@Override
 	public Object getCustomParameter(final String name) {
 
-		return customParameters.get(name);
+		return customParams.get(name);
 	}
 
 
 	/**
-	 * Sets a custom (non-registered) parameter. Callers and extending
-	 * classes should ensure the parameter name doesn't match a registered
-	 * parameter name.
+	 * Gets the custom (non-registered) parameters.
 	 *
-	 * @param name  The name of the custom parameter. Must not match a 
-	 *              registered parameter name and must not be {@code null}.
-	 * @param value The value of the custom parameter, should map to a
-	 *              valid JSON entity, {@code null} if not specified.
+	 * @return The custom parameters, as a unmodifiable map, empty map if
+	 *         none.
 	 */
-	protected void setCustomParameter(final String name, final Object value) {
-
-		customParameters.put(name, value);
-	}
-
-
-	@Override
 	public Map<String,Object> getCustomParameters() {
 
-		return Collections.unmodifiableMap(customParameters);
+		return customParams;
 	}
 
 
 	/**
-	 * Sets the custom (non-registered) parameters. The values must be
-	 * serialisable to a JSON entity, otherwise will be ignored.
+	 * Gets the original Base64URL used to create this header.
 	 *
-	 * @param customParameters The custom parameters, empty map or 
-	 *                         {@code null} if none.
+	 * @return The parsed Base64URL, {@code null} if the header was created
+	 *         from scratch.
 	 */
-	public void setCustomParameters(final Map<String,Object> customParameters) {
+	public Base64URL getParsedBase64URL() {
 
-		if (customParameters == null) {
-			return;
+		return parsedBase64URL;
+	}
+
+
+	/**
+	 * Gets the names of all included parameters (registered and custom) in
+	 * the header instance.
+	 *
+	 * @return The included parameters.
+	 */
+	public Set<String> getIncludedParameters() {
+
+		Set<String> includedParameters =
+			new HashSet<String>(getCustomParameters().keySet());
+
+		includedParameters.add("alg");
+
+		if (getType() != null) {
+			includedParameters.add("typ");
 		}
 
-		this.customParameters = customParameters;
+		if (getContentType() != null) {
+			includedParameters.add("cty");
+		}
+
+		if (getCriticalHeaders() != null && ! getCriticalHeaders().isEmpty()) {
+			includedParameters.add("crit");
+		}
+
+		return includedParameters;
 	}
 
 
 	/**
-	 * Sets the original parsed Base64URL used to create this header.
+	 * Returns a JSON object representation of the header. All custom
+	 * parameters are included if they serialise to a JSON entity and
+	 * their names don't conflict with the registered ones.
 	 *
-	 * @param parsedBase64URL The parsed Base64URL, {@code null} if the 
-	 *                        header was created from scratch.
+	 * @return The JSON object representation of the header.
 	 */
-	protected void setParsedBase64URL(final Base64URL parsedBase64URL) {
-
-		this.parsedBase64URL = parsedBase64URL;
-	}
-
-
-	@Override
 	public JSONObject toJSONObject() {
 
 		// Include custom parameters, they will be overwritten if their
 		// names match specified registered ones
-		JSONObject o = new JSONObject(customParameters);
+		JSONObject o = new JSONObject(customParams);
 
 		// Alg is always defined
 		o.put("alg", alg.toString());
@@ -222,14 +278,28 @@ public abstract class Header implements ReadOnlyHeader {
 	}
 
 
-	@Override
+	/**
+	 * Returns a JSON string representation of the header. All custom
+	 * parameters will be included if they serialise to a JSON entity and
+	 * their names don't conflict with the registered ones.
+	 *
+	 * @return The JSON string representation of the header.
+	 */
 	public String toString() {
 
 		return toJSONObject().toString();
 	}
 
 
-	@Override
+	/**
+	 * Returns a Base64URL representation of the header. If the header was
+	 * parsed always returns the original Base64URL (required for JWS
+	 * validation and authenticated JWE decryption).
+	 *
+	 * @return The original parsed Base64URL representation of the header,
+	 *         or a new Base64URL representation if the header was created
+	 *         from scratch.
+	 */
 	public Base64URL toBase64URL() {
 
 		if (parsedBase64URL == null) {
@@ -283,32 +353,55 @@ public abstract class Header implements ReadOnlyHeader {
 
 
 	/**
+	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader}
+	 * from the specified JSON object.
+	 *
+	 * @param jsonObject      The JSON object to parse. Must not be
+	 *                        {@code null}.
+	 *
+	 * @return The header.
+	 *
+	 * @throws ParseException If the specified JSON object doesn't
+	 *                        represent a valid header.
+	 */
+	public static Header parse(final JSONObject jsonObject)
+		throws ParseException {
+
+		return parse(jsonObject, null);
+	}
+
+
+	/**
 	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader} 
 	 * from the specified JSON object.
 	 *
-	 * @param json The JSON object to parse. Must not be {@code null}.
+	 * @param jsonObject      The JSON object to parse. Must not be
+	 *                        {@code null}.
+	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
+	 *                        if not applicable.
 	 *
 	 * @return The header.
 	 *
 	 * @throws ParseException If the specified JSON object doesn't 
 	 *                        represent a valid header.
 	 */
-	public static Header parse(final JSONObject json)
+	public static Header parse(final JSONObject jsonObject,
+				   final Base64URL parsedBase64URL)
 		throws ParseException {
 
-		Algorithm alg = parseAlgorithm(json);
+		Algorithm alg = parseAlgorithm(jsonObject);
 
 		if (alg.equals(Algorithm.NONE)) {
 
-			return PlainHeader.parse(json);
+			return PlainHeader.parse(jsonObject, parsedBase64URL);
 
 		} else if (alg instanceof JWSAlgorithm) {
 
-			return JWSHeader.parse(json);
+			return JWSHeader.parse(jsonObject, parsedBase64URL);
 
 		} else if (alg instanceof JWEAlgorithm) {
 
-			return JWEHeader.parse(json);
+			return JWEHeader.parse(jsonObject, parsedBase64URL);
 
 		} else {
 
@@ -321,19 +414,42 @@ public abstract class Header implements ReadOnlyHeader {
 	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader}
 	 * from the specified JSON object string.
 	 *
-	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 * @param jsonString      The JSON object string to parse. Must not be
+	 *                        {@code null}.
 	 *
 	 * @return The header.
 	 *
 	 * @throws ParseException If the specified JSON object string doesn't
 	 *                        represent a valid header.
 	 */
-	public static Header parse(final String s)
+	public static Header parse(final String jsonString)
 		throws ParseException {
 
-		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(s);
+		return parse(jsonString, null);
+	}
 
-		return parse(jsonObject);
+
+	/**
+	 * Parses a {@link PlainHeader}, {@link JWSHeader} or {@link JWEHeader}
+	 * from the specified JSON object string.
+	 *
+	 * @param jsonString      The JSON object string to parse. Must not be
+	 *                        {@code null}.
+	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
+	 *                        if not applicable.
+	 *
+	 * @return The header.
+	 *
+	 * @throws ParseException If the specified JSON object string doesn't
+	 *                        represent a valid header.
+	 */
+	public static Header parse(final String jsonString,
+				   final Base64URL parsedBase64URL)
+		throws ParseException {
+
+		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(jsonString);
+
+		return parse(jsonObject, parsedBase64URL);
 	}
 
 
@@ -351,8 +467,6 @@ public abstract class Header implements ReadOnlyHeader {
 	public static Header parse(final Base64URL base64URL)
 		throws ParseException {
 
-		Header header = parse(base64URL.decodeToString());
-		header.setParsedBase64URL(base64URL);
-		return header;
+		return parse(base64URL.decodeToString(), base64URL);
 	}
 }
