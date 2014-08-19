@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-19)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -32,6 +32,7 @@ public class JWEHeaderTest extends TestCase {
 		assertNull(h.getJWK());
 		assertNull(h.getX509CertURL());
 		assertNull(h.getX509CertThumbprint());
+		assertNull(h.getX509CertSHA256Thumbprint());
 		assertNull(h.getX509CertChain());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
@@ -120,6 +121,7 @@ public class JWEHeaderTest extends TestCase {
 			jwk(jwk).
 			x509CertURL(new URL("https://example/cert.b64")).
 			x509CertThumbprint(new Base64URL("789iop")).
+			x509CertSHA256Thumbprint(new Base64URL("789asd")).
 			x509CertChain(certChain).
 			keyID("1234").
 			agreementPartyUInfo(new Base64URL("abc")).
@@ -154,6 +156,7 @@ public class JWEHeaderTest extends TestCase {
 
 		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
+		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
 
 		certChain = h.getX509CertChain();
 		assertEquals(3, certChain.size());
@@ -192,7 +195,7 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("iv"));
 		assertTrue(h.getIncludedParameters().contains("tag"));
 		assertTrue(h.getIncludedParameters().contains("xCustom"));
-		assertEquals(17, h.getIncludedParameters().size());
+		assertEquals(18, h.getIncludedParameters().size());
 
 		// Test copy constructor
 		h = new JWEHeader(h);
@@ -214,6 +217,7 @@ public class JWEHeaderTest extends TestCase {
 
 		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
+		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
 
 		certChain = h.getX509CertChain();
 		assertEquals(3, certChain.size());
@@ -291,6 +295,7 @@ public class JWEHeaderTest extends TestCase {
 			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
 			x509CertURL(new URL("http://example.com/cert.pem")).
 			x509CertThumbprint(new Base64URL("abc")).
+			x509CertSHA256Thumbprint(new Base64URL("abc256")).
 			x509CertChain(Arrays.asList(new Base64("abc"), new Base64("def"))).
 			keyID("123").
 			compressionAlgorithm(CompressionAlgorithm.DEF).
@@ -315,6 +320,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals("xyz", ((OctetSequenceKey)h.getJWK()).getKeyValue().toString());
 		assertEquals("http://example.com/cert.pem", h.getX509CertURL().toString());
 		assertEquals("abc", h.getX509CertThumbprint().toString());
+		assertEquals("abc256", h.getX509CertSHA256Thumbprint().toString());
 		assertEquals("abc", h.getX509CertChain().get(0).toString());
 		assertEquals("def", h.getX509CertChain().get(1).toString());
 		assertEquals(2, h.getX509CertChain().size());
@@ -340,6 +346,7 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("jwk"));
 		assertTrue(h.getIncludedParameters().contains("x5u"));
 		assertTrue(h.getIncludedParameters().contains("x5t"));
+		assertTrue(h.getIncludedParameters().contains("x5t#S256"));
 		assertTrue(h.getIncludedParameters().contains("x5c"));
 		assertTrue(h.getIncludedParameters().contains("kid"));
 		assertTrue(h.getIncludedParameters().contains("zip"));
@@ -351,7 +358,7 @@ public class JWEHeaderTest extends TestCase {
 		assertTrue(h.getIncludedParameters().contains("tag"));
 		assertTrue(h.getIncludedParameters().contains("exp"));
 		assertTrue(h.getIncludedParameters().contains("nbf"));
-		assertEquals(20, h.getIncludedParameters().size());
+		assertEquals(21, h.getIncludedParameters().size());
 	}
 
 

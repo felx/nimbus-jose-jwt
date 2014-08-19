@@ -23,6 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>jwk
  *     <li>x5u
  *     <li>x5t
+ *     <li>x5t#S256
  *     <li>x5c
  *     <li>kid
  *     <li>typ
@@ -31,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2014-08-19)
  */
 abstract class CommonSEHeader extends Header {
 
@@ -55,9 +56,15 @@ abstract class CommonSEHeader extends Header {
 
 
 	/**
-	 * X.509 certificate thumbprint, {@code null} if not specified.
+	 * X.509 certificate SHA-1 thumbprint, {@code null} if not specified.
 	 */
 	private final Base64URL x5t;
+
+
+	/**
+	 * X.509 certificate SHA-256 thumbprint, {@code null} if not specified.
+	 */
+	private final Base64URL x5t256;
 
 
 	/**
@@ -91,9 +98,12 @@ abstract class CommonSEHeader extends Header {
 	 *                        parameter, {@code null} if not specified.
 	 * @param x5u             The X.509 certificate URL parameter
 	 *                        ({@code x5u}), {@code null} if not specified.
-	 * @param x5t             The X.509 certificate thumbprint
+	 * @param x5t             The X.509 certificate SHA-1 thumbprint
 	 *                        ({@code x5t}) parameter, {@code null} if not
 	 *                        specified.
+	 * @param x5t256          The X.509 certificate SHA-256 thumbprint
+	 *                        ({@code x5t#S256}) parameter, {@code null} if
+	 *                        not specified.
 	 * @param x5c             The X.509 certificate chain ({@code x5c})
 	 *                        parameter, {@code null} if not specified.
 	 * @param kid             The key ID ({@code kid}) parameter,
@@ -111,6 +121,7 @@ abstract class CommonSEHeader extends Header {
 				 final JWK jwk,
 				 final URL x5u,
 				 final Base64URL x5t,
+				 final Base64URL x5t256,
 				 final List<Base64> x5c,
 				 final String kid,
 				 final Map<String,Object> customParams,
@@ -122,6 +133,7 @@ abstract class CommonSEHeader extends Header {
 		this.jwk = jwk;
 		this.x5u = x5u;
 		this.x5t = x5t;
+		this.x5t256 = x5t256;
 
 		if (x5c != null) {
 			// Copy and make unmodifiable
@@ -171,14 +183,27 @@ abstract class CommonSEHeader extends Header {
 
 
 	/**
-	 * Gets the X.509 certificate thumbprint ({@code x5t}) parameter.
+	 * Gets the X.509 certificate SHA-1 thumbprint ({@code x5t}) parameter.
 	 *
-	 * @return The X.509 certificate thumbprint parameter, {@code null} if
-	 *         not specified.
+	 * @return The X.509 certificate SHA-1 thumbprint parameter,
+	 *         {@code null} if not specified.
 	 */
 	public Base64URL getX509CertThumbprint() {
 
 		return x5t;
+	}
+
+
+	/**
+	 * Gets the X.509 certificate SHA-256 thumbprint ({@code x5t#S256})
+	 * parameter.
+	 *
+	 * @return The X.509 certificate SHA-256 thumbprint parameter,
+	 *         {@code null} if not specified.
+	 */
+	public Base64URL getX509CertSHA256Thumbprint() {
+
+		return x5t256;
 	}
 
 
@@ -228,6 +253,10 @@ abstract class CommonSEHeader extends Header {
 			includedParameters.add("x5t");
 		}
 
+		if (x5t256 != null) {
+			includedParameters.add("x5t#S256");
+		}
+
 		if (x5c != null && ! x5c.isEmpty()) {
 			includedParameters.add("x5c");
 		}
@@ -259,6 +288,10 @@ abstract class CommonSEHeader extends Header {
 
 		if (x5t != null) {
 			o.put("x5t", x5t.toString());
+		}
+
+		if (x5t256 != null) {
+			o.put("x5t#S256", x5t256.toString());
 		}
 
 		if (x5c != null && ! x5c.isEmpty()) {

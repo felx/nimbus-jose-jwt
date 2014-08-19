@@ -32,6 +32,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>jwk
  *     <li>x5u
  *     <li>x5t
+ *     <li>x5t#S256
  *     <li>x5c
  *     <li>kid
  *     <li>typ
@@ -58,7 +59,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-19)
  */
 @Immutable
 public final class JWEHeader extends CommonSEHeader {
@@ -84,6 +85,7 @@ public final class JWEHeader extends CommonSEHeader {
 		p.add("jwk");
 		p.add("x5u");
 		p.add("x5t");
+		p.add("x5t#S256");
 		p.add("x5c");
 		p.add("kid");
 		p.add("typ");
@@ -164,9 +166,15 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
-		 * X.509 certificate thumbprint.
+		 * X.509 certificate SHA-1 thumbprint.
 		 */
 		private Base64URL x5t;
+
+
+		/**
+		 * X.509 certificate SHA-256 thumbprint.
+		 */
+		private Base64URL x5t256;
 
 
 		/**
@@ -279,6 +287,7 @@ public final class JWEHeader extends CommonSEHeader {
 			jwk = jweHeader.getJWK();
 			x5u = jweHeader.getX509CertURL();
 			x5t = jweHeader.getX509CertThumbprint();
+			x5t256 = jweHeader.getX509CertSHA256Thumbprint();
 			x5c = jweHeader.getX509CertChain();
 			kid = jweHeader.getKeyID();
 
@@ -386,10 +395,10 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
-		 * Sets the X.509 certificate thumbprint ({@code x5t})
+		 * Sets the X.509 certificate SHA-1 thumbprint ({@code x5t})
 		 * parameter.
 		 *
-		 * @param x5t The X.509 certificate thumbprint parameter,
+		 * @param x5t The X.509 certificate SHA-1 thumbprint parameter,
 		 *            {@code null} if not specified.
 		 *
 		 * @return This builder.
@@ -397,6 +406,22 @@ public final class JWEHeader extends CommonSEHeader {
 		public Builder x509CertThumbprint(final Base64URL x5t) {
 
 			this.x5t = x5t;
+			return this;
+		}
+
+
+		/**
+		 * Sets the X.509 certificate SHA-256 thumbprint
+		 * ({@code x5t#s256}) parameter.
+		 *
+		 * @param x5t256 The X.509 certificate SHA-256 thumbprint
+		 *               parameter, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder x509CertSHA256Thumbprint(final Base64URL x5t256) {
+
+			this.x5t256 = x5t256;
 			return this;
 		}
 
@@ -612,7 +637,7 @@ public final class JWEHeader extends CommonSEHeader {
 
 			return new JWEHeader(
 				alg, enc, typ, cty, crit,
-				jku, jwk, x5u, x5t, x5c, kid,
+				jku, jwk, x5u, x5t, x5t256, x5c, kid,
 				epk, zip, apu, apv, p2s, p2c,
 				iv, tag,
 				customParams, null
@@ -690,7 +715,7 @@ public final class JWEHeader extends CommonSEHeader {
 
 		this(
 			alg, enc,
-			null, null, null, null, null, null, null, null, null,
+			null, null, null, null, null, null, null, null, null, null,
 			null, null, null, null, null, 0,
 			null, null,
 			null, null);
@@ -720,9 +745,12 @@ public final class JWEHeader extends CommonSEHeader {
 	 *                        parameter, {@code null} if not specified.
 	 * @param x5u             The X.509 certificate URL parameter
 	 *                        ({@code x5u}), {@code null} if not specified.
-	 * @param x5t             The X.509 certificate thumbprint
+	 * @param x5t             The X.509 certificate SHA-1 thumbprint
 	 *                        ({@code x5t}) parameter, {@code null} if not
 	 *                        specified.
+	 * @param x5t256          The X.509 certificate SHA-256 thumbprint
+	 *                        ({@code x5t#S256}) parameter, {@code null} if
+	 *                        not specified.
 	 * @param x5c             The X.509 certificate chain ({@code x5c})
 	 *                        parameter, {@code null} if not specified.
 	 * @param kid             The key ID ({@code kid}) parameter,
@@ -757,6 +785,7 @@ public final class JWEHeader extends CommonSEHeader {
 			 final JWK jwk,
 			 final URL x5u,
 			 final Base64URL x5t,
+			 final Base64URL x5t256,
 			 final List<Base64> x5c,
 			 final String kid,
 			 final ECKey epk,
@@ -770,7 +799,7 @@ public final class JWEHeader extends CommonSEHeader {
 			 final Map<String,Object> customParams,
 			 final Base64URL parsedBase64URL) {
 
-		super(alg, typ, cty, crit, jku, jwk, x5u, x5t, x5c, kid, customParams, parsedBase64URL);
+		super(alg, typ, cty, crit, jku, jwk, x5u, x5t, x5t256, x5c, kid, customParams, parsedBase64URL);
 
 		if (alg.getName().equals(Algorithm.NONE.getName())) {
 			throw new IllegalArgumentException("The JWE algorithm cannot be \"none\"");
@@ -810,6 +839,7 @@ public final class JWEHeader extends CommonSEHeader {
 			jweHeader.getJWK(),
 			jweHeader.getX509CertURL(),
 			jweHeader.getX509CertThumbprint(),
+			jweHeader.getX509CertSHA256Thumbprint(),
 			jweHeader.getX509CertChain(),
 			jweHeader.getKeyID(),
 			jweHeader.getEphemeralPublicKey(),
@@ -1111,6 +1141,7 @@ public final class JWEHeader extends CommonSEHeader {
 		JWK jwk = null;
 		URL x5u = null;
 		Base64URL x5t = null;
+		Base64URL x5t256 = null;
 		List<Base64> x5c = null;
 		String kid = null;
 		ECKey epk = null;
@@ -1143,6 +1174,8 @@ public final class JWEHeader extends CommonSEHeader {
 				x5u = JSONObjectUtils.getURL(jsonObject, name);
 			} else if (name.equals("x5t")) {
 				x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+			} else if (name.equals("x5t#S256")) {
+				x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
 			} else if (name.equals("x5c")) {
 				x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
 			} else if (name.equals("kid")) {
@@ -1169,7 +1202,7 @@ public final class JWEHeader extends CommonSEHeader {
 		}
 
 		return new JWEHeader(
-			alg, enc, typ, cty, crit, jku, jwk, x5u, x5t, x5c, kid,
+			alg, enc, typ, cty, crit, jku, jwk, x5u, x5t, x5t256, x5c, kid,
 			epk, zip, apu, apv, p2s, p2c,
 			iv, tag,
 			customParams, parsedBase64URL
