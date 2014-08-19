@@ -4,40 +4,38 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 
 
 /**
- * Tests A256GCMKW JWE encryption and decryption.
+ * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
  * @version $version$ (2014-08-19)
  */
-public class A256GCMKWTest extends TestCase {
+public class A128KWTest extends TestCase {
 
 
-	// 256-bit shared symmetric key
-	private final static byte[] key256 = {
-		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121,
-		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226,
-		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61,
-		(byte) 48, (byte)162, (byte)206, (byte)161, (byte) 97, (byte)108, (byte)185, (byte)234 };
+	// 128-bit shared symmetric key
+	private final static byte[] key128 = {
+		(byte) 177, (byte) 119, (byte) 33,  (byte) 13,  (byte) 164, (byte) 30,  (byte) 108, (byte) 121,
+		(byte) 207, (byte) 136, (byte) 107, (byte) 242, (byte) 12,  (byte) 224, (byte) 19,  (byte) 226};
 
 
 	public void testKeyLength() {
 
-		assertEquals(256, key256.length * 8);
+		assertEquals(128, key128.length * 8);
 	}
 
 
 	public void testSupportedAlgorithms()
 		throws Exception {
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		assertEquals(6, encrypter.supportedAlgorithms().size());
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
@@ -47,7 +45,7 @@ public class A256GCMKWTest extends TestCase {
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		assertEquals(6, decrypter.supportedAlgorithms().size());
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
@@ -62,7 +60,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testSupportedEncryptionMethods()
 		throws Exception {
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		assertEquals(8, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
@@ -74,7 +72,7 @@ public class A256GCMKWTest extends TestCase {
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		assertEquals(8, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
@@ -91,18 +89,18 @@ public class A256GCMKWTest extends TestCase {
 	public void testGetAcceptedAlgorithms()
 		throws Exception {
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		assertEquals(2, decrypter.getAcceptedAlgorithms().size());
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
 	}
 
 
 	public void testGetAcceptedEncryptionMethods()
 		throws Exception {
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		assertEquals(8, decrypter.getAcceptedEncryptionMethods().size());
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
@@ -119,7 +117,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testSetAcceptedAlgorithms()
 		throws Exception {
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		try {
 			decrypter.setAcceptedAlgorithms(null);
@@ -129,14 +127,14 @@ public class A256GCMKWTest extends TestCase {
 		}
 
 		try {
-			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.RSA1_5)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A256GCMKW)));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A128KW));
 		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
 	}
 
@@ -144,7 +142,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testSetAcceptedEncryptionMethods()
 		throws Exception {
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		try {
 			decrypter.setAcceptedEncryptionMethods(null);
@@ -169,16 +167,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA128CBC_HS256()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128CBC_HS256);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -190,9 +188,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -207,16 +205,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA192CBC_HS384()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A192CBC_HS384);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A192CBC_HS384);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -228,9 +226,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -245,16 +243,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA256CBC_HS512()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A256CBC_HS512);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A256CBC_HS512);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -266,9 +264,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -283,16 +281,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA128GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -304,9 +302,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -321,16 +319,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA192GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A192GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A192GCM);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -342,9 +340,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -359,16 +357,16 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithA256GCM()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A256GCM);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A256GCM);
 		Payload payload = new Payload("I think therefore I am.");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -380,9 +378,9 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -397,7 +395,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithCompression()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128CBC_HS256).
 			compressionAlgorithm(CompressionAlgorithm.DEF).
 			build();
 
@@ -407,7 +405,7 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		jweObject.encrypt(encrypter);
 
@@ -419,7 +417,7 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		jweObject.decrypt(decrypter);
 
@@ -434,7 +432,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
 			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
 			build();
@@ -443,7 +441,7 @@ public class A256GCMKWTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		jweObject.encrypt(encrypter);
 
@@ -451,7 +449,7 @@ public class A256GCMKWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 		decrypter.getIgnoredCriticalHeaderParameters().add("exp");
 
 		jweObject.decrypt(decrypter);
@@ -467,7 +465,7 @@ public class A256GCMKWTest extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256).
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
 			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
 			build();
@@ -476,7 +474,7 @@ public class A256GCMKWTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		jweObject.encrypt(encrypter);
 
@@ -484,7 +482,7 @@ public class A256GCMKWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		try {
 			jweObject.decrypt(decrypter);
@@ -499,14 +497,14 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithDeprecatedA128CBC_HS256()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128CBC_HS256_DEPRECATED);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		jweObject.encrypt(encrypter);
 
@@ -518,7 +516,7 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		jweObject.decrypt(decrypter);
 
@@ -533,14 +531,14 @@ public class A256GCMKWTest extends TestCase {
 	public void testWithDeprecatedA256CBC_HS512()
 		throws Exception {
 
-		JWEHeader header = new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		JWEHeader header = new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A256CBC_HS512_DEPRECATED);
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		JWEEncrypter encrypter = new AESEncrypter(key128);
 
 		jweObject.encrypt(encrypter);
 
@@ -552,7 +550,7 @@ public class A256GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		JWEDecrypter decrypter = new AESDecrypter(key128);
 
 		jweObject.decrypt(decrypter);
 
@@ -564,41 +562,39 @@ public class A256GCMKWTest extends TestCase {
 	}
 
 
-	// http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.7
+
+	// http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.8
 	public void testDecryptCookbookExample()
 		throws Exception {
 
-		String jweString = "eyJhbGciOiJBMjU2R0NNS1ciLCJraWQiOiIxOGVjMDhlMS1iZmE5LTRkOTUtYj" +
-			"IwNS0yYjRkZDFkNDMyMWQiLCJ0YWciOiJrZlBkdVZRM1QzSDZ2bmV3dC0ta3N3" +
-			"IiwiaXYiOiJLa1lUMEdYXzJqSGxmcU5fIiwiZW5jIjoiQTEyOENCQy1IUzI1Ni" +
-			"J9" +
+		String jweString = "eyJhbGciOiJBMTI4S1ciLCJraWQiOiI4MWIyMDk2NS04MzMyLTQzZDktYTQ2OC" +
+			"04MjE2MGFkOTFhYzgiLCJlbmMiOiJBMTI4R0NNIn0" +
 			"." +
-			"lJf3HbOApxMEBkCMOoTnnABxs_CvTWUmZQ2ElLvYNok" +
+			"CBI6oDw8MydIx1IBntf_lQcw2MmJKIQx" +
 			"." +
-			"gz6NjyEFNm_vm8Gj6FwoFQ" +
+			"Qx0pmsDa8KnJc9Jo" +
 			"." +
-			"Jf5p9-ZhJlJy_IQ_byKFmI0Ro7w7G1QiaZpI8OaiVgD8EqoDZHyFKFBupS8iaE" +
-			"eVIgMqWmsuJKuoVgzR3YfzoMd3GxEm3VxNhzWyWtZKX0gxKdy6HgLvqoGNbZCz" +
-			"LjqcpDiF8q2_62EVAbr2uSc2oaxFmFuIQHLcqAHxy51449xkjZ7ewzZaGV3eFq" +
-			"hpco8o4DijXaG5_7kp3h2cajRfDgymuxUbWgLqaeNQaJtvJmSMFuEOSAzw9Hde" +
-			"b6yhdTynCRmu-kqtO5Dec4lT2OMZKpnxc_F1_4yDJFcqb5CiDSmA-psB2k0Jtj" +
-			"xAj4UPI61oONK7zzFIu4gBfjJCndsZfdvG7h8wGjV98QhrKEnR7xKZ3KCr0_qR" +
-			"1B-gxpNk3xWU" +
+			"AwliP-KmWgsZ37BvzCefNen6VTbRK3QMA4TkvRkH0tP1bTdhtFJgJxeVmJkLD6" +
+			"1A1hnWGetdg11c9ADsnWgL56NyxwSYjU1ZEHcGkd3EkU0vjHi9gTlb90qSYFfe" +
+			"F0LwkcTtjbYKCsiNJQkcIp1yeM03OmuiYSoYJVSpf7ej6zaYcMv3WwdxDFl8RE" +
+			"wOhNImk2Xld2JXq6BR53TSFkyT7PwVLuq-1GwtGHlQeg7gDT6xW0JqHDPn_H-p" +
+			"uQsmthc9Zg0ojmJfqqFvETUxLAF-KjcBTS5dNy6egwkYtOt8EIHK-oEsKYtZRa" +
+			"a8Z7MOZ7UGxGIMvEmxrGCPeJa14slv2-gaqK0kEThkaSqdYw0FkQZF" +
 			"." +
-			"DKW7jrb4WaRSNfbXVPlT5g";
+			"ER7MWJZ1FBI_NKvn7Zb1Lw";
 
 		JWEObject jweObject = JWEObject.parse(jweString);
 
-		assertEquals(JWEAlgorithm.A256GCMKW, jweObject.getHeader().getAlgorithm());
-		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
+		assertEquals(JWEAlgorithm.A128KW, jweObject.getHeader().getAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
 
 
 		String jwkString = "{" +
 			"\"kty\": \"oct\"," +
-			"\"kid\": \"18ec08e1-bfa9-4d95-b205-2b4dd1d4321d\"," +
+			"\"kid\": \"81b20965-8332-43d9-a468-82160ad91ac8\"," +
 			"\"use\": \"enc\"," +
-			"\"alg\": \"A256GCMKW\"," +
-			"\"k\": \"qC57l_uxcm7Nm3K-ct4GFjx8tM1U8CZ0NLBvdQstiS8\"" +
+			"\"alg\": \"A128KW\"," +
+			"\"k\": \"GZy6sIZ6wl9NJOKB-jnmVQ\"" +
 			"}";
 
 		OctetSequenceKey jwk = OctetSequenceKey.parse(jwkString);
@@ -607,9 +603,9 @@ public class A256GCMKWTest extends TestCase {
 
 		jweObject.decrypt(decrypter);
 
-		String message = "You can trust us to stick with you through thick and thin–to the bitter end. And you can trust us to keep any secret of yours–closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.";
+		String message = "You can trust us to stick with you through thick and thin\u2013to the bitter end. And you can trust us to keep any secret of yours\u2013closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.";
 
 		assertEquals(message, jweObject.getPayload().toString());
 	}
-}
 
+}

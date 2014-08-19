@@ -35,7 +35,7 @@
  *             <li>{@link com.nimbusds.jose.crypto.RSAEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.RSADecrypter}
  *         </ul>
- *     <li>For AES GCM with A128CBC-HS256, A192CBC-HS384,
+ *     <li>For AES key wrap and AES GCM with A128CBC-HS256, A192CBC-HS384,
  *         A256CBC-HS512, A128GCM, A192GCM and A256GCM encryption:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.AESEncrypter}

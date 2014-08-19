@@ -44,6 +44,8 @@ algorithms:
 
 * Key encryption with RSAES OAEP: RSA-OAEP and RSA-OAEP-256
 
+* Key encryption with AES key wrap: A128KW, A192KW and A256KW
+
 * Key encryption with AES GCM: A128CGMKW, A192CGMKW and A256CGMKW
 
 * Direct shared symmetric key encryption: dir
@@ -65,11 +67,11 @@ Related IETF drafts:
 
 * [JWA] draft-ietf-jose-json-web-algorithms-31
 
-* [JWS] draft-ietf-jose-json-web-signature-30
+* [JWS] draft-ietf-jose-json-web-signature-31
 
-* [JWE] draft-ietf-jose-json-web-encryption-30
+* [JWE] draft-ietf-jose-json-web-encryption-31
 
-* [JWK] draft-ietf-jose-json-web-key-30
+* [JWK] draft-ietf-jose-json-web-key-31
 
 * [JWT] draft-ietf-oauth-json-web-token-25
 

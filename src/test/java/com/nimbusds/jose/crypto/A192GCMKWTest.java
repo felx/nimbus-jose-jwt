@@ -14,7 +14,7 @@ import com.nimbusds.jose.*;
  * Tests A192GCMKW JWE encryption and decryption. 
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-19)
  */
 public class A192GCMKWTest extends TestCase {
 
@@ -37,14 +37,20 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEEncrypter encrypter = new AESEncrypter(key192);
 
-		assertEquals(3, encrypter.supportedAlgorithms().size());
+		assertEquals(6, encrypter.supportedAlgorithms().size());
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
 		JWEDecrypter decrypter = new AESDecrypter(key192);
 
-		assertEquals(3, decrypter.supportedAlgorithms().size());
+		assertEquals(6, decrypter.supportedAlgorithms().size());
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
@@ -85,7 +91,8 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEDecrypter decrypter = new AESDecrypter(key192);
 
-		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
+		assertEquals(2, decrypter.getAcceptedAlgorithms().size());
+		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A192KW));
 		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 	}
 

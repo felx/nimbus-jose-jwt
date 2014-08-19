@@ -23,6 +23,9 @@ import com.nimbusds.jose.util.StringUtils;
  * <p>Supports the following JWE algorithms:
  *
  * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A128KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A192KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A256KW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A128GCMKW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A192GCMKW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A256GCMKW}
@@ -42,9 +45,17 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-19)
  */
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
+
+
+	/**
+	 * Constants used for clarity.
+	 */
+	private static final char TYPE_UNINIT = 0;
+	private static final char TYPE_AESGCMKW = 1;
+	private static final char TYPE_AESKW = 2;
 
 
 	/**
@@ -112,52 +123,90 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		// Generate and encrypt the CEK according to the enc method
 		final SecureRandom randomGen = getSecureRandom();
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
-		byte[] keyIV = AESGCM.generateIV(randomGen);
+		byte[] keyIV;
 
 		final AuthenticatedCipherText authCiphCEK;
 
 		boolean isAESGCMKW = false;
+		int jweAlgorithmType = TYPE_UNINIT;
 
 		Base64URL encryptedKey = null; // The second JWE part
 
-		if (alg.equals(JWEAlgorithm.A128GCMKW)) {
+		if (alg.equals(JWEAlgorithm.A128KW)) {
+
+			if(kek.getEncoded().length != 16){
+				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128KW encryption");
+			}
+			jweAlgorithmType = TYPE_AESKW;
+
+		} else if (alg.equals(JWEAlgorithm.A192KW)) {
+
+			if(kek.getEncoded().length != 24){
+				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192KW encryption");
+			}
+			jweAlgorithmType = TYPE_AESKW;
+
+		} else if (alg.equals(JWEAlgorithm.A256KW)) {
+
+			if (kek.getEncoded().length != 32) {
+				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256KW encryption");
+			}
+			jweAlgorithmType = TYPE_AESKW;
+
+		} else if (alg.equals(JWEAlgorithm.A128GCMKW)) {
+
 			if(kek.getEncoded().length != 16){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128GCMKW encryption");
 			}
-
 			isAESGCMKW = true;
+			jweAlgorithmType = TYPE_AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192GCMKW)) {
+
 			if(kek.getEncoded().length != 24){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192GCMKW encryption");
 			}
-
 			isAESGCMKW = true;
+			jweAlgorithmType = TYPE_AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256GCMKW)) {
+
 			if(kek.getEncoded().length != 32){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256GCMKW encryption");
 			}
-
 			isAESGCMKW = true;
+			jweAlgorithmType = TYPE_AESGCMKW;
 
 		} else {
 
-			throw new JOSEException("Unsupported JWE algorithm, must be A128GCMKW, A192GCMKW, or A256GCMKW");
+			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
 		// We need to work on the header
 		JWEHeader modifiableHeader = header;
 
-		if (isAESGCMKW){
-			authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, kek, keyEncryptionProvider);
-			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
+		switch (jweAlgorithmType) {
 
-			// Add Initialization Vector to the header
-			modifiableHeader = new JWEHeader.Builder(header).
-				iv(Base64URL.encode(keyIV)).
-				tag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
-				build();
+			case TYPE_AESKW:
+				encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, kek));
+				modifiableHeader = new JWEHeader.Builder(header).build();
+				break;
+
+			case TYPE_AESGCMKW:
+				keyIV = AESGCM.generateIV(randomGen);
+				authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, kek, keyEncryptionProvider);
+				encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
+
+				// Add Initialization Vector to the header
+				modifiableHeader = new JWEHeader.Builder(header).
+					iv(Base64URL.encode(keyIV)).
+					tag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
+					build();
+				break;
+
+			default:
+				// This should never happen
+				throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
 		// Apply compression if instructed

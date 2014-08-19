@@ -1,9 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -16,6 +14,9 @@ import com.nimbusds.jose.JWEAlgorithm;
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
+ *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A128KW}
+ *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A192KW}
+ *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A256KW}
  *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A128GCMKW}
  *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A192GCMKW}
  *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A256GCMKW}
@@ -53,11 +54,20 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 
 
 	/**
+	 * The JWE algorithms compatible with each key size.
+	 */
+	public static final Map<Integer,Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS;
+
+
+	/**
 	 * Initialises the supported algorithms and encryption methods.
 	 */
 	static {
 
 		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
+		algs.add(JWEAlgorithm.A128KW);
+		algs.add(JWEAlgorithm.A192KW);
+		algs.add(JWEAlgorithm.A256KW);
 		algs.add(JWEAlgorithm.A128GCMKW);
 		algs.add(JWEAlgorithm.A192GCMKW);
 		algs.add(JWEAlgorithm.A256GCMKW);
@@ -73,6 +83,22 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
 		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
 		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
+
+
+		Map<Integer,Set<JWEAlgorithm>> algsMap = new HashMap<Integer,Set<JWEAlgorithm>>();
+		Set<JWEAlgorithm> bit16Algs = new HashSet<JWEAlgorithm>();
+		Set<JWEAlgorithm> bit24Algs = new HashSet<JWEAlgorithm>();
+		Set<JWEAlgorithm> bit32Algs = new HashSet<JWEAlgorithm>();
+		bit16Algs.add(JWEAlgorithm.A128GCMKW);
+		bit16Algs.add(JWEAlgorithm.A128KW);
+		bit24Algs.add(JWEAlgorithm.A192GCMKW);
+		bit24Algs.add(JWEAlgorithm.A192KW);
+		bit32Algs.add(JWEAlgorithm.A256GCMKW);
+		bit32Algs.add(JWEAlgorithm.A256KW);
+		algsMap.put(16,Collections.unmodifiableSet(bit16Algs));
+		algsMap.put(24,Collections.unmodifiableSet(bit24Algs));
+		algsMap.put(32,Collections.unmodifiableSet(bit32Algs));
+		COMPATIBLE_ALGORITHMS = Collections.unmodifiableMap(algsMap);
 	}
 
 

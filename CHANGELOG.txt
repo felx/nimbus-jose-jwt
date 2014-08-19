@@ -298,5 +298,6 @@ version 3.0 (2014-08-19)
     * Adds support for 'iv' and 'tag' parameters in JWEHeader.
     * Adds support for 'x5t#S256' parameter in JWSHeader and JWEHeader.
     * Adds support for serialising single-valued JWT audience (aud) claims.
+    * Adds A128KW, A192KW and A256KW encryption support.
     * Adds A128CGMKW, A192CGMKW and A256CGMKW encryption support.
     * Upgrades to BouncyCastle 1.51.

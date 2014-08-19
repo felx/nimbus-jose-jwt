@@ -24,6 +24,9 @@ import com.nimbusds.jose.util.StringUtils;
  * <p>Supports the following JWE algorithms:
  *
  * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A128KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A192KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A256KW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A128GCMKW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A192GCMKW}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#A256GCMKW}
@@ -48,7 +51,7 @@ import com.nimbusds.jose.util.StringUtils;
  * algorithms and encryption methods.
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-19)
  */
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
@@ -96,21 +99,13 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 			throw new IllegalArgumentException("The Key Encrypting Key must not be null");
 		}
 
-		switch (kek.getEncoded().length) {
-			case 16:
-				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128GCMKW));
-				break;
-			case 24:
-				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A192GCMKW));
-				break;
-			case 32:
-				acceptedAlgs = new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A256GCMKW));
-				break;
-			default:
-				throw new IllegalArgumentException("The Key Encrypting Key must be 128, 192 or 256 bits long");
-		}
-
 		this.kek = kek;
+
+		acceptedAlgs = compatibleAlgorithms();
+
+		if (acceptedAlgs == null){
+			throw new IllegalArgumentException("The Key Encrypting Key must be 128, 192 or 256 bits long");
+		}
 	}
 
 
@@ -128,6 +123,17 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 		throws IllegalArgumentException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	/**
+	 * Returns the JWK algorithms compatible with the key size.
+	 *
+	 * @return The set of compatible algorithms.
+	 */
+	public Set<JWEAlgorithm> compatibleAlgorithms() {
+
+		return COMPATIBLE_ALGORITHMS.get(kek.getEncoded().length);
 	}
 
 
@@ -158,6 +164,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 		if (!supportedAlgorithms().containsAll(acceptedAlgs)) {
 			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
+		}
+
+		if (!compatibleAlgorithms().containsAll(acceptedAlgs)) {
+			throw new IllegalArgumentException("JWE algorithm(s) not compatible with key size");
 		}
 
 		this.acceptedAlgs = acceptedAlgs;
@@ -235,9 +245,15 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 		SecretKey cek;
 
-		if (alg.equals(JWEAlgorithm.A128GCMKW) ||
-			alg.equals(JWEAlgorithm.A192GCMKW) ||
-			alg.equals(JWEAlgorithm.A256GCMKW)) {
+		if (alg.equals(JWEAlgorithm.A128KW) ||
+		    alg.equals(JWEAlgorithm.A192KW) ||
+		    alg.equals(JWEAlgorithm.A256KW))   {
+
+			cek = AESKW.decryptCEK(kek, encryptedKey.decode());
+
+		} else if (alg.equals(JWEAlgorithm.A128GCMKW) ||
+			   alg.equals(JWEAlgorithm.A192GCMKW) ||
+			   alg.equals(JWEAlgorithm.A256GCMKW)) {
 
 			byte[] keyIV = header.getIV().decode();
 			byte[] keyTag = header.getAuthenticationTag().decode();
@@ -246,7 +262,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 		} else {
 
-			throw new JOSEException("Unsupported JWE algorithm, must be AESGCMKW");
+			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
 		// Compose the AAD
