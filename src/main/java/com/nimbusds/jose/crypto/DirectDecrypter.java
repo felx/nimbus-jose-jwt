@@ -12,6 +12,7 @@ import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -43,6 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-08)
  */
+@ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
 
 

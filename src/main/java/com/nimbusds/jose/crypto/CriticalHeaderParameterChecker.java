@@ -59,7 +59,7 @@ class CriticalHeaderParameterChecker {
 	 */
 	public boolean headerPasses(final Header header) {
 
-		Set<String> crit = header.getCriticalHeaders();
+		Set<String> crit = header.getCriticalParams();
 
 		if (crit == null || crit.isEmpty()) {
 			return true; // OK

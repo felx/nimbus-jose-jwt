@@ -63,7 +63,7 @@ class AESKW {
 	/**
 	 * Decrypts the specified encrypted Content Encryption Key (CEK).
 	 *
-	 * @param kek          The AES Key Encription Key. Must not be
+	 * @param kek          The AES Key Encryption Key. Must not be
 	 *                     {@code null}.
 	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
 	 *                     decrypt and authentication tag. Must not be

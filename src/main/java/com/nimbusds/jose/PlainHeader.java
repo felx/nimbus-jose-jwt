@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>crit
  * </ul>
  *
- * <p>The header may also carry {@link #getCustomParameters custom parameters};
+ * <p>The header may also carry {@link #getCustomParams custom parameters};
  * these will be serialised and parsed along the registered ones.
  *
  * <p>Example:
@@ -72,7 +72,7 @@ public final class PlainHeader extends Header {
 	 * <pre>
 	 * PlainHeader header = new PlainHeader.Builder().
 	 *                      contentType("text/plain").
-	 *                      customParameter("exp", new Date().getTime()).
+	 *                      customParam("exp", new Date().getTime()).
 	 *                      build();
 	 * </pre>
 	 */
@@ -128,8 +128,8 @@ public final class PlainHeader extends Header {
 
 			typ = plainHeader.getType();
 			cty = plainHeader.getContentType();
-			crit = plainHeader.getCriticalHeaders();
-			customParams = plainHeader.getCustomParameters();
+			crit = plainHeader.getCriticalParams();
+			customParams = plainHeader.getCustomParams();
 		}
 
 
@@ -164,14 +164,15 @@ public final class PlainHeader extends Header {
 
 
 		/**
-		 * Sets the critical headers ({@code crit}) parameter.
+		 * Sets the critical header parameters ({@code crit})
+		 * parameter.
 		 *
 		 * @param crit The names of the critical header parameters,
 		 *             empty set or {@code null} if none.
 		 *
 		 * @return This builder.
 		 */
-		public Builder criticalHeaders(final Set<String> crit) {
+		public Builder criticalParams(final Set<String> crit) {
 
 			this.crit = crit;
 			return this;
@@ -194,7 +195,7 @@ public final class PlainHeader extends Header {
 		 *                                  name matches a registered
 		 *                                  parameter name.
 		 */
-		public Builder customParameter(final String name, final Object value) {
+		public Builder customParam(final String name, final Object value) {
 
 			if (getRegisteredParameterNames().contains(name)) {
 				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
@@ -219,7 +220,7 @@ public final class PlainHeader extends Header {
 		 *
 		 * @return This builder.
 		 */
-		public Builder customParameters(final Map<String,Object> customParameters) {
+		public Builder customParams(final Map<String, Object> customParameters) {
 
 			this.customParams = customParameters;
 			return this;
@@ -300,8 +301,8 @@ public final class PlainHeader extends Header {
 		this(
 			plainHeader.getType(),
 			plainHeader.getContentType(),
-			plainHeader.getCriticalHeaders(),
-			plainHeader.getCustomParameters(),
+			plainHeader.getCriticalParams(),
+			plainHeader.getCustomParams(),
 			plainHeader.getParsedBase64URL()
 		);
 	}
@@ -389,10 +390,10 @@ public final class PlainHeader extends Header {
 					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				case "crit":
-					header = header.criticalHeaders(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
+					header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 					break;
 				default:
-					header = header.customParameter(name, jsonObject.get(name));
+					header = header.customParam(name, jsonObject.get(name));
 					break;
 			}
 		}

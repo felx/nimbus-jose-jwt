@@ -233,9 +233,9 @@ abstract class CommonSEHeader extends Header {
 
 
 	@Override
-	public Set<String> getIncludedParameters() {
+	public Set<String> getIncludedParams() {
 
-		Set<String> includedParameters = super.getIncludedParameters();
+		Set<String> includedParameters = super.getIncludedParams();
 
 		if (jku != null) {
 			includedParameters.add("jku");

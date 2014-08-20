@@ -109,7 +109,7 @@ public interface JWEDecrypter extends JWEAlgorithmProvider {
 	 *                       required by the JWE algorithm.
 	 * @param cipherText     The cipher text to decrypt. Must not be 
 	 *                       {@code null}.
-	 * @param authTag        The authentication tag, {@code null} if not 
+	 * @param authTag        The authentication tag, {@code null} if not
 	 *                       required.
 	 *
 	 * @return The clear text.

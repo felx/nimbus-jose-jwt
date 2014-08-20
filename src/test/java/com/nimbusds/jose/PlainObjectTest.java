@@ -27,7 +27,7 @@ public class PlainObjectTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertTrue(h.getCustomParameters().isEmpty());
+		assertTrue(h.getCustomParams().isEmpty());
 
 		String serializedJOSEObject = p.serialize();
 
@@ -37,7 +37,7 @@ public class PlainObjectTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertTrue(h.getCustomParameters().isEmpty());
+		assertTrue(h.getCustomParams().isEmpty());
 
 		assertEquals("Hello world!", p.getPayload().toString());
 

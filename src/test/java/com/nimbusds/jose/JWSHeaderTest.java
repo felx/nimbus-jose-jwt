@@ -35,8 +35,8 @@ public class JWSHeaderTest extends TestCase {
 		assertNull(h.getX509CertChain());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertNull(h.getCriticalHeaders());
-		assertTrue(h.getCustomParameters().isEmpty());
+		assertNull(h.getCriticalParams());
+		assertTrue(h.getCustomParams().isEmpty());
 	}
 
 
@@ -63,7 +63,7 @@ public class JWSHeaderTest extends TestCase {
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			type(new JOSEObjectType("JWT")).
 			contentType("application/json").
-			criticalHeaders(crit).
+			criticalParams(crit).
 			jwkURL(new URL("https://example.com/jku.json")).
 			jwk(jwk).
 			x509CertURL(new URL("https://example/cert.b64")).
@@ -71,7 +71,7 @@ public class JWSHeaderTest extends TestCase {
 			x509CertSHA256Thumbprint(new Base64URL("789asd")).
 			x509CertChain(certChain).
 			keyID("1234").
-			customParameter("xCustom", "+++").
+			customParam("xCustom", "+++").
 			build();
 
 
@@ -82,10 +82,10 @@ public class JWSHeaderTest extends TestCase {
 
 		assertEquals(JWSAlgorithm.RS256, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertTrue(h.getCriticalHeaders().contains("iat"));
-		assertTrue(h.getCriticalHeaders().contains("exp"));
-		assertTrue(h.getCriticalHeaders().contains("nbf"));
-		assertEquals(3, h.getCriticalHeaders().size());
+		assertTrue(h.getCriticalParams().contains("iat"));
+		assertTrue(h.getCriticalParams().contains("exp"));
+		assertTrue(h.getCriticalParams().contains("nbf"));
+		assertEquals(3, h.getCriticalParams().size());
 		assertEquals("application/json", h.getContentType());
 		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
@@ -108,33 +108,33 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(new Base64("fgh"), certChain.get(1));
 		assertEquals(new Base64("jkl"), certChain.get(2));
 
-		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals("+++", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 
 		assertEquals(base64URL, h.getParsedBase64URL());
 
-		assertTrue(h.getIncludedParameters().contains("alg"));
-		assertTrue(h.getIncludedParameters().contains("typ"));
-		assertTrue(h.getIncludedParameters().contains("cty"));
-		assertTrue(h.getIncludedParameters().contains("crit"));
-		assertTrue(h.getIncludedParameters().contains("jku"));
-		assertTrue(h.getIncludedParameters().contains("jwk"));
-		assertTrue(h.getIncludedParameters().contains("kid"));
-		assertTrue(h.getIncludedParameters().contains("x5u"));
-		assertTrue(h.getIncludedParameters().contains("x5t"));
-		assertTrue(h.getIncludedParameters().contains("x5c"));
-		assertTrue(h.getIncludedParameters().contains("xCustom"));
-		assertEquals(12, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParams().contains("alg"));
+		assertTrue(h.getIncludedParams().contains("typ"));
+		assertTrue(h.getIncludedParams().contains("cty"));
+		assertTrue(h.getIncludedParams().contains("crit"));
+		assertTrue(h.getIncludedParams().contains("jku"));
+		assertTrue(h.getIncludedParams().contains("jwk"));
+		assertTrue(h.getIncludedParams().contains("kid"));
+		assertTrue(h.getIncludedParams().contains("x5u"));
+		assertTrue(h.getIncludedParams().contains("x5t"));
+		assertTrue(h.getIncludedParams().contains("x5c"));
+		assertTrue(h.getIncludedParams().contains("xCustom"));
+		assertEquals(12, h.getIncludedParams().size());
 
 		// Test copy constructor
 		h = new JWSHeader(h);
 
 		assertEquals(JWSAlgorithm.RS256, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
-		assertTrue(h.getCriticalHeaders().contains("iat"));
-		assertTrue(h.getCriticalHeaders().contains("exp"));
-		assertTrue(h.getCriticalHeaders().contains("nbf"));
-		assertEquals(3, h.getCriticalHeaders().size());
+		assertTrue(h.getCriticalParams().contains("iat"));
+		assertTrue(h.getCriticalParams().contains("exp"));
+		assertTrue(h.getCriticalParams().contains("nbf"));
+		assertEquals(3, h.getCriticalParams().size());
 		assertEquals("application/json", h.getContentType());
 		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
@@ -157,8 +157,8 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(new Base64("fgh"), certChain.get(1));
 		assertEquals(new Base64("jkl"), certChain.get(2));
 
-		assertEquals("+++", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals("+++", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 
 		assertEquals(base64URL, h.getParsedBase64URL());
 	}
@@ -179,9 +179,9 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
 		assertNull(h.getContentType());
 
-		assertTrue(h.getIncludedParameters().contains("alg"));
-		assertTrue(h.getIncludedParameters().contains("typ"));
-		assertEquals(2, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParams().contains("alg"));
+		assertTrue(h.getIncludedParams().contains("typ"));
+		assertEquals(2, h.getIncludedParams().size());
 	}
 
 
@@ -211,17 +211,17 @@ public class JWSHeaderTest extends TestCase {
 		crit.add("nbf");
 
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.RS256).
-			criticalHeaders(crit).
+			criticalParams(crit).
 			build();
 
-		assertEquals(3, h.getCriticalHeaders().size());
+		assertEquals(3, h.getCriticalParams().size());
 
 		Base64URL b64url = h.toBase64URL();
 
 		// Parse back
 		h = JWSHeader.parse(b64url);
 		
-		crit = h.getCriticalHeaders();
+		crit = h.getCriticalParams();
 
 		assertTrue(crit.contains("iat"));
 		assertTrue(crit.contains("exp"));
@@ -251,7 +251,7 @@ public class JWSHeaderTest extends TestCase {
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.HS256).
 			type(JOSEObjectType.JWS).
 			contentType("application/json").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp", "nbf"))).
+			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
 			jwkURL(new URL("http://example.com/jwk.json")).
 			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
 			x509CertURL(new URL("http://example.com/cert.pem")).
@@ -259,16 +259,16 @@ public class JWSHeaderTest extends TestCase {
 			x509CertSHA256Thumbprint(new Base64URL("abc256")).
 			x509CertChain(Arrays.asList(new Base64("abc"), new Base64("def"))).
 			keyID("123").
-			customParameter("exp", 123).
-			customParameter("nbf", 456).
+			customParam("exp", 123).
+			customParam("nbf", 456).
 			build();
 
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
 		assertEquals(JOSEObjectType.JWS, h.getType());
 		assertEquals("application/json", h.getContentType());
-		assertTrue(h.getCriticalHeaders().contains("exp"));
-		assertTrue(h.getCriticalHeaders().contains("nbf"));
-		assertEquals(2, h.getCriticalHeaders().size());
+		assertTrue(h.getCriticalParams().contains("exp"));
+		assertTrue(h.getCriticalParams().contains("nbf"));
+		assertEquals(2, h.getCriticalParams().size());
 		assertEquals("http://example.com/jwk.json", h.getJWKURL().toString());
 		assertEquals("xyz", ((OctetSequenceKey)h.getJWK()).getKeyValue().toString());
 		assertEquals("http://example.com/cert.pem", h.getX509CertURL().toString());
@@ -278,24 +278,24 @@ public class JWSHeaderTest extends TestCase {
 		assertEquals("def", h.getX509CertChain().get(1).toString());
 		assertEquals(2, h.getX509CertChain().size());
 		assertEquals("123", h.getKeyID());
-		assertEquals(123, ((Integer)h.getCustomParameter("exp")).intValue());
-		assertEquals(456, ((Integer)h.getCustomParameter("nbf")).intValue());
-		assertEquals(2, h.getCustomParameters().size());
+		assertEquals(123, ((Integer)h.getCustomParam("exp")).intValue());
+		assertEquals(456, ((Integer)h.getCustomParam("nbf")).intValue());
+		assertEquals(2, h.getCustomParams().size());
 		assertNull(h.getParsedBase64URL());
 
-		assertTrue(h.getIncludedParameters().contains("alg"));
-		assertTrue(h.getIncludedParameters().contains("typ"));
-		assertTrue(h.getIncludedParameters().contains("cty"));
-		assertTrue(h.getIncludedParameters().contains("crit"));
-		assertTrue(h.getIncludedParameters().contains("jku"));
-		assertTrue(h.getIncludedParameters().contains("jwk"));
-		assertTrue(h.getIncludedParameters().contains("x5u"));
-		assertTrue(h.getIncludedParameters().contains("x5t"));
-		assertTrue(h.getIncludedParameters().contains("x5c"));
-		assertTrue(h.getIncludedParameters().contains("kid"));
-		assertTrue(h.getIncludedParameters().contains("exp"));
-		assertTrue(h.getIncludedParameters().contains("nbf"));
-		assertEquals(13, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParams().contains("alg"));
+		assertTrue(h.getIncludedParams().contains("typ"));
+		assertTrue(h.getIncludedParams().contains("cty"));
+		assertTrue(h.getIncludedParams().contains("crit"));
+		assertTrue(h.getIncludedParams().contains("jku"));
+		assertTrue(h.getIncludedParams().contains("jwk"));
+		assertTrue(h.getIncludedParams().contains("x5u"));
+		assertTrue(h.getIncludedParams().contains("x5t"));
+		assertTrue(h.getIncludedParams().contains("x5c"));
+		assertTrue(h.getIncludedParams().contains("kid"));
+		assertTrue(h.getIncludedParams().contains("exp"));
+		assertTrue(h.getIncludedParams().contains("nbf"));
+		assertEquals(13, h.getIncludedParams().size());
 	}
 
 
@@ -306,12 +306,12 @@ public class JWSHeaderTest extends TestCase {
 		customParams.put("y", "2");
 
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.HS256).
-			customParameters(customParams).
+			customParams(customParams).
 			build();
 
-		assertEquals("1", (String)h.getCustomParameter("x"));
-		assertEquals("2", (String)h.getCustomParameter("y"));
-		assertEquals(2, h.getCustomParameters().size());
+		assertEquals("1", (String)h.getCustomParam("x"));
+		assertEquals("2", (String)h.getCustomParam("y"));
+		assertEquals(2, h.getCustomParams().size());
 	}
 
 
@@ -322,11 +322,11 @@ public class JWSHeaderTest extends TestCase {
 		customParams.put("y", "2");
 
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.HS256).
-			customParameters(customParams).
+			customParams(customParams).
 			build();
 
 		try {
-			h.getCustomParameters().put("x", "3");
+			h.getCustomParams().put("x", "3");
 			fail();
 		} catch (UnsupportedOperationException e) {
 			// ok
@@ -337,11 +337,11 @@ public class JWSHeaderTest extends TestCase {
 	public void testImmutableCritHeaders() {
 
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.HS256).
-			criticalHeaders(new HashSet<>(Arrays.asList("exp", "nbf"))).
+			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
 			build();
 
 		try {
-			h.getCriticalHeaders().remove("exp");
+			h.getCriticalParams().remove("exp");
 			fail();
 		} catch (UnsupportedOperationException e) {
 			// ok

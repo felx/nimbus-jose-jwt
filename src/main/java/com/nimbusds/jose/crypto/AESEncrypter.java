@@ -193,7 +193,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 				// Add Initialization Vector to the header
 				modifiableHeader = new JWEHeader.Builder(header).
 					iv(Base64URL.encode(keyIV)).
-					tag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
+					authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
 					build();
 				break;
 

@@ -237,7 +237,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * Gets the authentication tag of this JWE object.
 	 *
-	 * @return The authentication tag, {@code null} if not applicable or 
+	 * @return The authentication tag, {@code null} if not applicable or
 	 *         the JWE object has not been encrypted yet.
 	 */
 	public Base64URL getAuthenticationTag() {

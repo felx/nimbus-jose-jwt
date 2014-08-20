@@ -28,7 +28,7 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertNull(h.getCriticalHeaders());
+		assertNull(h.getCriticalParams());
 		assertNull(h.getParsedBase64URL());
 
 		Base64URL b64url = h.toBase64URL();
@@ -39,7 +39,7 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertNull(h.getType());
 		assertNull(h.getContentType());
-		assertNull(h.getCriticalHeaders());
+		assertNull(h.getCriticalParams());
 		assertEquals(b64url, h.getParsedBase64URL());
 		assertEquals(b64url, h.toBase64URL());
 	}
@@ -63,19 +63,19 @@ public class PlainHeaderTest extends TestCase {
 			customParams,
 			null);
 
-		assertTrue(h.getIncludedParameters().contains("alg"));
-		assertTrue(h.getIncludedParameters().contains("typ"));
-		assertTrue(h.getIncludedParameters().contains("cty"));
-		assertTrue(h.getIncludedParameters().contains("crit"));
-		assertTrue(h.getIncludedParameters().contains("xCustom"));
-		assertEquals(5, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParams().contains("alg"));
+		assertTrue(h.getIncludedParams().contains("typ"));
+		assertTrue(h.getIncludedParams().contains("cty"));
+		assertTrue(h.getIncludedParams().contains("crit"));
+		assertTrue(h.getIncludedParams().contains("xCustom"));
+		assertEquals(5, h.getIncludedParams().size());
 
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalHeaders().size());
-		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(3, h.getCriticalParams().size());
+		assertEquals("abc", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 		assertNull(h.getParsedBase64URL());
 
 		Base64URL b64url = h.toBase64URL();
@@ -88,9 +88,9 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalHeaders().size());
-		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(3, h.getCriticalParams().size());
+		assertEquals("abc", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 		assertEquals(b64url, h.getParsedBase64URL());
 
 		// Copy
@@ -99,9 +99,9 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalHeaders().size());
-		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(3, h.getCriticalParams().size());
+		assertEquals("abc", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 		assertEquals(b64url, h.getParsedBase64URL());
 	}
 
@@ -117,16 +117,16 @@ public class PlainHeaderTest extends TestCase {
 		PlainHeader h = new PlainHeader.Builder().
 			type(new JOSEObjectType("JWT")).
 			contentType("application/jwt").
-			criticalHeaders(crit).
-			customParameter("xCustom", "abc").
+			criticalParams(crit).
+			customParam("xCustom", "abc").
 			build();
 
-		assertTrue(h.getIncludedParameters().contains("alg"));
-		assertTrue(h.getIncludedParameters().contains("typ"));
-		assertTrue(h.getIncludedParameters().contains("cty"));
-		assertTrue(h.getIncludedParameters().contains("crit"));
-		assertTrue(h.getIncludedParameters().contains("xCustom"));
-		assertEquals(5, h.getIncludedParameters().size());
+		assertTrue(h.getIncludedParams().contains("alg"));
+		assertTrue(h.getIncludedParams().contains("typ"));
+		assertTrue(h.getIncludedParams().contains("cty"));
+		assertTrue(h.getIncludedParams().contains("crit"));
+		assertTrue(h.getIncludedParams().contains("xCustom"));
+		assertEquals(5, h.getIncludedParams().size());
 
 		Base64URL b64url = h.toBase64URL();
 
@@ -138,9 +138,9 @@ public class PlainHeaderTest extends TestCase {
 		assertEquals(Algorithm.NONE, h.getAlgorithm());
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals("application/jwt", h.getContentType());
-		assertEquals(3, h.getCriticalHeaders().size());
-		assertEquals("abc", (String)h.getCustomParameter("xCustom"));
-		assertEquals(1, h.getCustomParameters().size());
+		assertEquals(3, h.getCriticalParams().size());
+		assertEquals("abc", (String)h.getCustomParam("xCustom"));
+		assertEquals(1, h.getCustomParams().size());
 	}
 
 
@@ -165,12 +165,12 @@ public class PlainHeaderTest extends TestCase {
 		customParams.put("y", "2");
 
 		PlainHeader h = new PlainHeader.Builder().
-			customParameters(customParams).
+			customParams(customParams).
 			build();
 
-		assertEquals("1", (String)h.getCustomParameter("x"));
-		assertEquals("2", (String)h.getCustomParameter("y"));
-		assertEquals(2, h.getCustomParameters().size());
+		assertEquals("1", (String)h.getCustomParam("x"));
+		assertEquals("2", (String)h.getCustomParam("y"));
+		assertEquals(2, h.getCustomParams().size());
 	}
 }
 

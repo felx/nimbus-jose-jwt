@@ -666,8 +666,8 @@ public class RSASSATest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
@@ -691,8 +691,8 @@ public class RSASSATest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);

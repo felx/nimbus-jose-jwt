@@ -302,8 +302,8 @@ public class MACTest extends TestCase {
 		final String stringSecret = "3eae8196ad1b";
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);
@@ -331,8 +331,8 @@ public class MACTest extends TestCase {
 		final String stringSecret = "3eae8196ad1b";
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);

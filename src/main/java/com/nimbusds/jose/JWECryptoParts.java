@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * The cryptographic parts of a JSON Web Encryption (JWE) object. This class is 
  * an immutable wrapper for returning the cipher text, initialisation vector
- * (IV), encrypted key and authentication tag from {@link JWEEncrypter}
+ * (IV), encrypted key and authentication authTag from {@link JWEEncrypter}
  * implementations.
  *
  * @author Vladimir Dzhuvinov
@@ -58,7 +58,7 @@ public final class JWECryptoParts {
 	 *                          {@code null} if not required by the 
 	 *                          encryption algorithm.
 	 * @param cipherText        The cipher text. Must not be {@code null}.
-	 * @param authenticationTag The authentication tag, {@code null} if the 
+	 * @param authenticationTag The authentication tag, {@code null} if the
 	 *                          JWE algorithm provides built-in integrity 
 	 *                          check.
 	 */

@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>crit
  * </ul>
  *
- * <p>The header may also include {@link #getCustomParameters custom
+ * <p>The header may also include {@link #getCustomParams custom
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * <p>Example header of a JSON Web Signature (JWS) object using the 
@@ -91,7 +91,7 @@ public final class JWSHeader extends CommonSEHeader {
 	 * <pre>
 	 * JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256).
 	 *                    contentType("text/plain").
-	 *                    customParameter("exp", new Date().getTime()).
+	 *                    customParam("exp", new Date().getTime()).
 	 *                    build();
 	 * </pre>
 	 */
@@ -206,8 +206,8 @@ public final class JWSHeader extends CommonSEHeader {
 
 			typ = jwsHeader.getType();
 			cty = jwsHeader.getContentType();
-			crit = jwsHeader.getCriticalHeaders();
-			customParams = jwsHeader.getCustomParameters();
+			crit = jwsHeader.getCriticalParams();
+			customParams = jwsHeader.getCustomParams();
 
 			jku = jwsHeader.getJWKURL();
 			jwk = jwsHeader.getJWK();
@@ -216,7 +216,7 @@ public final class JWSHeader extends CommonSEHeader {
 			x5t256 = jwsHeader.getX509CertSHA256Thumbprint();
 			x5c = jwsHeader.getX509CertChain();
 			kid = jwsHeader.getKeyID();
-			customParams = jwsHeader.getCustomParameters();
+			customParams = jwsHeader.getCustomParams();
 		}
 
 
@@ -251,14 +251,15 @@ public final class JWSHeader extends CommonSEHeader {
 
 
 		/**
-		 * Sets the critical headers ({@code crit}) parameter.
+		 * Sets the critical header parameters ({@code crit})
+		 * parameter.
 		 *
 		 * @param crit The names of the critical header parameters,
 		 *             empty set or {@code null} if none.
 		 *
 		 * @return This builder.
 		 */
-		public Builder criticalHeaders(final Set<String> crit) {
+		public Builder criticalParams(final Set<String> crit) {
 
 			this.crit = crit;
 			return this;
@@ -389,7 +390,7 @@ public final class JWSHeader extends CommonSEHeader {
 		 *                                  name matches a registered
 		 *                                  parameter name.
 		 */
-		public Builder customParameter(final String name, final Object value) {
+		public Builder customParam(final String name, final Object value) {
 
 			if (getRegisteredParameterNames().contains(name)) {
 				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
@@ -414,7 +415,7 @@ public final class JWSHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
-		public Builder customParameters(final Map<String,Object> customParameters) {
+		public Builder customParams(final Map<String, Object> customParameters) {
 
 			this.customParams = customParameters;
 			return this;
@@ -535,7 +536,7 @@ public final class JWSHeader extends CommonSEHeader {
 			jwsHeader.getAlgorithm(),
 			jwsHeader.getType(),
 			jwsHeader.getContentType(),
-			jwsHeader.getCriticalHeaders(),
+			jwsHeader.getCriticalParams(),
 			jwsHeader.getJWKURL(),
 			jwsHeader.getJWK(),
 			jwsHeader.getX509CertURL(),
@@ -543,7 +544,7 @@ public final class JWSHeader extends CommonSEHeader {
 			jwsHeader.getX509CertSHA256Thumbprint(),
 			jwsHeader.getX509CertChain(),
 			jwsHeader.getKeyID(),
-			jwsHeader.getCustomParameters(),
+			jwsHeader.getCustomParams(),
 			jwsHeader.getParsedBase64URL()
 		);
 	}
@@ -631,7 +632,7 @@ public final class JWSHeader extends CommonSEHeader {
 					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				case "crit":
-					header = header.criticalHeaders(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
+					header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 					break;
 				case "jku":
 					header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
@@ -655,7 +656,7 @@ public final class JWSHeader extends CommonSEHeader {
 					header = header.keyID(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				default:
-					header = header.customParameter(name, jsonObject.get(name));
+					header = header.customParam(name, jsonObject.get(name));
 					break;
 			}
 		}

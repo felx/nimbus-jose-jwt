@@ -255,7 +255,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 			   alg.equals(JWEAlgorithm.A256GCMKW)) {
 
 			byte[] keyIV = header.getIV().decode();
-			byte[] keyTag = header.getAuthenticationTag().decode();
+			byte[] keyTag = header.getAuthTag().decode();
 			AuthenticatedCipherText authEncrCEK = new AuthenticatedCipherText(encryptedKey.decode(), keyTag);
 			cek = AESGCMKW.decryptCEK(kek, keyIV, authEncrCEK, keyLength, keyEncryptionProvider);
 

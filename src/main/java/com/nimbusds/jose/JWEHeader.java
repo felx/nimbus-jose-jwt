@@ -43,10 +43,10 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  *     <li>p2s
  *     <li>p2c
  *     <li>iv
- *     <li>tag
+ *     <li>authTag
  * </ul>
  *
- * <p>The header may also include {@link #getCustomParameters custom
+ * <p>The header may also include {@link #getCustomParams custom
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * <p>Example header:
@@ -96,7 +96,7 @@ public final class JWEHeader extends CommonSEHeader {
 		p.add("p2s");
 		p.add("p2c");
 		p.add("iv");
-		p.add("tag");
+		p.add("authTag");
 
 		REGISTERED_PARAMETER_NAMES = Collections.unmodifiableSet(p);
 	}
@@ -110,7 +110,7 @@ public final class JWEHeader extends CommonSEHeader {
 	 * <pre>
 	 * JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM).
 	 *                    contentType("text/plain").
-	 *                    customParameter("exp", new Date().getTime()).
+	 *                    customParam("exp", new Date().getTime()).
 	 *                    build();
 	 * </pre>
 	 */
@@ -233,7 +233,7 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
-		 * The authentication tag.
+		 * The authentication authTag.
 		 */
 		private Base64URL tag;
 
@@ -286,8 +286,8 @@ public final class JWEHeader extends CommonSEHeader {
 
 			typ = jweHeader.getType();
 			cty = jweHeader.getContentType();
-			crit = jweHeader.getCriticalHeaders();
-			customParams = jweHeader.getCustomParameters();
+			crit = jweHeader.getCriticalParams();
+			customParams = jweHeader.getCustomParams();
 
 			jku = jweHeader.getJWKURL();
 			jwk = jweHeader.getJWK();
@@ -304,9 +304,9 @@ public final class JWEHeader extends CommonSEHeader {
 			p2s = jweHeader.getPBES2Salt();
 			p2c = jweHeader.getPBES2Count();
 			iv = jweHeader.getIV();
-			tag = jweHeader.getAuthenticationTag();
+			tag = jweHeader.getAuthTag();
 
-			customParams = jweHeader.getCustomParameters();
+			customParams = jweHeader.getCustomParams();
 		}
 
 
@@ -341,14 +341,15 @@ public final class JWEHeader extends CommonSEHeader {
 
 
 		/**
-		 * Sets the critical headers ({@code crit}) parameter.
+		 * Sets the critical header parameters ({@code crit})
+		 * parameter.
 		 *
 		 * @param crit The names of the critical header parameters,
 		 *             empty set or {@code null} if none.
 		 *
 		 * @return This builder.
 		 */
-		public Builder criticalHeaders(final Set<String> crit) {
+		public Builder criticalParams(final Set<String> crit) {
 
 			this.crit = crit;
 			return this;
@@ -579,7 +580,7 @@ public final class JWEHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
-		public Builder tag(final Base64URL tag) {
+		public Builder authTag(final Base64URL tag) {
 
 			this.tag = tag;
 			return this;
@@ -602,7 +603,7 @@ public final class JWEHeader extends CommonSEHeader {
 		 *                                  name matches a registered
 		 *                                  parameter name.
 		 */
-		public Builder customParameter(final String name, final Object value) {
+		public Builder customParam(final String name, final Object value) {
 
 			if (getRegisteredParameterNames().contains(name)) {
 				throw new IllegalArgumentException("The parameter name \"" + name + "\" matches a registered name");
@@ -627,7 +628,7 @@ public final class JWEHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
-		public Builder customParameters(final Map<String,Object> customParameters) {
+		public Builder customParams(final Map<String, Object> customParameters) {
 
 			this.customParams = customParameters;
 			return this;
@@ -854,7 +855,7 @@ public final class JWEHeader extends CommonSEHeader {
 			jweHeader.getEncryptionMethod(),
 			jweHeader.getType(),
 			jweHeader.getContentType(),
-			jweHeader.getCriticalHeaders(),
+			jweHeader.getCriticalParams(),
 			jweHeader.getJWKURL(),
 			jweHeader.getJWK(),
 			jweHeader.getX509CertURL(),
@@ -869,8 +870,8 @@ public final class JWEHeader extends CommonSEHeader {
 			jweHeader.getPBES2Salt(),
 			jweHeader.getPBES2Count(),
 			jweHeader.getIV(),
-			jweHeader.getAuthenticationTag(),
-			jweHeader.getCustomParameters(),
+			jweHeader.getAuthTag(),
+			jweHeader.getCustomParams(),
 			jweHeader.getParsedBase64URL()
 		);
 	}
@@ -995,16 +996,16 @@ public final class JWEHeader extends CommonSEHeader {
 	 *
 	 * @return The authentication tag, {@code null} if not specified.
 	 */
-	public Base64URL getAuthenticationTag() {
+	public Base64URL getAuthTag() {
 
 		return tag;
 	}
 
 
 	@Override
-	public Set<String> getIncludedParameters() {
+	public Set<String> getIncludedParams() {
 
-		Set<String> includedParameters = super.getIncludedParameters();
+		Set<String> includedParameters = super.getIncludedParams();
 
 		if (enc != null) {
 			includedParameters.add("enc");
@@ -1174,7 +1175,7 @@ public final class JWEHeader extends CommonSEHeader {
 					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				case "crit":
-					header = header.criticalHeaders(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
+					header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 					break;
 				case "jku":
 					header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
@@ -1219,10 +1220,10 @@ public final class JWEHeader extends CommonSEHeader {
 					header = header.iv(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				case "tag":
-					header = header.tag(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
+					header = header.authTag(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				default:
-					header = header.customParameter(name, jsonObject.get(name));
+					header = header.customParam(name, jsonObject.get(name));
 					break;
 			}
 		}

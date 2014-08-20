@@ -642,8 +642,8 @@ public class RSA1_5Test extends TestCase {
 		throws Exception {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -675,8 +675,8 @@ public class RSA1_5Test extends TestCase {
 		throws Exception {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

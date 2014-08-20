@@ -236,16 +236,16 @@ class AESCBC {
 
 		byte[] epu = null;
 
-		if (header.getCustomParameter("epu") instanceof String) {
+		if (header.getCustomParam("epu") instanceof String) {
 
-			epu = new Base64URL((String)header.getCustomParameter("epu")).decode();
+			epu = new Base64URL((String)header.getCustomParam("epu")).decode();
 		}
 
 		byte[] epv = null;
 
-		if (header.getCustomParameter("epv") instanceof String) {
+		if (header.getCustomParam("epv") instanceof String) {
 
-			epv = new Base64URL((String)header.getCustomParameter("epv")).decode();
+			epv = new Base64URL((String)header.getCustomParam("epv")).decode();
 		}
 
 		// Generate alternative CEK using concat-KDF
@@ -398,16 +398,16 @@ class AESCBC {
 
 		byte[] epu = null;
 
-		if (header.getCustomParameter("epu") instanceof String) {
+		if (header.getCustomParam("epu") instanceof String) {
 
-			epu = new Base64URL((String)header.getCustomParameter("epu")).decode();
+			epu = new Base64URL((String)header.getCustomParam("epu")).decode();
 		}
 
 		byte[] epv = null;
 
-		if (header.getCustomParameter("epv") instanceof String) {
+		if (header.getCustomParam("epv") instanceof String) {
 
-			epv = new Base64URL((String)header.getCustomParameter("epv")).decode();
+			epv = new Base64URL((String)header.getCustomParam("epv")).decode();
 		}
 
 		SecretKey cekAlt = ConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);

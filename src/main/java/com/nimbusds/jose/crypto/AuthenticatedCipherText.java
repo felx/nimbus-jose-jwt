@@ -30,7 +30,7 @@ final class AuthenticatedCipherText {
 	 * Creates a new authenticated cipher text.
 	 *
 	 * @param cipherText        The cipher text. Must not be {@code null}.
-	 * @param authenticationTag The authentication tag. Must not be 
+	 * @param authenticationTag The authentication tag. Must not be
 	 *                          {@code null}.
 	 */
 	public AuthenticatedCipherText(final byte[] cipherText, final byte[] authenticationTag) {

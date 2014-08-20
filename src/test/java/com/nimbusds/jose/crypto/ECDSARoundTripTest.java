@@ -216,8 +216,8 @@ public class ECDSARoundTripTest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
@@ -249,8 +249,8 @@ public class ECDSARoundTripTest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
-			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);

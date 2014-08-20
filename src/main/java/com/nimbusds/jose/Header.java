@@ -14,11 +14,11 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * The base abstract class for plaintext, JSON Web Signature (JWS) and JSON Web 
  * Encryption (JWE) headers.
  *
- * <p>The header may also include {@link #getCustomParameters custom
+ * <p>The header may also include {@link #getCustomParams custom
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-20)
  */
 public abstract class Header {
 
@@ -128,8 +128,8 @@ public abstract class Header {
 			header.getAlgorithm(),
 			header.getType(),
 			header.getContentType(),
-			header.getCriticalHeaders(),
-			header.getCustomParameters(),
+			header.getCriticalParams(),
+			header.getCustomParams(),
 			header.getParsedBase64URL());
 	}
 
@@ -168,12 +168,12 @@ public abstract class Header {
 
 
 	/**
-	 * Gets the critical headers ({@code crit}) parameter.
+	 * Gets the critical header parameters ({@code crit}) parameter.
 	 *
 	 * @return The names of the critical header parameters, as a
 	 *         unmodifiable set, {@code null} if not specified.
 	 */
-	public Set<String> getCriticalHeaders() {
+	public Set<String> getCriticalParams() {
 
 		return crit;
 	}
@@ -187,7 +187,7 @@ public abstract class Header {
 	 *
 	 * @return The custom parameter, {@code null} if not specified.
 	 */
-	public Object getCustomParameter(final String name) {
+	public Object getCustomParam(final String name) {
 
 		return customParams.get(name);
 	}
@@ -199,7 +199,7 @@ public abstract class Header {
 	 * @return The custom parameters, as a unmodifiable map, empty map if
 	 *         none.
 	 */
-	public Map<String,Object> getCustomParameters() {
+	public Map<String,Object> getCustomParams() {
 
 		return customParams;
 	}
@@ -223,10 +223,10 @@ public abstract class Header {
 	 *
 	 * @return The included parameters.
 	 */
-	public Set<String> getIncludedParameters() {
+	public Set<String> getIncludedParams() {
 
 		Set<String> includedParameters =
-			new HashSet<>(getCustomParameters().keySet());
+			new HashSet<>(getCustomParams().keySet());
 
 		includedParameters.add("alg");
 
@@ -238,7 +238,7 @@ public abstract class Header {
 			includedParameters.add("cty");
 		}
 
-		if (getCriticalHeaders() != null && ! getCriticalHeaders().isEmpty()) {
+		if (getCriticalParams() != null && ! getCriticalParams().isEmpty()) {
 			includedParameters.add("crit");
 		}
 
