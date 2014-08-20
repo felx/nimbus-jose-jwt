@@ -295,9 +295,11 @@ version 2.26.1 (2014-07-14)
 version 3.0 (2014-08-19)
     * Makes Plain, JWS and JWE headers immutable, removes read-only header
       interfaces, adds header builders.
-    * Adds support for 'iv' and 'tag' parameters in JWEHeader.
     * Adds support for 'x5t#S256' parameter in JWSHeader and JWEHeader.
+    * Adds support for 'iv' and 'tag' parameters in JWEHeader (required for AES
+      GCM key encryption).
     * Adds support for serialising single-valued JWT audience (aud) claims.
     * Adds A128KW, A192KW and A256KW encryption support.
     * Adds A128CGMKW, A192CGMKW and A256CGMKW encryption support.
+    * Updates library source code to Java 7.
     * Upgrades to BouncyCastle 1.51.
