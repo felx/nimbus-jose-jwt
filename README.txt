@@ -2,7 +2,10 @@ Nimbus JOSE + JWT
 
 * The most popular Java library for signed and encrypted JSON Web Tokens (JWT)
 
-* Full JWS algorithm and RSA encryption support
+* Complete JWS algorithm support
+
+* RSA, AES key wrap and AES GCM encryption support with AES/CBC/HMAC and
+  AES/GCM.
 
 * Open source (Apache 2.0 licence)
 

@@ -1,38 +1,27 @@
 <html>
 	<head>
-		<!-- Overview for SDK JavaDocs -->
-		<title>Nimbus JOSE+JWT Library</title>
+		<title>Nimbus JOSE + JWT</title>
 	</head>
 	
 	<body>
-		<h3>Nimbus JOSE+JWT Library</h3>
+		<h3>Nimbus JOSE + JWT</h3>
 		
-		<p>The Nimbus JOSE+JWT library implements the Javascript Object Signing
-            and Encryption (JOSE) spec suite and the closely related JSON Web
-            Token (JWT) spec. </p>
-		
-		<p>The library supports creating, querying, serialising and parsing of the 
-		following JOSE and JWT objects:</p>
+		<p>Create, parse and process JOSE and JWT objects:</p>
 		
 		<ul>
 			<li>{@link com.nimbusds.jose.PlainObject Plain (unsecured) JOSE objects}.</li>
 			<li>{@link com.nimbusds.jose.JWSObject JSON Web Signature (JWS) objects}.</li>
 			<li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) objects}.</li>
 			<li>{@link com.nimbusds.jose.jwk.JWK JSON Web Key (JWK) objects} and 
-			    {@link com.nimbusds.jose.jwk.JWKSet JSON Web Key (JWK) Sets}.</li>
+			    {@link com.nimbusds.jose.jwk.JWKSet JWK Sets}.</li>
 			<li>{@link com.nimbusds.jwt.PlainJWT Plain}, 
 			    {@link com.nimbusds.jwt.SignedJWT signed} and 
 			    {@link com.nimbusds.jwt.EncryptedJWT encrypted} 
 			    {@link com.nimbusds.jwt.JWT JSON Web Tokens (JWTs)}.</li>
 		</ul>
-			
-		<p>The JOSE and JWT object representation is completely decoupled from
-            JSON Web Algorithm (JWA) implementations through a set of simple
-            interfaces for signing, validating, encrypting and decrypting the
-            objects.</p>
-		
-		<p>The library currently ships ready {@link com.nimbusds.jose.crypto implementations} 
-		of the following standard algorithms:</p>
+
+		<p>The library {@link com.nimbusds.jose.crypto implements} all standard
+            JWS algorithms and 6/9 of the JWE algorithms:</p>
 
         <p>JWS algorithms:</p>
 		<ul>
@@ -58,8 +47,13 @@
                 the deprecated A128CBC+HS256 and A256CBC+HS512 are also supported</li>
             <li>AES GCM: A128GCM, A192GCM and A256GCM</li>
         </ul>
+
+        <p>New JWA algorithms can be easily added. A set of interfaces
+            effectively decouple the JOSE / JWT objects from JWA crypto code
+            for signing / verification or encryption / decryption. Multiple JCA
+            providers, including hardware-based are easily supported.</p>
 		
-		<p>Related IETF drafts:</p>
+		<p>Supported IETF specifications:</p>
 		
 		<ul>
 			<li>[JWA] <a href="http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-31">draft-ietf-jose-json-web-algorithms-31</a></li>
@@ -69,13 +63,12 @@
 			<li>[JWT] <a href="http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-25">draft-ietf-oauth-json-web-token-25</a></li>
 		</ul>
 		
-		<p>Dependencies (see the pom.xml for details):</p>
+		<p>Dependencies (see the Maven pom.xml for details):</p>
 		
 		<ul>
 			<li>JSON Smart for highly efficient parsing and serialisation of JSON.</li>
 			<li>JCIP for concurrency annotations.</li>
-			<li>[optional] The BouncyCastle.org cryptography provider for Java, for 
-	  		    ECDSA, RSA encryption and AES-GCM.</li>
+			<li>[optional] The BouncyCastle.org cryptography provider for Java.</li>
 		</ul>
 	</body>
 
