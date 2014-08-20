@@ -181,9 +181,6 @@ public class JWSHeaderTest extends TestCase {
 
 		assertTrue(h.getIncludedParameters().contains("alg"));
 		assertTrue(h.getIncludedParameters().contains("typ"));
-
-		System.out.println("Included parameters: " + h.getIncludedParameters());
-
 		assertEquals(2, h.getIncludedParameters().size());
 	}
 
