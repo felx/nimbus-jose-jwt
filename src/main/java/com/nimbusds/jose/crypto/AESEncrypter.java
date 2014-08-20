@@ -55,9 +55,10 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	/**
 	 * Constants used for clarity.
 	 */
-	private static final char TYPE_UNINIT = 0;
-	private static final char TYPE_AESGCMKW = 1;
-	private static final char TYPE_AESKW = 2;
+	private static enum AlgFamily {
+
+		AESKW, AESGCMKW
+	}
 
 
 	/**
@@ -120,55 +121,51 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		final AuthenticatedCipherText authCiphCEK;
 
-		boolean isAESGCMKW = false;
-		int jweAlgorithmType = TYPE_UNINIT;
+		AlgFamily algFamily;
 
-		Base64URL encryptedKey = null; // The second JWE part
+		Base64URL encryptedKey; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.A128KW)) {
 
 			if(kek.getEncoded().length != 16){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128KW encryption");
 			}
-			jweAlgorithmType = TYPE_AESKW;
+			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192KW)) {
 
 			if(kek.getEncoded().length != 24){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192KW encryption");
 			}
-			jweAlgorithmType = TYPE_AESKW;
+			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256KW)) {
 
 			if (kek.getEncoded().length != 32) {
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256KW encryption");
 			}
-			jweAlgorithmType = TYPE_AESKW;
+			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A128GCMKW)) {
 
 			if(kek.getEncoded().length != 16){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128GCMKW encryption");
 			}
-			isAESGCMKW = true;
-			jweAlgorithmType = TYPE_AESGCMKW;
+			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192GCMKW)) {
 
 			if(kek.getEncoded().length != 24){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192GCMKW encryption");
 			}
-			isAESGCMKW = true;
-			jweAlgorithmType = TYPE_AESGCMKW;
+			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256GCMKW)) {
 
 			if(kek.getEncoded().length != 32){
 				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256GCMKW encryption");
 			}
-			isAESGCMKW = true;
-			jweAlgorithmType = TYPE_AESGCMKW;
+			algFamily = AlgFamily.AESGCMKW;
 
 		} else {
 
@@ -176,21 +173,21 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		}
 
 		// We need to work on the header
-		JWEHeader modifiableHeader = header;
+		JWEHeader modifiableHeader;
 
-		switch (jweAlgorithmType) {
+		switch (algFamily) {
 
-			case TYPE_AESKW:
+			case AESKW:
 				encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, kek));
-				modifiableHeader = new JWEHeader.Builder(header).build();
+				modifiableHeader = header; // simply copy ref
 				break;
 
-			case TYPE_AESGCMKW:
+			case AESGCMKW:
 				keyIV = AESGCM.generateIV(randomGen);
 				authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, kek, keyEncryptionProvider);
 				encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
-				// Add Initialization Vector to the header
+				// Add iv and tag to the header
 				modifiableHeader = new JWEHeader.Builder(header).
 					iv(Base64URL.encode(keyIV)).
 					authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
@@ -213,8 +210,8 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		AuthenticatedCipherText authCipherText;
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-			enc.equals(EncryptionMethod.A192CBC_HS384) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512)	 ) {
+		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
+		    enc.equals(EncryptionMethod.A256CBC_HS512)	 ) {
 
 			iv = AESCBC.generateIV(randomGen);
 
@@ -223,8 +220,8 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 				contentEncryptionProvider, macProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			enc.equals(EncryptionMethod.A192GCM) ||
-			enc.equals(EncryptionMethod.A256GCM)    ) {
+			   enc.equals(EncryptionMethod.A192GCM) ||
+			   enc.equals(EncryptionMethod.A256GCM)    ) {
 
 			iv = AESGCM.generateIV(randomGen);
 
@@ -233,7 +230,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 				contentEncryptionProvider);
 
 		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
+			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
 
 			iv = AESCBC.generateIV(randomGen);
 
