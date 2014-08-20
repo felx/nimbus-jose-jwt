@@ -59,14 +59,14 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	 * The accepted JWE algorithms.
 	 */
 	private Set<JWEAlgorithm> acceptedAlgs =
-		new HashSet<JWEAlgorithm>(supportedAlgorithms());
+		new HashSet<>(supportedAlgorithms());
 
 
 	/**
 	 * The accepted encryption methods.
 	 */
 	private Set<EncryptionMethod> acceptedEncs =
-		new HashSet<EncryptionMethod>(supportedEncryptionMethods());
+		new HashSet<>(supportedEncryptionMethods());
 
 
 	/**

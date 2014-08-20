@@ -101,14 +101,14 @@ public abstract class Header {
 
 		if (crit != null) {
 			// Copy and make unmodifiable
-			this.crit = Collections.unmodifiableSet(new HashSet<String>(crit));
+			this.crit = Collections.unmodifiableSet(new HashSet<>(crit));
 		} else {
 			this.crit = null;
 		}
 
 		if (customParams != null) {
 			// Copy and make unmodifiable
-			this.customParams = Collections.unmodifiableMap(new HashMap<String,Object>(customParams));
+			this.customParams = Collections.unmodifiableMap(new HashMap<>(customParams));
 		} else {
 			this.customParams = EMPTY_CUSTOM_PARAMS;
 		}
@@ -226,7 +226,7 @@ public abstract class Header {
 	public Set<String> getIncludedParameters() {
 
 		Set<String> includedParameters =
-			new HashSet<String>(getCustomParameters().keySet());
+			new HashSet<>(getCustomParameters().keySet());
 
 		includedParameters.add("alg");
 
@@ -271,7 +271,7 @@ public abstract class Header {
 		}
 
 		if (crit != null && ! crit.isEmpty()) {
-			o.put("crit", new ArrayList<String>(crit));
+			o.put("crit", new ArrayList<>(crit));
 		}
 
 		return o;

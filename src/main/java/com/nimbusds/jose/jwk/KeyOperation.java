@@ -138,7 +138,7 @@ public enum KeyOperation {
 			return null;
 		}
 
-		Set<KeyOperation> keyOps = new LinkedHashSet<KeyOperation>();
+		Set<KeyOperation> keyOps = new LinkedHashSet<>();
 
 		for (String s: sl) {
 

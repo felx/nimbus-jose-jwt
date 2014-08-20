@@ -11,8 +11,6 @@ import java.security.spec.RSAPublicKeySpec;
 
 import junit.framework.TestCase;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEDecrypter;
@@ -136,7 +134,7 @@ public class RSA_OAEPTest extends TestCase {
 
 		} catch (Exception e) {
 
-			System.err.println(e);
+			fail(e.getMessage());
 		}
 	}
 

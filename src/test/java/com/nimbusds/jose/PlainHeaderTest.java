@@ -48,12 +48,12 @@ public class PlainHeaderTest extends TestCase {
 	public void testFullAndCopyConstructors()
 		throws Exception {
 
-		Set<String> crit = new HashSet<String>();
+		Set<String> crit = new HashSet<>();
 		crit.add("iat");
 		crit.add("exp");
 		crit.add("nbf");
 
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 		customParams.put("xCustom", "abc");
 
 		PlainHeader h = new PlainHeader(
@@ -109,7 +109,7 @@ public class PlainHeaderTest extends TestCase {
 	public void testBuilder()
 		throws Exception {
 
-		Set<String> crit = new HashSet<String>();
+		Set<String> crit = new HashSet<>();
 		crit.add("iat");
 		crit.add("exp");
 		crit.add("nbf");
@@ -160,7 +160,7 @@ public class PlainHeaderTest extends TestCase {
 
 	public void testBuilderWithCustomParams() {
 
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 		customParams.put("x", "1");
 		customParams.put("y", "2");
 

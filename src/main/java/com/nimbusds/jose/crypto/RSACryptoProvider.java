@@ -58,13 +58,13 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	 */
 	static {
 
-		Set<JWEAlgorithm> algs = new HashSet<JWEAlgorithm>();
+		Set<JWEAlgorithm> algs = new HashSet<>();
 		algs.add(JWEAlgorithm.RSA1_5);
 		algs.add(JWEAlgorithm.RSA_OAEP);
 		algs.add(JWEAlgorithm.RSA_OAEP_256);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
-		Set<EncryptionMethod> methods = new HashSet<EncryptionMethod>();
+		Set<EncryptionMethod> methods = new HashSet<>();
 		methods.add(EncryptionMethod.A128CBC_HS256);
 		methods.add(EncryptionMethod.A192CBC_HS384);
 		methods.add(EncryptionMethod.A256CBC_HS512);

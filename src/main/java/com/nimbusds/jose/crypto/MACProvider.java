@@ -39,7 +39,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	static {
 
-		Set<JWSAlgorithm> algs = new HashSet<JWSAlgorithm>();
+		Set<JWSAlgorithm> algs = new HashSet<>();
 		algs.add(JWSAlgorithm.HS256);
 		algs.add(JWSAlgorithm.HS384);
 		algs.add(JWSAlgorithm.HS512);

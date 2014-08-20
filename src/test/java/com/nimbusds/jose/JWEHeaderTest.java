@@ -109,7 +109,7 @@ public class JWEHeaderTest extends TestCase {
 
 		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
 
-		List<Base64> certChain = new LinkedList<Base64>();
+		List<Base64> certChain = new LinkedList<>();
 		certChain.add(new Base64("asd"));
 		certChain.add(new Base64("fgh"));
 		certChain.add(new Base64("jkl"));
@@ -244,7 +244,7 @@ public class JWEHeaderTest extends TestCase {
 	public void testCrit()
 		throws Exception {
 
-		Set<String> crit = new HashSet<String>();
+		Set<String> crit = new HashSet<>();
 		crit.add("iat");
 		crit.add("exp");
 		crit.add("nbf");
@@ -290,7 +290,7 @@ public class JWEHeaderTest extends TestCase {
 		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
 			type(JOSEObjectType.JWS).
 			contentType("application/json").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp", "nbf"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp", "nbf"))).
 			jwkURL(new URL("http://example.com/jwk.json")).
 			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
 			x509CertURL(new URL("http://example.com/cert.pem")).
@@ -364,7 +364,7 @@ public class JWEHeaderTest extends TestCase {
 
 	public void testBuilderWithCustomParams() {
 
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 		customParams.put("x", "1");
 		customParams.put("y", "2");
 

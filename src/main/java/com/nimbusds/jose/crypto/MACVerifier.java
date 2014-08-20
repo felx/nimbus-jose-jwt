@@ -37,7 +37,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 * The accepted JWS algorithms.
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<JWSAlgorithm>(supportedAlgorithms());
+		new HashSet<>(supportedAlgorithms());
 
 
 	/**

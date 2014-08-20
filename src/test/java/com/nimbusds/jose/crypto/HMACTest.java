@@ -2,7 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.Provider;
-import java.security.Signature;
 
 import javax.crypto.Mac;
 
@@ -10,13 +9,6 @@ import junit.framework.TestCase;
 
 import org.junit.Assert;
 
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.util.Base64URL;
 
 

@@ -19,7 +19,7 @@ class CriticalHeaderParameterChecker {
 	/**
 	 * The critical header parameters to ignore.
 	 */
-	private Set<String> ignoredCritParams = new HashSet<String>();
+	private Set<String> ignoredCritParams = new HashSet<>();
 
 
 	/**
@@ -65,10 +65,6 @@ class CriticalHeaderParameterChecker {
 			return true; // OK
 		}
 
-		if (ignoredCritParams != null && ignoredCritParams.containsAll(crit)) {
-			return true; // ok
-		}
-
-		return false; // one or more crit params that are not handled
+		return ignoredCritParams != null && ignoredCritParams.containsAll(crit);
 	}
 }

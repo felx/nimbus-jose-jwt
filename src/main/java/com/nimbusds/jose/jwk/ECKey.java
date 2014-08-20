@@ -234,17 +234,15 @@ public final class ECKey extends JWK {
 		/**
 		 * Parses a cryptographic curve from the specified string.
 		 *
-		 * @param s The string to parse. Must not be {@code null}.
+		 * @param s The string to parse. Must not be {@code null} or
+		 *          empty.
 		 *
 		 * @return The cryptographic curve.
-		 *
-		 * @throws ParseException If the string couldn't be parsed.
 		 */
-		public static Curve parse(final String s) 
-			throws ParseException {
+		public static Curve parse(final String s) {
 
-			if (s == null) {
-				throw new IllegalArgumentException("The cryptographic curve string must not be null");
+			if (s == null || s.trim().isEmpty()) {
+				throw new IllegalArgumentException("The cryptographic curve string must not be null or empty");
 			}
 
 			if (s.equals(P_256.getName())) {
@@ -274,14 +272,11 @@ public final class ECKey extends JWK {
 		 */
 		public static Curve forStdName(final String stdName) {
 
-			if (stdName.equals("secp256r1")) {
-				return P_256;
-			} else if (stdName.equals("secp384r1")) {
-				return P_384;
-			} else if (stdName.equals("secp521r1")) {
-				return P_521;
-			} else {
-				throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
+			switch (stdName) {
+				case "secp256r1": return P_256;
+				case "secp384r1": return P_384;
+				case "secp521r1": return P_521;
+				default: throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
 			}
 		}
 	}

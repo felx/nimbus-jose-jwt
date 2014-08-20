@@ -65,7 +65,7 @@ public final class JWSHeader extends CommonSEHeader {
 	 * Initialises the registered parameter name set.
 	 */
 	static {
-		Set<String> p = new HashSet<String>();
+		Set<String> p = new HashSet<>();
 
 		p.add("alg");
 		p.add("jku");
@@ -390,7 +390,7 @@ public final class JWSHeader extends CommonSEHeader {
 			}
 
 			if (customParams == null) {
-				customParams = new HashMap<String,Object>();
+				customParams = new HashMap<>();
 			}
 
 			customParams.put(name, value);
@@ -603,34 +603,49 @@ public final class JWSHeader extends CommonSEHeader {
 		Base64URL x5t256 = null;
 		List<Base64> x5c = null;
 		String kid = null;
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 
 		// Parse optional + custom parameters
 		for (final String name: jsonObject.keySet()) {
-			if (name.equals("alg")) {
-				// skip
-			} else if (name.equals("typ")) {
-				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("cty")) {
-				cty = JSONObjectUtils.getString(jsonObject, name);
-			} else if (name.equals("crit")) {
-				crit = new HashSet<String>(JSONObjectUtils.getStringList(jsonObject, name));
-			} else if (name.equals("jku")) {
-				jku = JSONObjectUtils.getURL(jsonObject, name);
-			} else if (name.equals("jwk")) {
-				jwk = JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
-			} else if (name.equals("x5u")) {
-				x5u = JSONObjectUtils.getURL(jsonObject, name);
-			} else if (name.equals("x5t")) {
-				x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("x5t#S256")) {
-				x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("x5c")) {
-				x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
-			} else if (name.equals("kid")) {
-				kid = JSONObjectUtils.getString(jsonObject, name);
-			} else {
-				customParams.put(name, jsonObject.get(name));
+
+			switch (name) {
+
+				case "alg":
+					// skip
+					break;
+				case "typ":
+					typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "cty":
+					cty = JSONObjectUtils.getString(jsonObject, name);
+					break;
+				case "crit":
+					crit = new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name));
+					break;
+				case "jku":
+					jku = JSONObjectUtils.getURL(jsonObject, name);
+					break;
+				case "jwk":
+					jwk = JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
+					break;
+				case "x5u":
+					x5u = JSONObjectUtils.getURL(jsonObject, name);
+					break;
+				case "x5t":
+					x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "x5t#S256":
+					x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "x5c":
+					x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
+					break;
+				case "kid":
+					kid = JSONObjectUtils.getString(jsonObject, name);
+					break;
+				default:
+					customParams.put(name, jsonObject.get(name));
+					break;
 			}
 		}
 

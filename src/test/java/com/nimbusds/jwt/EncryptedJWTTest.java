@@ -14,7 +14,6 @@ import java.util.UUID;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
@@ -134,7 +133,7 @@ public class EncryptedJWTTest extends TestCase {
 
 		} catch (Exception e) {
 
-			System.err.println(e);
+			fail(e.getMessage());
 		}
 	}
 
@@ -151,7 +150,7 @@ public class EncryptedJWTTest extends TestCase {
 		String sub = "alice";
 		jwtClaims.setSubject(sub);
 
-		List<String> aud = new ArrayList<String>();
+		List<String> aud = new ArrayList<>();
 		aud.add("https://app-one.com");
 		aud.add("https://app-two.com");
 		jwtClaims.setAudience(aud);
@@ -162,10 +161,10 @@ public class EncryptedJWTTest extends TestCase {
 		jwtClaims.setExpirationTime(exp);
 
 		Date nbf = NOW;
-		jwtClaims.setNotBeforeTime(nbf);
+		jwtClaims.setNotBeforeTime(NOW);
 
 		Date iat = NOW;
-		jwtClaims.setIssueTime(iat);
+		jwtClaims.setIssueTime(NOW);
 
 		String jti = UUID.randomUUID().toString();
 		jwtClaims.setJWTID(jti);
@@ -202,8 +201,8 @@ public class EncryptedJWTTest extends TestCase {
 
 		// Retrieve JWT claims
 
-		assertEquals(iss, jwt.getJWTClaimsSet().getIssuer());;
-		
+		assertEquals(iss, jwt.getJWTClaimsSet().getIssuer());
+
 		assertEquals(sub, jwt.getJWTClaimsSet().getSubject());
 
 		assertEquals(2, jwt.getJWTClaimsSet().getAudience().size());

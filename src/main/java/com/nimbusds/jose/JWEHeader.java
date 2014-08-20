@@ -75,7 +75,7 @@ public final class JWEHeader extends CommonSEHeader {
 	 * Initialises the registered parameter name set.
 	 */
 	static {
-		Set<String> p = new HashSet<String>();
+		Set<String> p = new HashSet<>();
 
 		p.add("alg");
 		p.add("enc");
@@ -603,7 +603,7 @@ public final class JWEHeader extends CommonSEHeader {
 			}
 
 			if (customParams == null) {
-				customParams = new HashMap<String,Object>();
+				customParams = new HashMap<>();
 			}
 
 			customParams.put(name, value);
@@ -1152,52 +1152,76 @@ public final class JWEHeader extends CommonSEHeader {
 		int p2c = 0;
 		Base64URL iv = null;
 		Base64URL tag = null;
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
-			if (name.equals("alg")) {
-				// skip
-			} else if (name.equals("enc")) {
-				// skip
-			} else if (name.equals("typ")) {
-				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("cty")) {
-				cty = JSONObjectUtils.getString(jsonObject, name);
-			} else if (name.equals("crit")) {
-				crit = new HashSet<String>(JSONObjectUtils.getStringList(jsonObject, name));
-			} else if (name.equals("jku")) {
-				jku = JSONObjectUtils.getURL(jsonObject, name);
-			} else if (name.equals("jwk")) {
-				jwk = JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
-			} else if (name.equals("x5u")) {
-				x5u = JSONObjectUtils.getURL(jsonObject, name);
-			} else if (name.equals("x5t")) {
-				x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("x5t#S256")) {
-				x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("x5c")) {
-				x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
-			} else if (name.equals("kid")) {
-				kid = JSONObjectUtils.getString(jsonObject, name);
-			} else if (name.equals("epk")) {
-				epk = ECKey.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
-			} else if (name.equals("zip")) {
-				zip = new CompressionAlgorithm(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("apu")) {
-				apu = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("apv")) {
-				apv = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("p2s")) {
-				p2s = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("p2c")) {
-				p2c = JSONObjectUtils.getInt(jsonObject, name);
-			} else if (name.equals("iv")) {
-				iv = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("tag")) {
-				tag = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
-			} else {
-				customParams.put(name, jsonObject.get(name));
+
+			switch (name) {
+
+				case "alg":
+					// skip
+					break;
+				case "enc":
+					// skip
+					break;
+				case "typ":
+					typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "cty":
+					cty = JSONObjectUtils.getString(jsonObject, name);
+					break;
+				case "crit":
+					crit = new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name));
+					break;
+				case "jku":
+					jku = JSONObjectUtils.getURL(jsonObject, name);
+					break;
+				case "jwk":
+					jwk = JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
+					break;
+				case "x5u":
+					x5u = JSONObjectUtils.getURL(jsonObject, name);
+					break;
+				case "x5t":
+					x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "x5t#S256":
+					x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "x5c":
+					x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
+					break;
+				case "kid":
+					kid = JSONObjectUtils.getString(jsonObject, name);
+					break;
+				case "epk":
+					epk = ECKey.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
+					break;
+				case "zip":
+					zip = new CompressionAlgorithm(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "apu":
+					apu = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "apv":
+					apv = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "p2s":
+					p2s = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "p2c":
+					p2c = JSONObjectUtils.getInt(jsonObject, name);
+					break;
+				case "iv":
+					iv = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "tag":
+					tag = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				default:
+					customParams.put(name, jsonObject.get(name));
+					break;
 			}
 		}
 

@@ -3,8 +3,6 @@ package com.nimbusds.jose.util;
 
 import java.nio.charset.Charset;
 
-import com.nimbusds.jose.JOSEException;
-
 
 /**
  * String utilities.

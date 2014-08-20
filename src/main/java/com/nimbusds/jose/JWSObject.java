@@ -40,7 +40,7 @@ public class JWSObject extends JOSEObject {
 		/**
 		 * The JWS object is signed and its signature was successfully verified.
 		 */
-		VERIFIED;
+		VERIFIED
 	}
 
 

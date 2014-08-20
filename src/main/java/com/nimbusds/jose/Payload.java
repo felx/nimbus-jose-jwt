@@ -64,7 +64,7 @@ public final class Payload {
 		/**
 		 * The payload was created from a Base64URL-encoded object.
 		 */
-		BASE64URL;
+		BASE64URL
 	}
 
 

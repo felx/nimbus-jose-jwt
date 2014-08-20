@@ -8,7 +8,7 @@ import net.jcip.annotations.Immutable;
  * Authenticated cipher text. This class is immutable.
  *
  * @author Vladimir Dzhuvinov
- * @Version $version$ (2013-05-06)
+ * @version $version$ (2013-05-06)
  */
 @Immutable
 final class AuthenticatedCipherText {

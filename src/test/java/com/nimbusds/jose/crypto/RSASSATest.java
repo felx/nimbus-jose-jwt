@@ -135,7 +135,7 @@ public class RSASSATest extends TestCase {
 
 		} catch (Exception e) {
 
-			System.err.println(e);
+			fail(e.getMessage());
 		}
 	}
 
@@ -213,13 +213,13 @@ public class RSASSATest extends TestCase {
 		}
 
 		try {
-			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+			verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.ES256)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.RS256)));
+		verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.RS256)));
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS256));
 		assertEquals(1, verifier.getAcceptedAlgorithms().size());
 	}
@@ -667,7 +667,7 @@ public class RSASSATest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
@@ -692,7 +692,7 @@ public class RSASSATest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);

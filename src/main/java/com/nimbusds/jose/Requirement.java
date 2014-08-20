@@ -26,5 +26,5 @@ public enum Requirement {
 	/**
 	 * The implementation of the algorithm is optional.
 	 */
-	OPTIONAL;
+	OPTIONAL
 }

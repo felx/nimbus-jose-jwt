@@ -47,7 +47,7 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 	 */
 	static {
 
-		Set<JWSAlgorithm> algs = new HashSet<JWSAlgorithm>();
+		Set<JWSAlgorithm> algs = new HashSet<>();
 
 		algs.add(JWSAlgorithm.RS256);
 		algs.add(JWSAlgorithm.RS384);

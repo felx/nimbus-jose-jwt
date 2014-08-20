@@ -64,10 +64,8 @@ public class ECDSASpecVectorsTest extends TestCase {
 			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"));
 
 
-	private static final byte[] signable = new String("eyJhbGciOiJFUzI1NiJ9" +
-			"." +
-			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
-			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
+	private static final byte[] signable = ("eyJhbGciOiJFUzI1NiJ9." +
+		"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ").getBytes();
 
 
 	private static final Base64URL b64sig = new Base64URL("DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSA" +
@@ -115,13 +113,13 @@ public class ECDSASpecVectorsTest extends TestCase {
 		}
 
 		try {
-			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.HS256)));
+			verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.HS256)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+		verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.ES256)));
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES256));
 		assertEquals(1, verifier.getAcceptedAlgorithms().size());
 	}

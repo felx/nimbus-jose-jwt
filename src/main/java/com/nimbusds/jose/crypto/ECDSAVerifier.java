@@ -49,7 +49,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 	 * The accepted JWS algorithms.
 	 */
 	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<JWSAlgorithm>(supportedAlgorithms());
+		new HashSet<>(supportedAlgorithms());
 
 
 	/**

@@ -2,7 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -98,13 +97,13 @@ public class MACTest extends TestCase {
 		}
 
 		try {
-			verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.ES256)));
+			verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.ES256)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		verifier.setAcceptedAlgorithms(new HashSet<JWSAlgorithm>(Arrays.asList(JWSAlgorithm.HS256)));
+		verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.HS256)));
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.HS256));
 		assertEquals(1, verifier.getAcceptedAlgorithms().size());
 	}
@@ -304,7 +303,7 @@ public class MACTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);
@@ -333,7 +332,7 @@ public class MACTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, payload);

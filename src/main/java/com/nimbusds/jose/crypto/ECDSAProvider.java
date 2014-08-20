@@ -48,7 +48,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	 * Initialises the supported algorithms.
 	 */
 	static {
-		Set<JWSAlgorithm> algs = new HashSet<JWSAlgorithm>();
+		Set<JWSAlgorithm> algs = new HashSet<>();
 		algs.add(JWSAlgorithm.ES256);
 		algs.add(JWSAlgorithm.ES384);
 		algs.add(JWSAlgorithm.ES512);

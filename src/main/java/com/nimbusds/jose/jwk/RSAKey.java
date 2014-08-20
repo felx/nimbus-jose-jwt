@@ -245,7 +245,7 @@ public final class RSAKey extends JWK {
 		 */
 		public static List<OtherPrimesInfo> toList(final RSAOtherPrimeInfo[] othArray) {
 
-			List<OtherPrimesInfo> list = new ArrayList<OtherPrimesInfo>();
+			List<OtherPrimesInfo> list = new ArrayList<>();
 
 			if (othArray == null) {
 
@@ -1656,7 +1656,7 @@ public final class RSAKey extends JWK {
 		if (jsonObject.containsKey("oth")) {
 
 			JSONArray arr = JSONObjectUtils.getJSONArray(jsonObject, "oth");
-			oth = new ArrayList<RSAKey.OtherPrimesInfo>(arr.size());
+			oth = new ArrayList<>(arr.size());
 			
 			for (Object o : arr) {
 

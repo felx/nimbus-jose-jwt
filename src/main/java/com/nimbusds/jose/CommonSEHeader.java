@@ -137,7 +137,7 @@ abstract class CommonSEHeader extends Header {
 
 		if (x5c != null) {
 			// Copy and make unmodifiable
-			this.x5c = Collections.unmodifiableList(new ArrayList<Base64>(x5c));
+			this.x5c = Collections.unmodifiableList(new ArrayList<>(x5c));
 		} else {
 			this.x5c = null;
 		}

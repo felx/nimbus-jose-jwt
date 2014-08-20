@@ -189,9 +189,9 @@ public class JWTClaimsSetTest extends TestCase {
 
 		JSONObject json = cs.toJSONObject();
 
-		assertEquals(new Long(60l), (Long)json.get("iat"));
-		assertEquals(new Long(60l), (Long)json.get("nbf"));
-		assertEquals(new Long(60l), (Long)json.get("exp"));
+		assertEquals(new Long(60l), json.get("iat"));
+		assertEquals(new Long(60l), json.get("nbf"));
+		assertEquals(new Long(60l), json.get("exp"));
 	}
 	
 	
@@ -231,7 +231,7 @@ public class JWTClaimsSetTest extends TestCase {
 		
 		assertEquals(1, cs.getCustomClaims().size());
 		
-		Map<String,Object> newCustomClaims = new HashMap<String,Object>();
+		Map<String,Object> newCustomClaims = new HashMap<>();
 		newCustomClaims.put("locale", "es-ES");
 		newCustomClaims.put("ip", "127.0.0.1");
 		
@@ -266,7 +266,7 @@ public class JWTClaimsSetTest extends TestCase {
 		cs.setClaim("sub", null);
 		assertNull(cs.getSubject());
 		
-		List<String> audList = new ArrayList<String>();
+		List<String> audList = new ArrayList<>();
 		audList.add("http://client.example.com");
 		cs.setAudience(audList);
 		assertEquals("http://client.example.com", cs.getAudience().get(0));

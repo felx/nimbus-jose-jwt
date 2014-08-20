@@ -83,7 +83,7 @@ public class RSAKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
@@ -183,7 +183,7 @@ public class RSAKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
 		RSAKey key = new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).
@@ -265,10 +265,10 @@ public class RSAKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
-		Set<KeyOperation> ops = new LinkedHashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 		keyGen.initialize(512);
@@ -576,7 +576,7 @@ public class RSAKeyTest extends TestCase {
 
 		KeyUse use = KeyUse.SIGNATURE;
 
-		Set<KeyOperation> ops = new HashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		try {
 			new RSAKey(new Base64URL(n), new Base64URL(e), use, ops, null, null, null, null, null);

@@ -39,7 +39,7 @@ public class JWEObject extends JOSEObject {
 		/**
 		 * The JWE object is decrypted.
 		 */
-		DECRYPTED;
+		DECRYPTED
 	}
 
 

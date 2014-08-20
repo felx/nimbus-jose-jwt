@@ -93,7 +93,7 @@ public class JWKSelector {
 		if (kty == null) {
 			types = null;
 		} else {
-			types = new HashSet<KeyType>(Arrays.asList(kty));
+			types = new HashSet<>(Arrays.asList(kty));
 		}
 	}
 
@@ -105,7 +105,7 @@ public class JWKSelector {
 	 */
 	public void setKeyTypes(final KeyType ... types) {
 
-		setKeyTypes(new HashSet<KeyType>(Arrays.asList(types)));
+		setKeyTypes(new HashSet<>(Arrays.asList(types)));
 	}
 
 
@@ -141,7 +141,7 @@ public class JWKSelector {
 		if (use == null) {
 			uses = null;
 		} else {
-			uses = new HashSet<KeyUse>(Arrays.asList(use));
+			uses = new HashSet<>(Arrays.asList(use));
 		}
 	}
 
@@ -153,7 +153,7 @@ public class JWKSelector {
 	 */
 	public void setKeyUses(final KeyUse... uses) {
 
-		setKeyUses(new HashSet<KeyUse>(Arrays.asList(uses)));
+		setKeyUses(new HashSet<>(Arrays.asList(uses)));
 	}
 
 
@@ -189,7 +189,7 @@ public class JWKSelector {
 		if (op == null) {
 			ops = null;
 		} else {
-			ops = new HashSet<KeyOperation>(Arrays.asList(op));
+			ops = new HashSet<>(Arrays.asList(op));
 		}
 	}
 
@@ -201,7 +201,7 @@ public class JWKSelector {
 	 */
 	public void setKeyOperations(final KeyOperation... ops) {
 
-		setKeyOperations(new HashSet<KeyOperation>(Arrays.asList(ops)));
+		setKeyOperations(new HashSet<>(Arrays.asList(ops)));
 	}
 
 
@@ -237,7 +237,7 @@ public class JWKSelector {
 		if (alg == null) {
 			algs = null;
 		} else {
-			algs = new HashSet<Algorithm>(Arrays.asList(alg));
+			algs = new HashSet<>(Arrays.asList(alg));
 		}
 	}
 
@@ -249,7 +249,7 @@ public class JWKSelector {
 	 */
 	public void setAlgorithms(final Algorithm ... algs) {
 
-		setAlgorithms(new HashSet<Algorithm>(Arrays.asList(algs)));
+		setAlgorithms(new HashSet<>(Arrays.asList(algs)));
 	}
 
 
@@ -282,7 +282,7 @@ public class JWKSelector {
 	 */
 	public void setKeyIDs(final String ... ids) {
 
-		setKeyIDs(new HashSet<String>(Arrays.asList(ids)));
+		setKeyIDs(new HashSet<>(Arrays.asList(ids)));
 	}
 
 
@@ -307,7 +307,7 @@ public class JWKSelector {
 		if (id == null) {
 			ids = null;
 		} else {
-			ids = new HashSet<String>(Arrays.asList(id));
+			ids = new HashSet<>(Arrays.asList(id));
 		}
 	}
 
@@ -368,7 +368,7 @@ public class JWKSelector {
 	 */
 	public List<JWK> select(final JWKSet jwkSet) {
 
-		List<JWK> matches = new LinkedList<JWK>();
+		List<JWK> matches = new LinkedList<>();
 
 		if (jwkSet == null)
 			return matches;

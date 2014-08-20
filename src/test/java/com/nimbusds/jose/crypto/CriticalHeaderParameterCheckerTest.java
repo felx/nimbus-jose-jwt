@@ -30,7 +30,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
 
-		checker.setIgnoredCriticalHeaders(new HashSet<String>(Arrays.asList("exp", "hs")));
+		checker.setIgnoredCriticalHeaders(new HashSet<>(Arrays.asList("exp", "hs")));
 
 		assertTrue(checker.getIgnoredCriticalHeaders().contains("exp"));
 		assertTrue(checker.getIgnoredCriticalHeaders().contains("hs"));
@@ -57,7 +57,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		assertTrue(checker.headerPasses(header));
@@ -71,7 +71,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		assertFalse(checker.headerPasses(header));

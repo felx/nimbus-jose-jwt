@@ -274,7 +274,7 @@ final class Base64Codec {
 	 *
 	 * @return The base 64 encoded string. Never {@code null}.
 	 */
-	public final static String encodeToString(byte[] byteArray, final boolean urlSafe) {
+	public static String encodeToString(byte[] byteArray, final boolean urlSafe) {
 
 		// Reuse char[] since we can't create a String incrementally
 		// and StringBuffer/Builder would be slower
@@ -292,7 +292,7 @@ final class Base64Codec {
 	 * @return The decoded byte array, empty if the input base 64 encoded
 	 *         string is empty, {@code null} or corrupted.
 	 */
-	public final static byte[] decode(final String b64String) {
+	public static byte[] decode(final String b64String) {
 
 		// Check special case
 		if (b64String == null || b64String.isEmpty()) {

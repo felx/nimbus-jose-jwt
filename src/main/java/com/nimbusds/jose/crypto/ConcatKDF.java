@@ -241,12 +241,8 @@ class ConcatKDF {
 			throw new JOSEException(e.getMessage(), e);
 		}
 
-		byte[] hashOutput = md.digest(hashInput);
-
-		byte[] cikBytes = hashOutput;
-
 		// HMACSHA256 or HMACSHA512
-		return new SecretKeySpec(cikBytes, "HMACSHA" + cikBitLength);
+		return new SecretKeySpec(md.digest(hashInput), "HMACSHA" + cikBitLength);
 	}
 
 

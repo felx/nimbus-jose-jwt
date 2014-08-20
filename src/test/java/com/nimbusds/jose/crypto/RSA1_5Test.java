@@ -128,7 +128,7 @@ public class RSA1_5Test extends TestCase {
 
 		} catch (Exception e) {
 
-			System.err.println(e);
+			fail(e.getMessage());
 		}
 	}
 
@@ -220,13 +220,13 @@ public class RSA1_5Test extends TestCase {
 		}
 
 		try {
-			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+			decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.A128KW)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.RSA1_5)));
+		decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.RSA1_5)));
 		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
 		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
 	}
@@ -244,13 +244,13 @@ public class RSA1_5Test extends TestCase {
 		}
 
 		try {
-			decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(new EncryptionMethod("unsupported"))));
+			decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(new EncryptionMethod("unsupported"))));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(EncryptionMethod.A128GCM)));
+		decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(EncryptionMethod.A128GCM)));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
@@ -643,7 +643,7 @@ public class RSA1_5Test extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -676,7 +676,7 @@ public class RSA1_5Test extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

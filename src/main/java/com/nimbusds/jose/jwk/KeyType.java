@@ -171,8 +171,6 @@ public final class KeyType implements JSONAware {
 	 *
 	 * @return The key type (matching standard key type constant, else a 
 	 *         newly created one).
-	 *
-	 * @throws ParseException If the string couldn't be parsed.
 	 */
 	public static KeyType parse(final String s) {
 

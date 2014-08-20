@@ -127,13 +127,13 @@ public class A192GCMKWTest extends TestCase {
 		}
 
 		try {
-			decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A128KW)));
+			decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.A128KW)));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		decrypter.setAcceptedAlgorithms(new HashSet<JWEAlgorithm>(Arrays.asList(JWEAlgorithm.A192GCMKW)));
+		decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.A192GCMKW)));
 		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
 		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
 	}
@@ -152,13 +152,13 @@ public class A192GCMKWTest extends TestCase {
 		}
 
 		try {
-			decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(new EncryptionMethod("unsupported"))));
+			decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(new EncryptionMethod("unsupported"))));
 			fail();
 		} catch (IllegalArgumentException e) {
 			// ok
 		}
 
-		decrypter.setAcceptedEncryptionMethods(new HashSet<EncryptionMethod>(Arrays.asList(EncryptionMethod.A128GCM)));
+		decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(EncryptionMethod.A128GCM)));
 		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
@@ -432,7 +432,7 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -465,7 +465,7 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

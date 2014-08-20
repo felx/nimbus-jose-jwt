@@ -298,7 +298,7 @@ public abstract class JWK implements JSONAware {
 
 		if (ops != null) {
 
-			List<String> sl = new ArrayList<String>(ops.size());
+			List<String> sl = new ArrayList<>(ops.size());
 
 			for (KeyOperation op: ops) {
 				sl.add(op.identifier());

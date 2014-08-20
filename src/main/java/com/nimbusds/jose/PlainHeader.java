@@ -53,7 +53,7 @@ public final class PlainHeader extends Header {
 	 * Initialises the registered parameter name set.
 	 */
 	static {
-		Set<String> p = new HashSet<String>();
+		Set<String> p = new HashSet<>();
 
 		p.add("alg");
 		p.add("typ");
@@ -195,7 +195,7 @@ public final class PlainHeader extends Header {
 			}
 
 			if (customParams == null) {
-				customParams = new HashMap<String,Object>();
+				customParams = new HashMap<>();
 			}
 
 			customParams.put(name, value);
@@ -355,22 +355,29 @@ public final class PlainHeader extends Header {
 		JOSEObjectType typ = null;
 		String cty = null;
 		Set<String> crit = null;
-		Map<String,Object> customParams = new HashMap<String,Object>();
+		Map<String,Object> customParams = new HashMap<>();
 
 
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
 
-			if (name.equals("alg")) {
-				// skip
-			} else if (name.equals("typ")) {
-				typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
-			} else if (name.equals("cty")) {
-				cty = JSONObjectUtils.getString(jsonObject, name);
-			} else if (name.equals("crit")) {
-				crit = new HashSet<String>(JSONObjectUtils.getStringList(jsonObject, name));
-			} else {
-				customParams.put(name, jsonObject.get(name));
+			switch (name) {
+
+				case "alg":
+					// skip
+					break;
+				case "typ":
+					typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
+					break;
+				case "cty":
+					cty = JSONObjectUtils.getString(jsonObject, name);
+					break;
+				case "crit":
+					crit = new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name));
+					break;
+				default:
+					customParams.put(name, jsonObject.get(name));
+					break;
 			}
 		}
 

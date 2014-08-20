@@ -517,7 +517,7 @@ public class JWKSetTest extends TestCase {
 		OctetSequenceKey oct2 = new OctetSequenceKey.Builder(new Base64URL("def")).build();
 		assertEquals("def", oct2.getKeyValue().toString());
 
-		List<JWK> keyList = new LinkedList<JWK>();
+		List<JWK> keyList = new LinkedList<>();
 		keyList.add(oct1);
 		keyList.add(oct2);
 
@@ -541,7 +541,7 @@ public class JWKSetTest extends TestCase {
 		OctetSequenceKey oct2 = new OctetSequenceKey.Builder(new Base64URL("def")).build();
 		assertEquals("def", oct2.getKeyValue().toString());
 
-		List<JWK> keyList = new LinkedList<JWK>();
+		List<JWK> keyList = new LinkedList<>();
 		keyList.add(oct1);
 		keyList.add(oct2);
 

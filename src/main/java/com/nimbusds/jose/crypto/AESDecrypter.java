@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,7 +65,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 	 * The accepted encryption methods.
 	 */
 	private Set<EncryptionMethod> acceptedEncs =
-		new HashSet<EncryptionMethod>(supportedEncryptionMethods());
+		new HashSet<>(supportedEncryptionMethods());
 
 
 	/**

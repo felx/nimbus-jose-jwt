@@ -29,7 +29,7 @@ public class X509CertChainUtils {
 	public static List<Base64> parseX509CertChain(final JSONArray jsonArray)
 		throws ParseException {
 
-		List<Base64> chain = new LinkedList<Base64>();
+		List<Base64> chain = new LinkedList<>();
 
 		for (int i=0; i < jsonArray.size(); i++) {
 

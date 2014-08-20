@@ -95,7 +95,7 @@ public class ECKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
 		Set<KeyOperation> ops = null;
@@ -164,11 +164,11 @@ public class ECKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
 		KeyUse use = null;
-		Set<KeyOperation> ops = new LinkedHashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
 			use, ops, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
@@ -240,7 +240,7 @@ public class ECKeyTest extends TestCase {
 
 		URL x5u = new URL("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
-		List<Base64> x5c = new LinkedList<Base64>();
+		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
 		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y).
@@ -411,7 +411,7 @@ public class ECKeyTest extends TestCase {
 
 		KeyUse use = KeyUse.SIGNATURE;
 
-		Set<KeyOperation> ops = new HashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		try {
 			new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, use, ops, null, null, null, null, null);

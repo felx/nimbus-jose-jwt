@@ -44,7 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-08-20)
  */
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
@@ -59,15 +59,10 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 	 * Creates a new RSA encrypter.
 	 *
 	 * @param publicKey The public RSA key. Must not be {@code null}.
-	 *
-	 * @throws JOSEException If the underlying secure random generator
-	 *                       couldn't be instantiated.
 	 */
-	public RSAEncrypter(final RSAPublicKey publicKey)
-		throws JOSEException {
+	public RSAEncrypter(final RSAPublicKey publicKey) {
 
 		if (publicKey == null) {
-
 			throw new IllegalArgumentException("The public RSA key must not be null");
 		}
 

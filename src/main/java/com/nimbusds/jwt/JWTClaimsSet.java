@@ -57,7 +57,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * Initialises the registered claim name set.
 	 */
 	static {
-		Set<String> n = new HashSet<String>();
+		Set<String> n = new HashSet<>();
 
 		n.add(ISSUER_CLAIM);
 		n.add(SUBJECT_CLAIM);
@@ -123,7 +123,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Custom claims.
 	 */
-	private Map<String,Object> customClaims = new HashMap<String,Object>();
+	private Map<String,Object> customClaims = new HashMap<>();
 
 
 	/**
@@ -144,14 +144,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		
 		super();
 		setAllClaims(old.getAllClaims());
-	}
-
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-
-		// TODO Auto-generated method stub
-		return super.clone();
 	}
 
 
@@ -563,7 +555,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	@Override
 	public Map<String, Object> getAllClaims() {
 
-		Map<String, Object> allClaims = new HashMap<String, Object>();
+		Map<String, Object> allClaims = new HashMap<>();
 
 		allClaims.putAll(customClaims);
 
@@ -669,7 +661,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 				Object audValue = json.get(AUDIENCE_CLAIM);
 
 				if (audValue instanceof String) {
-					List<String> singleAud = new ArrayList<String>();
+					List<String> singleAud = new ArrayList<>();
 					singleAud.add(JSONObjectUtils.getString(json, AUDIENCE_CLAIM));
 					cs.setAudience(singleAud);
 				} else if (audValue instanceof List) {

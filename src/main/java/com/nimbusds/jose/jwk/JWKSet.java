@@ -58,13 +58,13 @@ public class JWKSet {
 	/**
 	 * The JWK list.
 	 */
-	private final List<JWK> keys = new LinkedList<JWK>();
+	private final List<JWK> keys = new LinkedList<>();
 
 
 	/**
 	 * Additional custom members.
 	 */
-	private final Map<String,Object> customMembers = new HashMap<String,Object>();
+	private final Map<String,Object> customMembers = new HashMap<>();
 
 
 	/**
@@ -181,7 +181,7 @@ public class JWKSet {
 	 */
 	public JWKSet toPublicJWKSet() {
 
-		List<JWK> publicKeyList = new LinkedList<JWK>();
+		List<JWK> publicKeyList = new LinkedList<>();
 
 		for (JWK key: keys) {
 
@@ -296,7 +296,7 @@ public class JWKSet {
 
 		JSONArray keyArray = JSONObjectUtils.getJSONArray(json, "keys");
 
-		List<JWK> keys = new LinkedList<JWK>();
+		List<JWK> keys = new LinkedList<>();
 
 		for (int i=0; i < keyArray.size(); i++) {
 

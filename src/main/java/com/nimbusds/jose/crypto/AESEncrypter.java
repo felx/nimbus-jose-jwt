@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -13,7 +15,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
-
 
 
 /**
@@ -45,8 +46,9 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-08-19)
+ * @version $version$ (2014-08-20)
  */
+@ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 
@@ -67,18 +69,13 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	/**
 	 * Creates a new AES encrypter.
 	 *
-	 * @param kek		The Key Encrypting Key. Must be 128 bits
-	 *			(16 bytes), 192 bits (24 bytes) or 256 bits
-	 *			(32 bytes). Must not be {@code null}.
-	 *
-	 * @throws JOSEException If called with a null parameter
-	 *
+	 * @param kek The Key Encrypting Key. Must be 128 bits (16 bytes), 192
+	 *            bits (24 bytes) or 256 bits (32 bytes). Must not be
+	 *            {@code null}.
 	 */
-	public AESEncrypter(final SecretKey kek)
-		throws JOSEException {
+	public AESEncrypter(final SecretKey kek) {
 
 		if (kek == null) {
-
 			throw new IllegalArgumentException("The Key Encrypting Key must not be null");
 		}
 
@@ -88,15 +85,11 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	/**
 	 * Creates a new AES encrypter.
 	 *
-	 * @param keyBytes	The Key Encrypting Key, as a byte array.
-	 *			Must be 128 bits (16 bytes), 192 bits (24 bytes)
-	 *			or 256 bits (32 bytes). Must not be {@code null}.
-	 *
-	 * @throws JOSEException If called with a null parameter
-	 *
+	 * @param keyBytes The Key Encrypting Key, as a byte array. Must be 128
+	 *                 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32
+	 *                 bytes). Must not be {@code null}.
 	 */
-	public AESEncrypter(final byte[] keyBytes)
-		throws JOSEException {
+	public AESEncrypter(final byte[] keyBytes) {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}

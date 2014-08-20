@@ -22,7 +22,6 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.util.Base64URL;
 
 
 /**
@@ -112,9 +111,7 @@ public class ECDSARoundTripTest extends TestCase {
 		// Create the public and private keys
 		KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("EC");
 		keyGenerator.initialize(spec);
-		KeyPair keyPair = keyGenerator.generateKeyPair();
-
-		return keyPair;
+		return keyGenerator.generateKeyPair();
 	}
 
 
@@ -220,7 +217,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
@@ -253,7 +250,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
 			customParameter("exp", "2014-04-24").
-			criticalHeaders(new HashSet<String>(Arrays.asList("exp"))).
+			criticalHeaders(new HashSet<>(Arrays.asList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
