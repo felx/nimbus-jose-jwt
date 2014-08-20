@@ -14,7 +14,7 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
-
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -46,6 +46,7 @@ import com.nimbusds.jose.util.StringUtils;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-08-20)
  */
+@ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 

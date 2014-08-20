@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 
 import javax.crypto.SecretKey;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -37,8 +39,9 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-08-20)
  */
+@ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
 
 

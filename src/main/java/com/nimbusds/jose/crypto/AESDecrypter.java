@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
@@ -50,8 +52,9 @@ import com.nimbusds.jose.util.StringUtils;
  * algorithms and encryption methods.
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-08-19)
+ * @version $version$ (2014-08-20)
  */
+@ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 
