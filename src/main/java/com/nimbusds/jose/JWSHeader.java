@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-19)
+ * @version $version$ (2014-08-20)
  */
 @Immutable
 public final class JWSHeader extends CommonSEHeader {
@@ -169,6 +169,12 @@ public final class JWSHeader extends CommonSEHeader {
 		 * Custom header parameters.
 		 */
 		private Map<String,Object> customParams;
+
+
+		/**
+		 * The parsed Base64URL.
+		 */
+		private Base64URL parsedBase64URL;
 
 
 		/**
@@ -416,6 +422,21 @@ public final class JWSHeader extends CommonSEHeader {
 
 
 		/**
+		 * Sets the parsed Base64URL.
+		 *
+		 * @param base64URL The parsed Base64URL, {@code null} if the
+		 *                  header is created from scratch.
+		 *
+		 * @return This builder.
+		 */
+		public Builder parsedBase64URL(final Base64URL base64URL) {
+
+			this.parsedBase64URL = base64URL;
+			return this;
+		}
+
+
+		/**
 		 * Builds a new JWS header.
 		 *
 		 * @return The JWS header.
@@ -425,7 +446,7 @@ public final class JWSHeader extends CommonSEHeader {
 			return new JWSHeader(
 				alg, typ, cty, crit,
 				jku, jwk, x5u, x5t, x5t256, x5c, kid,
-				customParams, null);
+				customParams, parsedBase64URL);
 		}
 	}
 
@@ -593,17 +614,7 @@ public final class JWSHeader extends CommonSEHeader {
 			throw new ParseException("The algorithm \"alg\" header parameter must be for signatures", 0);
 		}
 
-		JOSEObjectType typ = null;
-		String cty = null;
-		Set<String> crit = null;
-		URL jku = null;
-		JWK jwk = null;
-		URL x5u = null;
-		Base64URL x5t = null;
-		Base64URL x5t256 = null;
-		List<Base64> x5c = null;
-		String kid = null;
-		Map<String,Object> customParams = new HashMap<>();
+		JWSHeader.Builder header = new Builder((JWSAlgorithm)alg).parsedBase64URL(parsedBase64URL);
 
 		// Parse optional + custom parameters
 		for (final String name: jsonObject.keySet()) {
@@ -614,45 +625,42 @@ public final class JWSHeader extends CommonSEHeader {
 					// skip
 					break;
 				case "typ":
-					typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
+					header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				case "cty":
-					cty = JSONObjectUtils.getString(jsonObject, name);
+					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				case "crit":
-					crit = new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name));
+					header = header.criticalHeaders(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 					break;
 				case "jku":
-					jku = JSONObjectUtils.getURL(jsonObject, name);
+					header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
 					break;
 				case "jwk":
-					jwk = JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name));
+					header = header.jwk(JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name)));
 					break;
 				case "x5u":
-					x5u = JSONObjectUtils.getURL(jsonObject, name);
+					header = header.x509CertURL(JSONObjectUtils.getURL(jsonObject, name));
 					break;
 				case "x5t":
-					x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					header = header.x509CertThumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				case "x5t#S256":
-					x5t256 = new Base64URL(JSONObjectUtils.getString(jsonObject, name));
+					header = header.x509CertSHA256Thumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				case "x5c":
-					x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name));
+					header = header.x509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name)));
 					break;
 				case "kid":
-					kid = JSONObjectUtils.getString(jsonObject, name);
+					header = header.keyID(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				default:
-					customParams.put(name, jsonObject.get(name));
+					header = header.customParameter(name, jsonObject.get(name));
 					break;
 			}
 		}
 
-		return new JWSHeader(
-			(JWSAlgorithm)alg, typ, cty, crit,
-			jku, jwk, x5u, x5t, x5t256, x5c, kid,
-			customParams, parsedBase64URL);
+		return header.build();
 	}
 
 

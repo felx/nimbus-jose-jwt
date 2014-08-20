@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2014-08-20)
  */
 @Immutable
 public final class PlainHeader extends Header {
@@ -101,6 +101,12 @@ public final class PlainHeader extends Header {
 		 * Custom header parameters.
 		 */
 		private Map<String,Object> customParams;
+
+
+		/**
+		 * The parsed Base64URL.
+		 */
+		private Base64URL parsedBase64URL;
 
 
 		/**
@@ -221,13 +227,28 @@ public final class PlainHeader extends Header {
 
 
 		/**
+		 * Sets the parsed Base64URL.
+		 *
+		 * @param base64URL The parsed Base64URL, {@code null} if the
+		 *                  header is created from scratch.
+		 *
+		 * @return This builder.
+		 */
+		public Builder parsedBase64URL(final Base64URL base64URL) {
+
+			this.parsedBase64URL = base64URL;
+			return this;
+		}
+
+
+		/**
 		 * Builds a new plain header.
 		 *
 		 * @return The plain header.
 		 */
 		public PlainHeader build() {
 
-			return new PlainHeader(typ, cty, crit, customParams, null);
+			return new PlainHeader(typ, cty, crit, customParams, parsedBase64URL);
 		}
 	}
 
@@ -351,12 +372,7 @@ public final class PlainHeader extends Header {
 			throw new ParseException("The algorithm \"alg\" header parameter must be \"none\"", 0);
 		}
 
-
-		JOSEObjectType typ = null;
-		String cty = null;
-		Set<String> crit = null;
-		Map<String,Object> customParams = new HashMap<>();
-
+		PlainHeader.Builder header = new Builder().parsedBase64URL(parsedBase64URL);
 
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
@@ -367,21 +383,21 @@ public final class PlainHeader extends Header {
 					// skip
 					break;
 				case "typ":
-					typ = new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name));
+					header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
 					break;
 				case "cty":
-					cty = JSONObjectUtils.getString(jsonObject, name);
+					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
 					break;
 				case "crit":
-					crit = new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name));
+					header = header.criticalHeaders(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 					break;
 				default:
-					customParams.put(name, jsonObject.get(name));
+					header = header.customParameter(name, jsonObject.get(name));
 					break;
 			}
 		}
 
-		return new PlainHeader(typ, cty, crit, customParams, parsedBase64URL);
+		return header.build();
 	}
 
 
