@@ -190,7 +190,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Gets the signing input for this JWS object.
+	 * Returns the signing input for this JWS object.
 	 *
 	 * <p>Format:
 	 *
@@ -217,7 +217,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Gets the signature of this JWS object.
+	 * Returns the signature of this JWS object.
 	 *
 	 * @return The signature, {@code null} if the JWS object is not signed 
 	 *         yet.
@@ -229,7 +229,7 @@ public class JWSObject extends JOSEObject {
 
 
 	/**
-	 * Gets the state of this JWS object.
+	 * Returns the state of this JWS object.
 	 *
 	 * @return The state.
 	 */

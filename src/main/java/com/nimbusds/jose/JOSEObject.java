@@ -72,7 +72,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Gets the header of this JOSE object.
+	 * Returns the header of this JOSE object.
 	 *
 	 * @return The header.
 	 */
@@ -92,7 +92,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Gets the payload of this JOSE object.
+	 * Returns the payload of this JOSE object.
 	 *
 	 * @return The payload, {@code null} if not available (for an encrypted
 	 *         JWE object that hasn't been decrypted).
@@ -119,7 +119,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Gets the original parsed Base64URL parts used to create this JOSE 
+	 * Returns the original parsed Base64URL parts used to create this JOSE
 	 * object.
 	 *
 	 * @return The original Base64URL parts used to creates this JOSE 
@@ -134,7 +134,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Gets the original parsed string used to create this JOSE object.
+	 * Returns the original parsed string used to create this JOSE object.
 	 *
 	 * @see #getParsedParts
 	 * 
