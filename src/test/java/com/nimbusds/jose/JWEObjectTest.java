@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-07-15)
+ * @version $version$ (2014-08-20)
  */
 public class JWEObjectTest extends TestCase {
 
@@ -33,9 +33,8 @@ public class JWEObjectTest extends TestCase {
 
 		assertEquals(firstPart, jwe.getHeader().toBase64URL());
 		assertEquals(secondPart, jwe.getEncryptedKey());
-		assertEquals(thirdPart, jwe.getInitializationVector());
+		assertEquals(thirdPart, jwe.getIV());
 		assertEquals(fourthPart, jwe.getCipherText());
-		assertEquals(fifthPart, jwe.getIntegrityValue());
 
 		assertEquals(firstPart.toString() + ".abc.def.ghi.jkl", jwe.serialize());
 		assertEquals(firstPart.toString() + ".abc.def.ghi.jkl", jwe.getParsedString());

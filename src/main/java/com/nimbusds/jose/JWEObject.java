@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version $version$ (2014-08-20)
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -59,7 +59,7 @@ public class JWEObject extends JOSEObject {
 	 * The initialisation vector, {@code null} if not generated or 
 	 * applicable.
 	 */
-	private Base64URL initializationVector;
+	private Base64URL iv;
 
 
 	/**
@@ -71,7 +71,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * The authentication tag, {@code null} if not computed or applicable.
 	 */
-	private Base64URL authenticationTag;
+	private Base64URL authTag;
 
 
 	/**
@@ -162,11 +162,11 @@ public class JWEObject extends JOSEObject {
 
 		if (thirdPart == null || thirdPart.toString().isEmpty()) {
 
-			initializationVector = null;
+			iv = null;
 
 		} else {
 
-			initializationVector = thirdPart;
+			iv = thirdPart;
 		}
 
 		if (fourthPart == null) {
@@ -178,11 +178,11 @@ public class JWEObject extends JOSEObject {
 
 		if (fifthPart == null || fifthPart.toString().isEmpty()) {
 
-			authenticationTag = null;
+			authTag = null;
 
 		} else {
 
-			authenticationTag = fifthPart;
+			authTag = fifthPart;
 		}
 
 		state = State.ENCRYPTED; // but not decrypted yet!
@@ -199,7 +199,7 @@ public class JWEObject extends JOSEObject {
 
 
 	/**
-	 * Gets the encrypted key of this JWE object.
+	 * Returns the encrypted key of this JWE object.
 	 *
 	 * @return The encrypted key, {@code null} not applicable or the JWE
 	 *         object has not been encrypted yet.
@@ -211,19 +211,19 @@ public class JWEObject extends JOSEObject {
 
 
 	/**
-	 * Gets the initialisation vector (IV) of this JWE object.
+	 * Returns the initialisation vector (IV) of this JWE object.
 	 *
 	 * @return The initialisation vector (IV), {@code null} if not 
 	 *         applicable or the JWE object has not been encrypted yet.
 	 */
-	public Base64URL getInitializationVector() {
+	public Base64URL getIV() {
 
-		return initializationVector;
+		return iv;
 	}
 
 
 	/**
-	 * Gets the cipher text of this JWE object.
+	 * Returns the cipher text of this JWE object.
 	 *
 	 * @return The cipher text, {@code null} if the JWE object has not been
 	 *         encrypted yet.
@@ -235,29 +235,19 @@ public class JWEObject extends JOSEObject {
 
 
 	/**
-	 * Gets the authentication tag of this JWE object.
+	 * Returns the authentication tag of this JWE object.
 	 *
 	 * @return The authentication tag, {@code null} if not applicable or
 	 *         the JWE object has not been encrypted yet.
 	 */
-	public Base64URL getAuthenticationTag() {
+	public Base64URL getAuthTag() {
 
-		return authenticationTag;
+		return authTag;
 	}
 
 
 	/**
-	 * Use {@link #getAuthenticationTag} instead.
-	 */
-	@Deprecated
-	public Base64URL getIntegrityValue() {
-
-		return getAuthenticationTag();
-	}
-
-
-	/**
-	 * Gets the state of this JWE object.
+	 * Returns the state of this JWE object.
 	 *
 	 * @return The state.
 	 */
@@ -402,9 +392,9 @@ public class JWEObject extends JOSEObject {
 		}
 
 		encryptedKey = parts.getEncryptedKey();
-		initializationVector = parts.getInitializationVector();
+		iv = parts.getInitializationVector();
 		cipherText = parts.getCipherText();
-		authenticationTag = parts.getAuthenticationTag();
+		authTag = parts.getAuthenticationTag();
 
 		state = State.ENCRYPTED;
 	}
@@ -432,9 +422,9 @@ public class JWEObject extends JOSEObject {
 		try {
 			setPayload(new Payload(decrypter.decrypt(getHeader(), 
 					       getEncryptedKey(), 
-					       getInitializationVector(),
+					       getIV(),
 					       getCipherText(), 
-					       getAuthenticationTag())));
+					       getAuthTag())));
 
 		} catch (JOSEException e) {
 
@@ -483,9 +473,9 @@ public class JWEObject extends JOSEObject {
 
 		sb.append('.');
 
-		if (initializationVector != null) {
+		if (iv != null) {
 
-			sb.append(initializationVector.toString());
+			sb.append(iv.toString());
 		}
 
 		sb.append('.');
@@ -494,9 +484,9 @@ public class JWEObject extends JOSEObject {
 
 		sb.append('.');
 
-		if (authenticationTag != null) {
+		if (authTag != null) {
 
-			sb.append(authenticationTag.toString());
+			sb.append(authTag.toString());
 		}
 
 		return sb.toString();
