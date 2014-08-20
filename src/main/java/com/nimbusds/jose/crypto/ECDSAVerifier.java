@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-08-20)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
@@ -193,8 +193,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 		ECCurve curve = x9ECParameters.getCurve();
-		ECPoint qB = curve.createPoint(x, y, false);
-		ECPoint q = new ECPoint.Fp(curve, qB.getX(), qB.getY());
+		ECPoint q = curve.createPoint(x, y);
 
 		ECDomainParameters ecDomainParameters = new ECDomainParameters(
 			curve, 
