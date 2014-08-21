@@ -15,7 +15,7 @@ import com.nimbusds.jose.JWEObject;
  * Tests the JWT parser. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-01)
+ * @version $version$ (2013-08-21)
  */
 public class JWTParserTest extends TestCase {
 
@@ -30,6 +30,8 @@ public class JWTParserTest extends TestCase {
 				".";
 
 		JWT jwt = JWTParser.parse(s);
+
+		assertEquals(Algorithm.NONE, jwt.getHeader().getAlgorithm());
 		
 		assertTrue(jwt instanceof PlainJWT);
 		
@@ -63,6 +65,8 @@ public class JWTParserTest extends TestCase {
 			"fiK51VwhsxJ-siBMR-YFiA";
 		
 		JWT jwt = JWTParser.parse(s);
+
+		assertEquals(JWEAlgorithm.RSA1_5, jwt.getHeader().getAlgorithm());
 		
 		assertTrue(jwt instanceof EncryptedJWT);
 		

@@ -303,3 +303,6 @@ version 3.0 (2014-08-19)
     * Adds A128CGMKW, A192CGMKW and A256CGMKW encryption support.
     * Updates library source code to Java 7.
     * Upgrades to BouncyCastle 1.51.
+
+version 3.1 (2014-08-21)
+    * Allows public access to Header.getAlgorithm().

@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2014-08-21)
  */
 public abstract class Header {
 
@@ -139,7 +139,7 @@ public abstract class Header {
 	 *
 	 * @return The algorithm parameter.
 	 */
-	protected Algorithm getAlgorithm() {
+	public Algorithm getAlgorithm() {
 
 		return alg;
 	}
