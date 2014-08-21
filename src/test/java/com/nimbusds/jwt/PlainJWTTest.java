@@ -4,6 +4,7 @@ package com.nimbusds.jwt;
 import java.util.Date;
 
 import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.PlainHeader;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
@@ -14,9 +15,49 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-13)
+ * @version $version$ (2014-08-21)
  */
 public class PlainJWTTest extends TestCase {
+
+
+	public void testClaimsSetConstructor()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setSubject("alice");
+		claimsSet.setIssuer("http://c2id.com");
+		claimsSet.setAudience("http://app.example.com");
+
+		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+
+		PlainJWT jwt = new PlainJWT(readOnlyClaimsSet);
+
+		assertEquals("alice", jwt.getJWTClaimsSet().getSubject());
+		assertEquals("http://c2id.com", jwt.getJWTClaimsSet().getIssuer());
+		assertEquals("http://app.example.com", jwt.getJWTClaimsSet().getAudience().get(0));
+	}
+
+
+	public void testHeaderAndClaimsSetConstructor()
+		throws Exception {
+
+		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000l).build();
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setSubject("alice");
+		claimsSet.setIssuer("http://c2id.com");
+		claimsSet.setAudience("http://app.example.com");
+
+		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+
+		PlainJWT jwt = new PlainJWT(header, readOnlyClaimsSet);
+
+		assertEquals(header, jwt.getHeader());
+
+		assertEquals("alice", jwt.getJWTClaimsSet().getSubject());
+		assertEquals("http://c2id.com", jwt.getJWTClaimsSet().getIssuer());
+		assertEquals("http://app.example.com", jwt.getJWTClaimsSet().getAudience().get(0));
+	}
 
 
 	public void testBase64URLConstructor()

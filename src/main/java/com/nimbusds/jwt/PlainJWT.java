@@ -4,6 +4,7 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 
 import net.jcip.annotations.ThreadSafe;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JOSEObject;
@@ -17,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Plain JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2014-08-21)
  */
 @ThreadSafe
 public class PlainJWT extends PlainObject implements JWT {
@@ -30,7 +31,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	 *
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final JWTClaimsSet claimsSet) {
+	public PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) {
 
 		super(new Payload(claimsSet.toJSONObject()));
 	}
