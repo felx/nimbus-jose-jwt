@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 /**
  * Tests the array utilities.
  */
-public class ArrayUtilsTest extends TestCase {
+public class ConstantTimeUtilsTest extends TestCase {
 
 
 	public void testConstantTimeEquality() {
@@ -15,7 +15,7 @@ public class ArrayUtilsTest extends TestCase {
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7, 8};
 
-		assertTrue(ArrayUtils.constantTimeAreEqual(a, b));
+		assertTrue(ConstantTimeUtils.areEqual(a, b));
 
 	}
 
@@ -25,7 +25,7 @@ public class ArrayUtilsTest extends TestCase {
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7, 7};
 
-		assertFalse(ArrayUtils.constantTimeAreEqual(a, b));
+		assertFalse(ConstantTimeUtils.areEqual(a, b));
 	}
 
 
@@ -34,6 +34,6 @@ public class ArrayUtilsTest extends TestCase {
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7};
 
-		assertFalse(ArrayUtils.constantTimeAreEqual(a, b));
+		assertFalse(ConstantTimeUtils.areEqual(a, b));
 	}
 }

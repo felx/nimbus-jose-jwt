@@ -349,7 +349,7 @@ class AESCBC {
 
 		boolean macCheckPassed = true;
 
-		if (! ArrayUtils.constantTimeAreEqual(expectedAuthTag, authTag)) {
+		if (! ConstantTimeUtils.areEqual(expectedAuthTag, authTag)) {
 			// Thwart timing attacks by delaying exception until after decryption
 			macCheckPassed = false;
 		}
@@ -423,7 +423,7 @@ class AESCBC {
 
 		byte[] mac = HMAC.compute(cik, macInput.getBytes(), macProvider);
 
-		if (! ArrayUtils.constantTimeAreEqual(authTag.decode(), mac)) {
+		if (! ConstantTimeUtils.areEqual(authTag.decode(), mac)) {
 
 			throw new JOSEException("HMAC integrity check failed");
 		}

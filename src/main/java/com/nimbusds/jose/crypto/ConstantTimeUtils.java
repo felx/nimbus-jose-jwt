@@ -5,9 +5,9 @@ package com.nimbusds.jose.crypto;
  * Array utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-02)
+ * @version $version$ (2014-09-01)
  */
-class ArrayUtils {
+class ConstantTimeUtils {
 
 
 	/**
@@ -20,7 +20,7 @@ class ArrayUtils {
 	 * @return {@code true} if the two arrays are equal, else
 	 *         {@code false}.
 	 */
-	public static boolean constantTimeAreEqual(final byte[] a, final byte[] b) {
+	public static boolean areEqual(final byte[] a, final byte[] b) {
 
 		// From http://codahale.com/a-lesson-in-timing-attacks/
 
@@ -40,5 +40,5 @@ class ArrayUtils {
 	/**
 	 * Prevents public instantiation.
 	 */
-	private ArrayUtils() { }
+	private ConstantTimeUtils() { }
 }

@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-09-01)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
@@ -118,8 +118,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 			return false;
 		}
 
-		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
-		Base64URL expectedSignature = Base64URL.encode(hmac);
-		return expectedSignature.equals(signature);
+		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
+		return ConstantTimeUtils.areEqual(expectedHMAC, signature.decode());
 	}
 }
