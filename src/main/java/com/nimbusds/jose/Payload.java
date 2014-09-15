@@ -8,6 +8,8 @@ import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jwt.SignedJWT;
+
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -30,7 +32,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version $version$ (2014-09-15)
  */
 @Immutable
 public final class Payload {
@@ -64,7 +66,19 @@ public final class Payload {
 		/**
 		 * The payload was created from a Base64URL-encoded object.
 		 */
-		BASE64URL
+		BASE64URL,
+
+
+		/**
+		 * The payload was created from a JWS object.
+		 */
+		JWS_OBJECT,
+
+
+		/**
+		 * The payload was created from a signed JSON Web Token (JWT).
+		 */
+		SIGNED_JWT
 	}
 
 
@@ -103,6 +117,18 @@ public final class Payload {
 	 * The Base64URL view.
 	 */
 	private Base64URL base64URLView = null;
+
+
+	/**
+	 * The JWS object view.
+	 */
+	private JWSObject jwsObjectView = null;
+
+
+	/**
+	 * The signed JWT view.
+	 */
+	private SignedJWT signedJWTView = null;
 
 
 	/**
@@ -213,6 +239,46 @@ public final class Payload {
 		base64URLView = base64URL;
 
 		origin = Origin.BASE64URL;
+	}
+
+
+	/**
+	 * Creates a new payload from the specified JWS object. Intended for
+	 * signed then encrypted JOSE objects.
+	 *
+	 * @param jwsObject The JWS object representing the payload. Must not
+	 *                  be {@code null}.
+	 */
+	public Payload(final JWSObject jwsObject) {
+
+		if (jwsObject == null) {
+
+			throw new IllegalArgumentException("The JWS object must not be null");
+		}
+
+		jwsObjectView = jwsObject;
+
+		origin = Origin.JWS_OBJECT;
+	}
+
+
+	/**
+	 * Creates a new payload from the specified signed JSON Web Token
+	 * (JWT). Intended for signed then encrypted JWTs.
+	 *
+	 * @param signedJWT The signed JWT representing the payload. Must not
+	 *                  be {@code null}.
+	 */
+	public Payload(final SignedJWT signedJWT) {
+
+		if (signedJWT == null) {
+
+			throw new IllegalArgumentException("The signed JWT must not be null");
+		}
+
+		signedJWTView = signedJWT;
+
+		origin = Origin.SIGNED_JWT;
 	}
 
 
@@ -371,5 +437,57 @@ public final class Payload {
 		}
 
 		return base64URLView;
+	}
+
+
+	/**
+	 * Returns a JWS object view of this payload. Intended for signed then
+	 * encrypted JOSE objects.
+	 *
+	 * @return The JWS object view, {@code null} if the payload couldn't
+	 *         be converted to a JWS object.
+	 */
+	public JWSObject toJWSObject() {
+
+		if (jwsObjectView != null) {
+
+			return jwsObjectView;
+		}
+
+		try {
+			jwsObjectView = JWSObject.parse(toString());
+
+		} catch (ParseException e) {
+
+			return null;
+		}
+
+		return jwsObjectView;
+	}
+
+
+	/**
+	 * Returns a signed JSON Web Token (JWT) view of this payload. Intended
+	 * for signed then encrypted JWTs.
+	 *
+	 * @return The signed JWT view, {@code null} if the payload couldn't be
+	 *         converted to a signed JWT.
+	 */
+	public SignedJWT toSignedJWT() {
+
+		if (signedJWTView != null) {
+
+			return signedJWTView;
+		}
+
+		try {
+			signedJWTView = SignedJWT.parse(toString());
+
+		} catch (ParseException e) {
+
+			return null;
+		}
+
+		return signedJWTView;
 	}
 }
