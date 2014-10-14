@@ -246,14 +246,17 @@ public final class Payload {
 	 * Creates a new payload from the specified JWS object. Intended for
 	 * signed then encrypted JOSE objects.
 	 *
-	 * @param jwsObject The JWS object representing the payload. Must not
-	 *                  be {@code null}.
+	 * @param jwsObject The JWS object representing the payload. Must be in
+	 *                  a signed state and not {@code null}.
 	 */
 	public Payload(final JWSObject jwsObject) {
 
 		if (jwsObject == null) {
-
 			throw new IllegalArgumentException("The JWS object must not be null");
+		}
+
+		if (jwsObject.getState() == JWSObject.State.UNSIGNED) {
+			throw new IllegalArgumentException("The JWS object must be signed");
 		}
 
 		jwsObjectView = jwsObject;

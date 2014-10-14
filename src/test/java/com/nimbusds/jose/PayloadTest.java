@@ -87,4 +87,17 @@ public class PayloadTest extends TestCase {
 		assertEquals(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
 		assertEquals("joe", payload.toSignedJWT().getJWTClaimsSet().getIssuer());
 	}
+
+
+	public void testRejectUnsignedJWS() {
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("test"));
+
+		try {
+			new Payload(jwsObject);
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("The JWS object must be signed", e.getMessage());
+		}
+	}
 }
