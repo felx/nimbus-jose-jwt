@@ -15,11 +15,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Payload with JSON object, string, byte array and Base64URL views. Represents
- * the original object that was signed with JWS or encrypted with JWE. This 
- * class is immutable.
- *
- * <p>Non-initial views are created on demand to conserve resources.
+ * Payload with JSON object, string, byte array, Base64URL, JWS object and
+ * signed JWT views. Represents the original object that was signed with JWS or
+ * encrypted with JWE. This class is immutable.
  *
  * <p>UTF-8 is the character set for all conversions between strings and byte
  * arrays.
@@ -29,10 +27,12 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <pre>
  * JSONObject <=> String <=> Base64URL
  *                       <=> byte[]
+ *                       <=> JWSObject
+ *                       <=> SignedJWT
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-09-15)
+ * @version $version$ (2014-10-28)
  */
 @Immutable
 public final class Payload {
@@ -98,37 +98,37 @@ public final class Payload {
 	/**
 	 * The JSON object view.
 	 */
-	private JSONObject jsonView = null;
+	private final JSONObject jsonObject;
 
 
 	/**
 	 * The string view.
 	 */
-	private String stringView = null;
+	private final String string;
 
 
 	/**
 	 * The byte array view.
 	 */
-	private byte[] bytesView = null;
+	private final byte[] bytes;
 
 
 	/**
 	 * The Base64URL view.
 	 */
-	private Base64URL base64URLView = null;
+	private final Base64URL base64URL;
 
 
 	/**
 	 * The JWS object view.
 	 */
-	private JWSObject jwsObjectView = null;
+	private final JWSObject jwsObject;
 
 
 	/**
 	 * The signed JWT view.
 	 */
-	private SignedJWT signedJWTView = null;
+	private final SignedJWT signedJWT;
 
 
 	/**
@@ -170,16 +170,21 @@ public final class Payload {
 	/**
 	 * Creates a new payload from the specified JSON object.
 	 *
-	 * @param json The JSON object representing the payload. Must not be
-	 *             {@code null}.
+	 * @param jsonObject The JSON object representing the payload. Must not
+	 *                   be {@code null}.
 	 */
-	public Payload(final JSONObject json) {
+	public Payload(final JSONObject jsonObject) {
 
-		if (json == null) {
+		if (jsonObject == null) {
 			throw new IllegalArgumentException("The JSON object must not be null");
 		}
 
-		jsonView = json;
+		this.jsonObject = jsonObject;
+		string = null;
+		bytes = null;
+		base64URL = null;
+		jwsObject = null;
+		signedJWT = null;
 
 		origin = Origin.JSON;
 	}
@@ -194,11 +199,15 @@ public final class Payload {
 	public Payload(final String string) {
 
 		if (string == null) {
-
 			throw new IllegalArgumentException("The string must not be null");
 		}
 
-		stringView = string;
+		jsonObject = null;
+		this.string = string;
+		bytes = null;
+		base64URL = null;
+		jwsObject = null;
+		signedJWT = null;
 
 		origin = Origin.STRING;
 	}
@@ -213,11 +222,15 @@ public final class Payload {
 	public Payload(final byte[] bytes) {
 
 		if (bytes == null) {
-
 			throw new IllegalArgumentException("The byte array must not be null");
 		}
 
-		bytesView = bytes;
+		jsonObject = null;
+		string = null;
+		this.bytes = bytes;
+		base64URL = null;
+		jwsObject = null;
+		signedJWT = null;
 
 		origin = Origin.BYTE_ARRAY;
 	}
@@ -236,7 +249,12 @@ public final class Payload {
 			throw new IllegalArgumentException("The Base64URL-encoded object must not be null");
 		}
 
-		base64URLView = base64URL;
+		jsonObject = null;
+		string = null;
+		bytes = null;
+		this.base64URL = base64URL;
+		jwsObject = null;
+		signedJWT = null;
 
 		origin = Origin.BASE64URL;
 	}
@@ -259,7 +277,12 @@ public final class Payload {
 			throw new IllegalArgumentException("The JWS object must be signed");
 		}
 
-		jwsObjectView = jwsObject;
+		jsonObject = null;
+		string = null;
+		bytes = null;
+		base64URL = null;
+		this.jwsObject = jwsObject;
+		signedJWT = null;
 
 		origin = Origin.JWS_OBJECT;
 	}
@@ -269,17 +292,25 @@ public final class Payload {
 	 * Creates a new payload from the specified signed JSON Web Token
 	 * (JWT). Intended for signed then encrypted JWTs.
 	 *
-	 * @param signedJWT The signed JWT representing the payload. Must not
-	 *                  be {@code null}.
+	 * @param signedJWT The signed JWT representing the payload. Must be in
+	 *                  a signed state and not {@code null}.
 	 */
 	public Payload(final SignedJWT signedJWT) {
 
 		if (signedJWT == null) {
-
 			throw new IllegalArgumentException("The signed JWT must not be null");
 		}
 
-		signedJWTView = signedJWT;
+		if (signedJWT.getState() == JWSObject.State.UNSIGNED) {
+			throw new IllegalArgumentException("The JWT must be signed");
+		}
+
+		jsonObject = null;
+		string = null;
+		bytes = null;
+		base64URL = null;
+		this.signedJWT = signedJWT;
+		jwsObject = signedJWT; // The signed JWT is also a JWS
 
 		origin = Origin.SIGNED_JWT;
 	}
@@ -304,48 +335,26 @@ public final class Payload {
 	 */
 	public JSONObject toJSONObject() {
 
-		if (jsonView != null) {
-
-			return jsonView;
+		if (jsonObject != null) {
+			return jsonObject;
 		}
 
 		// Convert
-		if (stringView != null) {
 
-			try {
-				jsonView = JSONObjectUtils.parseJSONObject(stringView);
+		String s = toString();
 
-			} catch (ParseException e) {
-
-				// jsonView remains null
-			}
-
-		} else if (bytesView != null) {
-
-			stringView = byteArrayToString(bytesView);
-
-			try {
-				jsonView = JSONObjectUtils.parseJSONObject(stringView);
-
-			} catch (ParseException e) {
-
-				// jsonView remains null
-			}
-
-		} else if (base64URLView != null) {
-
-			stringView = base64URLView.decodeToString();
-
-			try {
-				jsonView = JSONObjectUtils.parseJSONObject(stringView);
-
-			} catch (ParseException e) {
-
-				// jsonView remains null
-			}
+		if (s == null) {
+			// to string conversion failed
+			return null;
 		}
 
-		return jsonView;
+		try {
+			return JSONObjectUtils.parseJSONObject(s);
+
+		} catch (ParseException e) {
+			// Payload not a JSON object
+			return null;
+		}
 	}
 
 
@@ -357,26 +366,34 @@ public final class Payload {
 	@Override
 	public String toString() {
 
-		if (stringView != null) {
+		if (string != null) {
 
-			return stringView;
+			return string;
 		}
 
 		// Convert
-		if (jsonView != null) {
+		if (jwsObject != null) {
 
-			stringView = jsonView.toString();
+			if (jwsObject.getParsedString() != null) {
+				return jwsObject.getParsedString();
+			} else {
+				return jwsObject.serialize();
+			}
 
-		} else if (bytesView != null) {
+		} else if (jsonObject != null) {
 
-			stringView = byteArrayToString(bytesView);
+			return jsonObject.toString();
 
-		} else if (base64URLView != null) {
+		} else if (bytes != null) {
 
-			stringView = base64URLView.decodeToString();
+			return byteArrayToString(bytes);
+
+		} else if (base64URL != null) {
+
+			return base64URL.decodeToString();
+		} else {
+			return null; // should never happen
 		}
-
-		return stringView;
 	}
 
 
@@ -387,27 +404,19 @@ public final class Payload {
 	 */
 	public byte[] toBytes() {
 
-		if (bytesView != null) {
+		if (bytes != null) {
 			
-			return bytesView;
+			return bytes;
 		}
 
 		// Convert
-		if (stringView != null) {
 
-			bytesView = stringToByteArray(stringView);
+		if (base64URL != null) {
+			return base64URL.decode();
 
-		} else if (jsonView != null) {
-
-			stringView = jsonView.toString();
-			bytesView = stringToByteArray(stringView);
-
-		} else if (base64URLView != null) {
-
-			bytesView = base64URLView.decode();
 		}
 
-		return bytesView;	
+		return stringToByteArray(toString());
 	}
 
 
@@ -418,28 +427,14 @@ public final class Payload {
 	 */
 	public Base64URL toBase64URL() {
 
-		if (base64URLView != null) {
+		if (base64URL != null) {
 
-			return base64URLView;
+			return base64URL;
 		}
 
 		// Convert
 
-		if (stringView != null) {
-
-			base64URLView = Base64URL.encode(stringView);
-
-		} else if (bytesView != null) {
-
-			base64URLView = Base64URL.encode(bytesView);
-
-		} else if (jsonView != null) {
-
-			stringView = jsonView.toString();
-			base64URLView = Base64URL.encode(stringView);
-		}
-
-		return base64URLView;
+		return Base64URL.encode(toBytes());
 	}
 
 
@@ -452,20 +447,18 @@ public final class Payload {
 	 */
 	public JWSObject toJWSObject() {
 
-		if (jwsObjectView != null) {
+		if (jwsObject != null) {
 
-			return jwsObjectView;
+			return jwsObject;
 		}
 
 		try {
-			jwsObjectView = JWSObject.parse(toString());
+			return JWSObject.parse(toString());
 
 		} catch (ParseException e) {
 
 			return null;
 		}
-
-		return jwsObjectView;
 	}
 
 
@@ -478,19 +471,17 @@ public final class Payload {
 	 */
 	public SignedJWT toSignedJWT() {
 
-		if (signedJWTView != null) {
+		if (signedJWT != null) {
 
-			return signedJWTView;
+			return signedJWT;
 		}
 
 		try {
-			signedJWTView = SignedJWT.parse(toString());
+			return SignedJWT.parse(toString());
 
 		} catch (ParseException e) {
 
 			return null;
 		}
-
-		return signedJWTView;
 	}
 }

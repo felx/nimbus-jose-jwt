@@ -4,6 +4,7 @@ package com.nimbusds.jose;
 import junit.framework.TestCase;
 
 import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.jwt.JWTClaimsSet;
 
 
 /**
@@ -29,6 +30,8 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(Payload.Origin.JWS_OBJECT, payload.getOrigin());
 		assertEquals(jwsObject, payload.toJWSObject());
+		assertEquals(s, payload.toString());
+		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
 	}
 
 
@@ -47,6 +50,9 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(Payload.Origin.STRING, payload.getOrigin());
 		assertEquals(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
+
+		assertEquals(s, payload.toString());
+		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
 	}
 
 
@@ -67,6 +73,11 @@ public class PayloadTest extends TestCase {
 
 		assertEquals(Payload.Origin.SIGNED_JWT, payload.getOrigin());
 		assertEquals(signedJWT, payload.toSignedJWT());
+
+		assertNotNull(payload.toJWSObject());
+
+		assertEquals(s, payload.toString());
+		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
 	}
 
 
@@ -86,18 +97,32 @@ public class PayloadTest extends TestCase {
 		assertEquals(Payload.Origin.STRING, payload.getOrigin());
 		assertEquals(JWSAlgorithm.HS256, payload.toJWSObject().getHeader().getAlgorithm());
 		assertEquals("joe", payload.toSignedJWT().getJWTClaimsSet().getIssuer());
+
+		assertNotNull(payload.toJWSObject());
+
+		assertEquals(s, payload.toString());
+		assertEquals(s, new String(payload.toBytes(), "UTF-8"));
 	}
 
 
 	public void testRejectUnsignedJWS() {
 
-		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("test"));
-
 		try {
-			new Payload(jwsObject);
+			new Payload(new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("test")));
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertEquals("The JWS object must be signed", e.getMessage());
+		}
+	}
+
+
+	public void testRejectUnsignedJWT() {
+
+		try {
+			new Payload(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet()));
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("The JWT must be signed", e.getMessage());
 		}
 	}
 }
