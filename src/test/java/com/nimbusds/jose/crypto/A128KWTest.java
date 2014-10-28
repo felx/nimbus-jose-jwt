@@ -4,6 +4,8 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -15,7 +17,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-08-19)
+ * @version $version$ (2014-10-28)
  */
 public class A128KWTest extends TestCase {
 
@@ -606,6 +608,50 @@ public class A128KWTest extends TestCase {
 		String message = "You can trust us to stick with you through thick and thin\u2013to the bitter end. And you can trust us to keep any secret of yours\u2013closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.";
 
 		assertEquals(message, jweObject.getPayload().toString());
+	}
+
+
+	public void testWithNestedSignedJWT()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setSubject("alice");
+
+		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+
+		JWSSigner signer = new MACSigner(key128);
+
+		signedJWT.sign(signer);
+
+		assertEquals(JWSObject.State.SIGNED, signedJWT.getState());
+
+		Payload payload = new Payload(signedJWT);
+		assertEquals(Payload.Origin.SIGNED_JWT, payload.getOrigin());
+		assertEquals(signedJWT, payload.toSignedJWT());
+		assertEquals(signedJWT, payload.toJWSObject());
+
+		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM), payload);
+
+		JWEEncrypter encrypter = new AESEncrypter(key128);
+
+		jweObject.encrypt(encrypter);
+
+		assertEquals(JWEObject.State.ENCRYPTED, jweObject.getState());
+
+		String compactEncoding = jweObject.serialize();
+
+		JWEDecrypter decrypter = new AESDecrypter(key128);
+
+		jweObject = JWEObject.parse(compactEncoding);
+		assertEquals(compactEncoding, jweObject.getParsedString());
+
+		jweObject.decrypt(decrypter);
+
+		payload = jweObject.getPayload();
+
+		signedJWT = payload.toSignedJWT();
+
+		assertEquals("alice", signedJWT.getJWTClaimsSet().getSubject());
 	}
 
 }
