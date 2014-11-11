@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-08-16)
+ * @version $version$ (2014-11-11)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -525,5 +525,12 @@ public class JWTClaimsSetTest extends TestCase {
 		claimsSet = JWTClaimsSet.parse(jsonObject.toJSONString());
 		assertEquals("123", claimsSet.getAudience().get(0));
 		assertEquals(1, claimsSet.getAudience().size());
+	}
+
+
+	public void testGetAllClaimsEmpty() {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		assertTrue(claimsSet.getAllClaims().isEmpty());
 	}
 }

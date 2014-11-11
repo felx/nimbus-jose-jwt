@@ -210,7 +210,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * 
 	 * @return All claims, as an unmodifiable map, empty map if none.
 	 */
-	public Map<String, Object> getAllClaims();
+	public Map<String,Object> getAllClaims();
 
 
 	/**

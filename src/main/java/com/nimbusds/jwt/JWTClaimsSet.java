@@ -554,7 +554,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	@Override
-	public Map<String, Object> getAllClaims() {
+	public Map<String,Object> getAllClaims() {
 
 		Map<String, Object> allClaims = new HashMap<>();
 
@@ -562,7 +562,11 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 		for (String registeredClaim : REGISTERED_CLAIM_NAMES) {
 
-			allClaims.put(registeredClaim, getClaim(registeredClaim));
+			Object value = getClaim(registeredClaim);
+
+			if (value != null) {
+				allClaims.put(registeredClaim, value);
+			}
 		}
 
 		return Collections.unmodifiableMap(allClaims);
@@ -642,7 +646,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 *                        represent a valid JWT claims set.
 	 */
 	public static JWTClaimsSet parse(final JSONObject json)
-			throws ParseException {
+		throws ParseException {
 
 		JWTClaimsSet cs = new JWTClaimsSet();
 
