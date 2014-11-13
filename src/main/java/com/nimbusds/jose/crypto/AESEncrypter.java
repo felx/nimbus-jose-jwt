@@ -175,28 +175,22 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		// We need to work on the header
 		JWEHeader modifiableHeader;
 
-		switch (algFamily) {
+		if(AlgFamily.AESKW.equals(algFamily)) {
+			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, kek));
+			modifiableHeader = header; // simply copy ref
+		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {
+			keyIV = AESGCM.generateIV(randomGen);
+			authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, kek, keyEncryptionProvider);
+			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
-			case AESKW:
-				encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, kek));
-				modifiableHeader = header; // simply copy ref
-				break;
-
-			case AESGCMKW:
-				keyIV = AESGCM.generateIV(randomGen);
-				authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, kek, keyEncryptionProvider);
-				encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
-
-				// Add iv and tag to the header
-				modifiableHeader = new JWEHeader.Builder(header).
-					iv(Base64URL.encode(keyIV)).
-					authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
-					build();
-				break;
-
-			default:
-				// This should never happen
-				throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
+			// Add iv and tag to the header
+			modifiableHeader = new JWEHeader.Builder(header).
+				iv(Base64URL.encode(keyIV)).
+				authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
+				build();
+		} else {
+			// This should never happen
+			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
 		// Apply compression if instructed

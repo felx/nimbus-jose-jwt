@@ -620,44 +620,30 @@ public final class JWSHeader extends CommonSEHeader {
 		// Parse optional + custom parameters
 		for (final String name: jsonObject.keySet()) {
 
-			switch (name) {
-
-				case "alg":
-					// skip
-					break;
-				case "typ":
-					header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
-					break;
-				case "cty":
-					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
-					break;
-				case "crit":
-					header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
-					break;
-				case "jku":
-					header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
-					break;
-				case "jwk":
-					header = header.jwk(JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name)));
-					break;
-				case "x5u":
-					header = header.x509CertURL(JSONObjectUtils.getURL(jsonObject, name));
-					break;
-				case "x5t":
-					header = header.x509CertThumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
-					break;
-				case "x5t#S256":
-					header = header.x509CertSHA256Thumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
-					break;
-				case "x5c":
-					header = header.x509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name)));
-					break;
-				case "kid":
-					header = header.keyID(JSONObjectUtils.getString(jsonObject, name));
-					break;
-				default:
-					header = header.customParam(name, jsonObject.get(name));
-					break;
+			if("alg".equals(name)) {
+				// skip
+			} else if("typ".equals(name)) {
+				header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
+			} else if("cty".equals(name)) {
+				header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
+			} else if("crit".equals(name)) {
+				header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
+			} else if("jku".equals(name)) {
+				header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
+			} else if("jwk".equals(name)) {
+				header = header.jwk(JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name)));
+			} else if("x5u".equals(name)) {
+				header = header.x509CertURL(JSONObjectUtils.getURL(jsonObject, name));
+			} else if("x5t".equals(name)) {
+				header = header.x509CertThumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
+			} else if("x5t#S256".equals(name)) {
+				header = header.x509CertSHA256Thumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
+			} else if("x5c".equals(name)) {
+				header = header.x509CertChain(X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, name)));
+			} else if("kid".equals(name)) {
+				header = header.keyID(JSONObjectUtils.getString(jsonObject, name));
+			} else {
+				header = header.customParam(name, jsonObject.get(name));
 			}
 		}
 

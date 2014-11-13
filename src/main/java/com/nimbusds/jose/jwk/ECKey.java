@@ -271,12 +271,14 @@ public final class ECKey extends JWK {
 		 *                                  constant could be found.
 		 */
 		public static Curve forStdName(final String stdName) {
-
-			switch (stdName) {
-				case "secp256r1": return P_256;
-				case "secp384r1": return P_384;
-				case "secp521r1": return P_521;
-				default: throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
+			if( "secp256r1".equals(stdName) ) {
+				 return P_256;
+			} else if( "secp384r1".equals(stdName) ) {
+				return P_384;
+			} else if( "secp521r1".equals(stdName) ) {
+				return P_521;
+			} else {
+				throw new IllegalArgumentException("No matching curve constant for standard (JCA) name " + stdName);
 			}
 		}
 	}

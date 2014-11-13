@@ -372,25 +372,24 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	@Override
 	public Object getClaim(final String name) {
 
-		switch (name) {
-			case ISSUER_CLAIM:
-				return getIssuer();
-			case SUBJECT_CLAIM:
-				return getSubject();
-			case AUDIENCE_CLAIM:
-				return getAudience();
-			case EXPIRATION_TIME_CLAIM:
-				return getExpirationTime();
-			case NOT_BEFORE_CLAIM:
-				return getNotBeforeTime();
-			case ISSUED_AT_CLAIM:
-				return getIssueTime();
-			case JWT_ID_CLAIM:
-				return getJWTID();
-			case TYPE_CLAIM:
-				return getType();
-			default:
-				return getCustomClaim(name);
+		if(ISSUER_CLAIM.equals(name)) {
+			return getIssuer();
+		} else if(SUBJECT_CLAIM.equals(name)) {
+			return getSubject();
+		} else if(AUDIENCE_CLAIM.equals(name)) {
+			return getAudience();
+		} else if(EXPIRATION_TIME_CLAIM.equals(name)) {
+			return getExpirationTime();
+		} else if(NOT_BEFORE_CLAIM.equals(name)) {
+			return getNotBeforeTime();
+		} else if(ISSUED_AT_CLAIM.equals(name)) {
+			return getIssueTime();
+		} else if(JWT_ID_CLAIM.equals(name)) {
+			return getJWTID();
+		} else if(TYPE_CLAIM.equals(name)) {
+			return getType();
+		} else {
+			return getCustomClaim(name);
 		}
 	}
 	

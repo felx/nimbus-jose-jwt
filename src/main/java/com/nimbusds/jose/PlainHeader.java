@@ -2,10 +2,13 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
-
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -378,23 +381,18 @@ public final class PlainHeader extends Header {
 		// Parse optional + custom parameters
 		for(final String name: jsonObject.keySet()) {
 
-			switch (name) {
 
-				case "alg":
-					// skip
-					break;
-				case "typ":
-					header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
-					break;
-				case "cty":
-					header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
-					break;
-				case "crit":
-					header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
-					break;
-				default:
-					header = header.customParam(name, jsonObject.get(name));
-					break;
+			
+			if("alg".equals(name)) {
+				// skip
+			} else if("typ".equals(name)) {
+				header = header.type(new JOSEObjectType(JSONObjectUtils.getString(jsonObject, name)));
+			} else if("cty".equals(name)) {
+				header = header.contentType(JSONObjectUtils.getString(jsonObject, name));
+			} else if("crit".equals(name)) {
+				header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
+			} else {
+				header = header.customParam(name, jsonObject.get(name));
 			}
 		}
 
