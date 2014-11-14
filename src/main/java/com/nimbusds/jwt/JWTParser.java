@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Junya Hayashi
- * @version $version$ (2014-01-17)
+ * @version $version$ (2014-11-14)
  */
 public final class JWTParser {
 
@@ -65,6 +65,34 @@ public final class JWTParser {
 			return EncryptedJWT.parse(s);
 		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
+		}
+	}
+
+
+	/**
+	 * Parses a plain, signed or encrypted JSON Web Token (JWT) from the
+	 * specified string in compact format.
+	 *
+	 * @param s       The string to parse. Must not be {@code null}.
+	 * @param handler Handler for the parsed JWT. Must not be {@code null}.
+	 *
+	 * @return The object returned by the handler, {@code null} if none is
+	 *         returned.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to a valid
+	 *                        plain, signed or encrypted JWT.
+	 */
+	public static <T> T parse(final String s, final JWTHandler<T> handler)
+		throws ParseException {
+
+		JWT jwt = parse(s);
+
+		if (jwt instanceof PlainJWT) {
+			return handler.onPlainJWT((PlainJWT)jwt);
+		} else if (jwt instanceof SignedJWT) {
+			return handler.onSignedJWT((SignedJWT)jwt);
+		} else {
+			return handler.onEncryptedJWT((EncryptedJWT)jwt);
 		}
 	}
 
