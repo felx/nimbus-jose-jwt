@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2014-11-18)
  */
 public abstract class JOSEObject {
 	
@@ -277,6 +277,36 @@ public abstract class JOSEObject {
 			return JWEObject.parse(s);
 		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
+		}
+	}
+
+
+	/**
+	 * Parses a {@link PlainObject plain}, {@link JWSObject JWS} or
+	 * {@link JWEObject JWE object} from the specified string in compact
+	 * format.
+	 *
+	 * @param s       The string to parse. Must not be {@code null}.
+	 * @param handler Handler for the parsed JOSE object. Must not be
+	 *                {@code null}.
+	 *
+	 * @return The object returned by the handler, {@code null} if none is
+	 *         returned.
+	 *
+	 * @throws ParseException If the string couldn't be parsed to a valid
+	 *                        plain, signed or encrypted JWT.
+	 */
+	public static <T> T parse(final String s, JOSEObjectHandler<T> handler)
+		throws ParseException {
+
+		JOSEObject joseObject = parse(s);
+
+		if (joseObject instanceof PlainObject) {
+			return handler.onPlainObject((PlainObject)joseObject);
+		} else if (joseObject instanceof JWSObject) {
+			return handler.onJWSObject((JWSObject)joseObject);
+		} else {
+			return handler.onJWEObject((JWEObject)joseObject);
 		}
 	}
 }

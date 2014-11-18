@@ -324,6 +324,10 @@ version 3.2.1 (2014-10-28)
 version 3.2.2 (2014-11-11)
     * Fixes JWTClaimsSet.getAllClaims inclusion of non-set registered claims
       (issue #113).
-      
+
 version 3.3 (2014-11-13)
     * Adds Maven profile to support Java 1.6 compilation.
+
+version 3.4 (2014-11-18)
+    * Adds JOSEHandler and JWTHandler interfaces to aid JOSE object and JWT
+      parsing.

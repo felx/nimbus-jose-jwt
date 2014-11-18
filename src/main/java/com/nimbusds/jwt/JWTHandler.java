@@ -2,11 +2,12 @@ package com.nimbusds.jwt;
 
 
 /**
- * Handler of parsed JSON Web Tokens (JWT). Invoked by a {@link JWTParser}
- * after parsing a JWT to indicate its exact type - {@link PlainJWT plain},
- * {@link SignedJWT signed} or {@link EncryptedJWT encrypted}.
+ * Handler of parsed {@link JWT JSON Web Tokens} (JWT). Invoked by a
+ * {@link JWTParser} after parsing a JWT to indicate its exact type -
+ * {@link PlainJWT plain}, {@link SignedJWT signed} or
+ * {@link EncryptedJWT encrypted}.
  *
- * @since 3.3
+ * @since 3.4
  */
 public interface JWTHandler<T> {
 
