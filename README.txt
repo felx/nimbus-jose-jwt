@@ -68,15 +68,15 @@ contribute in their development.
 
 Related IETF drafts:
 
-* [JWA] draft-ietf-jose-json-web-algorithms-31
+* [JWA] draft-ietf-jose-json-web-algorithms-36
 
-* [JWS] draft-ietf-jose-json-web-signature-31
+* [JWS] draft-ietf-jose-json-web-signature-36
 
-* [JWE] draft-ietf-jose-json-web-encryption-31
+* [JWE] draft-ietf-jose-json-web-encryption-36
 
-* [JWK] draft-ietf-jose-json-web-key-31
+* [JWK] draft-ietf-jose-json-web-key-36
 
-* [JWT] draft-ietf-oauth-json-web-token-25
+* [JWT] draft-ietf-oauth-json-web-token-30
 
 
 System requirements and dependencies
@@ -96,7 +96,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>3.1</version>
+    <version>3.4</version>
 </dependency>
 
 
