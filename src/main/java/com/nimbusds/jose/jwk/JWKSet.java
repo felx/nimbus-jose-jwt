@@ -1,6 +1,8 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,6 +12,7 @@ import java.util.Map;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.util.FileUtils;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
@@ -328,5 +331,23 @@ public class JWKSet {
 		}
 
 		return jwkSet;
+	}
+
+
+	/**
+	 * Loads a JSON Web Key (JWK) set from the specified file.
+	 *
+	 * @param file The file to read. Must not be {@code null}.
+	 *
+	 * @return The JSON Web Key (JWK) set.
+	 *
+	 * @throws IOException    If the file couldn't be read.
+	 * @throws ParseException If the file couldn't be parsed to a valid
+	 *                        JSON Web Key (JWK) set.
+	 */
+	public static JWKSet load(final File file)
+		throws IOException, ParseException {
+
+		return parse(FileUtils.readFile(file));
 	}
 }
