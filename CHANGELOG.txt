@@ -331,3 +331,6 @@ version 3.3 (2014-11-13)
 version 3.4 (2014-11-18)
     * Adds JOSEHandler and JWTHandler interfaces to aid JOSE object and JWT
       parsing.
+
+version 3.5 (2014-12-14)
+	* Adds utility JWKSet.load(File) method.
