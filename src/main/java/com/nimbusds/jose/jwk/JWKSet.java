@@ -3,16 +3,19 @@ package com.nimbusds.jose.jwk;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.nimbusds.jose.util.URLUtils;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.util.FileUtils;
+import org.apache.commons.io.FileUtils;
+
 import com.nimbusds.jose.util.JSONObjectUtils;
 
 
@@ -46,7 +49,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-09-20)
+ * @version $version$ (2014-12-14)
  */
 public class JWKSet {
 
@@ -337,7 +340,7 @@ public class JWKSet {
 	/**
 	 * Loads a JSON Web Key (JWK) set from the specified file.
 	 *
-	 * @param file The file to read. Must not be {@code null}.
+	 * @param file The JWK set file. Must not be {@code null}.
 	 *
 	 * @return The JSON Web Key (JWK) set.
 	 *
@@ -348,6 +351,51 @@ public class JWKSet {
 	public static JWKSet load(final File file)
 		throws IOException, ParseException {
 
-		return parse(FileUtils.readFile(file));
+		return parse(FileUtils.readFileToString(file));
+	}
+
+
+	/**
+	 * Loads a JSON Web Key (JWK) set from the specified URL.
+	 *
+	 * @param url            The JWK set URL. Must not be {@code null}.
+	 * @param connectTimeout The URL connection timeout, in milliseconds.
+	 *                       If zero no (infinite) timeout.
+	 * @param readTimeout    The URL read timeout, in milliseconds. If zero
+	 *                       no (infinite) timeout.
+	 * @param sizeLimit      The read size limit, in bytes. If negative no
+	 *                       limit.
+	 *
+	 * @return The JSON Web Key (JWK) set.
+	 *
+	 * @throws IOException    If the file couldn't be read.
+	 * @throws ParseException If the file couldn't be parsed to a valid
+	 *                        JSON Web Key (JWK) set.
+	 */
+	public static JWKSet load(final URL url,
+				  final int connectTimeout,
+				  final int readTimeout,
+				  final int sizeLimit)
+		throws IOException, ParseException {
+
+		return parse(URLUtils.read(url, connectTimeout, readTimeout, sizeLimit));
+	}
+
+
+	/**
+	 * Loads a JSON Web Key (JWK) set from the specified URL.
+	 *
+	 * @param url The JWK set URL. Must not be {@code null}.
+	 *
+	 * @return The JSON Web Key (JWK) set.
+	 *
+	 * @throws IOException    If the file couldn't be read.
+	 * @throws ParseException If the file couldn't be parsed to a valid
+	 *                        JSON Web Key (JWK) set.
+	 */
+	public static JWKSet load(final URL url)
+		throws IOException, ParseException {
+
+		return parse(URLUtils.read(url, 0, 0, -1));
 	}
 }

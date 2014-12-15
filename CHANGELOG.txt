@@ -334,3 +334,5 @@ version 3.4 (2014-11-18)
 
 version 3.5 (2014-12-14)
 	* Adds utility JWKSet.load(File) method.
+	* Adds utility JWKSet.load(URL) method.
+	* Adds Apache Commons IO 2.4 dependency.

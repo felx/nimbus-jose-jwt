@@ -3,6 +3,8 @@ package com.nimbusds.jose.jwk;
 
 import java.io.File;
 import java.io.PrintWriter;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -10,18 +12,21 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import static net.jadler.Jadler.*;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
+import org.junit.After;
 
 
 /**
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-02)
+ * @version $version$ (2014-12-14)
  */
 public class JWKSetTest extends TestCase {
 
@@ -633,5 +638,84 @@ public class JWKSetTest extends TestCase {
 		assertFalse(key.isPrivate());
 
 		Files.delete(file.toPath());
+	}
+
+
+	public void testLoadFromURL()
+		throws Exception {
+
+		initJadler();
+
+		// The string is from the JWK spec
+		String s = "{\"keys\":" +
+			"[" +
+			"{\"kty\":\"EC\"," +
+			"\"crv\":\"P-256\"," +
+			"\"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\"," +
+			"\"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\"," +
+			"\"use\":\"enc\"," +
+			"\"kid\":\"1\"}," +
+			" " +
+			"{\"kty\":\"RSA\"," +
+			"\"n\": \"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx" +
+			"4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs" +
+			"tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2" +
+			"QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI" +
+			"SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb" +
+			"w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"," +
+			"\"e\":\"AQAB\"," +
+			"\"alg\":\"RS256\"," +
+			"\"kid\":\"2011-04-29\"}" +
+			"]" +
+			"}";
+
+		onRequest()
+			.havingMethodEqualTo("GET")
+			.respond()
+			.withStatus(200)
+			.withBody(s)
+			.withEncoding(Charset.forName("UTF-8"))
+			.withContentType("application/json");
+
+		JWKSet keySet = JWKSet.load(new URL("http://localhost:" + port()));
+
+
+		List<JWK> keyList = keySet.getKeys();
+		assertEquals(2, keyList.size());
+
+
+		// Check first EC key
+		JWK key = keyList.get(0);
+
+		assertTrue(key instanceof ECKey);
+		assertEquals("1", key.getKeyID());
+		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
+
+		ECKey ecKey = (ECKey)key;
+		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
+		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
+		assertFalse(key.isPrivate());
+
+
+		// Check second RSA key
+		key = keyList.get(1);
+		assertTrue(key instanceof RSAKey);
+		assertEquals("2011-04-29", key.getKeyID());
+		assertNull(key.getKeyUse());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+
+		RSAKey rsaKey = (RSAKey)key;
+		assertEquals("0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx" +
+				"4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMs" +
+				"tn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2" +
+				"QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbI" +
+				"SD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqb" +
+				"w0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+			rsaKey.getModulus().toString());
+		assertEquals("AQAB", rsaKey.getPublicExponent().toString());
+		assertFalse(key.isPrivate());
+
+		closeJadler();
 	}
 }
