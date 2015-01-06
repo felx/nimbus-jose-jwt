@@ -12,6 +12,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 
@@ -20,7 +21,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-11-11)
+ * @version $version$ (2015-01-06)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -532,5 +533,29 @@ public class JWTClaimsSetTest extends TestCase {
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet();
 		assertTrue(claimsSet.getAllClaims().isEmpty());
+	}
+
+
+	public void testParseOIDCAuthz()
+		throws Exception {
+
+		String json = "{\"sub\":\"alice\",\"irt\":true,\"rft\":\"YWxpY2U.aHR0cDovL2NsaWVudDEuZXhhbXBsZS5jb20.rsKHqBpyEh-MMtllO7chHg\",\"aud\":[\"http:\\/\\/userinfo.example.com\"],\"iss\":\"http:\\/\\/oidc.example.com\",\"ate\":\"IDENTIFIER\",\"lng\":true,\"iat\":1420544052,\"cid\":\"http:\\/\\/client1.example.com\"}";
+		JWTClaimsSet.parse(json);
+	}
+
+
+	public void testAudienceParsing()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray aud = new JSONArray();
+		aud.add("client-1");
+		aud.add("client-2");
+		jsonObject.put("aud", aud);
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+		assertEquals("client-1", claimsSet.getAudience().get(0));
+		assertEquals("client-2", claimsSet.getAudience().get(1));
+		assertEquals(2, claimsSet.getAudience().size());
 	}
 }
