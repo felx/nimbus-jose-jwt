@@ -7,7 +7,7 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-jose-json-web-key-36
+ *     <li>http://tools.ietf.org/html/draft-ietf-jose-json-web-key-39
  *     <li>http://tools.ietf.org/wg/jose/
  * </ul>
  */
