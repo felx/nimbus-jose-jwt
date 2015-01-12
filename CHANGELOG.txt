@@ -336,3 +336,7 @@ version 3.5 (2014-12-14)
 	* Adds utility JWKSet.load(File) method.
 	* Adds utility JWKSet.load(URL) method.
 	* Adds Apache Commons IO 2.4 dependency.
+
+version 3.6 (2015-01-12)
+	* Adds ReadOnlyJWTClaimsSet.getStringArrayClaim method.
+	* Adds ReadOnlyJWTClaimsSet.getStringListClaim method.

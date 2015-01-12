@@ -406,6 +406,53 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			throw new ParseException("The \"" + name + "\" claim is not a String", 0);
 		}
 	}
+
+
+	@Override
+	public String[] getStringArrayClaim(final String name)
+		throws ParseException {
+
+		Object value = getClaim(name);
+
+		if (value == null) {
+			return null;
+		}
+
+		List<?> list;
+
+		try {
+			list = (List)getClaim(name);
+
+		} catch (ClassCastException e) {
+			throw new ParseException("The \"" + name + "\" claim is not a list / JSON array", 0);
+		}
+
+		String[] stringArray = new String[list.size()];
+
+		for (int i=0; i < stringArray.length; i++) {
+
+			try {
+				stringArray[i] = (String)list.get(i);
+			} catch (ClassCastException e) {
+				throw new ParseException("The \"" + name + "\" claim is not a list / JSON array of strings", 0);
+			}
+		}
+
+		return stringArray;
+	}
+
+
+	public List<String> getStringListClaim(final String name)
+		throws ParseException {
+
+		String[] stringArray = getStringArrayClaim(name);
+
+		if (stringArray == null) {
+			return null;
+		}
+
+		return Arrays.asList(stringArray);
+	}
 	
 	
 	@Override

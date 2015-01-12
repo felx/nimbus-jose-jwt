@@ -14,7 +14,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-10-07)
+ * @version $version$ (2015-01-12)
  */
 public interface ReadOnlyJWTClaimsSet {
 
@@ -125,6 +125,37 @@ public interface ReadOnlyJWTClaimsSet {
 	 */
 	public String getStringClaim(final String name)
 		throws ParseException;
+
+
+	/**
+	 * Gets the specified claims (registered or custom) as a
+	 * {@link java.lang.String} array.
+	 *
+	 * @param name The name of the claim. Must not be {@code null}.
+	 *
+	 * @return The value of the claim, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public String[] getStringArrayClaim(final String name)
+		throws ParseException;
+
+
+	/**
+	 * Gets the specified claims (registered or custom) as a
+	 * {@link java.lang.String} list.
+	 *
+	 * @param name The name of the claim. Must not be {@code null}.
+	 *
+	 * @return The value of the claim, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public List<String> getStringListClaim(final String name)
+		throws ParseException;
+
 	
 	/**
 	 * Gets the specified claim (registered or custom) as

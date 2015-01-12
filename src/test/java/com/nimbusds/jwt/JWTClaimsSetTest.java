@@ -21,7 +21,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-01-06)
+ * @version $version$ (2015-01-12)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -507,7 +507,7 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("123", claimsSet.getAudience().get(0));
 		assertEquals(1, claimsSet.getAudience().size());
 
-		claimsSet.setAudience((String)null);
+		claimsSet.setAudience((String) null);
 		assertNull(claimsSet.getAudience());
 	}
 
@@ -557,5 +557,103 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("client-1", claimsSet.getAudience().get(0));
 		assertEquals("client-2", claimsSet.getAudience().get(1));
 		assertEquals(2, claimsSet.getAudience().size());
+	}
+
+
+	public void testGetStringArrayClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.add("client-1");
+		jsonArray.add("client-2");
+		jsonObject.put("array", jsonArray);
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		String[] strings = claimsSet.getStringArrayClaim("array");
+		assertEquals("client-1", strings[0]);
+		assertEquals("client-2", strings[1]);
+		assertEquals(2, strings.length);
+	}
+
+
+	public void testGetInvalidStringArrayClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.add("client-1");
+		jsonArray.add(0);
+		jsonObject.put("array", jsonArray);
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		try {
+			claimsSet.getStringArrayClaim("array");
+			fail();
+		} catch (ParseException e) {
+			// ok
+		}
+	}
+
+
+	public void testGetNullStringArrayClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		assertNull(claimsSet.getStringArrayClaim("array"));
+	}
+
+
+	public void testGetStringListClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.add("client-1");
+		jsonArray.add("client-2");
+		jsonObject.put("array", jsonArray);
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		List<String> strings = claimsSet.getStringListClaim("array");
+		assertEquals("client-1", strings.get(0));
+		assertEquals("client-2", strings.get(1));
+		assertEquals(2, strings.size());
+	}
+
+
+	public void testGetInvalidStringListClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		jsonArray.add("client-1");
+		jsonArray.add(0);
+		jsonObject.put("array", jsonArray);
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		try {
+			claimsSet.getStringListClaim("array");
+			fail();
+		} catch (ParseException e) {
+			// ok
+		}
+	}
+
+
+	public void testGetNullStringListClaim()
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject();
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(jsonObject);
+
+		assertNull(claimsSet.getStringListClaim("array"));
 	}
 }
