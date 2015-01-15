@@ -340,3 +340,7 @@ version 3.5 (2014-12-14)
 version 3.6 (2015-01-12)
 	* Adds ReadOnlyJWTClaimsSet.getStringArrayClaim method.
 	* Adds ReadOnlyJWTClaimsSet.getStringListClaim method.
+
+version 3.7 (2015-01-15)
+	* Enforces minimal HMAC key sizes for HS256, HS384 and HS512 algorithms.
+	

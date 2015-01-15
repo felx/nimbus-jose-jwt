@@ -4,20 +4,20 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 
 
 /**
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-10-28)
+ * @version $version$ (2015-01-15)
  */
 public class A128KWTest extends TestCase {
 
@@ -619,7 +619,7 @@ public class A128KWTest extends TestCase {
 
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
 
-		JWSSigner signer = new MACSigner(key128);
+		JWSSigner signer = new MACSigner("12345678901234567890123456789012");
 
 		signedJWT.sign(signer);
 
@@ -650,6 +650,10 @@ public class A128KWTest extends TestCase {
 		payload = jweObject.getPayload();
 
 		signedJWT = payload.toSignedJWT();
+
+		JWSVerifier verifier = new MACVerifier("12345678901234567890123456789012");
+
+		assertTrue(signedJWT.verify(verifier));
 
 		assertEquals("alice", signedJWT.getJWTClaimsSet().getSubject());
 	}

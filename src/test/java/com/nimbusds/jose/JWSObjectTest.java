@@ -1,9 +1,9 @@
 package com.nimbusds.jose;
 
 
-import com.nimbusds.jose.crypto.MACSigner;
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-09)
+ * @version $version$ (2015-01-15)
  */
 public class JWSObjectTest extends TestCase {
 
@@ -49,7 +49,7 @@ public class JWSObjectTest extends TestCase {
 
 		assertTrue(signingInput.equals(Base64URL.encode(jwsObject.getSigningInput())));
 
-		jwsObject.sign(new MACSigner("1234567890abc"));
+		jwsObject.sign(new MACSigner("12345678901234567890123456789012"));
 
 		String output = jwsObject.serialize();
 

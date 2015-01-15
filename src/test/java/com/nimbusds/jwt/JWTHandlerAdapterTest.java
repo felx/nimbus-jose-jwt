@@ -40,7 +40,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), generateClaimsSet());
 
-		String key = "abcdef123456789";
+		String key = "12345678901234567890123456789012";
 
 		signedJWT.sign(new MACSigner(key));
 

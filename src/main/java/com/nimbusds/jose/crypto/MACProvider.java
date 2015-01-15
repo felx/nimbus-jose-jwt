@@ -23,7 +23,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-06)
+ * @version $version$ (2015-01-15)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -43,8 +43,34 @@ abstract class MACProvider extends BaseJWSProvider {
 		algs.add(JWSAlgorithm.HS256);
 		algs.add(JWSAlgorithm.HS384);
 		algs.add(JWSAlgorithm.HS512);
-
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
+	}
+
+
+	/**
+	 * Returns the minimal required secret size for the specified
+	 * HMAC JWS algorithm.
+	 *
+	 * @param hmacAlg The HMAC JWS algorithm. Must be
+	 *                {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *                {@code null}.
+	 *
+	 * @return The minimal required secret size, in bits.
+	 *
+	 * @throws JOSEException If the algorithm is not supported.
+	 */
+	public int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
+		throws JOSEException {
+
+		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
+			return 256;
+		} else if (JWSAlgorithm.HS384.equals(hmacAlg)) {
+			return 384;
+		} else if (JWSAlgorithm.HS512.equals(hmacAlg)) {
+			return 512;
+		} else {
+			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
+		}
 	}
 
 
@@ -63,19 +89,12 @@ abstract class MACProvider extends BaseJWSProvider {
 		throws JOSEException {
 
 		if (alg.equals(JWSAlgorithm.HS256)) {
-
 			return "HMACSHA256";
-
 		} else if (alg.equals(JWSAlgorithm.HS384)) {
-
 			return "HMACSHA384";
-
 		} else if (alg.equals(JWSAlgorithm.HS512)) {
-
 			return "HMACSHA512";
-
 		} else {
-			
 			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
 		}
 	}
@@ -90,15 +109,15 @@ abstract class MACProvider extends BaseJWSProvider {
 	/**
 	 * Creates a new Message Authentication (MAC) provider.
 	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param sharedSecret The shared secret. Must be at least 256 bits
+	 *                     long and not {@code null}.
 	 */
 	protected MACProvider(final byte[] sharedSecret) {
 
 		super(SUPPORTED_ALGORITHMS);
 
-		if (sharedSecret == null) {
-
-			throw new IllegalArgumentException("The shared secret must not be null");
+		if (sharedSecret.length < 256 / 8) {
+			throw new IllegalArgumentException("The shared secret size must be at least 256 bits");
 		}
 
 		this.sharedSecret = sharedSecret;

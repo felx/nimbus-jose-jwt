@@ -5,16 +5,10 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.*;
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -22,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-10)
+ * @version $version$ (2015-01-15)
  */
 public class MACTest extends TestCase {
 
@@ -179,7 +173,10 @@ public class MACTest extends TestCase {
 	public void testSignAndVerifyWithStringSecret()
 		throws Exception {
 
-		final String stringSecret = "3eae8196ad1b";
+		SecureRandom random = new SecureRandom();
+		byte[] sharedSecret = new byte[64];
+
+		final String stringSecret = new String(sharedSecret);
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
@@ -299,7 +296,8 @@ public class MACTest extends TestCase {
 	public void testCritHeaderParamIgnore()
 		throws Exception {
 
-		final String stringSecret = "3eae8196ad1b";
+		byte[] secret = new byte[64];
+		new SecureRandom().nextBytes(secret);
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
 			customParam("exp", "2014-04-24").
@@ -308,13 +306,13 @@ public class MACTest extends TestCase {
 
 		JWSObject jwsObject = new JWSObject(header, payload);
 
-		MACSigner signer = new MACSigner(stringSecret);
+		MACSigner signer = new MACSigner(secret);
 
 		jwsObject.sign(signer);
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
-		MACVerifier verifier = new MACVerifier(stringSecret);
+		MACVerifier verifier = new MACVerifier(secret);
 		verifier.getIgnoredCriticalHeaderParameters().add("exp");
 
 		boolean verified = jwsObject.verify(verifier);
@@ -328,7 +326,8 @@ public class MACTest extends TestCase {
 	public void testCritHeaderParamReject()
 		throws Exception {
 
-		final String stringSecret = "3eae8196ad1b";
+		byte[] secret = new byte[64];
+		new SecureRandom().nextBytes(secret);
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS512).
 			customParam("exp", "2014-04-24").
@@ -337,18 +336,66 @@ public class MACTest extends TestCase {
 
 		JWSObject jwsObject = new JWSObject(header, payload);
 
-		MACSigner signer = new MACSigner(stringSecret);
+		MACSigner signer = new MACSigner(secret);
 
 		jwsObject.sign(signer);
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
-		MACVerifier verifier = new MACVerifier(stringSecret);
+		MACVerifier verifier = new MACVerifier(secret);
 
 		boolean verified = jwsObject.verify(verifier);
 
 		assertFalse("Verified signature", verified);
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+	}
+
+
+	public void testRejectShortSecret()
+		throws Exception {
+
+		byte[] secret = new byte[31];
+		new SecureRandom().nextBytes(secret);
+
+		try {
+			new MACSigner(secret);
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("The shared secret size must be at least 256 bits", e.getMessage());
+		}
+	}
+
+
+	public void testRejectShortSecretOnSign()
+		throws Exception {
+
+		byte[] secret = new byte[32];
+		new SecureRandom().nextBytes(secret);
+
+		JWSSigner signer = new MACSigner(secret);
+
+		JWSObject jwsObject;
+
+		try {
+			jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS384), new Payload("Hello world!"));
+			jwsObject.sign(signer);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("The shared secret size must be at least 384 bits for HS384", e.getMessage());
+		}
+	}
+
+
+	public void testAllowsLongerSecretOnSign()
+		throws Exception {
+
+		byte[] secret = new byte[64];
+		new SecureRandom().nextBytes(secret);
+
+		JWSSigner signer = new MACSigner(secret);
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS384), new Payload("Hello world!"));
+		jwsObject.sign(signer);
 	}
 }

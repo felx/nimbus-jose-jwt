@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-01-15)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -32,7 +32,8 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	/**
 	 * Creates a new Message Authentication (MAC) signer.
 	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param sharedSecret The shared secret. Must be at least 256 bits
+	 *                     long and not {@code null}.
 	 */
 	public MACSigner(final byte[] sharedSecret) {
 
@@ -55,6 +56,12 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	@Override
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
+
+		int minRequiredKeyLength = getMinRequiredSecretSize(header.getAlgorithm());
+
+		if (getSharedSecret().length < minRequiredKeyLength / 8) {
+			throw new JOSEException("The shared secret size must be at least " + minRequiredKeyLength + " bits for " + header.getAlgorithm());
+		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
 		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signingInput, provider);

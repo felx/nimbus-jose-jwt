@@ -52,7 +52,7 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello world!"));
 
-		String key = "abcdef123456789";
+		String key = "12345678901234567890123456789012";
 
 		jwsObject.sign(new MACSigner(key));
 
