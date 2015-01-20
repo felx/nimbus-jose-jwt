@@ -343,4 +343,6 @@ version 3.6 (2015-01-12)
 
 version 3.7 (2015-01-15)
 	* Enforces minimal HMAC key sizes for HS256, HS384 and HS512 algorithms.
-	
+
+version 3.8 (2014-01-20)
+	* Adds alternative byte array OctetSequenceKey.Builder constructor.

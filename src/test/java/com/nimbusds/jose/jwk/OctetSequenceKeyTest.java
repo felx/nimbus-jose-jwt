@@ -2,11 +2,12 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.*;
 
-import com.nimbusds.jose.EncryptionMethod;
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2015-01-20)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -233,6 +234,18 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertNull(key.toPublicJWK());
 
 		assertTrue(key.isPrivate());
+	}
+
+
+	public void testBuilderWithByteArray()
+		throws Exception {
+
+		byte[] key = new byte[32];
+		new SecureRandom().nextBytes(key);
+
+		OctetSequenceKey oct = new OctetSequenceKey.Builder(key).build();
+
+		assertEquals(Base64URL.encode(key), oct.getKeyValue());
 	}
 
 

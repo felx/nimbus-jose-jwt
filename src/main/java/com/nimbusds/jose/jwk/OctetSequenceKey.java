@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2015-01-20)
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
@@ -122,6 +122,22 @@ public final class OctetSequenceKey extends JWK {
 			}
 
 			this.k = k;
+		}
+
+
+		/**
+		 * Creates a new octet sequence JWK builder.
+		 *
+		 * @param key The key value. Must not be empty byte array or
+		 *            {@code null}.
+		 */
+		public Builder(final byte[] key) {
+
+			if (key == null || key.length == 0) {
+				throw new IllegalArgumentException("The key value must not be empty or null");
+			}
+
+			k = Base64URL.encode(key);
 		}
 
 
