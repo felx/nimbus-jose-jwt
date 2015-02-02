@@ -76,7 +76,7 @@ class RSA_OAEP {
 		throws JOSEException {
 
 		try {
-			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding", provider);
+			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA1AndMGF1Padding", provider);
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			return new SecretKeySpec(cipher.doFinal(encryptedCEK), "AES");
 
