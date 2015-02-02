@@ -350,3 +350,6 @@ version 3.8 (2014-01-20)
 version 3.8.1 (2014-02-02)
     * Makes MACProvider.getMinRequiredSecretSize method static.
     * Fixes RSA/ECB/OAEPWithSHA1AndMGF1Padding algorithm identifier string.
+
+version 3.8.2 (2014-02-02)
+    * Moves getMinRequiredSecretSize method up to MACSigner.

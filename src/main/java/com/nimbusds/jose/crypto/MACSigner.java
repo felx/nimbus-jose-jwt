@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
@@ -23,10 +24,37 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-01-15)
+ * @version $version$ (2015-02-02)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
+
+
+	/**
+	 * Returns the minimal required secret size for the specified
+	 * HMAC JWS algorithm.
+	 *
+	 * @param hmacAlg The HMAC JWS algorithm. Must be
+	 *                {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *                {@code null}.
+	 *
+	 * @return The minimal required secret size, in bits.
+	 *
+	 * @throws JOSEException If the algorithm is not supported.
+	 */
+	public static int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
+		throws JOSEException {
+
+		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
+			return 256;
+		} else if (JWSAlgorithm.HS384.equals(hmacAlg)) {
+			return 384;
+		} else if (JWSAlgorithm.HS512.equals(hmacAlg)) {
+			return 512;
+		} else {
+			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
+		}
+	}
 
 
 	/**

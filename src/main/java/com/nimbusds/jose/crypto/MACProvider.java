@@ -48,33 +48,6 @@ abstract class MACProvider extends BaseJWSProvider {
 
 
 	/**
-	 * Returns the minimal required secret size for the specified
-	 * HMAC JWS algorithm.
-	 *
-	 * @param hmacAlg The HMAC JWS algorithm. Must be
-	 *                {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *                {@code null}.
-	 *
-	 * @return The minimal required secret size, in bits.
-	 *
-	 * @throws JOSEException If the algorithm is not supported.
-	 */
-	public static int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
-		throws JOSEException {
-
-		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
-			return 256;
-		} else if (JWSAlgorithm.HS384.equals(hmacAlg)) {
-			return 384;
-		} else if (JWSAlgorithm.HS512.equals(hmacAlg)) {
-			return 512;
-		} else {
-			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
-		}
-	}
-
-
-	/**
 	 * Gets the matching Java Cryptography Architecture (JCA) algorithm 
 	 * name for the specified HMAC-based JSON Web Algorithm (JWA).
 	 *
