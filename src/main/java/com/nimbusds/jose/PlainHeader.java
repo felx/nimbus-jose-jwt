@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.util.Base64URL;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Plaintext JOSE header.
+ * Plaintext (unsecured) JOSE header.
  *
  * <p>Supports all {@link #getRegisteredParameterNames registered header
  * parameters} of the plain specification:
