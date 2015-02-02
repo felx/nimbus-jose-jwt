@@ -346,3 +346,6 @@ version 3.7 (2015-01-15)
 
 version 3.8 (2014-01-20)
 	* Adds alternative byte array OctetSequenceKey.Builder constructor.
+
+version 3.8.1 (2014-02-02)
+    * Makes MACProvider.getMinRequiredSecretSize method static.

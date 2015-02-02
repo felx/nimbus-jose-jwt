@@ -23,7 +23,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-01-15)
+ * @version $version$ (2015-02-02)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -59,7 +59,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	public int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
+	public static int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
 		throws JOSEException {
 
 		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
