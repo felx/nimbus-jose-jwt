@@ -21,7 +21,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-01-12)
+ * @version $version$ (2015-02-13)
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -37,9 +37,8 @@ public class JWTClaimsSetTest extends TestCase {
 		assertTrue(names.contains("nbf"));
 		assertTrue(names.contains("iat"));
 		assertTrue(names.contains("jti"));
-		assertTrue(names.contains("typ"));
 
-		assertEquals(8, names.size());
+		assertEquals(7, names.size());
 	}
 
 
@@ -85,11 +84,6 @@ public class JWTClaimsSetTest extends TestCase {
 		cs.setJWTID("123");
 		assertEquals("jti set check", "123", cs.getJWTID());
 
-		// typ
-		assertNull("typ init check", cs.getType());
-		cs.setType("JWT");
-		assertEquals("typ set check", "JWT", cs.getType());
-
 		// custom claims
 		assertTrue(cs.getCustomClaims().isEmpty());
 
@@ -103,7 +97,7 @@ public class JWTClaimsSetTest extends TestCase {
 		// serialise
 		JSONObject json = cs.toJSONObject();
 
-		assertEquals(9, json.size());
+		assertEquals(8, json.size());
 
 		// parse back
 
@@ -122,7 +116,6 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("nbf parse check", NOW, cs.getNotBeforeTime());
 		assertEquals("iat parse check", NOW, cs.getIssueTime());
 		assertEquals("jti parse check", "123", cs.getJWTID());
-		assertEquals("typ parse check", "JWT", cs.getType());
 		assertEquals("abc", (String)cs.getCustomClaim("x-custom"));
 		assertEquals(1, cs.getCustomClaims().size());
 
@@ -136,7 +129,6 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("nbf parse check map", NOW, all.get("nbf"));
 		assertEquals("iat parse check map", NOW, all.get("iat"));
 		assertEquals("jti parse check map", "123", (String)all.get("jti"));
-		assertEquals("typ parse check map", "JWT", (String)all.get("typ"));
 		assertEquals("abc", (String)all.get("x-custom"));
 	}
 
@@ -294,11 +286,6 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("123", cs.getJWTID());
 		cs.setClaim("jti", null);
 		assertNull(cs.getJWTID());
-		
-		cs.setType("jwt");
-		assertEquals("jwt", cs.getType());
-		cs.setClaim("typ", null);
-		assertNull(cs.getType());
 	}
 	
 	

@@ -24,7 +24,6 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *     <li>nbf - Not Before
  *     <li>iat - Issued At
  *     <li>jti - JWT ID
- *     <li>typ - Type
  * </ul>
  *
  * <p>The set may also contain {@link #setCustomClaims custom claims}; these 
@@ -32,19 +31,18 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-08-16)
+ * @version $version$ (2015-02-13)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
-	private static final String TYPE_CLAIM = "typ";
-	private static final String JWT_ID_CLAIM = "jti";
-	private static final String ISSUED_AT_CLAIM = "iat";
-	private static final String NOT_BEFORE_CLAIM = "nbf";
-	private static final String EXPIRATION_TIME_CLAIM = "exp";
-	private static final String AUDIENCE_CLAIM = "aud";
-	private static final String SUBJECT_CLAIM = "sub";
 	private static final String ISSUER_CLAIM = "iss";
+	private static final String SUBJECT_CLAIM = "sub";
+	private static final String AUDIENCE_CLAIM = "aud";
+	private static final String EXPIRATION_TIME_CLAIM = "exp";
+	private static final String NOT_BEFORE_CLAIM = "nbf";
+	private static final String ISSUED_AT_CLAIM = "iat";
+	private static final String JWT_ID_CLAIM = "jti";
 
 
 	/**
@@ -66,7 +64,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 		n.add(NOT_BEFORE_CLAIM);
 		n.add(ISSUED_AT_CLAIM);
 		n.add(JWT_ID_CLAIM);
-		n.add(TYPE_CLAIM);
 
 		REGISTERED_CLAIM_NAMES = Collections.unmodifiableSet(n);
 	}
@@ -112,12 +109,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 * The JWT ID claim.
 	 */
 	private String jti = null;
-
-
-	/**
-	 * The type claim.
-	 */
-	private String typ = null;
 
 
 	/**
@@ -300,24 +291,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 
 	@Override
-	public String getType() {
-
-		return typ;
-	}
-
-
-	/**
-	 * Sets the type ({@code typ}) claim.
-	 *
-	 * @param typ The type claim, {@code null} if not specified.
-	 */
-	public void setType(final String typ) {
-
-		this.typ = typ;
-	}
-
-
-	@Override
 	public Object getCustomClaim(final String name) {
 
 		return customClaims.get(name);
@@ -386,8 +359,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			return getIssueTime();
 		} else if(JWT_ID_CLAIM.equals(name)) {
 			return getJWTID();
-		} else if(TYPE_CLAIM.equals(name)) {
-			return getType();
 		} else {
 			return getCustomClaim(name);
 		}
@@ -587,12 +558,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			} else {
 				throw new IllegalArgumentException("JWT-ID claim must be a String");
 			}
-		} else if (TYPE_CLAIM.equals(name)) {
-			if (value == null || value instanceof String) {
-				setType((String) value);
-			} else {
-				throw new IllegalArgumentException("Type claim must be a String");
-			}
 		} else {
 			setCustomClaim(name, value);
 		}
@@ -672,10 +637,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			o.put(JWT_ID_CLAIM, jti);
 		}
 
-		if (typ != null) {
-			o.put(TYPE_CLAIM, typ);
-		}
-
 		return o;
 	}
 
@@ -735,10 +696,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
 				cs.setJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
 
-			} else if (name.equals(TYPE_CLAIM)) {
-
-				cs.setType(JSONObjectUtils.getString(json, TYPE_CLAIM));
-
 			} else {
 				cs.setCustomClaim(name, json.get(name));
 			}
@@ -768,6 +725,6 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	@Override
 	public String toString() {
 
-		return "JWTClaimsSet [iss=" + iss + ", sub=" + sub + ", aud=" + aud + ", exp=" + exp + ", nbf=" + nbf + ", iat=" + iat + ", jti=" + jti + ", typ=" + typ + ", customClaims=" + customClaims + "]";
+		return "JWTClaimsSet [iss=" + iss + ", sub=" + sub + ", aud=" + aud + ", exp=" + exp + ", nbf=" + nbf + ", iat=" + iat + ", jti=" + jti + ", customClaims=" + customClaims + "]";
 	}
 }

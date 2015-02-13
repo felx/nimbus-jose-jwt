@@ -76,14 +76,6 @@ public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Gets the type ({@code typ}) claim.
-	 *
-	 * @return The type claim, {@code null} if not specified.
-	 */
-	public String getType();
-
-
-	/**
 	 * Gets a custom (non-registered) claim.
 	 * 
 	 * @param name The name of the custom claim. Must not be {@code null}.
