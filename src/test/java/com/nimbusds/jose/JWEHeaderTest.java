@@ -4,9 +4,9 @@ package com.nimbusds.jose;
 import java.net.URL;
 import java.util.*;
 
-import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.util.Base64;
@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-19)
+ * @version $version$ (2015-02-15)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -288,7 +288,7 @@ public class JWEHeaderTest extends TestCase {
 		throws Exception {
 
 		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM).
-			type(JOSEObjectType.JWS).
+			type(JOSEObjectType.JOSE).
 			contentType("application/json").
 			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
 			jwkURL(new URL("http://example.com/jwk.json")).
@@ -311,7 +311,7 @@ public class JWEHeaderTest extends TestCase {
 
 		assertEquals(JWEAlgorithm.A128KW, h.getAlgorithm());
 		assertEquals(EncryptionMethod.A128GCM, h.getEncryptionMethod());
-		assertEquals(JOSEObjectType.JWS, h.getType());
+		assertEquals(JOSEObjectType.JOSE, h.getType());
 		assertEquals("application/json", h.getContentType());
 		assertTrue(h.getCriticalParams().contains("exp"));
 		assertTrue(h.getCriticalParams().contains("nbf"));

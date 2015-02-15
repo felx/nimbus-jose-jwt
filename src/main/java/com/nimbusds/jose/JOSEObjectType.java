@@ -15,29 +15,36 @@ import net.minidev.json.JSONObject;
  * <p>Includes constants for the following standard types:
  *
  * <ul>
- *     <li>{@link #JWS}
- *     <li>{@link #JWE}
+ *     <li>{@link #JOSE}
+ *     <li>{@link #JOSE_JSON JOSE+JSON}
+ *     <li>{@link #JWT}
  * </ul>
  *
  * <p>Additional types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version $version$ (2014-02-15)
  */
 @Immutable
 public final class JOSEObjectType implements JSONAware {
 
 
 	/**
-	 * JWS object type.
+	 * Compact encoded JOSE object type.
 	 */
-	public static final JOSEObjectType JWS = new JOSEObjectType("JWS");
+	public static final JOSEObjectType JOSE = new JOSEObjectType("JOSE");
 
 
 	/**
-	 * JWE object type.
+	 * JSON-encoded JOSE object type..
 	 */
-	public static final JOSEObjectType JWE = new JOSEObjectType("JWE");
+	public static final JOSEObjectType JOSE_JSON = new JOSEObjectType("JOSE+JSON");
+
+
+	/**
+	 * JSON Web Token (JWT) object type.
+	 */
+	public static final JOSEObjectType JWT = new JOSEObjectType("JWT");
 
 
 	/**

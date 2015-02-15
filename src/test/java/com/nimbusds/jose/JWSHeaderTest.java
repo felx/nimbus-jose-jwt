@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-19)
+ * @version $version$ (2015-02-15)
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -249,7 +249,7 @@ public class JWSHeaderTest extends TestCase {
 		throws Exception {
 
 		JWSHeader h = new JWSHeader.Builder(JWSAlgorithm.HS256).
-			type(JOSEObjectType.JWS).
+			type(JOSEObjectType.JOSE).
 			contentType("application/json").
 			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
 			jwkURL(new URL("http://example.com/jwk.json")).
@@ -264,7 +264,7 @@ public class JWSHeaderTest extends TestCase {
 			build();
 
 		assertEquals(JWSAlgorithm.HS256, h.getAlgorithm());
-		assertEquals(JOSEObjectType.JWS, h.getType());
+		assertEquals(JOSEObjectType.JOSE, h.getType());
 		assertEquals("application/json", h.getContentType());
 		assertTrue(h.getCriticalParams().contains("exp"));
 		assertTrue(h.getCriticalParams().contains("nbf"));
