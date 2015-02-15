@@ -344,12 +344,17 @@ version 3.6 (2015-01-12)
 version 3.7 (2015-01-15)
 	* Enforces minimal HMAC key sizes for HS256, HS384 and HS512 algorithms.
 
-version 3.8 (2014-01-20)
+version 3.8 (2015-01-20)
 	* Adds alternative byte array OctetSequenceKey.Builder constructor.
 
-version 3.8.1 (2014-02-02)
+version 3.8.1 (2015-02-02)
     * Makes MACProvider.getMinRequiredSecretSize method static.
     * Fixes RSA/ECB/OAEPWithSHA1AndMGF1Padding algorithm identifier string.
 
-version 3.8.2 (2014-02-02)
+version 3.8.2 (2015-02-02)
     * Moves getMinRequiredSecretSize method up to MACSigner.
+
+version 3.9 (2015-02-15)
+    * Removes misplaced 'typ' JWT claim (issue #117).
+    * Updates JOSE 'typ' header constants to JWS draft 40 / JWT draft 32 (issue
+      #117).

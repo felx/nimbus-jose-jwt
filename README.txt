@@ -96,7 +96,7 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>3.8.1</version>
+    <version>3.9</version>
 </dependency>
 
 
