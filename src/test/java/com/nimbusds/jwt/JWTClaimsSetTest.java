@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 
 import net.minidev.json.JSONArray;
@@ -667,7 +668,9 @@ public class JWTClaimsSetTest extends TestCase {
 
 		String json = claimsSet.toJSONObject().toJSONString();
 
-		claimsSet = JWTClaimsSet.parse(json);
+		Base64URL base64URL = Base64URL.encode(json);
+
+		claimsSet = JWTClaimsSet.parse(base64URL.decodeToString());
 
 		assertEquals("João", claimsSet.getStringClaim("fullName"));
 	}
