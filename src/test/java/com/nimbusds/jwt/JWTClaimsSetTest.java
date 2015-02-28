@@ -643,4 +643,32 @@ public class JWTClaimsSetTest extends TestCase {
 
 		assertNull(claimsSet.getStringListClaim("array"));
 	}
+
+
+	public void testExtendedCyrillicChars()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setSubject("Владимир Джувинов");
+
+		String json = claimsSet.toJSONObject().toJSONString();
+
+		claimsSet = JWTClaimsSet.parse(json);
+
+		assertEquals("Владимир Джувинов", claimsSet.getSubject());
+	}
+
+
+	public void testExtendedLatinChars()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		claimsSet.setClaim("fullName", "João");
+
+		String json = claimsSet.toJSONObject().toJSONString();
+
+		claimsSet = JWTClaimsSet.parse(json);
+
+		assertEquals("João", claimsSet.getStringClaim("fullName"));
+	}
 }
