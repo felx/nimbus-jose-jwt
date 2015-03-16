@@ -16,7 +16,7 @@ import net.minidev.json.parser.JSONParser;
  * JSON object helper methods for parsing and typed retrieval of member values.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-08)
+ * @version $version$ (2015-03-16)
  */
 public class JSONObjectUtils {
 
@@ -46,12 +46,12 @@ public class JSONObjectUtils {
 	 *                        object.
 	 */
 	public static JSONObject parseJSONObject(final String s) 
-			throws ParseException {
+		throws ParseException {
 
-		Object o = null;
+		Object o;
 
 		try {
-			o = new JSONParser(JSONParser.USE_HI_PRECISION_FLOAT).parse(s);
+			o = new JSONParser(JSONParser.USE_HI_PRECISION_FLOAT | JSONParser.ACCEPT_TAILLING_SPACE).parse(s);
 
 		} catch (net.minidev.json.parser.ParseException e) {
 
