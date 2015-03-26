@@ -22,6 +22,36 @@ import com.nimbusds.jose.util.Base64URL;
 public class SignedJWTTest extends TestCase {
 
 
+	public void testCustomClaimsAreOrderedByInsertion() throws Exception {
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+		kpg.initialize(2048);
+
+		KeyPair kp = kpg.genKeyPair();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+
+		JWTClaimsSet claimsSetOne = new JWTClaimsSet();
+		claimsSetOne.setSubject("alice");
+		claimsSetOne.setIssueTime(new Date(123000l));
+		claimsSetOne.setIssuer("https://c2id.com");
+		claimsSetOne.setCustomClaim("scope", "openid");
+
+		JWSSigner signer = new RSASSASigner(privateKey);
+		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetOne);
+		signedJWT.sign(signer);
+		String orderOne = signedJWT.serialize();
+
+		JWTClaimsSet claimsSetTwo = new JWTClaimsSet();
+		claimsSetTwo.setSubject("alice");
+		claimsSetTwo.setIssuer("https://c2id.com");
+		claimsSetTwo.setIssueTime(new Date(123000l));
+		claimsSetTwo.setCustomClaim("scope", "openid");
+
+		signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetTwo);
+		signedJWT.sign(signer);
+		String orderTwo = signedJWT.serialize();
+		assertNotSame(orderOne, orderTwo);
+	}
+
 	public void testSignAndVerify()
 		throws Exception {
 
