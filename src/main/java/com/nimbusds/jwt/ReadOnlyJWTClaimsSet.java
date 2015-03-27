@@ -237,7 +237,8 @@ public interface ReadOnlyJWTClaimsSet {
 
 
 	/**
-	 * Returns the JSON object representation of the claims set.
+	 * Returns the JSON object representation of the claims set. The claims
+	 * are serialised according to their insertion order.
 	 *
 	 * @return The JSON object representation.
 	 */
