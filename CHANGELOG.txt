@@ -365,3 +365,7 @@ version 3.9.1 (2015-03-16)
 
 version 3.9.2 (2015-03-16)
     * Permits parsing of JSON objects with trailing whitespace.
+
+version 3.10 (2015-03-27)
+    * JWT claims set serialised according to claim insertion order (iss #121).
+
