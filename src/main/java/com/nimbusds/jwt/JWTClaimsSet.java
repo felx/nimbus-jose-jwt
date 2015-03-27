@@ -114,7 +114,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Custom claims.
 	 */
-	private Map<String,Object> customClaims = new HashMap<>();
+	private Map<String,Object> customClaims = new LinkedHashMap<>();
 
 
 	/**
@@ -334,10 +334,10 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	 */
 	public void setCustomClaims(final Map<String,Object> customClaims) {
 
-		if (customClaims == null) {
-			this.customClaims.clear();
-		} else {
-			this.customClaims = customClaims;
+		this.customClaims.clear();
+		
+		if(customClaims != null) {
+			this.customClaims.putAll(customClaims);	
 		}
 	}
 

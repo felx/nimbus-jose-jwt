@@ -297,6 +297,51 @@
 			</build>
     	</profile>
         <profile>
+            <id>jdk18</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Using the eclipse compiler allows for different source and target, 
+                            which is a good thing (outweighing that this is a rarely used combination, 
+                            and most people use javac) This should also allow us to run maven builds 
+                            on a JRE and not a JDK. -->
+            
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.2</version>
+                        <configuration>
+                            <source>1.7</source>
+                            <target>1.8</target>
+                            <fork>true</fork>
+                            <compilerId>eclipse</compilerId>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.codehaus.plexus</groupId>
+                                <artifactId>plexus-compiler-eclipse</artifactId>
+                                <version>2.5</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jdk16</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release-sign-artifacts</id>
             <activation>
                 <property>
