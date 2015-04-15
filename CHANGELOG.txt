@@ -369,3 +369,5 @@ version 3.9.2 (2015-03-16)
 version 3.10 (2015-03-27)
     * JWT claims set serialised according to claim insertion order (iss #121).
 
+version 3.11 (2015-04-15)
+    * Adds JWKSelector method for matching individual keys.

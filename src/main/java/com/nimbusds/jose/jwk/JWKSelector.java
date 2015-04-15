@@ -7,7 +7,8 @@ import com.nimbusds.jose.Algorithm;
 
 
 /**
- * Utility for selecting one or more JSON Web Keys (JWKs) from a JWK set.
+ * Utility for selecting (filtering) one or more JSON Web Keys (JWKs) from a
+ * JWK set. Can also be used to {@link #matches(JWK) match} an individual JWK.
  *
  * <p>Supports key selection by:
  *
@@ -25,7 +26,7 @@ import com.nimbusds.jose.Algorithm;
  * supported.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-03)
+ * @version $version$ (2015-04-15)
  */
 public class JWKSelector {
 
@@ -357,6 +358,49 @@ public class JWKSelector {
 
 
 	/**
+	 * Returns {@code true} if the specified JWK matches the selector
+	 * criteria.
+	 *
+	 * @param key The JSON Web Key (JWK). Must not  be {@code null}.
+	 *
+	 * @return {@code true} if the JWK matches, else {@code false}.
+	 */
+	public boolean matches(final JWK key) {
+
+		if (privateOnly && ! key.isPrivate())
+			return false;
+
+		if (publicOnly && key.isPrivate())
+			return false;
+
+		if (types != null && ! types.contains(key.getKeyType()))
+			return false;
+
+		if (uses != null && ! uses.contains(key.getKeyUse()))
+			return false;
+
+		if (ops != null) {
+
+			if (ops.contains(null) && key.getKeyOperations() == null) {
+				// pass
+			} else if (key.getKeyOperations() != null && ops.containsAll(key.getKeyOperations())) {
+				// pass
+			} else {
+				return false;
+			}
+		}
+
+		if (algs != null && ! algs.contains(key.getAlgorithm()))
+			return false;
+
+		if (ids != null && ! ids.contains(key.getKeyID()))
+			return false;
+
+		return true;
+	}
+
+
+	/**
 	 * Selects the keys from the specified JWK set that match the
 	 * configured criteria.
 	 *
@@ -368,45 +412,18 @@ public class JWKSelector {
 	 */
 	public List<JWK> select(final JWKSet jwkSet) {
 
-		List<JWK> matches = new LinkedList<>();
+		List<JWK> selectedKeys = new LinkedList<>();
 
 		if (jwkSet == null)
-			return matches;
+			return selectedKeys;
 
 		for (JWK key: jwkSet.getKeys()) {
 
-			if (privateOnly && ! key.isPrivate())
-				continue;
-
-			if (publicOnly && key.isPrivate())
-				continue;
-
-			if (types != null && ! types.contains(key.getKeyType()))
-				continue;
-
-			if (uses != null && ! uses.contains(key.getKeyUse()))
-				continue;
-
-			if (ops != null) {
-
-				if (ops.contains(null) && key.getKeyOperations() == null) {
-					// pass
-				} else if (key.getKeyOperations() != null && ops.containsAll(key.getKeyOperations())) {
-					// pass
-				} else {
-					continue;
-				}
+			if (matches(key)) {
+				selectedKeys.add(key);
 			}
-
-			if (algs != null && ! algs.contains(key.getAlgorithm()))
-				continue;
-
-			if (ids != null && ! ids.contains(key.getKeyID()))
-				continue;
-
-			matches.add(key);
 		}
 
-		return matches;
+		return selectedKeys;
 	}
 }

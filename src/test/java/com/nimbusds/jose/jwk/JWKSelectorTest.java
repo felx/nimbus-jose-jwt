@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the JWK selector.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-03)
+ * @version $version$ (2015-04-15)
  */
 public class JWKSelectorTest extends TestCase {
 
@@ -415,5 +415,17 @@ public class JWKSelectorTest extends TestCase {
 		assertEquals("1", key1.getKeyID());
 
 		assertEquals(1, matches.size());
+	}
+
+
+	public void testMatchSingle() {
+
+		JWKSelector selector = new JWKSelector();
+
+		selector.setKeyOperation(KeyOperation.SIGN);
+
+		JWK jwk = new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyOperations(new HashSet<KeyOperation>(Arrays.asList(KeyOperation.SIGN))).build();
+
+		assertTrue(selector.matches(jwk));
 	}
 }
