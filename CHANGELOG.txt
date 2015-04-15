@@ -373,5 +373,6 @@ version 4.0 (2015-04-15)
     * Replaces java.net.URL representation of 'jku' and 'x5u' header parameters
       with java.net.URI.
     * Factors a JWKMatcher class out of the JWKSelector.
-    * Adds JOSESelector class for selecting (filtering) one or more JOSE
-      objects by a set of criteria.
+    * Adds JOSEMatcher class for filtering of JOSE objects by a set of
+      application-specific criteria.
+      
