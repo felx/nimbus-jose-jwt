@@ -7,8 +7,8 @@ import com.nimbusds.jose.Algorithm;
 
 
 /**
- * Utility for selecting (filtering) one or more JSON Web Keys (JWKs) from a
- * JWK set. Can also be used to {@link #matches(JWK) match} an individual JWK.
+ * Selects (filters) one or more JSON Web Keys (JWKs) from a JWK set. Can also
+ * {@link #matches(JWK) match} an individual JWK.
  *
  * <p>Supports key selection by:
  *
