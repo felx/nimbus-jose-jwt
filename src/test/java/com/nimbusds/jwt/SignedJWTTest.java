@@ -1,7 +1,7 @@
 package com.nimbusds.jwt;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
@@ -70,7 +70,7 @@ public class SignedJWTTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
-			jwkURL(new URL("https://c2id.com/jwks.json")).
+			jwkURL(new URI("https://c2id.com/jwks.json")).
 			build();
 
 		SignedJWT signedJWT = new SignedJWT(header, claimsSet);

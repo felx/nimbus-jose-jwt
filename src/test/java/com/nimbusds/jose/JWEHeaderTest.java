@@ -1,7 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
 
 import junit.framework.TestCase;
@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-02-15)
+ * @version $version$ (2015-04-15)
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -117,9 +117,9 @@ public class JWEHeaderTest extends TestCase {
 		JWEHeader h = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM).
 			type(new JOSEObjectType("JWT")).
 			compressionAlgorithm(CompressionAlgorithm.DEF).
-			jwkURL(new URL("https://example.com/jku.json")).
+			jwkURL(new URI("https://example.com/jku.json")).
 			jwk(jwk).
-			x509CertURL(new URL("https://example/cert.b64")).
+			x509CertURL(new URI("https://example/cert.b64")).
 			x509CertThumbprint(new Base64URL("789iop")).
 			x509CertSHA256Thumbprint(new Base64URL("789asd")).
 			x509CertChain(certChain).
@@ -143,7 +143,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
 		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
-		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
+		assertEquals(new URI("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
 
 		jwk = (RSAKey)h.getJWK();
@@ -154,7 +154,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
 		assertEquals("1234", jwk.getKeyID());
 
-		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
+		assertEquals(new URI("https://example/cert.b64"), h.getX509CertURL());
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
 		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
 
@@ -204,7 +204,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(new JOSEObjectType("JWT"), h.getType());
 		assertEquals(EncryptionMethod.A256GCM, h.getEncryptionMethod());
 		assertEquals(CompressionAlgorithm.DEF, h.getCompressionAlgorithm());
-		assertEquals(new URL("https://example.com/jku.json"), h.getJWKURL());
+		assertEquals(new URI("https://example.com/jku.json"), h.getJWKURL());
 		assertEquals("1234", h.getKeyID());
 
 		jwk = (RSAKey)h.getJWK();
@@ -215,7 +215,7 @@ public class JWEHeaderTest extends TestCase {
 		assertEquals(JWEAlgorithm.RSA1_5, jwk.getAlgorithm());
 		assertEquals("1234", jwk.getKeyID());
 
-		assertEquals(new URL("https://example/cert.b64"), h.getX509CertURL());
+		assertEquals(new URI("https://example/cert.b64"), h.getX509CertURL());
 		assertEquals(new Base64URL("789iop"), h.getX509CertThumbprint());
 		assertEquals(new Base64URL("789asd"), h.getX509CertSHA256Thumbprint());
 
@@ -291,9 +291,9 @@ public class JWEHeaderTest extends TestCase {
 			type(JOSEObjectType.JOSE).
 			contentType("application/json").
 			criticalParams(new HashSet<>(Arrays.asList("exp", "nbf"))).
-			jwkURL(new URL("http://example.com/jwk.json")).
+			jwkURL(new URI("http://example.com/jwk.json")).
 			jwk(new OctetSequenceKey.Builder(new Base64URL("xyz")).build()).
-			x509CertURL(new URL("http://example.com/cert.pem")).
+			x509CertURL(new URI("http://example.com/cert.pem")).
 			x509CertThumbprint(new Base64URL("abc")).
 			x509CertSHA256Thumbprint(new Base64URL("abc256")).
 			x509CertChain(Arrays.asList(new Base64("abc"), new Base64("def"))).

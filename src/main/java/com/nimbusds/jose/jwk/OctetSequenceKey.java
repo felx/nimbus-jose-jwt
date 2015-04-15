@@ -1,7 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.text.ParseException;
 import java.util.Set;
@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-01-20)
+ * @version $version$ (2015-04-15)
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
@@ -93,7 +93,7 @@ public final class OctetSequenceKey extends JWK {
 		/**
 		 * X.509 certificate URL, optional.
 		 */
-		private URL x5u;
+		private URI x5u;
 
 
 		/**
@@ -213,7 +213,7 @@ public final class OctetSequenceKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder x509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URI x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -291,7 +291,7 @@ public final class OctetSequenceKey extends JWK {
 	 */
 	public OctetSequenceKey(final Base64URL k,
 				final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		                final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		                final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 	
 		super(KeyType.OCT, use, ops, alg, kid, x5u, x5t, x5c);
 
@@ -437,10 +437,10 @@ public final class OctetSequenceKey extends JWK {
 		}
 
 		// Get optional X.509 cert URL
-		URL x5u = null;
+		URI x5u = null;
 
 		if (jsonObject.containsKey("x5u")) {
-			x5u = JSONObjectUtils.getURL(jsonObject, "x5u");	
+			x5u = JSONObjectUtils.getURI(jsonObject, "x5u");
 		}
 
 		// Get optional X.509 cert thumbprint

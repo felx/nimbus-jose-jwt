@@ -1,7 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -114,7 +114,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version $version$ (2014-04-02)
+ * @version $version$ (2015-04-15)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -373,7 +373,7 @@ public final class RSAKey extends JWK {
 		/**
 		 * X.509 certificate URL, optional.
 		 */
-		private URL x5u;
+		private URI x5u;
 
 
 		/**
@@ -710,7 +710,7 @@ public final class RSAKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder x509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URI x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -860,7 +860,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		// Call the full constructor, all private key parameters are null
 		this(n, e, null, null, null, null, null, null, null, use, ops, alg, kid,
@@ -896,7 +896,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final Base64URL n, final Base64URL e, final Base64URL d,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		// Call the full constructor, the second private representation 
 		// parameters are all null
@@ -954,7 +954,7 @@ public final class RSAKey extends JWK {
 		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
 		      final List<OtherPrimesInfo> oth,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		// Call the full constructor, the first private representation 
 		// d param is null
@@ -1040,7 +1040,7 @@ public final class RSAKey extends JWK {
 		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
 		      final List<OtherPrimesInfo> oth,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
 		super(KeyType.RSA, use, ops, alg, kid, x5u, x5t, x5c);
 
@@ -1132,7 +1132,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final RSAPublicKey pub,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -1165,7 +1165,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateKey priv,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -1199,7 +1199,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAPrivateCrtKey priv,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -1240,7 +1240,7 @@ public final class RSAKey extends JWK {
 	 */
 	public RSAKey(final RSAPublicKey pub, final RSAMultiPrimePrivateCrtKey priv,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		      final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 		
 		this(Base64URL.encode(pub.getModulus()), 
 		     Base64URL.encode(pub.getPublicExponent()), 
@@ -1702,10 +1702,10 @@ public final class RSAKey extends JWK {
 		}
 
 		// Get optional X.509 cert URL
-		URL x5u = null;
+		URI x5u = null;
 
 		if (jsonObject.containsKey("x5u")) {
-			x5u = JSONObjectUtils.getURL(jsonObject, "x5u");	
+			x5u = JSONObjectUtils.getURI(jsonObject, "x5u");
 		}
 
 		// Get optional X.509 cert thumbprint

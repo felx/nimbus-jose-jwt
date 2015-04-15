@@ -1,7 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +45,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-04-02)
+ * @version $version$ (2015-04-15)
  */
 public abstract class JWK implements JSONAware {
 
@@ -90,7 +90,7 @@ public abstract class JWK implements JSONAware {
 	/**
 	 * X.509 certificate URL, optional.
 	 */
-	private final URL x5u;
+	private final URI x5u;
 
 
 	/**
@@ -126,7 +126,7 @@ public abstract class JWK implements JSONAware {
 		   final Set<KeyOperation> ops,
 		   final Algorithm alg,
 		   final String kid,
-		   final URL x5u,
+		   final URI x5u,
 		   final Base64URL x5t,
 		   final List<Base64> x5c) {
 
@@ -216,7 +216,7 @@ public abstract class JWK implements JSONAware {
 	 *
 	 * @return The X.509 certificate URL, {@code null} if not specified.
 	 */
-	public URL getX509CertURL() {
+	public URI getX509CertURL() {
 
 		return x5u;
 	}

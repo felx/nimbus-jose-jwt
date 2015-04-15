@@ -2,7 +2,6 @@ package com.nimbusds.jose;
 
 
 import java.net.URI;
-import java.net.URL;
 import java.util.Set;
 
 
@@ -32,7 +31,7 @@ public class JOSEMatcher {
 	private Set<EncryptionMethod> encs;
 
 
-	private Set<URL> jkus;
+	private Set<URI> jkus;
 
 
 	private Set<String> kids;

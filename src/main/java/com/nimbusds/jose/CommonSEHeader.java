@@ -1,7 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
 
 import net.minidev.json.JSONObject;
@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-19)
+ * @version $version$ (2015-04-15)
  */
 abstract class CommonSEHeader extends Header {
 
@@ -40,7 +40,7 @@ abstract class CommonSEHeader extends Header {
 	/**
 	 * JWK Set URL, {@code null} if not specified.
 	 */
-	private final URL jku;
+	private final URI jku;
 
 
 	/**
@@ -52,7 +52,7 @@ abstract class CommonSEHeader extends Header {
 	/**
 	 * X.509 certificate URL, {@code null} if not specified.
 	 */
-	private final URL x5u;
+	private final URI x5u;
 
 
 	/**
@@ -117,9 +117,9 @@ abstract class CommonSEHeader extends Header {
 				 final JOSEObjectType typ,
 				 final String cty,
 				 final Set<String> crit,
-				 final URL jku,
+				 final URI jku,
 				 final JWK jwk,
-				 final URL x5u,
+				 final URI x5u,
 				 final Base64URL x5t,
 				 final Base64URL x5t256,
 				 final List<Base64> x5c,
@@ -152,7 +152,7 @@ abstract class CommonSEHeader extends Header {
 	 * @return The JSON Web Key (JWK) Set URL parameter, {@code null} if
 	 *         not specified.
 	 */
-	public URL getJWKURL() {
+	public URI getJWKURL() {
 
 		return jku;
 	}
@@ -176,7 +176,7 @@ abstract class CommonSEHeader extends Header {
 	 * @return The X.509 certificate URL parameter, {@code null} if not
 	 *         specified.
 	 */
-	public URL getX509CertURL() {
+	public URI getX509CertURL() {
 
 		return x5u;
 	}

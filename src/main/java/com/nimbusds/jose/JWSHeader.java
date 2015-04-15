@@ -1,7 +1,7 @@
 package com.nimbusds.jose;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.*;
 
@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2015-04-15)
  */
 @Immutable
 public final class JWSHeader extends CommonSEHeader {
@@ -125,7 +125,7 @@ public final class JWSHeader extends CommonSEHeader {
 		/**
 		 * JWK Set URL.
 		 */
-		private URL jku;
+		private URI jku;
 
 
 		/**
@@ -137,7 +137,7 @@ public final class JWSHeader extends CommonSEHeader {
 		/**
 		 * X.509 certificate URL.
 		 */
-		private URL x5u;
+		private URI x5u;
 
 
 		/**
@@ -274,7 +274,7 @@ public final class JWSHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
-		public Builder jwkURL(final URL jku) {
+		public Builder jwkURL(final URI jku) {
 
 			this.jku = jku;
 			return this;
@@ -304,7 +304,7 @@ public final class JWSHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
-		public Builder x509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URI x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -507,9 +507,9 @@ public final class JWSHeader extends CommonSEHeader {
 			 final JOSEObjectType typ,
 			 final String cty,
 			 final Set<String> crit,
-			 final URL jku,
+			 final URI jku,
 			 final JWK jwk,
-			 final URL x5u,
+			 final URI x5u,
 			 final Base64URL x5t,
 			 final Base64URL x5t256,
 			 final List<Base64> x5c,
@@ -629,11 +629,11 @@ public final class JWSHeader extends CommonSEHeader {
 			} else if("crit".equals(name)) {
 				header = header.criticalParams(new HashSet<>(JSONObjectUtils.getStringList(jsonObject, name)));
 			} else if("jku".equals(name)) {
-				header = header.jwkURL(JSONObjectUtils.getURL(jsonObject, name));
+				header = header.jwkURL(JSONObjectUtils.getURI(jsonObject, name));
 			} else if("jwk".equals(name)) {
 				header = header.jwk(JWK.parse(JSONObjectUtils.getJSONObject(jsonObject, name)));
 			} else if("x5u".equals(name)) {
-				header = header.x509CertURL(JSONObjectUtils.getURL(jsonObject, name));
+				header = header.x509CertURL(JSONObjectUtils.getURI(jsonObject, name));
 			} else if("x5t".equals(name)) {
 				header = header.x509CertThumbprint(new Base64URL(JSONObjectUtils.getString(jsonObject, name)));
 			} else if("x5t#S256".equals(name)) {

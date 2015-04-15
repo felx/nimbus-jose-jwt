@@ -2,7 +2,7 @@ package com.nimbusds.jose.jwk;
 
 
 import java.math.BigInteger;
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -66,7 +66,7 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-04-02)
+ * @version $version$ (2015-04-15)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -351,7 +351,7 @@ public final class ECKey extends JWK {
 		/**
 		 * X.509 certificate URL, optional.
 		 */
-		private URL x5u;
+		private URI x5u;
 
 
 		/**
@@ -528,7 +528,7 @@ public final class ECKey extends JWK {
 		 *
 		 * @return This builder.
 		 */
-		public Builder x509CertURL(final URL x5u) {
+		public Builder x509CertURL(final URI x5u) {
 
 			this.x5u = x5u;
 			return this;
@@ -676,7 +676,7 @@ public final class ECKey extends JWK {
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
 
@@ -733,7 +733,7 @@ public final class ECKey extends JWK {
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final Base64URL d,
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
 
@@ -783,7 +783,7 @@ public final class ECKey extends JWK {
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv, 
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
@@ -817,7 +817,7 @@ public final class ECKey extends JWK {
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, final ECPrivateKey priv, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URL x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		this(crv,
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
@@ -1100,10 +1100,10 @@ public final class ECKey extends JWK {
 		}
 
 		// Get optional X.509 cert URL
-		URL x5u = null;
+		URI x5u = null;
 
 		if (jsonObject.containsKey("x5u")) {
-			x5u = JSONObjectUtils.getURL(jsonObject, "x5u");	
+			x5u = JSONObjectUtils.getURI(jsonObject, "x5u");
 		}
 
 		// Get optional X.509 cert thumbprint

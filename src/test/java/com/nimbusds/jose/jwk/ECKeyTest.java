@@ -2,7 +2,7 @@ package com.nimbusds.jose.jwk;
 
 
 import java.math.BigInteger;
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2015-04-15)
  */
 public class ECKeyTest extends TestCase {
 
@@ -93,7 +93,7 @@ public class ECKeyTest extends TestCase {
 	public void testFullConstructorAndSerialization()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -162,7 +162,7 @@ public class ECKeyTest extends TestCase {
 	public void testFullConstructorAndSerializationWithOps()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -238,7 +238,7 @@ public class ECKeyTest extends TestCase {
 	public void testBuilder()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));

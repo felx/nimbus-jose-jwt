@@ -1,7 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		throws Exception {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -93,7 +93,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		throws Exception {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -167,7 +167,7 @@ public class OctetSequenceKeyTest extends TestCase {
 		throws Exception {
 
 		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));

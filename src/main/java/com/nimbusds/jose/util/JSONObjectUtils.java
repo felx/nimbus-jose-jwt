@@ -1,8 +1,8 @@
 package com.nimbusds.jose.util;
 
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
@@ -16,7 +16,7 @@ import net.minidev.json.parser.JSONParser;
  * JSON object helper methods for parsing and typed retrieval of member values.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-03-16)
+ * @version $version$ (2015-04-15)
  */
 public class JSONObjectUtils {
 
@@ -210,7 +210,7 @@ public class JSONObjectUtils {
 
 
 	/**
-	 * Gets a string member of a JSON object as {@code java.net.URL}.
+	 * Gets a string member of a JSON object as {@code java.net.URI}.
 	 *
 	 * @param o   The JSON object. Must not be {@code null}.
 	 * @param key The JSON object member key. Must not be {@code null}.
@@ -220,13 +220,13 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the value is missing, {@code null} or not
 	 *                        of the expected type.
 	 */
-	public static URL getURL(final JSONObject o, final String key)
+	public static URI getURI(final JSONObject o, final String key)
 			throws ParseException {
 
 		try {
-			return new URL(getGeneric(o, key, String.class));
+			return new URI(getGeneric(o, key, String.class));
 
-		} catch (MalformedURLException e) {
+		} catch (URISyntaxException e) {
 
 			throw new ParseException(e.getMessage(), 0);
 		}

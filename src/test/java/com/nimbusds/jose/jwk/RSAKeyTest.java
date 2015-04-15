@@ -1,7 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.net.URL;
+import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -81,7 +81,7 @@ public class RSAKeyTest extends TestCase {
 	public void testFullConstructorAndSerialization()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -181,7 +181,7 @@ public class RSAKeyTest extends TestCase {
 	public void testBase64Builder()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
@@ -263,7 +263,7 @@ public class RSAKeyTest extends TestCase {
 	public void testObjectBuilder()
 		throws Exception {
 
-		URL x5u = new URL("http://example.com/jwk.json");
+		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
