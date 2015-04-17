@@ -118,7 +118,7 @@ public class MACTest extends TestCase {
 
 
 		MACSigner signer = new MACSigner(sharedSecret);
-		assertEquals("Shared secret check", sharedSecret, signer.getSharedSecret());
+		assertEquals("Shared secret check", sharedSecret, signer.getSecret());
 
 		jwsObject.sign(signer);
 
@@ -126,7 +126,7 @@ public class MACTest extends TestCase {
 
 
 		MACVerifier verifier = new MACVerifier(sharedSecret);
-		assertEquals("Shared secret check", sharedSecret, verifier.getSharedSecret());
+		assertEquals("Shared secret check", sharedSecret, verifier.getSecret());
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -188,7 +188,7 @@ public class MACTest extends TestCase {
 
 
 		MACSigner signer = new MACSigner(stringSecret);
-		assertEquals("Shared secret string check", stringSecret, signer.getSharedSecretString());
+		assertEquals("Shared secret string check", stringSecret, signer.getSecretString());
 
 		jwsObject.sign(signer);
 
@@ -196,7 +196,7 @@ public class MACTest extends TestCase {
 
 
 		MACVerifier verifier = new MACVerifier(stringSecret);
-		assertEquals("Shared secret string check", stringSecret, verifier.getSharedSecretString());
+		assertEquals("Shared secret string check", stringSecret, verifier.getSecretString());
 
 		boolean verified = jwsObject.verify(verifier);
 

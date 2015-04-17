@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.InvalidKeyException;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.RSAPrivateKey;
@@ -9,6 +10,7 @@ import java.security.interfaces.RSAPrivateKey;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSJCAProviderSpec;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.util.Base64URL;
@@ -31,7 +33,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-04)
+ * @version $version$ (2015-04-17)
  */
 @ThreadSafe
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
@@ -47,8 +49,12 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
 	 *
 	 * @param privateKey The private RSA key. Must not be {@code null}.
+	 * @param jcaSpec    The JCA provider specification, {@code null}
+	 *                   implies the default one.
 	 */
-	public RSASSASigner(final RSAPrivateKey privateKey) {
+	public RSASSASigner(final RSAPrivateKey privateKey, final JWSJCAProviderSpec jcaSpec) {
+
+		super(jcaSpec);
 
 		if (privateKey == null) {
 
@@ -73,6 +79,8 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	@Override
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
+
+		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
 
 		Signature signer = getRSASignerAndVerifier(header.getAlgorithm(), provider);
 

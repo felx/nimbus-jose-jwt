@@ -1,12 +1,15 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.nio.charset.Charset;
+import java.security.Provider;
+
+import javax.crypto.SecretKey;
 
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -21,88 +24,127 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS512}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
- * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-09-01)
+ * @version $version$ (2015-04-17)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier {
 
 
 	/**
-	 * The accepted JWS algorithms.
+	 * The JWS header validator.
 	 */
-	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final JWSHeaderValidator headerValidator;
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) verifier.
 	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param secret The secret. Must be at least 256 bits long and not
+	 *               {@code null}.
+	 * @param alg    The expected HMAC JWS algorithm. Must be
+	 *               {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *               {@code null}.
 	 */
-	public MACVerifier(final byte[] sharedSecret) {
+	public MACVerifier(final byte[] secret, final JWSAlgorithm alg) {
 
-		super(sharedSecret);
+		this(secret, new DefaultJWSHeaderValidator(alg));
+		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
 	}
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) verifier.
 	 *
-	 * @param sharedSecretString The shared secret as a UTF-8 encoded
-	 *                           string. Must not be {@code null}.
+	 * @param secretString The secret as a UTF-8 encoded string. Must be at
+	 *                     least 256 bits long and not {@code null}.
+	 * @param alg          The expected HMAC JWS algorithm. Must be
+	 *                     {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *                     {@code null}.
 	 */
-	public MACVerifier(final String sharedSecretString) {
+	public MACVerifier(final String secretString, final JWSAlgorithm alg) {
 
-		super(sharedSecretString);
+		this(secretString.getBytes(Charset.forName("UTF-8")), new DefaultJWSHeaderValidator(alg));
+		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
 	}
 
 
-	@Override
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param secretKey The secret key. Must be at least 256 bits long and
+	 *                  not {@code null}.
+	 * @param alg       The expected HMAC JWS algorithm. Must be
+	 *                  {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *                  {@code null}.
+	 */
+	public MACVerifier(final SecretKey secretKey, final JWSAlgorithm alg) {
 
-		return acceptedAlgs;
+		this(secretKey.getEncoded(), new DefaultJWSHeaderValidator(alg));
+		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
 	}
 
 
-	@Override
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
+	 *            not {@code null}.
+	 * @param alg The expected HMAC JWS algorithm. Must be
+	 *            {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *            {@code null}.
+	 */
+	public MACVerifier(final OctetSequenceKey jwk, final JWSAlgorithm alg) {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
+		this(jwk.toByteArray(), alg);
+		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param secret          The secret. Must be at least 256 bits long
+	 *                        and not {@code null}.
+	 * @param headerValidator The JWS header validator. Must not be
+	 *                        {@code null}.
+	 */
+	public MACVerifier(final byte[] secret,
+			   final JWSHeaderValidator headerValidator) {
+
+		this(secret, headerValidator, null);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param secret          The secret. Must be at least 256 bits long
+	 *                        and not {@code null}.
+	 * @param headerValidator The JWS header validator. Must not be
+	 *                        {@code null}.
+	 * @param jcaSpec         The JCA provider specification, {@code null}
+	 *                        implies the default one.
+	 */
+	public MACVerifier(final byte[] secret,
+			   final JWSHeaderValidator headerValidator,
+			   final JWSJCAProviderSpec jcaSpec) {
+
+		super(secret, jcaSpec);
+
+		if (headerValidator == null) {
+			throw new IllegalArgumentException("The JWS header validator must not be null");
 		}
 
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
+		this.headerValidator = headerValidator;
 	}
 
 
 	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
+	public JWSHeaderValidator getHeaderValidator() {
 
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return headerValidator;
 	}
 
 
@@ -114,11 +156,10 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
 
-		if (! critParamChecker.headerPasses(header)) {
-			return false;
-		}
+		headerValidator.validate(header);
 
-		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
+		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
+		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, provider);
 		return ConstantTimeUtils.areEqual(expectedHMAC, signature.decode());
 	}
 }

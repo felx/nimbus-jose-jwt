@@ -28,11 +28,11 @@ class HMAC {
 
 	/**
 	 * Computes a Hash-based Message Authentication Code (HMAC) for the
-	 * specified (shared) secret and message.
+	 * specified secret and message.
 	 *
 	 * @param alg      The Java Cryptography Architecture (JCA) HMAC
 	 *                 algorithm name. Must not be {@code null}.
-	 * @param secret   The (shared) secret. Must not be {@code null}.
+	 * @param secret   The secret. Must not be {@code null}.
 	 * @param message  The message. Must not be {@code null}.
 	 * @param provider The JCA provider, or {@code null} to use the default
 	 *                 one.
@@ -54,9 +54,9 @@ class HMAC {
 
 	/**
 	 * Computes a Hash-based Message Authentication Code (HMAC) for the
-	 * specified (shared) secret key and message.
+	 * specified secret key and message.
 	 *
-	 * @param secretKey The (shared) secret key, with the appropriate HMAC
+	 * @param secretKey The secret key, with the appropriate HMAC
 	 *                  algorithm. Must not be {@code null}.
 	 * @param message   The message. Must not be {@code null}.
 	 * @param provider  The JCA provider, or {@code null} to use the

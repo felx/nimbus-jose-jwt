@@ -12,16 +12,25 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2015-04-17)
  */
 public interface JWSAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Returns the names of the supported JWS algorithms. These correspond 
+	 * Returns the names of the supported JWS algorithms. These correspond
 	 * to the {@code alg} JWS header parameter.
 	 *
 	 * @return The supported JWS algorithms, empty set if none.
 	 */
 	public Set<JWSAlgorithm> supportedAlgorithms();
+
+
+	/**
+	 * Returns the JCA provider specification.
+	 *
+	 * @return The JCA provider specification, {@code null} if not
+	 *         specified.
+	 */
+	public JWSJCAProviderSpec getJCAProviderSpec();
 }

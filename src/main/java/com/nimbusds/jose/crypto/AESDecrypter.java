@@ -129,7 +129,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 
 	/**
-	 * Returns the JWK algorithms compatible with the key size.
+	 * Returns the JWE algorithms compatible with the key size.
 	 *
 	 * @return The set of compatible algorithms.
 	 */

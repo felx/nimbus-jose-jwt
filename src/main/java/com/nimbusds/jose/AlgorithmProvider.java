@@ -1,23 +1,20 @@
 package com.nimbusds.jose;
 
 
-import java.security.Provider;
-
-
 /**
  * Common interface for JOSE algorithm providers.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-04-17)
  */
 public interface AlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider, to be used for all operations.
+	 * Returns the JCA provider specification.
 	 *
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *                 one.
+	 * @return The JCA provider specification, {@code null} if not
+	 *         specified.
 	 */
-	public void setProvider(final Provider provider);
+	public JCAProviderSpec getJCAProviderSpec();
 }

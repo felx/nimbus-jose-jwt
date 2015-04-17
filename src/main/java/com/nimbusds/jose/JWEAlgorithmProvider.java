@@ -1,8 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.security.Provider;
-import java.security.SecureRandom;
 import java.util.Set;
 
 
@@ -14,7 +12,7 @@ import java.util.Set;
  * capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2015-04-17)
  */
 public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
@@ -38,39 +36,10 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Sets a specific JCA provider for the key encryption.
+	 * Returns the JCA provider specification.
 	 *
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *                 one.
+	 * @return The JCA provider specification, {@code null} if not
+	 *         specified.
 	 */
-	public void setKeyEncryptionProvider(final Provider provider);
-
-
-	/**
-	 * Sets a specific JCA provider for the content encryption.
-	 *
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *                 one.
-	 */
-	public void setContentEncryptionProvider(final Provider provider);
-
-
-	/**
-	 * Sets a specific JCA provider for MAC computation (where required by
-	 * the JWE encryption method).
-	 *
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *                 one.
-	 */
-	public void setMACProvider(final Provider provider);
-
-
-	/**
-	 * Sets a specific secure random generator for the initialisation
-	 * vector and other purposes requiring a random number.
-	 *
-	 * @param randomGen The secure random generator, or {@code null} to use
-	 *                  the default one.
-	 */
-	public void setSecureRandom(final SecureRandom randomGen);
+	public JWEJCAProviderSpec getJCAProviderSpec();
 }

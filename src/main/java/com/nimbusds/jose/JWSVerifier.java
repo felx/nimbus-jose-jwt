@@ -1,8 +1,6 @@
 package com.nimbusds.jose;
 
 
-import java.util.Set;
-
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -14,59 +12,17 @@ import com.nimbusds.jose.util.Base64URL;
  * processing.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-04-17)
  */
 public interface JWSVerifier extends JWSAlgorithmProvider {
 
 
 	/**
-	 * Gets the names of the accepted JWS algorithms. These correspond to
-	 * the {@code alg} JWS header parameter.
+	 * Returns the employed JWS header validator.
 	 *
-	 * @see #setAcceptedAlgorithms
-	 *
-	 * @return The accepted JWS algorithms, as a read-only set, empty set
-	 *         if none.
+	 * @return The JWS header validator.
 	 */
-	public Set<JWSAlgorithm> getAcceptedAlgorithms();
-
-
-	/**
-	 * Sets the names of the accepted JWS algorithms. These correspond to
-	 * the {@code alg} JWS header parameter.
-	 *
-	 * <p>For JWS verifiers that support multiple JWS algorithms this
-	 * method can be used to indicate that only a subset should be accepted
-	 * for processing.
-	 *
-	 * @param acceptedAlgs The accepted JWS algorithms. Must be a subset of
-	 *                     the supported algorithms and not {@code null}.
-	 */
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs);
-
-
-	/**
-	 * Gets the names of the critical JWS header parameters to ignore.
-	 * These are indicated by the {@code crit} header parameter. The JWS
-	 * verifier should not ignore critical headers by default.
-	 *
-	 * @return The names of the critical JWS header parameters to ignore,
-	 *         empty or {@code null} if none.
-	 */
-	public Set<String> getIgnoredCriticalHeaderParameters();
-
-
-	/**
-	 * Sets the names of the critical JWS header parameters to ignore.
-	 * These are indicated by the {@code crit} header parameter. The JWS
-	 * verifier should not ignore critical headers by default. Use this
-	 * setter to delegate processing of selected critical headers to the
-	 * application.
-	 *
-	 * @param headers The names of the critical JWS header parameters to
-	 *                ignore, empty or {@code null} if none.
-	 */
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers);
+	JWSHeaderValidator getHeaderValidator();
 
 
 	/**
@@ -89,8 +45,6 @@ public interface JWSVerifier extends JWSAlgorithmProvider {
 	 *                       signature verification failed for some other
 	 *                       reason.
 	 */
-	public boolean verify(final JWSHeader header,
-			      final byte[] signingInput,
-			      final Base64URL signature)
+	boolean verify(final JWSHeader header, final byte[] signingInput, final Base64URL signature)
 		throws JOSEException;
 }

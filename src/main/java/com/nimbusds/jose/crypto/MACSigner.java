@@ -1,12 +1,15 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.nio.charset.Charset;
+import java.security.Provider;
+
+import javax.crypto.SecretKey;
+
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -24,25 +27,25 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-02-02)
+ * @version $version$ (2015-04-17)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
 
 
 	/**
-	 * Returns the minimal required secret size for the specified
-	 * HMAC JWS algorithm.
+	 * Returns the minimal required secret length for the specified HMAC
+	 * JWS algorithm.
 	 *
 	 * @param hmacAlg The HMAC JWS algorithm. Must be
 	 *                {@link #SUPPORTED_ALGORITHMS supported} and not
 	 *                {@code null}.
 	 *
-	 * @return The minimal required secret size, in bits.
+	 * @return The minimal required secret length, in bits.
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	public static int getMinRequiredSecretSize(final JWSAlgorithm hmacAlg)
+	public static int getMinRequiredSecretLength(final JWSAlgorithm hmacAlg)
 		throws JOSEException {
 
 		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
@@ -60,24 +63,62 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	/**
 	 * Creates a new Message Authentication (MAC) signer.
 	 *
-	 * @param sharedSecret The shared secret. Must be at least 256 bits
-	 *                     long and not {@code null}.
+	 * @param secret The secret. Must be at least 256 bits long and not
+	 *               {@code null}.
 	 */
-	public MACSigner(final byte[] sharedSecret) {
+	public MACSigner(final byte[] secret) {
 
-		super(sharedSecret);
+		this(secret, null);
 	}
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) signer.
 	 *
-	 * @param sharedSecretString The shared secret as a UTF-8 encoded
-	 *                           string. Must not be {@code null}.
+	 * @param secretString The secret as a UTF-8 encoded string. Must be at
+	 *                     least 256 bits long and not {@code null}.
 	 */
-	public MACSigner(final String sharedSecretString) {
+	public MACSigner(final String secretString) {
 
-		super(sharedSecretString);
+		this(secretString.getBytes(Charset.forName("UTF-8")), null);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) signer.
+	 *
+	 * @param secretKey The secret key. Must be at least 256 bits long and
+	 *                  not {@code null}.
+	 */
+	public MACSigner(final SecretKey secretKey) {
+
+		this(secretKey.getEncoded(), null);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) signer.
+	 *
+	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
+	 *            not {@code null}.
+	 */
+	public MACSigner(final OctetSequenceKey jwk) {
+
+		this(jwk.toByteArray(), null);
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) signer.
+	 *
+	 * @param secret  The secret. Must be at least 256 bits long and not
+	 *                {@code null}.
+	 * @param jcaSpec The JCA provider specification, {@code null} implies
+	 *                the default one.
+	 */
+	public MACSigner(final byte[] secret, final JWSJCAProviderSpec jcaSpec) {
+
+		super(secret, jcaSpec);
 	}
 
 
@@ -85,14 +126,15 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
-		int minRequiredKeyLength = getMinRequiredSecretSize(header.getAlgorithm());
+		final int minRequiredLength = getMinRequiredSecretLength(header.getAlgorithm());
 
-		if (getSharedSecret().length < minRequiredKeyLength / 8) {
-			throw new JOSEException("The shared secret size must be at least " + minRequiredKeyLength + " bits for " + header.getAlgorithm());
+		if (getSecret().length < minRequiredLength / 8) {
+			throw new JOSEException("The secret must be at least " + minRequiredLength + " bits long for " + header.getAlgorithm());
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-		byte[] hmac = HMAC.compute(jcaAlg, getSharedSecret(), signingInput, provider);
+		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
+		byte[] hmac = HMAC.compute(jcaAlg, getSecret(), signingInput, provider);
 		return Base64URL.encode(hmac);
 	}
 }

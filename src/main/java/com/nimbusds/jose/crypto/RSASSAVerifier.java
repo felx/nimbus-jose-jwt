@@ -2,18 +2,14 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.InvalidKeyException;
+import java.security.Provider;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
-import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -31,30 +27,18 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#PS512}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
- * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2015-04-17)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 
 	/**
-	 * The accepted JWS algorithms.
+	 * The JWS header validator.
 	 */
-	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final JWSHeaderValidator headerValidator;
 
 
 	/**
@@ -67,15 +51,57 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
 	 *
 	 * @param publicKey The public RSA key. Must not be {@code null}.
+	 * @param alg       The expected RSA JWS algorithm. Must be
+	 *                  {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *                  {@code null}.
 	 */
-	public RSASSAVerifier(final RSAPublicKey publicKey) {
+	public RSASSAVerifier(final RSAPublicKey publicKey, JWSAlgorithm alg) {
+
+		this(publicKey, new DefaultJWSHeaderValidator(alg));
+		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+	}
+
+
+	/**
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
+	 *
+	 * @param publicKey       The public RSA key. Must not be {@code null}.
+	 * @param headerValidator The JWS header validator. Must not be
+	 *                        {@code null}.
+	 */
+	public RSASSAVerifier(final RSAPublicKey publicKey,
+			      final JWSHeaderValidator headerValidator) {
+
+		this(publicKey, headerValidator, null);
+	}
+
+
+	/**
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
+	 *
+	 * @param publicKey       The public RSA key. Must not be {@code null}.
+	 * @param headerValidator The JWS header validator. Must not be
+	 *                        {@code null}.
+	 * @param jcaSpec         The JCA provider specification, {@code null}
+	 *                        implies the default one.
+	 */
+	public RSASSAVerifier(final RSAPublicKey publicKey,
+			      final JWSHeaderValidator headerValidator,
+			      final JWSJCAProviderSpec jcaSpec) {
+
+		super(jcaSpec);
 
 		if (publicKey == null) {
-
 			throw new IllegalArgumentException("The public RSA key must not be null");
 		}
 
 		this.publicKey = publicKey;
+
+		if (headerValidator == null) {
+			throw new IllegalArgumentException("The JWS header validator must not be null");
+		}
+
+		this.headerValidator = headerValidator;
 	}
 
 
@@ -91,38 +117,9 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 
 
 	@Override
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
+	public JWSHeaderValidator getHeaderValidator() {
 
-		return acceptedAlgs;
-	}
-
-
-	@Override
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
-
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
-		}
-
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return headerValidator;
 	}
 
 
@@ -132,9 +129,9 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
-		if (! critParamChecker.headerPasses(header)) {
-			return false;
-		}
+		headerValidator.validate(header);
+
+		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
 
 		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), provider);
 
