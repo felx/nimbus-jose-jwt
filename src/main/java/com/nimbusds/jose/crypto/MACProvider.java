@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -108,7 +109,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	public SecretKey getSecretKey() {
 
-		return new MACSecretKey(secret);
+		return new SecretKeySpec(secret, "MAC");
 	}
 
 
