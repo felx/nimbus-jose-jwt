@@ -114,7 +114,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version $version$ (2015-04-15)
+ * @version $version$ (2015-04-19)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -1672,58 +1672,16 @@ public final class RSAKey extends JWK {
 				}
 			}
 		}
-		
-		// Get optional key use
-		KeyUse use = null;
-
-		if (jsonObject.containsKey("use")) {
-			use = KeyUse.parse(JSONObjectUtils.getString(jsonObject, "use"));
-		}
-
-		// Get optional key operations
-		Set<KeyOperation> ops = null;
-
-		if (jsonObject.containsKey("key_ops")) {
-			ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
-		}
-
-		// Get optional intended algorithm
-		Algorithm alg = null;
-
-		if (jsonObject.containsKey("alg")) {
-			alg = new Algorithm(JSONObjectUtils.getString(jsonObject, "alg"));
-		}
-
-		// Get optional key ID
-		String kid = null;
-
-		if (jsonObject.containsKey("kid")) {
-			kid = JSONObjectUtils.getString(jsonObject, "kid");
-		}
-
-		// Get optional X.509 cert URL
-		URI x5u = null;
-
-		if (jsonObject.containsKey("x5u")) {
-			x5u = JSONObjectUtils.getURI(jsonObject, "x5u");
-		}
-
-		// Get optional X.509 cert thumbprint
-		Base64URL x5t = null;
-
-		if (jsonObject.containsKey("x5t")) {
-			x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, "x5t"));
-		}
-
-		// Get optional X.509 cert chain
-		List<Base64> x5c = null;
-
-		if (jsonObject.containsKey("x5c")) {
-			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
-		}
 
 		try {
-			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, use, ops, alg, kid, x5u, x5t, x5c);
+			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth,
+				JWKMetadata.parseKeyUse(jsonObject),
+				JWKMetadata.parseKeyOperations(jsonObject),
+				JWKMetadata.parseAlgorithm(jsonObject),
+				JWKMetadata.parseKeyID(jsonObject),
+				JWKMetadata.parseX509CertURL(jsonObject),
+				JWKMetadata.parseX509CertThumbprint(jsonObject),
+				JWKMetadata.parseX509CertChain(jsonObject));
 		
 		} catch (IllegalArgumentException ex) {
 

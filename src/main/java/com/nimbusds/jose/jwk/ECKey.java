@@ -66,7 +66,7 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-04-15)
+ * @version $version$ (2015-04-19)
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -1059,75 +1059,41 @@ public final class ECKey extends JWK {
 		Base64URL y = new Base64URL(JSONObjectUtils.getString(jsonObject, "y"));
 
 		// Check key type
-		KeyType kty = KeyType.parse(JSONObjectUtils.getString(jsonObject, "kty"));
+		KeyType kty = JWKMetadata.parseKeyType(jsonObject);
 
 		if (kty != KeyType.EC) {
 			throw new ParseException("The key type \"kty\" must be EC", 0);
 		}
-		
+
 		// Get optional private key
 		Base64URL d = null;
 		if (jsonObject.get("d") != null) {
 			d = new Base64URL(JSONObjectUtils.getString(jsonObject, "d"));
 		}
-		
-		// Get optional key use
-		KeyUse use = null;
 
-		if (jsonObject.containsKey("use")) {
-			use = KeyUse.parse(JSONObjectUtils.getString(jsonObject, "use"));
-		}
-
-		// Get optional key operations
-		Set<KeyOperation> ops = null;
-
-		if (jsonObject.containsKey("key_ops")) {
-			ops = KeyOperation.parse(JSONObjectUtils.getStringList(jsonObject, "key_ops"));
-		}
-
-		// Get optional intended algorithm
-		Algorithm alg = null;
-
-		if (jsonObject.containsKey("alg")) {
-			alg = new Algorithm(JSONObjectUtils.getString(jsonObject, "alg"));
-		}
-
-		// Get optional key ID
-		String kid = null;
-
-		if (jsonObject.containsKey("kid")) {
-			kid = JSONObjectUtils.getString(jsonObject, "kid");
-		}
-
-		// Get optional X.509 cert URL
-		URI x5u = null;
-
-		if (jsonObject.containsKey("x5u")) {
-			x5u = JSONObjectUtils.getURI(jsonObject, "x5u");
-		}
-
-		// Get optional X.509 cert thumbprint
-		Base64URL x5t = null;
-
-		if (jsonObject.containsKey("x5t")) {
-			x5t = new Base64URL(JSONObjectUtils.getString(jsonObject, "x5t"));
-		}
-
-		// Get optional X.509 cert chain
-		List<Base64> x5c = null;
-
-		if (jsonObject.containsKey("x5c")) {
-			x5c = X509CertChainUtils.parseX509CertChain(JSONObjectUtils.getJSONArray(jsonObject, "x5c"));	
-		}
 
 		try {
 			if (d == null) {
 				// Public key
-				return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c);
+				return new ECKey(crv, x, y,
+					JWKMetadata.parseKeyUse(jsonObject),
+					JWKMetadata.parseKeyOperations(jsonObject),
+					JWKMetadata.parseAlgorithm(jsonObject),
+					JWKMetadata.parseKeyID(jsonObject),
+					JWKMetadata.parseX509CertURL(jsonObject),
+					JWKMetadata.parseX509CertThumbprint(jsonObject),
+					JWKMetadata.parseX509CertChain(jsonObject));
 
 			} else {
 				// Key pair
-				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c);
+				return new ECKey(crv, x, y, d,
+					JWKMetadata.parseKeyUse(jsonObject),
+					JWKMetadata.parseKeyOperations(jsonObject),
+					JWKMetadata.parseAlgorithm(jsonObject),
+					JWKMetadata.parseKeyID(jsonObject),
+					JWKMetadata.parseX509CertURL(jsonObject),
+					JWKMetadata.parseX509CertThumbprint(jsonObject),
+					JWKMetadata.parseX509CertChain(jsonObject));
 			}
 
 		} catch (IllegalArgumentException ex) {
