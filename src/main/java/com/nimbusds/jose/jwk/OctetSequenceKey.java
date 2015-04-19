@@ -6,6 +6,9 @@ import java.util.List;
 import java.text.ParseException;
 import java.util.Set;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
@@ -21,6 +24,10 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * {@link KeyType#OCT Octet sequence} JSON Web Key (JWK), used to represent
  * symmetric keys. This class is immutable.
  *
+ * <p>Octet sequence JWKs should specify the algorithm intended to be used with
+ * the key, unless the application uses other means or convention to determine
+ * the algorithm used.
+ *
  * <p>Example JSON object representation of an octet sequence JWK:
  *
  * <pre>
@@ -33,14 +40,14 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version $version$ (2015-04-19)
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
 
 
 	/**
-	 * The symmetric key value.
+	 * The key value.
 	 */
 	private final Base64URL k;
 
@@ -61,7 +68,7 @@ public final class OctetSequenceKey extends JWK {
 
 
 		/**
-		 * The symmetric key value.
+		 * The key value.
 		 */
 		private final Base64URL k;
 
@@ -133,11 +140,23 @@ public final class OctetSequenceKey extends JWK {
 		 */
 		public Builder(final byte[] key) {
 
-			if (key == null || key.length == 0) {
-				throw new IllegalArgumentException("The key value must not be empty or null");
-			}
+			this(Base64URL.encode(key));
 
-			k = Base64URL.encode(key);
+			if (key.length == 0) {
+				throw new IllegalArgumentException("The key must have a positive length");
+			}
+		}
+
+
+		/**
+		 * Creates a new octet sequence JWK builder.
+		 *
+		 * @param secretKey The secret key to represent. Must not be
+		 *                  {@code null}.
+		 */
+		public Builder(final SecretKey secretKey) {
+
+			this(secretKey.getEncoded());
 		}
 
 
@@ -275,8 +294,8 @@ public final class OctetSequenceKey extends JWK {
 	 * parameters.
 	 *
 	 * @param k   The key value. It is represented as the Base64URL 
-	 *            encoding of value's big endian representation. Must not 
-	 *            be {@code null}.
+	 *            encoding of the value's big endian representation. Must
+	 *            not be {@code null}.
 	 * @param use The key use, {@code null} if not specified or if the key
 	 *            is intended for signing as well as encryption.
 	 * @param ops The key operations, {@code null} if not specified.
@@ -306,8 +325,8 @@ public final class OctetSequenceKey extends JWK {
 	/**
 	 * Returns the value of this octet sequence key. 
 	 *
-	 * @return The key value. It is represented as the Base64URL encoding 
-	 *         of the coordinate's big endian representation.
+	 * @return The key value. It is represented as the Base64URL encoding
+	 *         of the value's big endian representation.
 	 */
 	public Base64URL getKeyValue() {
 
@@ -323,6 +342,18 @@ public final class OctetSequenceKey extends JWK {
 	public byte[] toByteArray() {
 
 		return getKeyValue().decode();
+	}
+
+
+	/**
+	 * Returns a secret key representation of this octet sequence key.
+	 *
+	 * @return The secret key representation, with an algorithm set to
+	 *         {@code NONE}.
+	 */
+	public SecretKey toSecretKey() {
+
+		return new SecretKeySpec(toByteArray(), "NONE");
 	}
 
 

@@ -5,6 +5,9 @@ import java.net.URI;
 import java.security.SecureRandom;
 import java.util.*;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.EncryptionMethod;
@@ -17,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-01-20)
+ * @version $version$ (2015-04-19)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -246,6 +249,20 @@ public class OctetSequenceKeyTest extends TestCase {
 		OctetSequenceKey oct = new OctetSequenceKey.Builder(key).build();
 
 		assertEquals(Base64URL.encode(key), oct.getKeyValue());
+	}
+
+
+	public void testBuilderWithSecretKey()
+		throws Exception {
+
+		byte[] key = new byte[32];
+		new SecureRandom().nextBytes(key);
+
+		OctetSequenceKey oct = new OctetSequenceKey.Builder(new SecretKeySpec(key, "MAC")).keyUse(KeyUse.SIGNATURE).build();
+
+		SecretKey secretKey = oct.toSecretKey();
+		assertTrue(Arrays.equals(key, secretKey.getEncoded()));
+		assertEquals("NONE", secretKey.getAlgorithm());
 	}
 
 
