@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-20)
+ * @version $version$ (2015-04-21)
  */
 public class ECDSASpecVectorsTest extends TestCase {
 
@@ -87,41 +87,6 @@ public class ECDSASpecVectorsTest extends TestCase {
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES256));
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES384));
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES512));
-	}
-
-
-	public void testGetAcceptedAlgorithms() {
-
-		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
-
-		assertEquals(3, verifier.getAcceptedAlgorithms().size());
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES256));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES384));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES512));
-	}
-
-
-	public void testSetAcceptedAlgorithms() {
-
-		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
-
-		try {
-			verifier.setAcceptedAlgorithms(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.HS256)));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.ES256)));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.ES256));
-		assertEquals(1, verifier.getAcceptedAlgorithms().size());
 	}
 
 

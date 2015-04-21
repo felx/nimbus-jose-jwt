@@ -234,8 +234,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		BigInteger x = publicKey.getW().getAffineX();
 		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y);
-		verifier.getIgnoredCriticalHeaderParameters().add("exp");
+		JWSVerifier verifier = new ECDSAVerifier(x, y, new HashSet<>(Arrays.asList("exp")));
 
 		boolean verified = jwsObject.verify(verifier);
 

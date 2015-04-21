@@ -9,8 +9,8 @@ import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
-import com.nimbusds.jose.jwk.RSAKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -19,6 +19,7 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -27,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2015-04-21)
  */
 public class RSASSATest extends TestCase {
 
@@ -184,44 +185,6 @@ public class RSASSATest extends TestCase {
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.PS384));
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.PS512));
 		assertEquals(6, verifier.supportedJWSAlgorithms().size());
-	}
-
-
-	public void testGetAcceptedAlgorithms() {
-
-		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
-
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS384));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS512));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS256));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS384));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, verifier.supportedJWSAlgorithms().size());
-	}
-
-
-	public void testSetAcceptedAlgorithms() {
-
-		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
-
-		try {
-			verifier.setAcceptedAlgorithms(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.ES256)));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		verifier.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWSAlgorithm.RS256)));
-		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertEquals(1, verifier.getAcceptedAlgorithms().size());
 	}
 
 
@@ -662,7 +625,7 @@ public class RSASSATest extends TestCase {
 	}
 
 
-	public void testCritHeaderParamIgnore()
+	public void testCritHeaderParamsDefer()
 		throws Exception {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
@@ -676,8 +639,12 @@ public class RSASSATest extends TestCase {
 
 		jwsObject.sign(signer);
 
-		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
-		verifier.getIgnoredCriticalHeaderParameters().add("exp");
+		Set<String> deferredCrit = new HashSet<>(Arrays.asList("exp"));
+
+		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY, deferredCrit);
+
+		assertTrue(deferredCrit.containsAll(verifier.getDeferredCriticalHeaderParams()));
+		assertTrue(verifier.getProcessedCriticalHeaderParams().isEmpty());
 
 		boolean verified = jwsObject.verify(verifier);
 

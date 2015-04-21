@@ -1,11 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
+import junit.framework.TestCase;
+
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.jwk.ECKey;
-import junit.framework.TestCase;
 
 
 /**

@@ -62,20 +62,6 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider, JWEJCAProviderAw
 		}
 
 		this.encs = encs;
-
-		initSecureRandom();
-	}
-
-
-	/**
-	 * Initialises the secure random generator.
-	 */
-	private void initSecureRandom() {
-
-		if (jcaProviderSpec.getSecureRandom() == null) {
-			// Use default SecureRandom instance for this JVM/platform.
-			jcaProviderSpec = jcaProviderSpec.withSecureRandom(new SecureRandom());
-		}
 	}
 
 

@@ -114,7 +114,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 		final int minRequiredLength = getMinRequiredSecretLength(header.getAlgorithm());
 
 		if (getSecret().length < minRequiredLength / 8) {
-			throw new JOSEException("The secret must be at least " + minRequiredLength + " bits long for " + header.getAlgorithm());
+			throw new JOSEException("The secret length for " + header.getAlgorithm() + " must be at least " + minRequiredLength + " bits");
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());

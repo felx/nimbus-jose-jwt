@@ -205,14 +205,14 @@ public final class JWEJCAProviderSpec {
 
 
 	/**
-	 * Gets the specific secure random generator for the initialisation
-	 * vector and other purposes requiring a random number.
+	 * Gets the secure random generator for the initialisation vector and
+	 * other purposes requiring a random number.
 	 *
-	 * @return The secure random generator, {@code null} implies the
-	 *         default one.
+	 * @return The specific secure random generator (if specified), else
+	 *         the default one.
 	 */
 	public SecureRandom getSecureRandom() {
 
-		return randomGen;
+		return randomGen != null ? randomGen : new SecureRandom();
 	}
 }

@@ -2,12 +2,10 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.Provider;
-
 import javax.crypto.Mac;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
+import junit.framework.TestCase;
 
 import com.nimbusds.jose.util.Base64URL;
 
