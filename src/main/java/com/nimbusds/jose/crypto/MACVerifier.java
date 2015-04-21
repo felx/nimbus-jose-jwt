@@ -2,7 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.nio.charset.Charset;
-import java.security.Provider;
+import java.util.Set;
 
 import javax.crypto.SecretKey;
 
@@ -26,16 +26,16 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
-public class MACVerifier extends MACProvider implements JWSVerifier {
+public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The JWS header validator.
+	 * The critical header policy.
 	 */
-	private final JWSHeaderValidator headerValidator;
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
@@ -43,14 +43,10 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 *
 	 * @param secret The secret. Must be at least 256 bits long and not
 	 *               {@code null}.
-	 * @param alg    The expected HMAC JWS algorithm. Must be
-	 *               {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *               {@code null}.
 	 */
-	public MACVerifier(final byte[] secret, final JWSAlgorithm alg) {
+	public MACVerifier(final byte[] secret) {
 
-		this(secret, new DefaultJWSHeaderValidator(alg));
-		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+		this(secret, null);
 	}
 
 
@@ -59,14 +55,10 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 *
 	 * @param secretString The secret as a UTF-8 encoded string. Must be at
 	 *                     least 256 bits long and not {@code null}.
-	 * @param alg          The expected HMAC JWS algorithm. Must be
-	 *                     {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *                     {@code null}.
 	 */
-	public MACVerifier(final String secretString, final JWSAlgorithm alg) {
+	public MACVerifier(final String secretString) {
 
-		this(secretString.getBytes(Charset.forName("UTF-8")), new DefaultJWSHeaderValidator(alg));
-		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+		this(secretString.getBytes(Charset.forName("UTF-8")));
 	}
 
 
@@ -75,14 +67,10 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 *
 	 * @param secretKey The secret key. Must be at least 256 bits long and
 	 *                  not {@code null}.
-	 * @param alg       The expected HMAC JWS algorithm. Must be
-	 *                  {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *                  {@code null}.
 	 */
-	public MACVerifier(final SecretKey secretKey, final JWSAlgorithm alg) {
+	public MACVerifier(final SecretKey secretKey) {
 
-		this(secretKey.getEncoded(), new DefaultJWSHeaderValidator(alg));
-		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+		this(secretKey.getEncoded());
 	}
 
 
@@ -91,60 +79,42 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 	 *
 	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
 	 *            not {@code null}.
-	 * @param alg The expected HMAC JWS algorithm. Must be
-	 *            {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *            {@code null}.
 	 */
-	public MACVerifier(final OctetSequenceKey jwk, final JWSAlgorithm alg) {
+	public MACVerifier(final OctetSequenceKey jwk) {
 
-		this(jwk.toByteArray(), alg);
-		AlgorithmSupport.ensure(SUPPORTED_ALGORITHMS, alg);
+		this(jwk.toByteArray());
 	}
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) verifier.
 	 *
-	 * @param secret          The secret. Must be at least 256 bits long
-	 *                        and not {@code null}.
-	 * @param headerValidator The JWS header validator. Must not be
-	 *                        {@code null}.
+	 * @param secret         The secret. Must be at least 256 bits long
+	 *                       and not {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
 	 */
 	public MACVerifier(final byte[] secret,
-			   final JWSHeaderValidator headerValidator) {
+			   final Set<String> defCritHeaders) {
 
-		this(secret, headerValidator, null);
-	}
+		super(secret);
 
-
-	/**
-	 * Creates a new Message Authentication (MAC) verifier.
-	 *
-	 * @param secret          The secret. Must be at least 256 bits long
-	 *                        and not {@code null}.
-	 * @param headerValidator The JWS header validator. Must not be
-	 *                        {@code null}.
-	 * @param jcaSpec         The JCA provider specification, {@code null}
-	 *                        implies the default one.
-	 */
-	public MACVerifier(final byte[] secret,
-			   final JWSHeaderValidator headerValidator,
-			   final JWSJCAProviderSpec jcaSpec) {
-
-		super(secret, jcaSpec);
-
-		if (headerValidator == null) {
-			throw new IllegalArgumentException("The JWS header validator must not be null");
-		}
-
-		this.headerValidator = headerValidator;
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
 	@Override
-	public JWSHeaderValidator getHeaderValidator() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return headerValidator;
+		return critPolicy.getProcessedCriticalHeaderParams();
+	}
+
+
+	@Override
+	public Set<String> getDeferredCriticalHeaderParams() {
+
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -154,12 +124,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
+		if (! critPolicy.headerPasses(header)) {
+			return false;
+		}
+
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-
-		headerValidator.validate(header);
-
-		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
-		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, provider);
+		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, getJCAProvider());
 		return ConstantTimeUtils.areEqual(expectedHMAC, signature.decode());
 	}
 }

@@ -2,7 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.nio.charset.Charset;
-import java.security.Provider;
 
 import javax.crypto.SecretKey;
 
@@ -27,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-20)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -68,7 +67,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final byte[] secret) {
 
-		this(secret, null);
+		super(secret);
 	}
 
 
@@ -80,7 +79,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final String secretString) {
 
-		this(secretString.getBytes(Charset.forName("UTF-8")), null);
+		this(secretString.getBytes(Charset.forName("UTF-8")));
 	}
 
 
@@ -92,7 +91,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final SecretKey secretKey) {
 
-		this(secretKey.getEncoded(), null);
+		this(secretKey.getEncoded());
 	}
 
 
@@ -104,21 +103,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final OctetSequenceKey jwk) {
 
-		this(jwk.toByteArray(), null);
-	}
-
-
-	/**
-	 * Creates a new Message Authentication (MAC) signer.
-	 *
-	 * @param secret  The secret. Must be at least 256 bits long and not
-	 *                {@code null}.
-	 * @param jcaSpec The JCA provider specification, {@code null} implies
-	 *                the default one.
-	 */
-	public MACSigner(final byte[] secret, final JWSJCAProviderSpec jcaSpec) {
-
-		super(secret, jcaSpec);
+		this(jwk.toByteArray());
 	}
 
 
@@ -133,8 +118,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-		Provider provider = getJCAProviderSpec() != null ? getJCAProviderSpec().getProvider() : null;
-		byte[] hmac = HMAC.compute(jcaAlg, getSecret(), signingInput, provider);
+		byte[] hmac = HMAC.compute(jcaAlg, getSecret(), signingInput, getJCAProvider());
 		return Base64URL.encode(hmac);
 	}
 }

@@ -10,8 +10,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for plaintext (unsecured), JSON Web Signature (JWS)
- * and JSON Web Encryption (JWE) objects.
+ * The base abstract class for unsecured ({@code alg=none}), JSON Web Signature
+ * (JWS) and JSON Web Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-11-18)
@@ -34,7 +34,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * The payload (message), {@code null} if not defined.
+	 * The payload (message), {@code null} if not specified.
 	 */
 	private Payload payload;
 
@@ -54,7 +54,6 @@ public abstract class JOSEObject {
 	protected JOSEObject() {
 
 		payload = null;
-
 		parsedParts = null;
 	}
 
@@ -177,12 +176,13 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Splits a serialised JOSE object into its Base64URL-encoded parts.
+	 * Splits a compact serialised JOSE object into its Base64URL-encoded
+	 * parts.
 	 *
-	 * @param s The serialised JOSE object to split. Must not be 
+	 * @param s The compact serialised JOSE object to split. Must not be
 	 *          {@code null}.
 	 *
-	 * @return The JOSE Base64URL-encoded parts (three for plaintext and 
+	 * @return The JOSE Base64URL-encoded parts (three for unsecured and
 	 *         JWS objects, five for JWE objects).
 	 *
 	 * @throws ParseException If the specified string couldn't be split 
@@ -250,7 +250,7 @@ public abstract class JOSEObject {
 	 *         {@link JWEObject} instance.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                       plaintext, JWS or JWE object.
+	 *                        unsecured, JWS or JWE object.
 	 */
 	public static JOSEObject parse(final String s) 
 		throws ParseException {
@@ -264,7 +264,7 @@ public abstract class JOSEObject {
 
 		} catch (ParseException e) {
 
-			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
+			throw new ParseException("Invalid unsecured/JWS/JWE header: " + e.getMessage(), 0);
 		}
 
 		Algorithm alg = Header.parseAlgorithm(jsonObject);
@@ -282,7 +282,7 @@ public abstract class JOSEObject {
 
 
 	/**
-	 * Parses a {@link PlainObject plain}, {@link JWSObject JWS} or
+	 * Parses an {@link PlainObject unsecured}, {@link JWSObject JWS} or
 	 * {@link JWEObject JWE object} from the specified string in compact
 	 * format.
 	 *

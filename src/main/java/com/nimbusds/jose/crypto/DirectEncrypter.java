@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.security.SecureRandom;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -39,7 +40,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2014-04-21)
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -79,7 +80,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	public DirectEncrypter(final byte[] keyBytes)
 		throws JOSEException {
 
-		super(keyBytes);
+		super(new SecretKeySpec(keyBytes, "AES"));
 	}
 
 
@@ -116,19 +117,22 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;
 		AuthenticatedCipherText authCipherText;
-		SecureRandom randomGen = getSecureRandom();
+		SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
 			iv = AESCBC.generateIV(randomGen);
 
-			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad, contentEncryptionProvider, macProvider);
+			authCipherText = AESCBC.encryptAuthenticated(getKey(), iv, plainText, aad,
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
 			iv = AESGCM.generateIV(randomGen);
 
-			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad, contentEncryptionProvider);
+			authCipherText = AESGCM.encrypt(getKey(), iv, plainText, aad,
+				getJWEJCAProvider().getContentEncryptionProvider());
 
 		} else {
 

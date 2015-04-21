@@ -6,10 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -35,7 +33,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version $version$ (2015-04-21)
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 
@@ -80,23 +78,16 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Creates a new direct encryption / decryption provider.
 	 *
-	 * @param key The shared symmetric key. Its algorithm must be "AES".
-	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
-	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
-	 *            (64 bytes) long. Must not be {@code null}.
+	 * @param cek The Content Encryption Key. Must be 128 bits (16 bytes),
+	 *            192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48
+	 *            bytes) or 512 bits (64 bytes) long. Must not be
+	 *            {@code null}.
 	 */
-	protected DirectCryptoProvider(final SecretKey key)
-		throws JOSEException {
+	protected DirectCryptoProvider(final SecretKey cek) {
 
 		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
 
-		if (! key.getAlgorithm().equals("AES")) {
-
-			throw new JOSEException("The algorithm of the shared symmetric key must be AES");
-		}
-		
-
-		byte[] keyBytes = key.getEncoded();
+		byte[] keyBytes = cek.getEncoded();
 
 		if (keyBytes.length != 16 &&
 		    keyBytes.length != 24 &&
@@ -104,30 +95,15 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 		    keyBytes.length != 48 &&
 		    keyBytes.length != 64) {
 
-			throw new JOSEException("The length of the shared symmetric key must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
+			throw new IllegalArgumentException("The Content Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
 		}
 
-		cek = key;
+		this.cek = cek;
 	}
 
 
 	/**
-	 * Creates a new direct encryption / decryption provider.
-	 *
-	 * @param keyBytes The shared symmetric key, as a byte array. Must be
-	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
-	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
-	 *                 bytes) long. Must not be {@code null}.
-	 */
-	protected DirectCryptoProvider(final byte[] keyBytes)
-		throws JOSEException {
-
-		this(new SecretKeySpec(keyBytes, "AES"));
-	}
-
-
-	/**
-	 * Gets the shared symmetric key.
+	 * Gets the Content Encryption Key (CEK).
 	 *
 	 * @return The key.
 	 */

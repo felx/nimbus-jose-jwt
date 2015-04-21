@@ -15,12 +15,12 @@ import junit.framework.TestCase;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-07-10)
  */
-public class CriticalHeaderParameterCheckerTest extends TestCase {
+public class CriticalHeaderParamsDeferralTest extends TestCase {
 
 
 	public void testConstructor() {
 
-		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
+		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
 
 		assertTrue(checker.getIgnoredCriticalHeaders().isEmpty());
 	}
@@ -28,7 +28,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 	public void testSetter() {
 
-		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
+		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
 
 		checker.setIgnoredCriticalHeaders(new HashSet<>(Arrays.asList("exp", "hs")));
 
@@ -41,7 +41,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 	public void testPassMissingCritHeader() {
 
-		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
+		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).keyID("1").build();
 
@@ -51,7 +51,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 	public void testPassIgnoredCritParams() {
 
-		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
+		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
 		checker.getIgnoredCriticalHeaders().add("exp");
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
@@ -66,7 +66,7 @@ public class CriticalHeaderParameterCheckerTest extends TestCase {
 
 	public void testReject() {
 
-		CriticalHeaderParameterChecker checker = new CriticalHeaderParameterChecker();
+		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").

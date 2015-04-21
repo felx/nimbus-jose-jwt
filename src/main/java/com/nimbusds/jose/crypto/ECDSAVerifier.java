@@ -2,7 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-import java.util.HashSet;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -14,16 +13,13 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 
 
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) verifier of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
@@ -32,31 +28,19 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES512}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
- * restrict the acceptable JWS algorithms.
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
-public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
+public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The accepted JWS algorithms.
+	 * The critical header policy.
 	 */
-	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
@@ -83,19 +67,38 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 	 */
 	public ECDSAVerifier(final BigInteger x, final BigInteger y) {
 
-		if (x == null) {
+		this(x, y, null);
+	}
 
+
+
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * verifier.
+	 *
+	 * @param x              The 'x' coordinate for the elliptic curve
+	 *                       point. Must not be {@code null}.
+	 * @param y              The 'y' coordinate for the elliptic curve
+	 *                       point. Must not be {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
+	 */
+	public ECDSAVerifier(final BigInteger x, final BigInteger y, final Set<String> defCritHeaders) {
+
+		if (x == null) {
 			throw new IllegalArgumentException("The \"x\" EC coordinate must not be null");
 		}
 
 		this.x = x;
 
 		if (y == null) {
-
 			throw new IllegalArgumentException("The \"y\" EC coordinate must not be null");
 		}
 
 		this.y = y;
+
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
@@ -122,38 +125,16 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 
 
 	@Override
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return acceptedAlgs;
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
 	@Override
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+	public Set<String> getDeferredCriticalHeaderParams() {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
-		}
-
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -163,7 +144,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
-		if (! critParamChecker.headerPasses(header)) {
+		if (! critPolicy.headerPasses(header)) {
 			return false;
 		}
 

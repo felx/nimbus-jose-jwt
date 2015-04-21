@@ -11,8 +11,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for plaintext, JSON Web Signature (JWS) and JSON Web 
- * Encryption (JWE) headers.
+ * The base abstract class for unsecured ({@code alg=none}), JSON Web Signature
+ * (JWS) and JSON Web Encryption (JWE) headers.
  *
  * <p>The header may also include {@link #getCustomParams custom
  * parameters}; these will be serialised and parsed along the registered ones.

@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -21,7 +21,7 @@ public class JWEObject extends JOSEObject {
 	/**
 	 * Enumeration of the states of a JSON Web Encryption (JWE) object.
 	 */
-	public static enum State {
+	public enum State {
 
 
 		/**
@@ -311,7 +311,7 @@ public class JWEObject extends JOSEObject {
 	private void ensureJWEEncrypterSupport(final JWEEncrypter encrypter)
 		throws JOSEException {
 
-		if (! encrypter.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
+		if (! encrypter.supportedJWEAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
 					        "\" algorithm is not supported by the JWE encrypter");
@@ -321,32 +321,6 @@ public class JWEObject extends JOSEObject {
 
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
 					        "\" encryption method is not supported by the JWE encrypter");
-		}
-	}
-
-
-	/**
-	 * Ensures the specified JWE decrypter accepts the algorithms and the 
-	 * headers of this JWE object.
-	 *
-	 * @throws JOSEException If the JWE algorithms or headers are not 
-	 *                       accepted.
-	 */
-	private void ensureJWEDecrypterAcceptance(final JWEDecrypter decrypter)
-		throws JOSEException {
-
-
-		if (! decrypter.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
-
-			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-					        "\" algorithm is not accepted by the JWE decrypter");
-		}
-
-
-		if (! decrypter.getAcceptedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
-
-			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
-					        "\" encryption method is not accepted by the JWE decrypter");
 		}
 	}
 
@@ -370,7 +344,7 @@ public class JWEObject extends JOSEObject {
 
 		ensureJWEEncrypterSupport(encrypter);
 
-		JWECryptoParts parts = null;
+		JWECryptoParts parts;
 
 		try {
 			parts = encrypter.encrypt(getHeader(), getPayload().toBytes());
@@ -416,8 +390,6 @@ public class JWEObject extends JOSEObject {
 		throws JOSEException {
 
 		ensureEncryptedState();
-
-		ensureJWEDecrypterAcceptance(decrypter);
 
 		try {
 			setPayload(new Payload(decrypter.decrypt(getHeader(), 

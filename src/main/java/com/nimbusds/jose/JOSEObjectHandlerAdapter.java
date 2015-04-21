@@ -2,7 +2,7 @@ package com.nimbusds.jose;
 
 
 /**
- * JOSE object handler adapter.  Intended to be extended by classes that need
+ * JOSE object handler adapter. Intended to be extended by classes that need
  * to handle only a subset of the JOSE object types.
  *
  * @author Vladimir Dzhuvinov

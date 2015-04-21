@@ -76,13 +76,13 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEEncrypter encrypter = new DirectEncrypter(key128);
 
-		assertEquals(1, encrypter.supportedAlgorithms().size());
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+		assertEquals(1, encrypter.supportedJWEAlgorithms().size());
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.DIR));
 
 		JWEDecrypter decrypter = new DirectDecrypter(key128);
 
-		assertEquals(1, decrypter.supportedAlgorithms().size());
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.DIR));
+		assertEquals(1, decrypter.supportedJWEAlgorithms().size());
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.DIR));
 	}
 
 

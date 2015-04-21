@@ -167,23 +167,23 @@ public class RSASSATest extends TestCase {
 
 		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
 
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.RS512));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, signer.supportedAlgorithms().size());
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, signer.supportedJWSAlgorithms().size());
 
 		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
 
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS256));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS384));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.RS512));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS256));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS384));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, verifier.supportedAlgorithms().size());
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.RS256));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.RS384));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.RS512));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.PS256));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.PS384));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.PS512));
+		assertEquals(6, verifier.supportedJWSAlgorithms().size());
 	}
 
 
@@ -197,7 +197,7 @@ public class RSASSATest extends TestCase {
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS256));
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS384));
 		assertTrue(verifier.getAcceptedAlgorithms().contains(JWSAlgorithm.PS512));
-		assertEquals(6, verifier.supportedAlgorithms().size());
+		assertEquals(6, verifier.supportedJWSAlgorithms().size());
 	}
 
 

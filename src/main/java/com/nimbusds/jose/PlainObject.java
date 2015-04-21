@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Plaintext (unsecured) JOSE object. This class is thread-safe.
+ * Unsecured ({@code alg=none}) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-08)
@@ -25,15 +25,14 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Creates a new plaintext JOSE object with a default 
-	 * {@link PlainHeader} and the specified payload.
+	 * Creates a new unsecured JOSE object with a default {@link
+	 * PlainHeader} and the specified payload.
 	 *
 	 * @param payload The payload. Must not be {@code null}.
 	 */
 	public PlainObject(final Payload payload) {
 
 		if (payload == null) {
-
 			throw new IllegalArgumentException("The payload must not be null");
 		}
 
@@ -44,10 +43,10 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Creates a new plaintext JOSE object with the specified header and 
+	 * Creates a new unsecured JOSE object with the specified header and
 	 * payload.
 	 *
-	 * @param header  The plaintext header. Must not be {@code null}.
+	 * @param header  The unsecured header. Must not be {@code null}.
 	 * @param payload The payload. Must not be {@code null}.
 	 */
 	public PlainObject(final PlainHeader header, final Payload payload) {
@@ -69,10 +68,10 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Creates a new plaintext JOSE object with the specified 
+	 * Creates a new unsecured JOSE object with the specified
 	 * Base64URL-encoded parts.
 	 *
-	 * @param firstPart  The first part, corresponding to the plaintext 
+	 * @param firstPart  The first part, corresponding to the unsecured
 	 *                   header. Must not be {@code null}.
 	 * @param secondPart The second part, corresponding to the payload. 
 	 *                   Must not be {@code null}.
@@ -114,7 +113,7 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Serialises this plaintext JOSE object to its compact format 
+	 * Serialises this unsecured JOSE object to its compact format
 	 * consisting of Base64URL-encoded parts delimited by period ('.') 
 	 * characters.
 	 *
@@ -122,7 +121,7 @@ public class PlainObject extends JOSEObject {
 	 * [header-base64url].[payload-base64url].[]
 	 * </pre>
 	 *
-	 * @return The serialised plaintext JOSE object.
+	 * @return The serialised unsecured JOSE object.
 	 */
 	@Override
 	public String serialize() {
@@ -136,15 +135,15 @@ public class PlainObject extends JOSEObject {
 
 
 	/**
-	 * Parses a plaintext JOSE object from the specified string in compact 
+	 * Parses an unsecured JOSE object from the specified string in compact
 	 * format.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The plain JOSE object.
+	 * @return The unsecured JOSE object.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                        plaintext JOSE object.
+	 *                        unsecured JOSE object.
 	 */
 	public static PlainObject parse(final String s)
 		throws ParseException {

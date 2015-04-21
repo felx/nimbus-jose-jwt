@@ -11,7 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSJCAProviderSpec;
 
 
 /**
@@ -27,7 +26,7 @@ import com.nimbusds.jose.JWSJCAProviderSpec;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-19)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -85,14 +84,12 @@ abstract class MACProvider extends BaseJWSProvider {
 	/**
 	 * Creates a new Message Authentication (MAC) provider.
 	 *
-	 * @param secret  The secret. Must be at least 256 bits long and not
-	 *                {@code null}.
-	 * @param jcaSpec The JCA provider specification, {@code null} implies
-	 *                the default one.
+	 * @param secret The secret. Must be at least 256 bits long and not
+	 *               {@code null}.
 	 */
-	protected MACProvider(final byte[] secret, final JWSJCAProviderSpec jcaSpec) {
+	protected MACProvider(final byte[] secret) {
 
-		super(SUPPORTED_ALGORITHMS, jcaSpec);
+		super(SUPPORTED_ALGORITHMS);
 
 		if (secret.length < 256 / 8) {
 			throw new IllegalArgumentException("The secret length must be at least 256 bits");

@@ -33,7 +33,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-06)
+ * @version $version$ (2015-04-21)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 

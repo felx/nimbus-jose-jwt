@@ -8,19 +8,23 @@ package com.nimbusds.jose;
  * {@link JWSObject signed} or {@link JWEObject encrypted object}.
  *
  * @since 3.4
+ *
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-04-21)
  */
 public interface JOSEObjectHandler<T> {
 
 
 	/**
-	 * Invoked when the parsed JOSE object is plain (unsecured).
+	 * Invoked when the parsed JOSE object is unsecured.
 	 *
-	 * @param plainObject The parsed plain JOSE object. Not {@code null}.
+	 * @param plainObject The parsed unsecured JOSE object. Not
+	 *                    {@code null}.
 	 *
-	 * @return Any object to be used after inspecting the plain JOSE
+	 * @return Any object to be used after inspecting the unsecured JOSE
 	 *         object, or {@code null} if no return value is necessary.
 	 */
-	public T onPlainObject(final PlainObject plainObject);
+	T onPlainObject(final PlainObject plainObject);
 
 
 	/**
@@ -31,7 +35,7 @@ public interface JOSEObjectHandler<T> {
 	 * @return Any object to be used after inspecting the JWS object, or
 	 *         {@code null} if no return value is necessary.
 	 */
-	public T onJWSObject(final JWSObject jwsObject);
+	T onJWSObject(final JWSObject jwsObject);
 
 
 	/**
@@ -42,6 +46,6 @@ public interface JOSEObjectHandler<T> {
 	 * @return Any object to be used after inspecting the JWE object, or
 	 *         {@code null} if no return value is necessary.
 	 */
-	public T onJWEObject(final JWEObject jweObject);
+	T onJWEObject(final JWEObject jweObject);
 }
 

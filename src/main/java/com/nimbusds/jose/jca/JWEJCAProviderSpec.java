@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.jca;
 
 
 import java.security.Provider;
@@ -8,14 +8,19 @@ import net.jcip.annotations.Immutable;
 
 
 /**
- * The JCA provider specification for {@link JWEAlgorithmProvider JWE algorithm
- * provider} implementations.
+ * JCA provider specification for JSON Web Encryption (JWE) operations.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-20)
  */
 @Immutable
-public final class JWEJCAProviderSpec extends JCAProviderSpec {
+public final class JWEJCAProviderSpec {
+
+
+	/**
+	 * The JCA provider for all operations.
+	 */
+	private final Provider provider;
 
 
 	/**
@@ -60,12 +65,12 @@ public final class JWEJCAProviderSpec extends JCAProviderSpec {
 	 *                    requiring a random number, {@code null} to use
 	 *                    the default one.
 	 */
-	private JWEJCAProviderSpec(final Provider provider,
-				   final Provider keProvider,
-				   final Provider ceProvider,
-				   final Provider macProvider,
-				   final SecureRandom randomGen) {
-		super(provider);
+	public JWEJCAProviderSpec(final Provider provider,
+				  final Provider keProvider,
+				  final Provider ceProvider,
+				  final Provider macProvider,
+				  final SecureRandom randomGen) {
+		this.provider = provider;
 		this.keProvider = keProvider;
 		this.ceProvider = ceProvider;
 		this.macProvider = macProvider;
@@ -93,6 +98,17 @@ public final class JWEJCAProviderSpec extends JCAProviderSpec {
 	public JWEJCAProviderSpec withProvider(final Provider provider) {
 
 		return new JWEJCAProviderSpec(getProvider(), keProvider, ceProvider, macProvider, randomGen);
+	}
+
+
+	/**
+	 * Gets the specific JCA provider to be used for all operations.
+	 *
+	 * @return The JCA provider, {@code null} implies the default one.
+	 */
+	public Provider getProvider() {
+
+		return provider;
 	}
 
 

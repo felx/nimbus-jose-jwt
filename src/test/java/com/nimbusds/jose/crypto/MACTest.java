@@ -54,17 +54,17 @@ public class MACTest extends TestCase {
 
 		MACSigner signer = new MACSigner(sharedSecret);
 
-		assertEquals(3, signer.supportedAlgorithms().size());
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(signer.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+		assertEquals(3, signer.supportedJWSAlgorithms().size());
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
 
 		MACVerifier verifier = new MACVerifier(sharedSecret);
 
-		assertEquals(3, verifier.supportedAlgorithms().size());
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS256));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS384));
-		assertTrue(verifier.supportedAlgorithms().contains(JWSAlgorithm.HS512));
+		assertEquals(3, verifier.supportedJWSAlgorithms().size());
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
 	}
 
 

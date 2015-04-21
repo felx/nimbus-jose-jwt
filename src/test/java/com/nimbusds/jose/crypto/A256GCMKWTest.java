@@ -39,23 +39,23 @@ public class A256GCMKWTest extends TestCase {
 
 		JWEEncrypter encrypter = new AESEncrypter(key256);
 
-		assertEquals(6, encrypter.supportedAlgorithms().size());
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		assertEquals(6, encrypter.supportedJWEAlgorithms().size());
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
 		JWEDecrypter decrypter = new AESDecrypter(key256);
 
-		assertEquals(6, decrypter.supportedAlgorithms().size());
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		assertEquals(6, decrypter.supportedJWEAlgorithms().size());
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 	}
 
 

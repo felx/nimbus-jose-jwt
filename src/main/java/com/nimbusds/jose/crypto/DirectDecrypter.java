@@ -1,18 +1,15 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.HashSet;
 import java.util.Set;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEHeader;
+import net.jcip.annotations.ThreadSafe;
+
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -35,38 +32,18 @@ import net.jcip.annotations.ThreadSafe;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
- * registered JWE header parameters}. Use {@link #setAcceptedAlgorithms} and
- * {@link #setAcceptedEncryptionMethods} to restrict the acceptable JWE
- * algorithms and encryption methods.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
-public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter {
+public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The accepted JWE algorithms.
+	 * The critical header policy.
 	 */
-	private Set<JWEAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The accepted encryption methods.
-	 */
-	private Set<EncryptionMethod> acceptedEncs =
-		new HashSet<>(supportedEncryptionMethods());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
@@ -99,64 +76,29 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	public DirectDecrypter(final byte[] keyBytes)
 		throws JOSEException {
 
-		super(keyBytes);
+		super(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	public DirectDecrypter(final SecretKey key, final Set<String> defCritHeaders) {
+
+		super(key);
+
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
 	@Override
-	public Set<JWEAlgorithm> getAcceptedAlgorithms() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return acceptedAlgs;
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
 	@Override
-	public void setAcceptedAlgorithms(final Set<JWEAlgorithm> acceptedAlgs) {
+	public Set<String> getDeferredCriticalHeaderParams() {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWE algorithms must not be null");
-		}
-
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<EncryptionMethod> getAcceptedEncryptionMethods() {
-
-		return acceptedEncs;
-	}
-
-
-	@Override
-	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs) {
-
-		if (acceptedEncs == null)
-			throw new IllegalArgumentException("The accepted encryption methods must not be null");
-
-		if (!supportedEncryptionMethods().containsAll(acceptedEncs)) {
-			throw new IllegalArgumentException("Unsupported encryption method(s)");
-		}
-
-		this.acceptedEncs = acceptedEncs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -170,17 +112,14 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 		// Validate required JWE parts
 		if (encryptedKey != null) {
-
 			throw new JOSEException("Unexpected encrypted key, must be omitted");
 		}	
 
 		if (iv == null) {
-
 			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
 		if (authTag == null) {
-
 			throw new JOSEException("The authentication tag must not be null");
 		}
 		
@@ -188,12 +127,10 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		JWEAlgorithm alg = header.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
-
 			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
 		}
 
-		if (! critParamChecker.headerPasses(header)) {
-
+		if (! critPolicy.headerPasses(header)) {
 			throw new JOSEException("Unsupported critical header parameter");
 		}
 
@@ -207,11 +144,14 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
 
-			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider, macProvider);
+			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(),
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
 
-			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(), contentEncryptionProvider);
+			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(),
+				getJWEJCAProvider().getContentEncryptionProvider());
 
 		} else {
 

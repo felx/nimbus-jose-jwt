@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.Set;
@@ -9,6 +8,8 @@ import java.util.Set;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEAlgorithmProvider;
+import com.nimbusds.jose.jca.JWEJCAProviderAware;
+import com.nimbusds.jose.jca.JWEJCAProviderSpec;
 
 
 /**
@@ -16,9 +17,9 @@ import com.nimbusds.jose.JWEAlgorithmProvider;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-04-21)
  */
-abstract class BaseJWEProvider implements JWEAlgorithmProvider {
+abstract class BaseJWEProvider implements JWEAlgorithmProvider, JWEJCAProviderAware {
 
 
 	/**
@@ -34,30 +35,9 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	/**
-	 * The JCA provider for the key encryption, {@code null} if not
-	 * specified (implies default one).
+	 * The JWE JCA provider specification.
 	 */
-	protected Provider keyEncryptionProvider = null;
-
-
-	/**
-	 * The JCA provider for the content encryption, {@code null} if not
-	 * specified (implies default one).
-	 */
-	protected Provider contentEncryptionProvider = null;
-
-
-	/**
-	 * The JCA provider for the MAC computation, {@code null} if not
-	 * specified (implies default one).
-	 */
-	protected Provider macProvider = null;
-
-
-	/**
-	 * The SecureRandom instance used for encryption/decryption.
-	 */
-	private SecureRandom randomGen = null;
+	private JWEJCAProviderSpec jcaProviderSpec = new JWEJCAProviderSpec();
 
 
 	/**
@@ -82,11 +62,25 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 		}
 
 		this.encs = encs;
+
+		initSecureRandom();
+	}
+
+
+	/**
+	 * Initialises the secure random generator.
+	 */
+	private void initSecureRandom() {
+
+		if (jcaProviderSpec.getSecureRandom() == null) {
+			// Use default SecureRandom instance for this JVM/platform.
+			jcaProviderSpec = jcaProviderSpec.withSecureRandom(new SecureRandom());
+		}
 	}
 
 
 	@Override
-	public Set<JWEAlgorithm> supportedAlgorithms() {
+	public Set<JWEAlgorithm> supportedJWEAlgorithms() {
 
 		return algs;
 	}
@@ -100,56 +94,20 @@ abstract class BaseJWEProvider implements JWEAlgorithmProvider {
 
 
 	@Override
-	public void setProvider(final Provider provider) {
+	public void setJWEJCAProvider(final JWEJCAProviderSpec jcaProviderSpec) {
 
-		setKeyEncryptionProvider(provider);
-		setContentEncryptionProvider(provider);
-		setMACProvider(provider);
-	}
-
-
-	@Override
-	public void setKeyEncryptionProvider(final Provider provider) {
-
-		keyEncryptionProvider = provider;
-	}
-
-
-	@Override
-	public void setContentEncryptionProvider(final Provider provider) {
-
-		contentEncryptionProvider = provider;
-	}
-
-
-	@Override
-	public void setMACProvider(final Provider provider) {
-
-		macProvider = provider;
-	}
-
-
-	@Override
-	public void setSecureRandom(final SecureRandom randomGen) {
-
-		this.randomGen = randomGen;
-	}
-
-
-	/**
-	 * Returns the secure random generator for this JWE provider.
-	 *
-	 * @return The secure random generator.
-	 */
-	protected SecureRandom getSecureRandom() {
-		if (randomGen == null) {
-			// Use default SecureRandom instance for this JVM/platform.
-			this.randomGen = new SecureRandom();
-			return randomGen;
-		} else {
-			// Use the specified instance.
-			return randomGen;
+		if (jcaProviderSpec == null) {
+			throw new IllegalArgumentException("The JCA provider specification must not be null");
 		}
+
+		this.jcaProviderSpec = jcaProviderSpec;
+	}
+
+
+	@Override
+	public JWEJCAProviderSpec getJWEJCAProvider() {
+
+		return jcaProviderSpec;
 	}
 }
 

@@ -5,14 +5,12 @@ import java.util.Set;
 
 
 /**
- * Common interface for JSON Web Signature (JWS) {@link JWSSigner signers} and
- * {@link JWSVerifier verifiers}.
+ * JSON Web Signature (JWS) algorithm provider
  *
- * <p>Callers can query the JWS provider to determine its algorithm 
- * capabilities.
+ * <p>The JWS provider can be queried to determine its algorithm capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-21)
  */
 public interface JWSAlgorithmProvider extends AlgorithmProvider {
 
@@ -23,14 +21,5 @@ public interface JWSAlgorithmProvider extends AlgorithmProvider {
 	 *
 	 * @return The supported JWS algorithms, empty set if none.
 	 */
-	public Set<JWSAlgorithm> supportedAlgorithms();
-
-
-	/**
-	 * Returns the JCA provider specification.
-	 *
-	 * @return The JCA provider specification, {@code null} if not
-	 *         specified.
-	 */
-	public JWSJCAProviderSpec getJCAProviderSpec();
+	Set<JWSAlgorithm> supportedJWSAlgorithms();
 }

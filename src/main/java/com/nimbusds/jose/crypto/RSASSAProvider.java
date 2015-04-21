@@ -13,7 +13,6 @@ import java.util.Set;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSJCAProviderSpec;
 
 
 /**
@@ -32,7 +31,7 @@ import com.nimbusds.jose.JWSJCAProviderSpec;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-21)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
@@ -63,13 +62,10 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 	/**
 	 * Creates a new RSASSA provider.
-	 *
-	 * @param jcaSpec The JCA provider specification, {@code null} implies
-	 *                the default one.
 	 */
-	protected RSASSAProvider(final JWSJCAProviderSpec jcaSpec) {
+	protected RSASSAProvider() {
 
-		super(SUPPORTED_ALGORITHMS, jcaSpec);
+		super(SUPPORTED_ALGORITHMS);
 	}
 
 

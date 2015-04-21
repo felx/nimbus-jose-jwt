@@ -5,14 +5,12 @@ import java.util.Set;
 
 
 /**
- * Common interface for JSON Web Encryption (JWE) {@link JWEEncrypter 
- * encrypters} and {@link JWEDecrypter decrypters}.
+ * JSON Web Encryption (JWE) algorithm provider.
  *
- * <p>Callers can query the JWE provider to determine its algorithm
- * capabilities.
+ * <p>The JWE provider can be queried to determine its algorithm capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-21)
  */
 public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
@@ -23,7 +21,7 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 	 *
 	 * @return The supported JWE algorithms, empty set if none.
 	 */
-	public Set<JWEAlgorithm> supportedAlgorithms();
+	Set<JWEAlgorithm> supportedJWEAlgorithms();
 
 
 	/**
@@ -32,14 +30,5 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 	 *
 	 * @return The supported encryption methods, empty set if none.
 	 */
-	public Set<EncryptionMethod> supportedEncryptionMethods();
-
-
-	/**
-	 * Returns the JCA provider specification.
-	 *
-	 * @return The JCA provider specification, {@code null} if not
-	 *         specified.
-	 */
-	public JWEJCAProviderSpec getJCAProviderSpec();
+	Set<EncryptionMethod> supportedEncryptionMethods();
 }

@@ -2,19 +2,9 @@ package com.nimbusds.jose;
 
 
 /**
- * Common interface for JOSE algorithm providers.
+ * JOSE algorithm provider.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-17)
+ * @version $version$ (2015-04-20)
  */
-public interface AlgorithmProvider {
-
-
-	/**
-	 * Returns the JCA provider specification.
-	 *
-	 * @return The JCA provider specification, {@code null} if not
-	 *         specified.
-	 */
-	public JCAProviderSpec getJCAProviderSpec();
-}
+public interface AlgorithmProvider { }
