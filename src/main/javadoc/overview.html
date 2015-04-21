@@ -9,12 +9,12 @@
 		<p>Create, parse and process JOSE and JWT objects:</p>
 		
 		<ul>
-			<li>{@link com.nimbusds.jose.PlainObject Plain (unsecured) JOSE objects}.</li>
+			<li>{@link com.nimbusds.jose.PlainObject Unsecured (alg=none) JOSE objects}.</li>
 			<li>{@link com.nimbusds.jose.JWSObject JSON Web Signature (JWS) objects}.</li>
 			<li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) objects}.</li>
 			<li>{@link com.nimbusds.jose.jwk.JWK JSON Web Key (JWK) objects} and 
 			    {@link com.nimbusds.jose.jwk.JWKSet JWK Sets}.</li>
-			<li>{@link com.nimbusds.jwt.PlainJWT Plain}, 
+			<li>{@link com.nimbusds.jwt.PlainJWT Unsecured},
 			    {@link com.nimbusds.jwt.SignedJWT signed} and 
 			    {@link com.nimbusds.jwt.EncryptedJWT encrypted} 
 			    {@link com.nimbusds.jwt.JWT JSON Web Tokens (JWTs)}.</li>
@@ -25,7 +25,7 @@
 
         <p>JWS algorithms:</p>
 		<ul>
-			<li>HMAC protection: HS256, HS384 and HS512</li>
+			<li>HMAC integrity protection: HS256, HS384 and HS512</li>
 			<li>RSA signatures: RS256, RS384, RS512, PS256, PS384 and PS512.</li>
 			<li>EC signatures: ES256, ES384 and ES512</li>
 		</ul>
@@ -35,9 +35,9 @@
         <ul>
             <li>Key encryption with RSAES-PKCS1-V1_5: RSA1_5</li>
             <li>Key encryption with RSAES OAEP: RSA-OAEP and RSA-OAEP-256</li>
-            <li>Key Encryption with AES key wrap: A128KW, A192KW and A256KW</li>
-            <li>Key Encryption with AES GCM key wrap: A128CGMKW, A192CGMKW and A256CGMKW</li>
-            <li>Direct Encryption with a Shared Symmetric Key: dir</li>
+            <li>Key encryption with AES key wrap: A128KW, A192KW and A256KW</li>
+            <li>Key encryption with AES GCM key wrap: A128CGMKW, A192CGMKW and A256CGMKW</li>
+            <li>Direct encryption with a symmetric key: dir</li>
         </ul>
 
         <p>JWE content encryption algorithms:</p>
@@ -48,10 +48,11 @@
             <li>AES GCM: A128GCM, A192GCM and A256GCM</li>
         </ul>
 
-        <p>New JWA algorithms can be easily added. A set of interfaces
-            effectively decouple the JOSE / JWT objects from JWA crypto code
-            for signing / verification or encryption / decryption. Multiple JCA
-            providers, including hardware-based are easily supported.</p>
+        <p>New JWA algorithms can be easily added. The library provides a set
+			of simple interfaces to decouple the representation of JOSE / JWT
+			objects from JWA crypto code for signing / verification or
+			encryption / decryption. Multiple JCA providers, including
+			hardware-based can be configured.</p>
 		
 		<p>Supported IETF specifications:</p>
 		
