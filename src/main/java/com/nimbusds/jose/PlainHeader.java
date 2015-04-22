@@ -69,7 +69,7 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Builder for constructing plain headers.
+	 * Builder for constructing unsecured (plain) headers.
 	 *
 	 * <p>Example use:
 	 *
@@ -114,7 +114,7 @@ public final class PlainHeader extends Header {
 
 
 		/**
-		 * Creates a new plain header builder.
+		 * Creates a new unsecured (plain) header builder.
 		 */
 		public Builder() {
 
@@ -122,10 +122,10 @@ public final class PlainHeader extends Header {
 
 
 		/**
-		 * Creates a new plain header builder with the parameters from
-		 * the specified header.
+		 * Creates a new unsecured (plain) header builder with the
+		 * parameters from the specified header.
 		 *
-		 * @param plainHeader The plain header to use. Must not be
+		 * @param plainHeader The unsecured header to use. Must not be
 		 *                    {@code null}.
 		 */
 		public Builder(final PlainHeader plainHeader) {
@@ -247,9 +247,9 @@ public final class PlainHeader extends Header {
 
 
 		/**
-		 * Builds a new plain header.
+		 * Builds a new unsecured (plain) header.
 		 *
-		 * @return The plain header.
+		 * @return The unsecured header.
 		 */
 		public PlainHeader build() {
 
@@ -259,7 +259,7 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Creates a new minimal plain header with algorithm
+	 * Creates a new minimal unsecured (plain) header with algorithm
 	 * {@link Algorithm#NONE none}.
 	 */
 	public PlainHeader() {
@@ -269,7 +269,7 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Creates a new plain header with algorithm
+	 * Creates a new unsecured (plain) header with algorithm
 	 * {@link Algorithm#NONE none}.
 	 *
 	 * @param typ             The type ({@code typ}) parameter,
@@ -297,7 +297,7 @@ public final class PlainHeader extends Header {
 	/**
 	 * Deep copy constructor.
 	 *
-	 * @param plainHeader The plain header to copy. Must not be
+	 * @param plainHeader The unsecured header to copy. Must not be
 	 *                    {@code null}.
 	 */
 	public PlainHeader(final PlainHeader plainHeader) {
@@ -313,7 +313,7 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Gets the registered parameter names for plain headers.
+	 * Gets the registered parameter names for unsecured headers.
 	 *
 	 * @return The registered parameter names, as an unmodifiable set.
 	 */
@@ -336,15 +336,14 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Parses a plain header from the specified JSON object.
+	 * Parses an unsecured header from the specified JSON object.
 	 *
-	 * @param jsonObject      The JSON object to parse. Must not be
-	 *                        {@code null}.
+	 * @param jsonObject The JSON object to parse. Must not be {@code null}.
 	 *
-	 * @return The plain header.
+	 * @return The unsecured header.
 	 *
 	 * @throws ParseException If the specified JSON object doesn't
-	 *                        represent a valid plain header.
+	 *                        represent a valid unsecured header.
 	 */
 	public static PlainHeader parse(final JSONObject jsonObject)
 		throws ParseException {
@@ -354,17 +353,17 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Parses a plain header from the specified JSON object.
+	 * Parses an unsecured header from the specified JSON object.
 	 *
 	 * @param jsonObject      The JSON object to parse. Must not be
 	 *                        {@code null}.
 	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
 	 *                        if not applicable.
 	 *
-	 * @return The plain header.
+	 * @return The unsecured header.
 	 *
 	 * @throws ParseException If the specified JSON object doesn't
-	 *                        represent a valid plain header.
+	 *                        represent a valid unsecured header.
 	 */
 	public static PlainHeader parse(final JSONObject jsonObject,
 					final Base64URL parsedBase64URL)
@@ -402,15 +401,15 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Parses a plain header from the specified JSON string.
+	 * Parses an unsecured header from the specified JSON string.
 	 *
 	 * @param jsonString The JSON string to parse. Must not be
 	 *                   {@code null}.
 	 *
-	 * @return The plain header.
+	 * @return The unsecured header.
 	 *
 	 * @throws ParseException If the specified JSON string doesn't
-	 *                        represent a valid plain header.
+	 *                        represent a valid unsecured header.
 	 */
 	public static PlainHeader parse(final String jsonString)
 		throws ParseException {
@@ -420,17 +419,17 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Parses a plain header from the specified JSON string.
+	 * Parses an unsecured header from the specified JSON string.
 	 *
 	 * @param jsonString      The JSON string to parse. Must not be
 	 *                        {@code null}.
 	 * @param parsedBase64URL The original parsed Base64URL, {@code null}
 	 *                        if not applicable.
 	 *
-	 * @return The plain header.
+	 * @return The unsecured header.
 	 *
 	 * @throws ParseException If the specified JSON string doesn't 
-	 *                        represent a valid plain header.
+	 *                        represent a valid unsecured header.
 	 */
 	public static PlainHeader parse(final String jsonString,
 					final Base64URL parsedBase64URL)
@@ -441,14 +440,14 @@ public final class PlainHeader extends Header {
 
 
 	/**
-	 * Parses a plain header from the specified Base64URL.
+	 * Parses an unsecured header from the specified Base64URL.
 	 *
 	 * @param base64URL The Base64URL to parse. Must not be {@code null}.
 	 *
-	 * @return The plain header.
+	 * @return The unsecured header.
 	 *
 	 * @throws ParseException If the specified Base64URL doesn't represent
-	 *                        a valid plain header.
+	 *                        a valid unsecured header.
 	 */
 	public static PlainHeader parse(final Base64URL base64URL)
 		throws ParseException {

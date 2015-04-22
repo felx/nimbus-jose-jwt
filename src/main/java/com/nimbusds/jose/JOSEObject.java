@@ -199,13 +199,13 @@ public abstract class JOSEObject {
 		final int dot1 = s.indexOf(".");
 
 		if (dot1 == -1) {
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing part delimiters", 0);
+			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Missing part delimiters", 0);
 		}
 
 		final int dot2 = s.indexOf(".", dot1 + 1);
 
 		if (dot2 == -1) {
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Missing second delimiter", 0);
+			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Missing second delimiter", 0);
 		}
 
 		// Third dot for JWE only
@@ -229,7 +229,7 @@ public abstract class JOSEObject {
 		}
 
 		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1) {
-			throw new ParseException("Invalid serialized plain/JWS/JWE object: Too many part delimiters", 0);
+			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Too many part delimiters", 0);
 		}
 
 		// Four dots -> five parts
@@ -298,7 +298,7 @@ public abstract class JOSEObject {
 	 *         returned.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid
-	 *                        plain, signed or encrypted JWT.
+	 *                        unsecured, JWS or JWE object.
 	 */
 	public static <T, C extends Context> T parse(final String s, JOSEObjectHandler<T,C> handler, final C context)
 		throws ParseException {

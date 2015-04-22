@@ -53,7 +53,7 @@ public class PlainObject extends JOSEObject {
 
 		if (header == null) {
 
-			throw new IllegalArgumentException("The plain header must not be null");
+			throw new IllegalArgumentException("The unsecured header must not be null");
 		}
 
 		this.header = header;
@@ -91,7 +91,7 @@ public class PlainObject extends JOSEObject {
 
 		} catch (ParseException e) {
 
-			throw new ParseException("Invalid plain header: " + e.getMessage(), 0);
+			throw new ParseException("Invalid unsecured header: " + e.getMessage(), 0);
 		}
 
 		if (secondPart == null) {

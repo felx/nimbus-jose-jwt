@@ -317,8 +317,8 @@ public abstract class Header {
 
 	/**
 	 * Parses an algorithm ({@code alg}) parameter from the specified 
-	 * header JSON object. Intended for initial parsing of plain, JWS and 
-	 * JWE headers.
+	 * header JSON object. Intended for initial parsing of unsecured
+	 * (plain), JWS and JWE headers.
 	 *
 	 * <p>The algorithm type (none, JWS or JWE) is determined by inspecting
 	 * the algorithm name for "none" and the presence of an "enc"
