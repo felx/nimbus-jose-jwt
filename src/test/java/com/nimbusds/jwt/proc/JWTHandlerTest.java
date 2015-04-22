@@ -1,4 +1,4 @@
-package com.nimbusds.jwt;
+package com.nimbusds.jwt.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -9,6 +9,8 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.proc.SimpleContext;
+import com.nimbusds.jwt.*;
 
 
 /**
@@ -17,23 +19,23 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 public class JWTHandlerTest extends TestCase {
 
 
-	public static class JWTHandlerImpl implements JWTHandler<String> {
+	public static class JWTHandlerImpl implements JWTHandler<String,SimpleContext> {
 
 
 		@Override
-		public String onPlainJWT(PlainJWT plainJWT) {
+		public String onPlainJWT(PlainJWT plainJWT, SimpleContext ctx) {
 			return "plain";
 		}
 
 
 		@Override
-		public String onSignedJWT(SignedJWT signedJWT) {
+		public String onSignedJWT(SignedJWT signedJWT, SimpleContext ctx) {
 			return "signed";
 		}
 
 
 		@Override
-		public String onEncryptedJWT(EncryptedJWT encryptedJWT) {
+		public String onEncryptedJWT(EncryptedJWT encryptedJWT, SimpleContext ctx) {
 			return "encrypted";
 		}
 	}
@@ -53,7 +55,7 @@ public class JWTHandlerTest extends TestCase {
 
 		JWT plainJWT = new PlainJWT(generateClaimsSet());
 
-		assertEquals("plain", JWTParser.parse(plainJWT.serialize(), new JWTHandlerImpl()));
+		assertEquals("plain", JWTParser.parse(plainJWT.serialize(), new JWTHandlerImpl(), null));
 	}
 
 
@@ -66,7 +68,7 @@ public class JWTHandlerTest extends TestCase {
 
 		signedJWT.sign(new MACSigner(key));
 
-		assertEquals("signed", JWTParser.parse(signedJWT.serialize(), new JWTHandlerImpl()));
+		assertEquals("signed", JWTParser.parse(signedJWT.serialize(), new JWTHandlerImpl(), null));
 	}
 
 
@@ -80,6 +82,6 @@ public class JWTHandlerTest extends TestCase {
 
 		encryptedJWT.encrypt(new RSAEncrypter((RSAPublicKey)keyGen.generateKeyPair().getPublic()));
 
-		assertEquals("encrypted", JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerImpl()));
+		assertEquals("encrypted", JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerImpl(), null));
 	}
 }

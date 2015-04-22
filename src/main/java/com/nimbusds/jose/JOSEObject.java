@@ -5,6 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
+import com.nimbusds.jose.proc.Context;
+import com.nimbusds.jose.proc.JOSEObjectHandler;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -14,7 +16,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * (JWS) and JSON Web Encryption (JWE) objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-11-18)
+ * @version $version$ (2015-04-22)
  */
 public abstract class JOSEObject {
 	
@@ -289,6 +291,8 @@ public abstract class JOSEObject {
 	 * @param s       The string to parse. Must not be {@code null}.
 	 * @param handler Handler for the parsed JOSE object. Must not be
 	 *                {@code null}.
+	 * @param context Optional context of the JOSE object, {@code null} if
+	 *                not required.
 	 *
 	 * @return The object returned by the handler, {@code null} if none is
 	 *         returned.
@@ -296,17 +300,17 @@ public abstract class JOSEObject {
 	 * @throws ParseException If the string couldn't be parsed to a valid
 	 *                        plain, signed or encrypted JWT.
 	 */
-	public static <T> T parse(final String s, JOSEObjectHandler<T> handler)
+	public static <T, C extends Context> T parse(final String s, JOSEObjectHandler<T,C> handler, final C context)
 		throws ParseException {
 
 		JOSEObject joseObject = parse(s);
 
 		if (joseObject instanceof PlainObject) {
-			return handler.onPlainObject((PlainObject)joseObject);
+			return handler.onPlainObject((PlainObject)joseObject, context);
 		} else if (joseObject instanceof JWSObject) {
-			return handler.onJWSObject((JWSObject)joseObject);
+			return handler.onJWSObject((JWSObject)joseObject, context);
 		} else {
-			return handler.onJWEObject((JWEObject)joseObject);
+			return handler.onJWEObject((JWEObject)joseObject, context);
 		}
 	}
 }

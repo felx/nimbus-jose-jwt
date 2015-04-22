@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.proc;
 
 
 import java.net.URI;
@@ -8,6 +8,7 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.*;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;

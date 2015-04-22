@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -6,14 +6,37 @@ import java.security.interfaces.RSAPublicKey;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 
 
 /**
- * Tests the JOSE object handler adapter.
+ * Tests the JOSE object handler interface.
  */
-public class JOSEObjectHandlerAdapterTest extends TestCase {
+public class JOSEObjectHandlerTest extends TestCase {
+
+
+	public static class JOSEObjectHandlerImpl implements JOSEObjectHandler<String,SimpleContext> {
+
+
+		@Override
+		public String onPlainObject(PlainObject plainObject, SimpleContext ctx) {
+			return "plain";
+		}
+
+
+		@Override
+		public String onJWSObject(JWSObject jwsObject, SimpleContext ctx) {
+			return "jws";
+		}
+
+
+		@Override
+		public String onJWEObject(JWEObject jweObject, SimpleContext ctx) {
+			return "jwe";
+		}
+	}
 
 
 	public void testParsePlainObject()
@@ -21,7 +44,7 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 		PlainObject plainObject = new PlainObject(new Payload("Hello world!"));
 
-		assertNull(JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerAdapter<String>()));
+		assertEquals("plain", JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerImpl(), null));
 	}
 
 
@@ -34,7 +57,7 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		assertNull(JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerAdapter<String>()));
+		assertEquals("jws", JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerImpl(), null));
 	}
 
 
@@ -48,6 +71,6 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 		jweObject.encrypt(new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic()));
 
-		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerAdapter<String>()));
+		assertEquals("jwe", JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerImpl(), null));
 	}
 }
