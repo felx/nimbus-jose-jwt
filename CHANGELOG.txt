@@ -379,3 +379,5 @@ version 4.0 (2015-04-22)
     * Factors a JWKMatcher class out of the JWKSelector.
     * Adds JOSEMatcher class for filtering of JOSE objects by a set of
       application-specific criteria.
+    * Updates terminlogy and JavaDocs.
+    
