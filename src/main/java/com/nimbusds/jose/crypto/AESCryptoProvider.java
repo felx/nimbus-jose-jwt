@@ -3,6 +3,8 @@ package com.nimbusds.jose.crypto;
 
 import java.util.*;
 
+import javax.crypto.SecretKey;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
@@ -36,7 +38,8 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Melisa Halsband
- * @version $version$ (2014-06-18)
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-04-21)
  */
 abstract class AESCryptoProvider extends BaseJWEProvider {
 
@@ -103,10 +106,50 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * Creates a new AES encryption / decryption provider.
+	 * The Key Encryption Key (KEK).
 	 */
-	protected AESCryptoProvider() {
+	private final SecretKey kek;
+
+
+	/**
+	 * Creates a new AES encryption / decryption provider.
+	 *
+	 *  @param kek The Key Encrypting Key. Must be 128 bits (16 bytes), 192
+	 *             bits (24 bytes) or 256 bits (32 bytes). Must not be
+	 *             {@code null}.
+	 */
+	protected AESCryptoProvider(final SecretKey kek) {
 
 		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+
+		byte[] keyBytes = kek.getEncoded();
+
+		if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
+			throw new IllegalArgumentException("The Key Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32 bytes)");
+		}
+
+		this.kek = kek;
+	}
+
+
+	/**
+	 * Gets the Key Encryption Key (KEK).
+	 *
+	 * @return The Key Encryption Key.
+	 */
+	public SecretKey getKey() {
+
+		return kek;
+	}
+
+
+	/**
+	 * Returns the JWE algorithms compatible with the key size.
+	 *
+	 * @return The set of compatible algorithms.
+	 */
+	public Set<JWEAlgorithm> compatibleJWEAlgorithms() {
+
+		return COMPATIBLE_ALGORITHMS.get(kek.getEncoded().length);
 	}
 }

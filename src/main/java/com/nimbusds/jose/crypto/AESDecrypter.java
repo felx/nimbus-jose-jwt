@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
@@ -9,11 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -46,42 +41,18 @@ import com.nimbusds.jose.util.StringUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  *
- * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
- * registered JWE header parameters}. Use {@link #setAcceptedAlgorithms} and
- * {@link #setAcceptedEncryptionMethods} to restrict the acceptable JWE
- * algorithms and encryption methods.
- *
- * @author Melisa Halsband 
- * @version $version$ (2014-08-20)
+ * @author Melisa Halsband
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-05-21)
  */
 @ThreadSafe
-public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
+public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The accepted JWE algorithms.
+	 * The critical header policy.
 	 */
-	private Set<JWEAlgorithm> acceptedAlgs;
-
-
-	/**
-	 * The accepted encryption methods.
-	 */
-	private Set<EncryptionMethod> acceptedEncs =
-		new HashSet<>(supportedEncryptionMethods());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
-
-
-	/**
-	 * The key encrypting key.
-	 */
-	private final SecretKey kek;
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
@@ -90,24 +61,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 	 * @param kek The Key Encrypting Key. Must be 128 bits (16 bytes), 192
 	 *            bits (24 bytes) or 256 bits (32 bytes). Must not be
 	 *            {@code null}.
-	 *
-	 * @throws IllegalArgumentException If called with a null parameter or
-	 *                                  unsupported key length
 	 */
 	public AESDecrypter(final SecretKey kek) {
 
-		if (kek == null) {
-
-			throw new IllegalArgumentException("The Key Encrypting Key must not be null");
-		}
-
-		this.kek = kek;
-
-		acceptedAlgs = compatibleAlgorithms();
-
-		if (acceptedAlgs == null){
-			throw new IllegalArgumentException("The Key Encrypting Key must be 128, 192 or 256 bits long");
-		}
+		this(kek, null);
 	}
 
 
@@ -117,9 +74,6 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 	 * @param keyBytes The Key Encrypting Key, as a byte array. Must be 128
 	 *                 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32
 	 *                 bytes). Must not be {@code null}.
-	 *
-	 * @throws IllegalArgumentException If called with a null parameter or
-	 *                                  unsupported key length
 	 */
 	public AESDecrypter(final byte[] keyBytes)
 		throws IllegalArgumentException {
@@ -129,85 +83,34 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 
 	/**
-	 * Returns the JWK algorithms compatible with the key size.
+	 * Creates a new AES decrypter.
 	 *
-	 * @return The set of compatible algorithms.
+	 * @param kek            The Key Encrypting Key. Must be 128 bits (16
+	 *                       bytes), 192 bits (24 bytes) or 256 bits (32
+	 *                       bytes). Must not be {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
 	 */
-	public Set<JWEAlgorithm> compatibleAlgorithms() {
+	public AESDecrypter(final SecretKey kek, final Set<String> defCritHeaders) {
 
-		return COMPATIBLE_ALGORITHMS.get(kek.getEncoded().length);
-	}
+		super(kek);
 
-
-	/**
-	 * Gets the Key Encrypting Key.
-	 *
-	 * @return The Key Encrypting Key.
-	 */
-	public SecretKey getKey() {
-
-		return kek;
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
 	@Override
-	public Set<JWEAlgorithm> getAcceptedAlgorithms() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return acceptedAlgs;
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
 	@Override
-	public void setAcceptedAlgorithms(final Set<JWEAlgorithm> acceptedAlgs) {
+	public Set<String> getDeferredCriticalHeaderParams() {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWE algorithms must not be null");
-		}
-
-		if (!supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
-		}
-
-		if (!compatibleAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("JWE algorithm(s) not compatible with key size");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<EncryptionMethod> getAcceptedEncryptionMethods() {
-
-		return acceptedEncs;
-	}
-
-
-	@Override
-	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs) {
-
-		if (acceptedEncs == null)
-			throw new IllegalArgumentException("The accepted encryption methods must not be null");
-
-		if (!supportedEncryptionMethods().containsAll(acceptedEncs)) {
-			throw new IllegalArgumentException("Unsupported encryption method(s)");
-		}
-
-		this.acceptedEncs = acceptedEncs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -221,23 +124,19 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 
 		// Validate required JWE parts
 		if (encryptedKey == null) {
-
 			throw new JOSEException("The encrypted key must not be null");
 		}
 
 		if (iv == null) {
-
 			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
 		if (authTag == null) {
-
 			throw new JOSEException("The authentication tag must not be null");
 		}
 
-		if (!critParamChecker.headerPasses(header)) {
-
-			throw new JOSEException("Unsupported critical header parameter");
+		if (! critPolicy.headerPasses(header)) {
+			throw new JOSEException("Unsupported critical header parameter(s)");
 		}
 
 
@@ -251,7 +150,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 		    alg.equals(JWEAlgorithm.A192KW) ||
 		    alg.equals(JWEAlgorithm.A256KW))   {
 
-			cek = AESKW.decryptCEK(kek, encryptedKey.decode());
+			cek = AESKW.decryptCEK(getKey(), encryptedKey.decode());
 
 		} else if (alg.equals(JWEAlgorithm.A128GCMKW) ||
 			   alg.equals(JWEAlgorithm.A192GCMKW) ||
@@ -260,7 +159,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 			byte[] keyIV = header.getIV().decode();
 			byte[] keyTag = header.getAuthTag().decode();
 			AuthenticatedCipherText authEncrCEK = new AuthenticatedCipherText(encryptedKey.decode(), keyTag);
-			cek = AESGCMKW.decryptCEK(kek, keyIV, authEncrCEK, keyLength, keyEncryptionProvider);
+			cek = AESGCMKW.decryptCEK(getKey(), keyIV, authEncrCEK, keyLength, getJWEJCAProvider().getKeyEncryptionProvider());
 
 		} else {
 
@@ -285,8 +184,8 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 				cipherText.decode(),
 				aad,
 				authTag.decode(),
-				contentEncryptionProvider,
-				macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) ||
 			enc.equals(EncryptionMethod.A192GCM) ||
@@ -298,7 +197,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 				cipherText.decode(),
 				aad,
 				authTag.decode(),
-				contentEncryptionProvider);
+				getJWEJCAProvider().getContentEncryptionProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
 			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)) {
@@ -310,8 +209,8 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter {
 				iv,
 				cipherText,
 				authTag,
-				contentEncryptionProvider,
-				macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else {
 

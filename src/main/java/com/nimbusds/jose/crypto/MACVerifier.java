@@ -1,12 +1,15 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.HashSet;
+import java.nio.charset.Charset;
 import java.util.Set;
+
+import javax.crypto.SecretKey;
 
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -21,88 +24,97 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS384}
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS512}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWSHeader#getRegisteredParameterNames
- * registered JWS header parameters}. Use {@link #setAcceptedAlgorithms} to
- * restrict the acceptable JWS algorithms.
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-09-01)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
-public class MACVerifier extends MACProvider implements JWSVerifier {
+public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The accepted JWS algorithms.
+	 * The critical header policy.
 	 */
-	private Set<JWSAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) verifier.
 	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param secret The secret. Must be at least 256 bits long and not
+	 *               {@code null}.
 	 */
-	public MACVerifier(final byte[] sharedSecret) {
+	public MACVerifier(final byte[] secret) {
 
-		super(sharedSecret);
+		this(secret, null);
 	}
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) verifier.
 	 *
-	 * @param sharedSecretString The shared secret as a UTF-8 encoded
-	 *                           string. Must not be {@code null}.
+	 * @param secretString The secret as a UTF-8 encoded string. Must be at
+	 *                     least 256 bits long and not {@code null}.
 	 */
-	public MACVerifier(final String sharedSecretString) {
+	public MACVerifier(final String secretString) {
 
-		super(sharedSecretString);
+		this(secretString.getBytes(Charset.forName("UTF-8")));
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param secretKey The secret key. Must be at least 256 bits long and
+	 *                  not {@code null}.
+	 */
+	public MACVerifier(final SecretKey secretKey) {
+
+		this(secretKey.getEncoded());
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
+	 *            not {@code null}.
+	 */
+	public MACVerifier(final OctetSequenceKey jwk) {
+
+		this(jwk.toByteArray());
+	}
+
+
+	/**
+	 * Creates a new Message Authentication (MAC) verifier.
+	 *
+	 * @param secret         The secret. Must be at least 256 bits long
+	 *                       and not {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
+	 */
+	public MACVerifier(final byte[] secret,
+			   final Set<String> defCritHeaders) {
+
+		super(secret);
+
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
 	@Override
-	public Set<JWSAlgorithm> getAcceptedAlgorithms() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return acceptedAlgs;
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
 	@Override
-	public void setAcceptedAlgorithms(final Set<JWSAlgorithm> acceptedAlgs) {
+	public Set<String> getDeferredCriticalHeaderParams() {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWS algorithms must not be null");
-		}
-
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWS algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -112,13 +124,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier {
 		              final Base64URL signature)
 		throws JOSEException {
 
-		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-
-		if (! critParamChecker.headerPasses(header)) {
+		if (! critPolicy.headerPasses(header)) {
 			return false;
 		}
 
-		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSharedSecret(), signedContent, provider);
+		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
+		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, getJCAProvider());
 		return ConstantTimeUtils.areEqual(expectedHMAC, signature.decode());
 	}
 }

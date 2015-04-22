@@ -17,10 +17,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Plaintext (unsecured) JOSE header.
+ * Unsecured ({@code alg=none}) JOSE header.
  *
  * <p>Supports all {@link #getRegisteredParameterNames registered header
- * parameters} of the plain specification:
+ * parameters} of the unsecured JOSE object specification:
  *
  * <ul>
  *     <li>alg (set to {@link Algorithm#NONE "none"}).

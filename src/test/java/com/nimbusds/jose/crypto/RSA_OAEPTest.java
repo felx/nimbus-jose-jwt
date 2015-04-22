@@ -18,6 +18,7 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jca.JWEJCAProviderSpec;
 import com.nimbusds.jose.jwk.RSAKey;
 
 
@@ -26,7 +27,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version $version$ (2015-04-21)
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -183,8 +184,8 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
-		encrypter.setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.setJWEJCAProvider(new JWEJCAProviderSpec().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		jweObject.encrypt(encrypter);
 
@@ -194,10 +195,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-		decrypter.setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.setJWEJCAProvider(new JWEJCAProviderSpec().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(privateKey, (decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -452,14 +453,17 @@ public class RSA_OAEPTest extends TestCase {
 		
 		assertEquals(JWEAlgorithm.RSA_OAEP_256, jweObject.getHeader().getAlgorithm());
 		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
-		
-		JWEDecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
+
+		RSADecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
 		
 		// Get bouncycastle for the test
 		Provider provider = BouncyCastleProviderSingleton.getInstance();
-		decrypter.setKeyEncryptionProvider(provider);
-		decrypter.setContentEncryptionProvider(provider);
-		decrypter.setMACProvider(provider);
+		JWEJCAProviderSpec jcaSpec = new JWEJCAProviderSpec().
+			withKeyEncryptionProvider(provider).
+			withContentEncryptionProvider(provider).
+			withMACProvider(provider);
+
+		decrypter.setJWEJCAProvider(jcaSpec);
 		
 		jweObject.decrypt(decrypter);
 		

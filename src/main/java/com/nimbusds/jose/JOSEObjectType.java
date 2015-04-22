@@ -8,9 +8,9 @@ import net.minidev.json.JSONObject;
 
 
 /**
- * JOSE object type, represents the {@code typ} header parameter in plain, JSON
- * Web Signature (JWS) and JSON Web Encryption (JWE) objects. This class is 
- * immutable.
+ * JOSE object type, represents the {@code typ} header parameter in unsecured,
+ * JSON Web Signature (JWS) and JSON Web Encryption (JWE) objects. This class
+ * is immutable.
  *
  * <p>Includes constants for the following standard types:
  *
@@ -130,10 +130,6 @@ public final class JOSEObjectType implements JSONAware {
 	@Override
 	public String toJSONString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append('"');
-		sb.append(JSONObject.escape(type));
-		sb.append('"');
-		return sb.toString();
+		return "\"" + JSONObject.escape(type) + '"';
 	}
 }

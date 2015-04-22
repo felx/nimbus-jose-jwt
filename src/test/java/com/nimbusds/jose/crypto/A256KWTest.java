@@ -4,6 +4,8 @@ package com.nimbusds.jose.crypto;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -14,7 +16,7 @@ import com.nimbusds.jose.*;
  * Tests A256KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-08-19)
+ * @version $version$ (2015-04-21)
  */
 public class A256KWTest extends TestCase {
 
@@ -38,23 +40,23 @@ public class A256KWTest extends TestCase {
 
 		JWEEncrypter encrypter = new AESEncrypter(key256);
 
-		assertEquals(6, encrypter.supportedAlgorithms().size());
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		assertEquals(6, encrypter.supportedJWEAlgorithms().size());
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
 		JWEDecrypter decrypter = new AESDecrypter(key256);
 
-		assertEquals(6, decrypter.supportedAlgorithms().size());
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
+		assertEquals(6, decrypter.supportedJWEAlgorithms().size());
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 	}
 
 
@@ -84,84 +86,6 @@ public class A256KWTest extends TestCase {
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
-	}
-
-
-	public void testGetAcceptedAlgorithms()
-		throws Exception {
-
-		JWEDecrypter decrypter = new AESDecrypter(key256);
-
-		assertEquals(2, decrypter.getAcceptedAlgorithms().size());
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256GCMKW));
-	}
-
-
-	public void testGetAcceptedEncryptionMethods()
-		throws Exception {
-
-		JWEDecrypter decrypter = new AESDecrypter(key256);
-
-		assertEquals(8, decrypter.getAcceptedEncryptionMethods().size());
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
-	}
-
-
-	public void testSetAcceptedAlgorithms()
-		throws Exception {
-
-		JWEDecrypter decrypter = new AESDecrypter(key256);
-
-		try {
-			decrypter.setAcceptedAlgorithms(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.RSA1_5)));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.A256KW)));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.A256KW));
-		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
-	}
-
-
-	public void testSetAcceptedEncryptionMethods()
-		throws Exception {
-
-		JWEDecrypter decrypter = new AESDecrypter(key256);
-
-		try {
-			decrypter.setAcceptedEncryptionMethods(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(new EncryptionMethod("unsupported"))));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(EncryptionMethod.A128GCM)));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
 
 
@@ -450,8 +374,7 @@ public class A256KWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
-		decrypter.getIgnoredCriticalHeaderParameters().add("exp");
+		JWEDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Arrays.asList("exp")));
 
 		jweObject.decrypt(decrypter);
 
@@ -490,7 +413,7 @@ public class A256KWTest extends TestCase {
 			fail();
 		} catch (JOSEException e) {
 			// ok
-			assertEquals("Unsupported critical header parameter", e.getMessage());
+			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
 		}
 	}
 

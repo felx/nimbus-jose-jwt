@@ -156,11 +156,7 @@ public final class KeyType implements JSONAware {
 	@Override
 	public String toJSONString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append('"');
-		sb.append(JSONObject.escape(value));
-		sb.append('"');
-		return sb.toString();
+		return "\"" + JSONObject.escape(value) + '"';
 	}
 
 

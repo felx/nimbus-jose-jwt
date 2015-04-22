@@ -12,10 +12,10 @@ import org.bouncycastle.crypto.Digest;
  * class is immutable.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-27)
+ * @version $version$ (2015-04-21)
  */
 @Immutable
-class ECDSAParameters {
+final class ECDSAParameters {
 
 
 	/**

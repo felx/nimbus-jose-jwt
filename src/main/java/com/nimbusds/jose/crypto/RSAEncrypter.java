@@ -3,8 +3,9 @@ package com.nimbusds.jose.crypto;
 
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
-
 import javax.crypto.SecretKey;
+
+import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
@@ -14,7 +15,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -44,7 +44,7 @@ import net.jcip.annotations.ThreadSafe;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -90,22 +90,22 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Generate and encrypt the CEK according to the enc method
-		final SecureRandom randomGen = getSecureRandom();
+		final SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
 
 		Base64URL encryptedKey; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, keyEncryptionProvider));
+			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, keyEncryptionProvider));
+			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
 			
-			encryptedKey = Base64URL.encode(RSA_OAEP_256.encryptCEK(publicKey, cek, keyEncryptionProvider));
+			encryptedKey = Base64URL.encode(RSA_OAEP_256.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
 			
 		} else {
 
@@ -131,7 +131,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			authCipherText = AESCBC.encryptAuthenticated(
 				cek, iv, plainText, aad,
-				contentEncryptionProvider, macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) ||
 			   enc.equals(EncryptionMethod.A192GCM) ||
@@ -141,7 +141,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			authCipherText = AESGCM.encrypt(
 				cek, iv, plainText, aad,
-				contentEncryptionProvider);
+				getJWEJCAProvider().getContentEncryptionProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
 			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
@@ -150,7 +150,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 			authCipherText = AESCBC.encryptWithConcatKDF(
 				header, cek, encryptedKey, iv, plainText,
-				contentEncryptionProvider, macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
 
 		} else {
 

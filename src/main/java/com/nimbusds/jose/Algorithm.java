@@ -146,10 +146,6 @@ public class Algorithm implements JSONAware {
 	@Override
 	public final String toJSONString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append('"');
-		sb.append(JSONObject.escape(name));
-		sb.append('"');
-		return sb.toString();
+		return "\"" + JSONObject.escape(name) + '"';
 	}
 }

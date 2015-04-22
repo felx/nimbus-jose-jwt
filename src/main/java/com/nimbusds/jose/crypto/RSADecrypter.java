@@ -3,18 +3,12 @@ package com.nimbusds.jose.crypto;
 
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
-import java.util.HashSet;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -43,40 +37,19 @@ import com.nimbusds.jose.util.StringUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
- *
- * <p>Accepts all {@link com.nimbusds.jose.JWEHeader#getRegisteredParameterNames
- * registered JWE header parameters}. Use {@link #setAcceptedAlgorithms} and
- * {@link #setAcceptedEncryptionMethods} to restrict the acceptable JWE
- * algorithms and encryption methods.
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
- *
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
-public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
+public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
 
 	/**
-	 * The accepted JWE algorithms.
+	 * The critical header policy.
 	 */
-	private Set<JWEAlgorithm> acceptedAlgs =
-		new HashSet<>(supportedAlgorithms());
-
-
-	/**
-	 * The accepted encryption methods.
-	 */
-	private Set<EncryptionMethod> acceptedEncs =
-		new HashSet<>(supportedEncryptionMethods());
-
-
-	/**
-	 * The critical header parameter checker.
-	 */
-	private final CriticalHeaderParameterChecker critParamChecker =
-		new CriticalHeaderParameterChecker();
+	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
 	/**
@@ -92,12 +65,28 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 	 */
 	public RSADecrypter(final RSAPrivateKey privateKey) {
 
-		if (privateKey == null) {
+		this(privateKey, null);
+	}
 
+
+	/**
+	 * Creates a new RSA decrypter.
+	 *
+	 * @param privateKey     The private RSA key. Must not be {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
+	 */
+	public RSADecrypter(final RSAPrivateKey privateKey,
+			    final Set<String> defCritHeaders) {
+
+		if (privateKey == null) {
 			throw new IllegalArgumentException("The private RSA key must not be null");
 		}
 
 		this.privateKey = privateKey;
+
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
@@ -113,59 +102,16 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 
 	@Override
-	public Set<JWEAlgorithm> getAcceptedAlgorithms() {
+	public Set<String> getProcessedCriticalHeaderParams() {
 
-		return acceptedAlgs;
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
 	@Override
-	public void setAcceptedAlgorithms(final Set<JWEAlgorithm> acceptedAlgs) {
+	public Set<String> getDeferredCriticalHeaderParams() {
 
-		if (acceptedAlgs == null) {
-			throw new IllegalArgumentException("The accepted JWE algorithms must not be null");
-		}
-
-		if (! supportedAlgorithms().containsAll(acceptedAlgs)) {
-			throw new IllegalArgumentException("Unsupported JWE algorithm(s)");
-		}
-
-		this.acceptedAlgs = acceptedAlgs;
-	}
-
-
-	@Override
-	public Set<EncryptionMethod> getAcceptedEncryptionMethods() {
-
-		return acceptedEncs;
-	}
-
-
-	@Override
-	public void setAcceptedEncryptionMethods(final Set<EncryptionMethod> acceptedEncs) {
-
-		if (acceptedEncs == null)
-			throw new IllegalArgumentException("The accepted encryption methods must not be null");
-
-		if (!supportedEncryptionMethods().containsAll(acceptedEncs)) {
-			throw new IllegalArgumentException("Unsupported encryption method(s)");
-		}
-
-		this.acceptedEncs = acceptedEncs;
-	}
-
-
-	@Override
-	public Set<String> getIgnoredCriticalHeaderParameters() {
-
-		return critParamChecker.getIgnoredCriticalHeaders();
-	}
-
-
-	@Override
-	public void setIgnoredCriticalHeaderParameters(final Set<String> headers) {
-
-		critParamChecker.setIgnoredCriticalHeaders(headers);
+		return critPolicy.getProcessedCriticalHeaderParams();
 	}
 
 
@@ -179,23 +125,19 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 		// Validate required JWE parts
 		if (encryptedKey == null) {
-
 			throw new JOSEException("The encrypted key must not be null");
 		}	
 
 		if (iv == null) {
-
 			throw new JOSEException("The initialization vector (IV) must not be null");
 		}
 
 		if (authTag == null) {
-
 			throw new JOSEException("The authentication tag must not be null");
 		}
 
-		if (! critParamChecker.headerPasses(header)) {
-
-			throw new JOSEException("Unsupported critical header parameter");
+		if (! critPolicy.headerPasses(header)) {
+			throw new JOSEException("Unsupported critical header parameter(s)");
 		}
 		
 
@@ -210,11 +152,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 
 			// Protect against MMA attack by generating random CEK on failure,
 			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
-			SecureRandom randomGen = getSecureRandom();
+			SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
 			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
 
 			try {
-				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, keyEncryptionProvider);
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, getJWEJCAProvider().getKeyEncryptionProvider());
 
 				if (cek == null) {
 					// CEK length mismatch, signalled by null instead of
@@ -229,11 +171,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), getJWEJCAProvider().getKeyEncryptionProvider());
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
 			
-			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), keyEncryptionProvider);
+			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), getJWEJCAProvider().getKeyEncryptionProvider());
 			
 		} else {
 		
@@ -258,8 +200,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				cipherText.decode(),
 				aad,
 				authTag.decode(),
-				contentEncryptionProvider,
-				macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128GCM) ||
 			   enc.equals(EncryptionMethod.A192GCM) ||
@@ -271,7 +213,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				cipherText.decode(),
 				aad,
 				authTag.decode(),
-				contentEncryptionProvider);
+				getJWEJCAProvider().getContentEncryptionProvider());
 
 		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
 			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
@@ -283,8 +225,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter {
 				iv,
 				cipherText,
 				authTag,
-				contentEncryptionProvider,
-				macProvider);
+				getJWEJCAProvider().getContentEncryptionProvider(),
+				getJWEJCAProvider().getMACProvider());
 
 		} else {
 

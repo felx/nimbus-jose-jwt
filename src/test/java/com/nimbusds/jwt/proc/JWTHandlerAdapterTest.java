@@ -1,4 +1,4 @@
-package com.nimbusds.jwt;
+package com.nimbusds.jwt.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -9,6 +9,8 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.proc.SimpleContext;
+import com.nimbusds.jwt.*;
 
 
 /**
@@ -31,7 +33,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		JWT plainJWT = new PlainJWT(generateClaimsSet());
 
-		assertNull(JWTParser.parse(plainJWT.serialize(), new JWTHandlerAdapter<String>()));
+		TestCase.assertNull(JWTParser.parse(plainJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
 	}
 
 
@@ -44,7 +46,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		signedJWT.sign(new MACSigner(key));
 
-		assertNull(JWTParser.parse(signedJWT.serialize(), new JWTHandlerAdapter<String>()));
+		assertNull(JWTParser.parse(signedJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
 	}
 
 
@@ -58,6 +60,6 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		encryptedJWT.encrypt(new RSAEncrypter((RSAPublicKey)keyGen.generateKeyPair().getPublic()));
 
-		assertNull(JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerAdapter<String>()));
+		assertNull(JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
 	}
 }

@@ -31,7 +31,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-04-21)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 

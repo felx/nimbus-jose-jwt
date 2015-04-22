@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -6,36 +6,15 @@ import java.security.interfaces.RSAPublicKey;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 
 
 /**
- * Tests the JOSE object handler interface.
+ * Tests the JOSE object handler adapter.
  */
-public class JOSEObjectHandlerTest extends TestCase {
-
-
-	public static class JOSEObjectHandlerImpl implements JOSEObjectHandler<String> {
-
-
-		@Override
-		public String onPlainObject(PlainObject plainObject) {
-			return "plain";
-		}
-
-
-		@Override
-		public String onJWSObject(JWSObject jwsObject) {
-			return "jws";
-		}
-
-
-		@Override
-		public String onJWEObject(JWEObject jweObject) {
-			return "jwe";
-		}
-	}
+public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 
 	public void testParsePlainObject()
@@ -43,7 +22,7 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		PlainObject plainObject = new PlainObject(new Payload("Hello world!"));
 
-		assertEquals("plain", JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerImpl()));
+		assertNull(JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerAdapter<String,SimpleContext>(), null));
 	}
 
 
@@ -56,7 +35,7 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		assertEquals("jws", JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerImpl()));
+		assertNull(JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerAdapter<String,SimpleContext>(), null));
 	}
 
 
@@ -70,6 +49,6 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		jweObject.encrypt(new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic()));
 
-		assertEquals("jwe", JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerImpl()));
+		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerAdapter<String, SimpleContext>(), null));
 	}
 }

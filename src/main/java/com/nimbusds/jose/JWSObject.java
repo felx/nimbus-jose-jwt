@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-04-21)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -22,7 +22,7 @@ public class JWSObject extends JOSEObject {
 	/**
 	 * Enumeration of the states of a JSON Web Signature (JWS) object.
 	 */
-	public static enum State {
+	public enum State {
 
 
 		/**
@@ -182,10 +182,7 @@ public class JWSObject extends JOSEObject {
 	 */
 	private static String composeSigningInput(final Base64URL firstPart, final Base64URL secondPart) {
 
-		StringBuilder sb = new StringBuilder(firstPart.toString());
-		sb.append('.');
-		sb.append(secondPart.toString());
-		return sb.toString();
+		return firstPart.toString() + '.' + secondPart.toString();
 	}
 
 
@@ -203,16 +200,6 @@ public class JWSObject extends JOSEObject {
 	public byte[] getSigningInput() {
 
 		return signingInputString.getBytes(Charset.forName("UTF-8"));
-	}
-
-
-	/**
-	 * @deprecated Use {@link #getSigningInput} instead.
-	 */
-	@Deprecated
-	public byte[] getSignableContent() {
-
-		return getSigningInput();
 	}
 
 
@@ -278,27 +265,10 @@ public class JWSObject extends JOSEObject {
 	private void ensureJWSSignerSupport(final JWSSigner signer)
 		throws JOSEException {
 
-		if (! signer.supportedAlgorithms().contains(getHeader().getAlgorithm())) {
+		if (! signer.supportedJWSAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
 			                        "\" algorithm is not supported by the JWS signer");
-		}
-	}
-
-
-	/**
-	 * Ensures the specified JWS verifier accepts the algorithm and the headers 
-	 * of this JWS object.
-	 *
-	 * @throws JOSEException If the JWS algorithm or headers are not accepted.
-	 */
-	private void ensureJWSVerifierAcceptance(final JWSVerifier verifier)
-		throws JOSEException {
-
-		if (! verifier.getAcceptedAlgorithms().contains(getHeader().getAlgorithm())) {
-
-			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-					"\" algorithm is not accepted by the JWS verifier");
 		}
 	}
 
@@ -350,14 +320,13 @@ public class JWSObject extends JOSEObject {
 	 * @throws IllegalStateException If the JWS object is not in a 
 	 *                               {@link State#SIGNED signed} or
 	 *                               {@link State#VERIFIED verified state}.
-	 * @throws JOSEException         If the JWS object couldn't be verified.
+	 * @throws JOSEException         If the JWS object couldn't be
+	 *                               verified.
 	 */
 	public synchronized boolean verify(final JWSVerifier verifier)
 		throws JOSEException {
 
 		ensureSignedOrVerifiedState();
-
-		ensureJWSVerifierAcceptance(verifier);
 
 		boolean verified;
 
@@ -405,10 +374,7 @@ public class JWSObject extends JOSEObject {
 
 		ensureSignedOrVerifiedState();
 
-		StringBuilder sb = new StringBuilder(signingInputString);
-		sb.append('.');
-		sb.append(signature.toString());
-		return sb.toString();
+		return signingInputString + '.' + signature.toString();
 	}
 
 

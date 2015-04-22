@@ -21,7 +21,7 @@ public interface JWT {
 	 *
 	 * @return The header.
 	 */
-	public Header getHeader();
+	Header getHeader();
 
 
 	/**
@@ -33,7 +33,7 @@ public interface JWT {
 	 * @throws ParseException If the payload of the JWT doesn't represent a
 	 *                        valid JSON object and a JWT claims set.
 	 */
-	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
+	ReadOnlyJWTClaimsSet getJWTClaimsSet()
 		throws ParseException;
 
 
@@ -46,7 +46,7 @@ public interface JWT {
 	 *         individual parts may be empty or {@code null} to indicate a 
 	 *         missing part.
 	 */
-	public Base64URL[] getParsedParts();
+	Base64URL[] getParsedParts();
 
 
 	/**
@@ -58,7 +58,7 @@ public interface JWT {
 	 * @return The parsed string used to create the JWT, {@code null} if 
 	 *         the JWT was created from scratch.
 	 */
-	public String getParsedString();
+	String getParsedString();
 
 
 	/**
@@ -70,5 +70,5 @@ public interface JWT {
 	 * @throws IllegalStateException If the JWT is not in a state that 
 	 *                               permits serialisation.
 	 */
-	public String serialize();
+	String serialize();
 }

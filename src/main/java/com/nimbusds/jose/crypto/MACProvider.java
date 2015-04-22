@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 
@@ -23,7 +26,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-02-02)
+ * @version $version$ (2015-04-19)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -38,7 +41,6 @@ abstract class MACProvider extends BaseJWSProvider {
 	 * Initialises the supported algorithms.
 	 */
 	static {
-
 		Set<JWSAlgorithm> algs = new HashSet<>();
 		algs.add(JWSAlgorithm.HS256);
 		algs.add(JWSAlgorithm.HS384);
@@ -74,59 +76,58 @@ abstract class MACProvider extends BaseJWSProvider {
 
 
 	/**
-	 * The shared secret.
+	 * The secret.
 	 */
-	private final byte[] sharedSecret;
+	private final byte[] secret;
 
 
 	/**
 	 * Creates a new Message Authentication (MAC) provider.
 	 *
-	 * @param sharedSecret The shared secret. Must be at least 256 bits
-	 *                     long and not {@code null}.
+	 * @param secret The secret. Must be at least 256 bits long and not
+	 *               {@code null}.
 	 */
-	protected MACProvider(final byte[] sharedSecret) {
+	protected MACProvider(final byte[] secret) {
 
 		super(SUPPORTED_ALGORITHMS);
 
-		if (sharedSecret.length < 256 / 8) {
-			throw new IllegalArgumentException("The shared secret size must be at least 256 bits");
+		if (secret.length < 256 / 8) {
+			throw new IllegalArgumentException("The secret length must be at least 256 bits");
 		}
 
-		this.sharedSecret = sharedSecret;
+		this.secret = secret;
 	}
 
 
 	/**
-	 * Creates a new Message Authentication (MAC) provider.
+	 * Gets the secret key.
 	 *
-	 * @param sharedSecretString The shared secret as a UTF-8 encoded 
-	 *                           string. Must not be {@code null}.
+	 * @return The secret key.
 	 */
-	protected MACProvider(final String sharedSecretString) {
+	public SecretKey getSecretKey() {
 
-		this(sharedSecretString.getBytes(Charset.forName("UTF-8")));
+		return new SecretKeySpec(secret, "MAC");
 	}
 
 
 	/**
-	 * Gets the shared secret.
+	 * Gets the secret bytes.
 	 *
-	 * @return The shared secret.
+	 * @return The secret bytes.
 	 */
-	public byte[] getSharedSecret() {
+	public byte[] getSecret() {
 
-		return sharedSecret;
+		return secret;
 	}
 
 
 	/**
-	 * Gets the shared secret as a UTF-8 encoded string.
+	 * Gets the secret as a UTF-8 encoded string.
 	 *
-	 * @return The shared secret as a UTF-8 encoded string.
+	 * @return The secret as a UTF-8 encoded string.
 	 */
-	public String getSharedSecretString() {
+	public String getSecretString() {
 
-		return new String(sharedSecret, Charset.forName("UTF-8"));
+		return new String(secret, Charset.forName("UTF-8"));
 	}
 }

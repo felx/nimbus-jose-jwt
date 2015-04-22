@@ -369,7 +369,11 @@ version 3.9.2 (2015-03-16)
 version 3.10 (2015-03-27)
     * JWT claims set serialised according to claim insertion order (iss #121).
 
-version 4.0 (2015-04-15)
+version 4.0 (2015-04-22)
+    * Refactors the JOSE AlgorithmProvider interfaces and implementations.
+    * Adds new convenience constructors to JWS and JWE providers.
+    * Extends JOSE and JWT processing framework and moves it to separate
+      packages.
     * Replaces java.net.URL representation of 'jku' and 'x5u' header parameters
       with java.net.URI.
     * Factors a JWKMatcher class out of the JWKSelector.

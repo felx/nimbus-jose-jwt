@@ -7,15 +7,16 @@ import java.util.Set;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSAlgorithmProvider;
+import com.nimbusds.jose.jca.JCAProviderAware;
 
 
 /**
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-04-20)
  */
-abstract class BaseJWSProvider implements JWSAlgorithmProvider {
+abstract class BaseJWSProvider implements JWSAlgorithmProvider, JCAProviderAware {
 
 
 	/**
@@ -25,10 +26,9 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 
 
 	/**
-	 * The underlying cryptographic provider, {@code null} if not specified
-	 * (implies default one).
+	 * The JCA provider, {@code null} implies the default one.
 	 */
-	protected Provider provider = null;
+	private Provider jcaProvider;
 
 
 	/**
@@ -38,9 +38,8 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 	 */
 	public BaseJWSProvider(final Set<JWSAlgorithm> algs) {
 
-		if (algs == null) {
-			
-			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
+		if (algs == null || algs.isEmpty()) {
+			throw new IllegalArgumentException("The supported JWS algorithm set must not be null or empty");
 		}
 
 		this.algs = Collections.unmodifiableSet(algs);
@@ -48,16 +47,23 @@ abstract class BaseJWSProvider implements JWSAlgorithmProvider {
 
 
 	@Override
-	public Set<JWSAlgorithm> supportedAlgorithms() {
+	public Set<JWSAlgorithm> supportedJWSAlgorithms() {
 
 		return algs;
 	}
 
 
 	@Override
-	public void setProvider(final Provider provider) {
+	public void setJCAProvider(final Provider jcaProvider) {
 
-		this.provider = provider;
+		this.jcaProvider = jcaProvider;
+	}
+
+
+	@Override
+	public Provider getJCAProvider() {
+
+		return jcaProvider;
 	}
 }
 

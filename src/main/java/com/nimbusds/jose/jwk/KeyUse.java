@@ -45,7 +45,7 @@ public enum KeyUse {
 	 * @param identifier The public key use identifier. Must not be
 	 *                   {@code null}.
 	 */
-	private KeyUse(final String identifier) {
+	KeyUse(final String identifier) {
 
 		if (identifier == null)
 			throw new IllegalArgumentException("The key use identifier must not be null");

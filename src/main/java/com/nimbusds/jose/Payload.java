@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-10-28)
+ * @version $version$ (2015-04-21)
  */
 @Immutable
 public final class Payload {
@@ -42,7 +42,7 @@ public final class Payload {
 	 * Enumeration of the original data types used to create a 
 	 * {@link Payload}.
 	 */
-	public static enum Origin {
+	public enum Origin {
 
 
 		/**
@@ -140,12 +140,7 @@ public final class Payload {
 	 */
 	private static String byteArrayToString(final byte[] bytes) {
 
-		if (bytes == null) {
-
-			return null;
-		}
-
-		return new String(bytes, CHARSET);
+		return bytes != null ? new String(bytes, CHARSET) : null;
 	}
 
 
@@ -158,12 +153,7 @@ public final class Payload {
 	 */
 	private static byte[] stringToByteArray(final String string) {
 
-		if (string == null) {
-
-			return null;
-		}
-
-		return string.getBytes(CHARSET);
+		return string != null ? string.getBytes(CHARSET) : null;
 	}
 
 
@@ -245,7 +235,6 @@ public final class Payload {
 	public Payload(final Base64URL base64URL) {
 
 		if (base64URL == null) {
-
 			throw new IllegalArgumentException("The Base64URL-encoded object must not be null");
 		}
 
@@ -405,12 +394,10 @@ public final class Payload {
 	public byte[] toBytes() {
 
 		if (bytes != null) {
-			
 			return bytes;
 		}
 
 		// Convert
-
 		if (base64URL != null) {
 			return base64URL.decode();
 
@@ -428,12 +415,10 @@ public final class Payload {
 	public Base64URL toBase64URL() {
 
 		if (base64URL != null) {
-
 			return base64URL;
 		}
 
 		// Convert
-
 		return Base64URL.encode(toBytes());
 	}
 
@@ -448,7 +433,6 @@ public final class Payload {
 	public JWSObject toJWSObject() {
 
 		if (jwsObject != null) {
-
 			return jwsObject;
 		}
 
@@ -472,7 +456,6 @@ public final class Payload {
 	public SignedJWT toSignedJWT() {
 
 		if (signedJWT != null) {
-
 			return signedJWT;
 		}
 

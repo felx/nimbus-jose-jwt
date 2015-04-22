@@ -10,9 +10,10 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import junit.framework.TestCase;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
-import junit.framework.TestCase;
 
 
 /**
@@ -20,7 +21,7 @@ import junit.framework.TestCase;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2015-04-21)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -138,17 +139,17 @@ public class RSA1_5Test extends TestCase {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
 
-		assertEquals(3, encrypter.supportedAlgorithms().size());
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
-		assertTrue(encrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
+		assertEquals(3, encrypter.supportedJWEAlgorithms().size());
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(3, decrypter.supportedAlgorithms().size());
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA1_5));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
-		assertTrue(decrypter.supportedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
+		assertEquals(3, decrypter.supportedJWEAlgorithms().size());
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA1_5));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 	}
 
 
@@ -178,81 +179,6 @@ public class RSA1_5Test extends TestCase {
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
-	}
-
-
-	public void testGetAcceptedAlgorithms() {
-
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-
-		assertEquals(3, decrypter.getAcceptedAlgorithms().size());
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
-	}
-
-
-	public void testGetAcceptedEncryptionMethods() {
-
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-
-		assertEquals(8, decrypter.getAcceptedEncryptionMethods().size());
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A192GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256GCM));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
-	}
-
-
-	public void testSetAcceptedAlgorithms() {
-
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-
-		try {
-			decrypter.setAcceptedAlgorithms(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.A128KW)));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		decrypter.setAcceptedAlgorithms(new HashSet<>(Arrays.asList(JWEAlgorithm.RSA1_5)));
-		assertTrue(decrypter.getAcceptedAlgorithms().contains(JWEAlgorithm.RSA1_5));
-		assertEquals(1, decrypter.getAcceptedAlgorithms().size());
-	}
-
-
-	public void testSetAcceptedEncryptionMethods() {
-
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-
-		try {
-			decrypter.setAcceptedEncryptionMethods(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(new EncryptionMethod("unsupported"))));
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		decrypter.setAcceptedEncryptionMethods(new HashSet<>(Arrays.asList(EncryptionMethod.A128GCM)));
-		assertTrue(decrypter.getAcceptedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertEquals(1, decrypter.getAcceptedEncryptionMethods().size());
 	}
 
 
@@ -658,8 +584,7 @@ public class RSA1_5Test extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
-		decrypter.getIgnoredCriticalHeaderParameters().add("exp");
+		JWEDecrypter decrypter = new RSADecrypter(privateKey, new HashSet<>(Arrays.asList("exp")));;
 
 		jweObject.decrypt(decrypter);
 
@@ -698,7 +623,7 @@ public class RSA1_5Test extends TestCase {
 			fail();
 		} catch (JOSEException e) {
 			// ok
-			assertEquals("Unsupported critical header parameter", e.getMessage());
+			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
 		}
 	}
 

@@ -5,12 +5,10 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Interface for signing JSON Web Signature (JWS) objects.
- *
- * <p>Callers can query the signer to determine its algorithm capabilities.
+ * JSON Web Signature (JWS) signer.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-04-21)
  */
 public interface JWSSigner extends JWSAlgorithmProvider {
 
@@ -26,9 +24,11 @@ public interface JWSSigner extends JWSAlgorithmProvider {
 	 *
 	 * @return The resulting signature part (third part) of the JWS object.
 	 *
-	 * @throws JOSEException If the JWS algorithm is not supported or if
-	 *                       signing failed for some other reason.
+	 * @throws JOSEException If the JWS algorithm is not supported, if a
+	 *                       critical header parameter is not supported or
+	 *                       marked for deferral to the application, or if
+	 *                       signing failed for some other internal reason.
 	 */
-	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
+	Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException;
 }

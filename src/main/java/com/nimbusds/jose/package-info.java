@@ -5,8 +5,8 @@
  * for the following JOSE objects:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.PlainObject Plaintext (unsecured) JOSE
- *         objects}.
+ *     <li>{@link com.nimbusds.jose.PlainObject Unsecured ({@code alg=none})
+ *         JOSE objects}.
  *     <li>{@link com.nimbusds.jose.JWSObject JSON Web Signature (JWS) 
  *         objects}.
  *     <li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) 

@@ -90,7 +90,7 @@ public enum KeyOperation {
 	 * @param identifier The key operation identifier. Must not be
 	 *                   {@code null}.
 	 */
-	private KeyOperation(final String identifier) {
+	KeyOperation(final String identifier) {
 
 		if (identifier == null)
 			throw new IllegalArgumentException("The key operation identifier must not be null");

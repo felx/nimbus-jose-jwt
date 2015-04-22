@@ -1,4 +1,4 @@
-package com.nimbusds.jose;
+package com.nimbusds.jose.proc;
 
 
 import java.net.URI;
@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.jcip.annotations.Immutable;
+import com.nimbusds.jose.*;
 
 
 /**
@@ -26,10 +26,9 @@ import net.jcip.annotations.Immutable;
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version $version$ (2015-04-22)
  */
-@Immutable
-public final class JOSEMatcher {
+public class JOSEMatcher {
 
 
 	/**
