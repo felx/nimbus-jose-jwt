@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Plain JSON Web Token (JWT).
+ * Unsecured (plain) JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-08-21)
@@ -25,7 +25,7 @@ public class PlainJWT extends PlainObject implements JWT {
 
 
 	/**
-	 * Creates a new plain JSON Web Token (JWT) with a default 
+	 * Creates a new unsecured (plain) JSON Web Token (JWT) with a default
 	 * {@link com.nimbusds.jose.PlainHeader} and the specified claims 
 	 * set.
 	 *
@@ -38,10 +38,10 @@ public class PlainJWT extends PlainObject implements JWT {
 
 
 	/**
-	 * Creates a new plain JSON Web Token (JWT) with the specified header 
-	 * and claims set.
+	 * Creates a new unsecured (plain) JSON Web Token (JWT) with the
+	 * specified header and claims set.
 	 *
-	 * @param header    The plain header. Must not be {@code null}.
+	 * @param header    The unsecured header. Must not be {@code null}.
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
 	public PlainJWT(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
@@ -51,11 +51,11 @@ public class PlainJWT extends PlainObject implements JWT {
 
 
 	/**
-	 * Creates a new plain JSON Web Token (JWT) with the specified 
-	 * Base64URL-encoded parts.
+	 * Creates a new unsecured (plain) JSON Web Token (JWT) with the
+	 * specified Base64URL-encoded parts.
 	 *
-	 * @param firstPart  The first part, corresponding to the plain header. 
-	 *                   Must not be {@code null}.
+	 * @param firstPart  The first part, corresponding to the unsecured
+	 *                   header. Must not be {@code null}.
 	 * @param secondPart The second part, corresponding to the claims set 
 	 *                   (payload). Must not be {@code null}.
 	 *
@@ -76,7 +76,7 @@ public class PlainJWT extends PlainObject implements JWT {
 
 		if (json == null) {
 			
-			throw new ParseException("Payload of plain JOSE object is not a valid JSON object", 0);
+			throw new ParseException("Payload of unsecured JOSE object is not a valid JSON object", 0);
 		}
 
 		return JWTClaimsSet.parse(json);
@@ -84,15 +84,15 @@ public class PlainJWT extends PlainObject implements JWT {
 
 
 	/**
-	 * Parses a plain JSON Web Token (JWT) from the specified string in 
-	 * compact format. 
+	 * Parses an unsecured (plain) JSON Web Token (JWT) from the specified
+	 * string in compact format.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The plain JWT.
+	 * @return The unsecured JWT.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                        plain JWT.
+	 *                        unsecured JWT.
 	 */
 	public static PlainJWT parse(final String s)
 		throws ParseException {
@@ -101,7 +101,7 @@ public class PlainJWT extends PlainObject implements JWT {
 
 		if (! parts[2].toString().isEmpty()) {
 
-			throw new ParseException("Unexpected third Base64URL part in the plain JWT object", 0);
+			throw new ParseException("Unexpected third Base64URL part in the unsecured JWT object", 0);
 		}
 
 		return new PlainJWT(parts[0], parts[1]);

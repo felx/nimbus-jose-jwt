@@ -16,7 +16,7 @@ import com.nimbusds.jwt.proc.JWTHandler;
 
 
 /**
- * Parser for plain, signed and encrypted JSON Web Tokens (JWTs).
+ * Parser for unsecured (plain), signed and encrypted JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
  * @author Junya Hayashi
@@ -26,8 +26,8 @@ public final class JWTParser {
 
 
 	/**
-	 * Parses a plain, signed or encrypted JSON Web Token (JWT) from the
-	 * specified string in compact format.
+	 * Parses an unsecured (plain), signed or encrypted JSON Web Token
+	 * (JWT) from the specified string in compact format.
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
@@ -35,7 +35,7 @@ public final class JWTParser {
 	 *         {@link EncryptedJWT} instance.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid 
-	 *                        plain, signed or encrypted JWT.
+	 *                        unsecured, signed or encrypted JWT.
 	 */
 	public static JWT parse(final String s)
 		throws ParseException {
@@ -54,7 +54,7 @@ public final class JWTParser {
 
 		} catch (ParseException e) {
 
-			throw new ParseException("Invalid plain/JWS/JWE header: " + e.getMessage(), 0);
+			throw new ParseException("Invalid unsecured/JWS/JWE header: " + e.getMessage(), 0);
 		}
 
 		Algorithm alg = Header.parseAlgorithm(jsonObject);
@@ -72,8 +72,8 @@ public final class JWTParser {
 
 
 	/**
-	 * Parses a plain, signed or encrypted JSON Web Token (JWT) from the
-	 * specified string in compact format.
+	 * Parses an unsecured (plain), signed or encrypted JSON Web Token
+	 * (JWT) from the specified string in compact format.
 	 *
 	 * @param s       The string to parse. Must not be {@code null}.
 	 * @param handler Handler for the parsed JWT. Must not be {@code null}.
@@ -84,7 +84,7 @@ public final class JWTParser {
 	 *         returned.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid
-	 *                        plain, signed or encrypted JWT.
+	 *                        unsecured, signed or encrypted JWT.
 	 */
 	public static <T, C extends Context> T parse(final String s, final JWTHandler<T,C> handler, final C context)
 		throws ParseException {
