@@ -97,7 +97,7 @@ public final class JWEJCAProviderSpec {
 	 */
 	public JWEJCAProviderSpec withProvider(final Provider provider) {
 
-		return new JWEJCAProviderSpec(getProvider(), keProvider, ceProvider, macProvider, randomGen);
+		return new JWEJCAProviderSpec(provider, keProvider, ceProvider, macProvider, randomGen);
 	}
 
 
