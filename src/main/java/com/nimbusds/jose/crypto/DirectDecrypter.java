@@ -53,11 +53,8 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
 	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
 	 *            (64 bytes) long. Must not be {@code null}.
-	 *
-	 * @throws JOSEException If the key length is unexpected.
 	 */
-	public DirectDecrypter(final SecretKey key)
-		throws JOSEException {
+	public DirectDecrypter(final SecretKey key) {
 
 		super(key);
 	}
@@ -70,11 +67,8 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
 	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
 	 *                 bytes) long. Must not be {@code null}.
-	 *
-	 * @throws JOSEException If the key length is unexpected.
 	 */
-	public DirectDecrypter(final byte[] keyBytes)
-		throws JOSEException {
+	public DirectDecrypter(final byte[] keyBytes) {
 
 		super(new SecretKeySpec(keyBytes, "AES"));
 	}

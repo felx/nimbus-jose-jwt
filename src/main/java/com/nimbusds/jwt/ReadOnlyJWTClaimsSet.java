@@ -24,7 +24,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The issuer claim, {@code null} if not specified.
 	 */
-	public String getIssuer();
+	String getIssuer();
 
 
 	/**
@@ -32,7 +32,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The subject claim, {@code null} if not specified.
 	 */
-	public String getSubject();
+	String getSubject();
 
 
 	/**
@@ -40,7 +40,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The audience claim, {@code null} if not specified.
 	 */
-	public List<String> getAudience();
+	List<String> getAudience();
 
 
 	/**
@@ -48,7 +48,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The expiration time, {@code null} if not specified.
 	 */
-	public Date getExpirationTime();
+	Date getExpirationTime();
 
 
 	/**
@@ -56,7 +56,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The not-before claim, {@code null} if not specified.
 	 */
-	public Date getNotBeforeTime();
+	Date getNotBeforeTime();
 
 
 	/**
@@ -64,7 +64,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The issued-at claim, {@code null} if not specified.
 	 */
-	public Date getIssueTime();
+	Date getIssueTime();
 
 
 	/**
@@ -72,7 +72,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The JWT ID claim, {@code null} if not specified.
 	 */
-	public String getJWTID();
+	String getJWTID();
 
 
 	/**
@@ -83,7 +83,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @return The value of the custom claim, {@code null} if not 
 	 *         specified.
 	 */
-	public Object getCustomClaim(final String name);
+	Object getCustomClaim(final String name);
 
 
 	/**
@@ -91,7 +91,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The custom claims, as a unmodifiable map, empty map if none.
 	 */
-	public Map<String,Object> getCustomClaims();
+	Map<String,Object> getCustomClaims();
 	
 
 	/**
@@ -101,7 +101,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * 
 	 * @return The value of the claim, {@code null} if not specified.
 	 */
-	public Object getClaim(final String name);
+	Object getClaim(final String name);
 	
 	
 	/**
@@ -115,7 +115,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public String getStringClaim(final String name)
+	String getStringClaim(final String name)
 		throws ParseException;
 
 
@@ -130,7 +130,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public String[] getStringArrayClaim(final String name)
+	String[] getStringArrayClaim(final String name)
 		throws ParseException;
 
 
@@ -145,7 +145,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public List<String> getStringListClaim(final String name)
+	List<String> getStringListClaim(final String name)
 		throws ParseException;
 
 	
@@ -160,7 +160,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public Boolean getBooleanClaim(final String name)
+	Boolean getBooleanClaim(final String name)
 		throws ParseException;
 	
 	
@@ -175,7 +175,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public Integer getIntegerClaim(final String name)
+	Integer getIntegerClaim(final String name)
 		throws ParseException;
 	
 	
@@ -190,7 +190,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public Long getLongClaim(final String name)
+	Long getLongClaim(final String name)
 		throws ParseException;
 	
 	
@@ -205,7 +205,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public Float getFloatClaim(final String name)
+	Float getFloatClaim(final String name)
 		throws ParseException;
 	
 	
@@ -220,7 +220,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * @throws ParseException If the claim value is not of the required
 	 *                        type.
 	 */
-	public Double getDoubleClaim(final String name)
+	Double getDoubleClaim(final String name)
 		throws ParseException;
 
 
@@ -233,7 +233,7 @@ public interface ReadOnlyJWTClaimsSet {
 	 * 
 	 * @return All claims, as an unmodifiable map, empty map if none.
 	 */
-	public Map<String,Object> getAllClaims();
+	Map<String,Object> getAllClaims();
 
 
 	/**
@@ -242,5 +242,5 @@ public interface ReadOnlyJWTClaimsSet {
 	 *
 	 * @return The JSON object representation.
 	 */
-	public JSONObject toJSONObject();
+	JSONObject toJSONObject();
 }

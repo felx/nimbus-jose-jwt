@@ -114,7 +114,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	/**
 	 * Custom claims.
 	 */
-	private Map<String,Object> customClaims = new LinkedHashMap<>();
+	private final Map<String,Object> customClaims = new LinkedHashMap<>();
 
 
 	/**

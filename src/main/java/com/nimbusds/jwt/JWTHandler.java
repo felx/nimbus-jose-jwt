@@ -21,7 +21,7 @@ public interface JWTHandler<T> {
 	 * @return Any object to be used after inspecting the JWT, or
 	 *         {@code null} if no return value is necessary.
 	 */
-	public T onPlainJWT(final PlainJWT plainJWT);
+	T onPlainJWT(final PlainJWT plainJWT);
 
 
 	/**
@@ -33,7 +33,7 @@ public interface JWTHandler<T> {
 	 * @return Any object to be used after inspecting the JWT, or
 	 *         {@code null} if no return value is necessary.
 	 */
-	public T onSignedJWT(final SignedJWT signedJWT);
+	T onSignedJWT(final SignedJWT signedJWT);
 
 
 	/**
@@ -45,5 +45,5 @@ public interface JWTHandler<T> {
 	 * @return Any object to be used after inspecting the JWT, or
 	 *         {@code null} if no return value is necessary.
 	 */
-	public T onEncryptedJWT(final EncryptedJWT encryptedJWT);
+	T onEncryptedJWT(final EncryptedJWT encryptedJWT);
 }

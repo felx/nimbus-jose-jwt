@@ -53,13 +53,8 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
 	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
 	 *            (64 bytes) long. Must not be {@code null}.
-	 *
-	 * @throws JOSEException If the key length or algorithm are unexpected,
-	 *                       or if the underlying secure random generator 
-	 *                       couldn't be instantiated.
 	 */
-	public DirectEncrypter(final SecretKey key)
-		throws JOSEException {
+	public DirectEncrypter(final SecretKey key) {
 
 		super(key);
 	}
@@ -72,13 +67,8 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
 	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
 	 *                 bytes) long. Must not be {@code null}.
-	 *
-	 * @throws JOSEException If the key length or algorithm are unexpected,
-	 *                       or if the underlying secure random generator 
-	 *                       couldn't be instantiated.
 	 */
-	public DirectEncrypter(final byte[] keyBytes)
-		throws JOSEException {
+	public DirectEncrypter(final byte[] keyBytes) {
 
 		super(new SecretKeySpec(keyBytes, "AES"));
 	}

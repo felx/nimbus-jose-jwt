@@ -116,10 +116,6 @@ public final class CompressionAlgorithm implements JSONAware {
 	@Override
 	public String toJSONString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append('"');
-		sb.append(JSONObject.escape(name));
-		sb.append('"');
-		return sb.toString();
+		return "\"" + JSONObject.escape(name) + '"';
 	}
 }

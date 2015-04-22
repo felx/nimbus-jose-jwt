@@ -126,11 +126,7 @@ public class PlainObject extends JOSEObject {
 	@Override
 	public String serialize() {
 
-		StringBuilder sb = new StringBuilder(header.toBase64URL().toString());
-		sb.append('.');
-		sb.append(getPayload().toBase64URL().toString());
-		sb.append('.');
-		return sb.toString();
+		return header.toBase64URL().toString() + '.' + getPayload().toBase64URL().toString() + '.';
 	}
 
 
