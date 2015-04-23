@@ -13,6 +13,7 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -47,7 +48,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -84,6 +85,20 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	public AESEncrypter(final byte[] keyBytes) {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	/**
+	 * Creates a new AES encrypter.
+	 *
+	 * @param octJWK The Key Encryption Key, as a JWK. Must be 128 bits (16
+	 *               bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
+	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
+	 *               be {@code null}.
+	 */
+	public AESEncrypter(final OctetSequenceKey octJWK) {
+
+		this(octJWK.toSecretKey("AES"));
 	}
 
 

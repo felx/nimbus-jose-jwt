@@ -14,6 +14,7 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -40,7 +41,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-21)
+ * @version $version$ (2014-04-23)
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -49,10 +50,10 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	/**
 	 * Creates a new direct encrypter.
 	 *
-	 * @param key The shared symmetric key. Its algorithm must be "AES".
-	 *            Must be 128 bits (16 bytes), 192 bits (24 bytes), 256
-	 *            bits (32 bytes), 384 bits (48 bytes) or 512 bits
-	 *            (64 bytes) long. Must not be {@code null}.
+	 * @param key The symmetric key. Its algorithm must be "AES". Must be
+	 *            128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32
+	 *            bytes), 384 bits (48 bytes) or 512 bits (64 bytes) long.
+	 *            Must not be {@code null}.
 	 */
 	public DirectEncrypter(final SecretKey key) {
 
@@ -63,14 +64,28 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	/**
 	 * Creates a new direct encrypter.
 	 *
-	 * @param keyBytes The shared symmetric key, as a byte array. Must be 
-	 *                 128 bits (16 bytes), 192 bits (24 bytes), 256 bits
-	 *                 (32 bytes), 384 bits (48 bytes) or 512 bits (64
-	 *                 bytes) long. Must not be {@code null}.
+	 * @param keyBytes The symmetric key, as a byte array. Must be 128 bits
+	 *                 (16 bytes), 192 bits (24 bytes), 256 bits (32
+	 *                 bytes), 384 bits (48 bytes) or 512 bits (64 bytes)
+	 *                 long. Must not be {@code null}.
 	 */
 	public DirectEncrypter(final byte[] keyBytes) {
 
-		super(new SecretKeySpec(keyBytes, "AES"));
+		this(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	/**
+	 * Creates a new direct encrypter.
+	 *
+	 * @param octJWK The symmetric key, as a JWK. Must be 128 bits (16
+	 *               bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
+	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
+	 *               be {@code null}.
+	 */
+	public DirectEncrypter(final OctetSequenceKey octJWK) {
+
+		this(octJWK.toSecretKey("AES"));
 	}
 
 

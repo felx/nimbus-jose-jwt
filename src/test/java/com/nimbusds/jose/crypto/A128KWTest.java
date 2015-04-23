@@ -19,7 +19,7 @@ import com.nimbusds.jwt.SignedJWT;
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 public class A128KWTest extends TestCase {
 
@@ -315,6 +315,36 @@ public class A128KWTest extends TestCase {
 		payload = jweObject.getPayload();
 
 		assertEquals("I think therefore I am.", payload.toString());
+	}
+
+
+	public void testJWKConstructor()
+		throws Exception {
+
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A256GCM),
+			new Payload("I think therefore I am."));
+
+		OctetSequenceKey oct = new OctetSequenceKey.Builder(key128).build();
+
+		JWEEncrypter encrypter = new AESEncrypter(oct);
+
+		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
+
+		jweObject.encrypt(encrypter);
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		JWEDecrypter decrypter = new AESDecrypter(oct);
+
+		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
+
+		jweObject.decrypt(decrypter);
+		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
+
+		assertEquals("I think therefore I am.", jweObject.getPayload().toString());
 	}
 
 

@@ -9,6 +9,7 @@ import javax.crypto.spec.SecretKeySpec;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -43,7 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-21)
+ * @version $version$ (2015-05-23)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -79,6 +80,20 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 		throws IllegalArgumentException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
+	}
+
+
+	/**
+	 * Creates a new AES decrypter.
+	 *
+	 * @param octJWK The Key Encryption Key, as a JWK. Must be 128 bits (16
+	 *               bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
+	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
+	 *               be {@code null}.
+	 */
+	public AESDecrypter(final OctetSequenceKey octJWK) {
+
+		this(octJWK.toSecretKey("AES"));
 	}
 
 

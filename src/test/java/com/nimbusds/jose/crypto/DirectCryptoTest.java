@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-21)
+ * @version $version$ (2014-04-23)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -315,6 +315,29 @@ public class DirectCryptoTest extends TestCase {
 		payload = jweObject.getPayload();
 
 		assertEquals("I think therefore I am.", payload.toString());
+	}
+
+
+	public void testOctJWKConstructor()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256GCM);
+
+		JWEObject jweObject = new JWEObject(header, new Payload("I think therefore I am."));
+
+		OctetSequenceKey oct = new OctetSequenceKey.Builder(key256).build();
+
+		JWEEncrypter encrypter = new DirectEncrypter(oct);
+
+		jweObject.encrypt(encrypter);
+
+		jweObject = JWEObject.parse(jweObject.serialize());
+
+		JWEDecrypter decrypter = new DirectDecrypter(oct);
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("I think therefore I am.", jweObject.getPayload().toString());
 	}
 
 
