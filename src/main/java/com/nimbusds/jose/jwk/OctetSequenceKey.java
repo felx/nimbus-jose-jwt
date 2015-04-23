@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-19)
+ * @version $version$ (2015-04-23)
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
@@ -352,7 +352,21 @@ public final class OctetSequenceKey extends JWK {
 	 */
 	public SecretKey toSecretKey() {
 
-		return new SecretKeySpec(toByteArray(), "NONE");
+		return toSecretKey("NONE");
+	}
+
+
+	/**
+	 * Returns a secret key representation of this octet sequence key with
+	 * the specified Java Cryptography Architecture (JCA) algorithm.
+	 *
+	 * @param jcaAlg The JCA algorithm. Must not be {@code null}.
+	 *
+	 * @return The secret key representation.
+	 */
+	public SecretKey toSecretKey(final String jcaAlg) {
+
+		return new SecretKeySpec(toByteArray(), jcaAlg);
 	}
 
 

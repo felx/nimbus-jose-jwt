@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-19)
+ * @version $version$ (2015-04-23)
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -309,5 +309,27 @@ public class OctetSequenceKeyTest extends TestCase {
 		assertEquals(EncryptionMethod.A128GCM, jwk.getAlgorithm());
 
 		assertEquals("XctOhJAkA-pD9Lh7ZgW_2A", jwk.getKeyValue().toString());
+	}
+
+
+	public void testToSecretKey() {
+
+		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
+
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(k).build();
+
+		assertTrue(Arrays.equals(k.decode(), jwk.toSecretKey().getEncoded()));
+		assertEquals("NONE", jwk.toSecretKey().getAlgorithm());
+	}
+
+
+	public void testToSecretKeyWithAlg() {
+
+		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
+
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(k).build();
+
+		assertTrue(Arrays.equals(k.decode(), jwk.toSecretKey("AES").getEncoded()));
+		assertEquals("AES", jwk.toSecretKey("AES").getAlgorithm());
 	}
 }
