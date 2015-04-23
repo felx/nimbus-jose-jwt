@@ -11,6 +11,7 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -31,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-22)
  */
 @ThreadSafe
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
@@ -55,6 +56,26 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 		}
 
 		this.privateKey = privateKey;
+	}
+
+
+	/**
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
+	 *
+	 * @param rsaJWK The RSA JSON Web Key (JWK). Must contain a private
+	 *               part. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the RSA JWK doesn't contain a private part
+	 *                       or its extraction failed.
+	 */
+	public RSASSASigner(final RSAKey rsaJWK)
+		throws JOSEException {
+
+		if (! rsaJWK.isPrivate()) {
+			throw new JOSEException("The RSA JWK doesn't contain a private part");
+		}
+
+		privateKey = rsaJWK.toRSAPrivateKey();
 	}
 
 

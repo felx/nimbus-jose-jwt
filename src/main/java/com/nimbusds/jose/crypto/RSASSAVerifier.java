@@ -10,6 +10,7 @@ import java.util.Set;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -29,7 +30,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-22)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -55,6 +56,20 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier, Criti
 	public RSASSAVerifier(final RSAPublicKey publicKey) {
 
 		this(publicKey, null);
+	}
+
+
+	/**
+	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) verifier.
+	 *
+	 * @param rsaJWK The RSA JSON Web Key (JWK). Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the RSA JWK extraction failed.
+	 */
+	public RSASSAVerifier(final RSAKey rsaJWK)
+		throws JOSEException {
+
+		this(rsaJWK.toRSAPublicKey(), null);
 	}
 
 
@@ -114,7 +129,7 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier, Criti
 			return false;
 		}
 
-		Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), getJCAProvider());
+		final Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), getJCAProvider());
 
 		try {
 			verifier.initVerify(publicKey);

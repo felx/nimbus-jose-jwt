@@ -2,8 +2,6 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.HashSet;
 
 import junit.framework.TestCase;
 
@@ -104,7 +102,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 
 		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
-		assertEquals("Private key check", new BigInteger(1, d), signer.getPrivateKey());
+		assertEquals("Private key check", new BigInteger(1, d), signer.getD());
 
 		jwsObject.sign(signer);
 

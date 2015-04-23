@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.nimbusds.jose.JOSEException;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONArray;
@@ -114,7 +115,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version $version$ (2015-04-19)
+ * @version $version$ (2015-04-22)
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -1386,22 +1387,27 @@ public final class RSAKey extends JWK {
 	 * 
 	 * @return The public RSA key.
 	 * 
-	 * @throws NoSuchAlgorithmException If RSA is not supported by the
-	 *                                  underlying Java Cryptography (JCA)
-	 *                                  provider.
-	 * @throws InvalidKeySpecException  If the JWK key parameters are 
-	 *                                  invalid for a public RSA key.
+	 * @throws JOSEException If RSA is not supported by the underlying Java
+	 *                       Cryptography (JCA) provider or if the JWK
+	 *                       parameters are invalid for a public RSA key.
 	 */
 	public RSAPublicKey toRSAPublicKey() 
-		throws NoSuchAlgorithmException, InvalidKeySpecException {
+		throws JOSEException {
 
 		BigInteger modulus = n.decodeToBigInteger();
 		BigInteger exponent = e.decodeToBigInteger();
 				
 		RSAPublicKeySpec spec = new RSAPublicKeySpec(modulus, exponent);
-		KeyFactory factory = KeyFactory.getInstance("RSA");
-		
-		return (RSAPublicKey)factory.generatePublic(spec);
+
+		try {
+			KeyFactory factory = KeyFactory.getInstance("RSA");
+
+			return (RSAPublicKey) factory.generatePublic(spec);
+
+		} catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 	}
 	
 
@@ -1412,14 +1418,12 @@ public final class RSAKey extends JWK {
 	 * @return The private RSA key, {@code null} if not specified by this
 	 *         JWK.
 	 * 
-	 * @throws NoSuchAlgorithmException If RSA is not supported by the
-	 *                                  underlying Java Cryptography (JCA)
-	 *                                  provider.
-	 * @throws InvalidKeySpecException  If the JWK key parameters are 
-	 *                                  invalid for a private RSA key.
+	 * @throws JOSEException If RSA is not supported by the underlying Java
+	 *                       Cryptography (JCA) provider or if the JWK
+	 *                       parameters are invalid for a private RSA key.
 	 */
 	public RSAPrivateKey toRSAPrivateKey() 
-		throws NoSuchAlgorithmException, InvalidKeySpecException {
+		throws JOSEException {
 		
 		if (d == null) {
 			// no private key
@@ -1482,10 +1486,16 @@ public final class RSAKey extends JWK {
 	                        	                        crtCoefficient);	
 			} 
 		}
-		
-		KeyFactory factory = KeyFactory.getInstance("RSA");
-		
-		return (RSAPrivateKey)factory.generatePrivate(spec);
+
+		try {
+			KeyFactory factory = KeyFactory.getInstance("RSA");
+
+			return (RSAPrivateKey) factory.generatePrivate(spec);
+
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+
+			throw new JOSEException(e.getMessage(), e);
+		}
 	}
 
 
@@ -1496,15 +1506,13 @@ public final class RSAKey extends JWK {
 	 * @return The RSA key pair. The private RSA key will be {@code null} 
 	 *         if not specified.
 	 * 
-	 * @throws NoSuchAlgorithmException If RSA is not supported by the
-	 *                                  underlying Java Cryptography (JCA)
-	 *                                  provider.
-	 * @throws InvalidKeySpecException  If the JWK key parameters are 
-	 *                                  invalid for a public and / or 
-	 *                                  private RSA key.
+	 * @throws JOSEException If RSA is not supported by the underlying Java
+	 *                       Cryptography (JCA) provider or if the JWK
+	 *                       parameters are invalid for a public and / or
+	 *                       private RSA key.
 	 */
 	public KeyPair toKeyPair() 
-		throws NoSuchAlgorithmException, InvalidKeySpecException {
+		throws JOSEException {
 		
 		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
 	}

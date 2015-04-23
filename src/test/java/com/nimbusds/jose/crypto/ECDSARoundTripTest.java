@@ -22,6 +22,7 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jwk.ECKey;
 
 
 /**
@@ -105,7 +106,7 @@ public class ECDSARoundTripTest extends TestCase {
 		COFACTOR);
 
 
-	private static KeyPair createECKeyPair(AlgorithmParameterSpec spec) 
+	private static KeyPair createECKeyPair(final AlgorithmParameterSpec spec)
 		throws Exception {
 
 		// Create the public and private keys
@@ -209,6 +210,67 @@ public class ECDSARoundTripTest extends TestCase {
 		boolean verified = jwsObject.verify(verifier);
 
 		assertTrue("EC512 signature verified", verified);
+	}
+
+
+	public void testECKeyConstructors()
+		throws Exception {
+
+		// Create the public and private keys
+		KeyPair keyPair = createECKeyPair(EC256SPEC);
+		ECPublicKey publicKey = (ECPublicKey) keyPair.getPublic();
+		ECPrivateKey privateKey = (ECPrivateKey) keyPair.getPrivate();
+
+		// Creates initial unsigned JWS object
+		JWSObject jwsObject = createInitialJWSObject(JWSAlgorithm.ES256);
+
+		// Initialise signer
+		ECDSASigner signer = new ECDSASigner(privateKey);
+		assertEquals(privateKey.getS(), signer.getD());
+
+		jwsObject.sign(signer);
+
+		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
+
+		// Initialise verifier
+		ECDSAVerifier verifier = new ECDSAVerifier(publicKey);
+		assertEquals(publicKey.getW().getAffineX(), verifier.getX());
+		assertEquals(publicKey.getW().getAffineY(), verifier.getY());
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("EC256 signature verified", verified);
+	}
+
+
+	public void testECJWKConstructors()
+		throws Exception {
+
+		// Create the public and private keys
+		KeyPair keyPair = createECKeyPair(EC256SPEC);
+		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey) keyPair.getPublic()).
+			privateKey((ECPrivateKey) keyPair.getPrivate()).
+			build();
+
+		// Creates initial unsigned JWS object
+		JWSObject jwsObject = createInitialJWSObject(JWSAlgorithm.ES256);
+
+		// Initialise signer
+		ECDSASigner signer = new ECDSASigner(ecJWK);
+		assertEquals(ecJWK.getD().decodeToBigInteger(), signer.getD());
+
+		jwsObject.sign(signer);
+
+		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
+
+		// Initialise verifier
+		ECDSAVerifier verifier = new ECDSAVerifier(ecJWK);
+		assertEquals(ecJWK.getX().decodeToBigInteger(), verifier.getX());
+		assertEquals(ecJWK.getY().decodeToBigInteger(), verifier.getY());
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("EC256 signature verified", verified);
 	}
 
 

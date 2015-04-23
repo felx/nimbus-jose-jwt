@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.security.interfaces.ECPrivateKey;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -13,6 +14,7 @@ import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.BigIntegerUtils;
 
@@ -31,7 +33,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -53,7 +55,6 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	public ECDSASigner(final BigInteger privateKey) {
 
 		if (privateKey == null) {
-
 			throw new IllegalArgumentException("The private key must not be null");
 		}
 
@@ -62,11 +63,44 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 
 	/**
-	 * Gets the private key ('d' parameter).
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * signer.
 	 *
-	 * @return The private key.
+	 * @param privateKey The private EC key. Must not be {@code null}.
 	 */
-	public BigInteger getPrivateKey() {
+	public ECDSASigner(final ECPrivateKey privateKey) {
+
+		this(privateKey.getS());
+	}
+
+
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * signer.
+	 *
+	 * @param ecJWK The EC JSON Web Key (JWK). Must contain a private part.
+	 *              Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the EC JWK doesn't contain a private part
+	 *                       or its extraction failed.
+	 */
+	public ECDSASigner(final ECKey ecJWK)
+		throws JOSEException {
+
+		if (! ecJWK.isPrivate()) {
+			throw new JOSEException("The EC JWK doesn't contain a private part");
+		}
+
+		privateKey = ecJWK.getD().decodeToBigInteger();
+	}
+
+
+	/**
+	 * Gets the private key 'd' parameter.
+	 *
+	 * @return The private key 'd' parameter.
+	 */
+	public BigInteger getD() {
 
 		return privateKey;
 	}

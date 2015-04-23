@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.security.interfaces.ECPublicKey;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
@@ -14,6 +15,7 @@ import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -31,7 +33,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -70,6 +72,29 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 		this(x, y, null);
 	}
 
+
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * verifier.
+	 *
+	 * @param publicKey The public EC key. Must not be {@code null}.
+	 */
+	public ECDSAVerifier(final ECPublicKey publicKey) {
+
+		this(publicKey.getW().getAffineX(), publicKey.getW().getAffineY());
+	}
+
+
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * verifier.
+	 *
+	 * @param ecJWK The EC JSON Web Key (JWK). Must not be {@code null}.
+	 */
+	public ECDSAVerifier(final ECKey ecJWK) {
+
+		this(ecJWK.getX().decodeToBigInteger(), ecJWK.getY().decodeToBigInteger(), null);
+	}
 
 
 	/**

@@ -28,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 public class RSASSATest extends TestCase {
 
@@ -209,6 +209,38 @@ public class RSASSATest extends TestCase {
 
 
 		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+		assertNotNull("Public key check", verifier.getPublicKey());
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertTrue("Verified signature", verified);
+
+		assertEquals("State check", JWSObject.State.VERIFIED, jwsObject.getState());
+	}
+
+
+	public void testSignAndVerifyWithJWKConstructors()
+		throws Exception {
+
+		JWSHeader header = JWSHeader.parse(B64_HEADER);
+
+		assertEquals("RS256 alg check", JWSAlgorithm.RS256, header.getAlgorithm());
+
+		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
+
+		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
+
+		RSAKey rsaJWK = new RSAKey.Builder(PUBLIC_KEY).privateKey(PRIVATE_KEY).build();
+
+		RSASSASigner signer = new RSASSASigner(rsaJWK);
+		assertNotNull("Private key check", signer.getPrivateKey());
+
+		jwsObject.sign(signer);
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+
+		RSASSAVerifier verifier = new RSASSAVerifier(rsaJWK);
 		assertNotNull("Public key check", verifier.getPublicKey());
 
 		boolean verified = jwsObject.verify(verifier);
