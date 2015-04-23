@@ -21,7 +21,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -208,7 +208,7 @@ public class RSA1_5Test extends TestCase {
 
 		JWEDecrypter decrypter = new RSADecrypter(privateKey);
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(privateKey, ((RSADecrypter) decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -407,6 +407,35 @@ public class RSA1_5Test extends TestCase {
 		payload = jweObject.getPayload();
 
 		assertEquals("I think therefore I am.", payload.toString());
+	}
+
+
+	public void testRSAJWKConstructors()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
+
+		JWEObject jweObject = new JWEObject(header, new Payload("I think therefore I am."));
+
+		RSAKey rsaJWK = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+
+		JWEEncrypter encrypter = new RSAEncrypter(rsaJWK);
+
+		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+
+		jweObject.encrypt(encrypter);
+
+		String jweString = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jweString);
+
+		JWEDecrypter decrypter = new RSADecrypter(rsaJWK);
+
+		assertEquals(privateKey, ((RSADecrypter) decrypter).getPrivateKey());
+
+		jweObject.decrypt(decrypter);
+
+		assertEquals("I think therefore I am.", jweObject.getPayload().toString());
 	}
 
 

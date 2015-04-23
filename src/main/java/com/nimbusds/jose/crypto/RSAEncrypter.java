@@ -13,6 +13,7 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWECryptoParts;
 import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -44,7 +45,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -68,6 +69,20 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		}
 
 		this.publicKey = publicKey;
+	}
+
+
+	/**
+	 * Creates a new RSA encrypter.
+	 *
+	 *  @param rsaJWK The RSA JSON Web Key (JWK). Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the RSA JWK extraction failed.
+	 */
+	public RSAEncrypter(final RSAKey rsaJWK)
+		throws JOSEException {
+
+		this(rsaJWK.toRSAPublicKey());
 	}
 
 

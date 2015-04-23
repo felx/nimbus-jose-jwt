@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.StringUtils;
 
@@ -40,7 +41,7 @@ import com.nimbusds.jose.util.StringUtils;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -66,6 +67,26 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	public RSADecrypter(final RSAPrivateKey privateKey) {
 
 		this(privateKey, null);
+	}
+
+
+	/**
+	 * Creates a new RSA decrypter.
+	 *
+	 * @param rsaJWK The RSA JSON Web Key (JWK). Must contain a private
+	 *               part. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the RSA JWK doesn't contain a private part
+	 *                       or its extraction failed.
+	 */
+	public RSADecrypter(final RSAKey rsaJWK)
+		throws JOSEException {
+
+		if (! rsaJWK.isPrivate()) {
+			throw new JOSEException("The RSA JWK doesn't contain a private part");
+		}
+
+		privateKey = rsaJWK.toRSAPrivateKey();
 	}
 
 
