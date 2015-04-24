@@ -7,7 +7,7 @@ import junit.framework.TestCase;
  * Tests the JWS Algorithm class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version $version$ (2015-04-24)
  */
 public class JWEAlgorithmTest extends TestCase {
 
@@ -34,7 +34,7 @@ public class JWEAlgorithmTest extends TestCase {
 		assertEquals(JWEAlgorithm.A256GCMKW, JWEAlgorithm.parse("A256GCMKW"));
 
 		assertEquals(JWEAlgorithm.PBES2_HS256_A128KW, JWEAlgorithm.parse("PBES2-HS256+A128KW"));
-		assertEquals(JWEAlgorithm.PBES2_HS256_A192KW, JWEAlgorithm.parse("PBES2-HS256+A192KW"));
-		assertEquals(JWEAlgorithm.PBES2_HS256_A256KW, JWEAlgorithm.parse("PBES2-HS256+A256KW"));
+		assertEquals(JWEAlgorithm.PBES2_HS384_A192KW, JWEAlgorithm.parse("PBES2-HS384+A192KW"));
+		assertEquals(JWEAlgorithm.PBES2_HS512_A256KW, JWEAlgorithm.parse("PBES2-HS512+A256KW"));
 	}
 }

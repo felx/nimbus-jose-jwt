@@ -20,10 +20,38 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-04-23)
  */
 @ThreadSafe
 class HMAC {
+
+
+	public static Mac getInitMac(final SecretKey secretKey,
+				     final Provider provider)
+		throws JOSEException {
+
+		Mac mac;
+
+		try {
+			if (provider != null) {
+				mac = Mac.getInstance(secretKey.getAlgorithm(), provider);
+			} else {
+				mac = Mac.getInstance(secretKey.getAlgorithm());
+			}
+
+			mac.init(secretKey);
+
+		} catch (NoSuchAlgorithmException e) {
+
+			throw new JOSEException("Unsupported HMAC algorithm: " + e.getMessage(), e);
+
+		} catch (InvalidKeyException e) {
+
+			throw new JOSEException("Invalid HMAC key: " + e.getMessage(), e);
+		}
+
+		return mac;
+	}
 
 
 	/**
@@ -72,28 +100,8 @@ class HMAC {
 				     final Provider provider)
 		throws JOSEException {
 
-		Mac mac;
-
-		try {
-			if (provider != null) {
-				mac = Mac.getInstance(secretKey.getAlgorithm(), provider);
-			} else {
-				mac = Mac.getInstance(secretKey.getAlgorithm());
-			}
-
-			mac.init(secretKey);
-
-		} catch (NoSuchAlgorithmException e) {
-
-			throw new JOSEException("Unsupported HMAC algorithm: " + e.getMessage(), e);
-
-		} catch (InvalidKeyException e) {
-
-			throw new JOSEException("Invalid HMAC key: " + e.getMessage(), e);
-		}
-
+		Mac mac = getInitMac(secretKey, provider);
 		mac.update(message);
-
 		return mac.doFinal();
 	}
 }

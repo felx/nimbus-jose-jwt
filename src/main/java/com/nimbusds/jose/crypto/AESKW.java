@@ -17,7 +17,7 @@ import com.nimbusds.jose.JOSEException;
  * AES Key Wrapping methods for Content Encryption Key (CEK) encryption and
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-31, section 4.4.
+ * <p>See draft-ietf-jose-json-web-algorithms-40, section 4.4.
  *
  * @author Melisa Halsband
  * @version $version$ (2014-08-19)
@@ -31,7 +31,7 @@ class AESKW {
 	 *
 	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
 	 *            {@code null}.
-	 * @param kek The AES Key Encription Key (KEK). Must not be
+	 * @param kek The AES Key Encryption Key (KEK). Must not be
 	 *            {@code null}.
 	 *
 	 * @return The encrypted Content Encryption Key (CEK).
@@ -52,7 +52,6 @@ class AESKW {
 		try {
 			return encrypter.wrap(cekBytes, 0, cekBytes.length);
 		} catch (Exception e) {
-
 			// java.lang.IllegalStateException
 			// org.bouncycastle.crypto.DataLengthException
 			throw new JOSEException("Couldn't encrypt Content Encryption Key (CEK): " + e.getMessage(), e);

@@ -23,14 +23,14 @@ import net.jcip.annotations.Immutable;
  *     <li>{@link #ECDH_ES_A128KW ESDH-ES+A192KW}
  *     <li>{@link #ECDH_ES_A256KW ESDH-ES+A256KW}
  *     <li>{@link #PBES2_HS256_A128KW PBES2-HS256+A128KW}
- *     <li>{@link #PBES2_HS256_A192KW PBES2-HS256+A192KW}
- *     <li>{@link #PBES2_HS256_A256KW PBES2-HS256+A256KW}
+ *     <li>{@link #PBES2_HS384_A192KW PBES2-HS256+A192KW}
+ *     <li>{@link #PBES2_HS512_A256KW PBES2-HS256+A256KW}
  * </ul>
  *
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version $version$ (2015-04-23)
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {
@@ -153,17 +153,17 @@ public final class JWEAlgorithm extends Algorithm {
 
 
 	/**
-	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
+	 * PBES2 (RFC 2898) with HMAC SHA-384 as the PRF and AES Key Wrap
 	 * (RFC 3394) using 192 bit keys for the encryption scheme (optional).
 	 */
-	public static final JWEAlgorithm PBES2_HS256_A192KW = new JWEAlgorithm("PBES2-HS256+A192KW", Requirement.OPTIONAL);
+	public static final JWEAlgorithm PBES2_HS384_A192KW = new JWEAlgorithm("PBES2-HS384+A192KW", Requirement.OPTIONAL);
 
 
 	/**
-	 * PBES2 (RFC 2898) with HMAC SHA-256 as the PRF and AES Key Wrap
+	 * PBES2 (RFC 2898) with HMAC SHA-512 as the PRF and AES Key Wrap
 	 * (RFC 3394) using 256 bit keys for the encryption scheme (optional).
 	 */
-	public static final JWEAlgorithm PBES2_HS256_A256KW = new JWEAlgorithm("PBES2-HS256+A256KW", Requirement.OPTIONAL);
+	public static final JWEAlgorithm PBES2_HS512_A256KW = new JWEAlgorithm("PBES2-HS512+A256KW", Requirement.OPTIONAL);
 
 
 	/**
@@ -228,10 +228,10 @@ public final class JWEAlgorithm extends Algorithm {
 			return A256GCMKW;
 		} else if (s.equals(PBES2_HS256_A128KW.getName())) {
 			return PBES2_HS256_A128KW;
-		} else if (s.equals(PBES2_HS256_A192KW.getName())) {
-			return PBES2_HS256_A192KW;
-		} else if (s.equals(PBES2_HS256_A256KW.getName())) {
-			return PBES2_HS256_A256KW;
+		} else if (s.equals(PBES2_HS384_A192KW.getName())) {
+			return PBES2_HS384_A192KW;
+		} else if (s.equals(PBES2_HS512_A256KW.getName())) {
+			return PBES2_HS512_A256KW;
 		} else {
 			return new JWEAlgorithm(s);
 		}
