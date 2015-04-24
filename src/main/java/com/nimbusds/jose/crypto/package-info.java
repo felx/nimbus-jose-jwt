@@ -47,6 +47,14 @@
  *             <li>{@link com.nimbusds.jose.crypto.DirectEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.DirectDecrypter}
  *         </ul>
+ *     <li>For password-based (PBKDF2) key encryption with A128CBC-HS256,
+ *         A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
+ *         encryption:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedEncrypter}
+ *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedDecrypter}
+ *             <li>
+ *         </ul>
  * </ul>
  */
 package com.nimbusds.jose.crypto;
