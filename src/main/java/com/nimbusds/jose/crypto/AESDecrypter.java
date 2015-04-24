@@ -139,15 +139,15 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 
 		// Validate required JWE parts
 		if (encryptedKey == null) {
-			throw new JOSEException("The encrypted key must not be null");
+			throw new JOSEException("Missing JWE encrypted key");
 		}
 
 		if (iv == null) {
-			throw new JOSEException("The initialization vector (IV) must not be null");
+			throw new JOSEException("Missing JWE initialization vector (IV)");
 		}
 
 		if (authTag == null) {
-			throw new JOSEException("The authentication tag must not be null");
+			throw new JOSEException("Missing JWE authentication tag");
 		}
 
 		if (! critPolicy.headerPasses(header)) {

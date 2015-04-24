@@ -133,15 +133,15 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 		// Validate required JWE parts
 		if (encryptedKey != null) {
-			throw new JOSEException("Unexpected encrypted key, must be omitted");
+			throw new JOSEException("Unexpected present JWE encrypted key");
 		}	
 
 		if (iv == null) {
-			throw new JOSEException("The initialization vector (IV) must not be null");
+			throw new JOSEException("Unexpected present JWE initialization vector (IV)");
 		}
 
 		if (authTag == null) {
-			throw new JOSEException("The authentication tag must not be null");
+			throw new JOSEException("Missing JWE authentication tag");
 		}
 		
 
