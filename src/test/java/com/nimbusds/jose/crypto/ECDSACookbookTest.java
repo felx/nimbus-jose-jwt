@@ -21,7 +21,7 @@ public class ECDSACookbookTest extends TestCase {
 	public void testES512Verify()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.3
+		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-4.3
 
 		String json = "{"+
 			"\"kty\":\"EC\","+
