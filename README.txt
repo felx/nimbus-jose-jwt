@@ -96,9 +96,10 @@ For Maven add:
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
-    <version>3.9</version>
+    <version>[ version ]</version>
 </dependency>
 
+where [ version ] is the latest stable version.
 
 To post bug reports and suggestions:
 
