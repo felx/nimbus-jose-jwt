@@ -33,7 +33,7 @@ public class OpenSSLWithECKeyTest extends TestCase {
 		// openssl ecparam -genkey -name prime256v1 -noout -out testprivatekey-ec256.pem
 
 		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./test-ec256-key.pem")));
+		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec256-key.pem")));
 		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
 		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
 		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
@@ -62,7 +62,7 @@ public class OpenSSLWithECKeyTest extends TestCase {
 		// openssl ecparam -genkey -name secp384r1 -noout -out test-ec384-key.pem
 
 		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./test-ec384-key.pem")));
+		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec384-key.pem")));
 		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
 		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
 		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
@@ -91,7 +91,7 @@ public class OpenSSLWithECKeyTest extends TestCase {
 		// openssl ecparam -genkey -name secp521r1 -noout -out test-ec512-key.pem
 
 		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./test-ec512-key.pem")));
+		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec512-key.pem")));
 		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
 		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
 		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
