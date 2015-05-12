@@ -5,12 +5,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import junit.framework.TestCase;
-import org.junit.Assert;
 
 import org.bouncycastle.util.Arrays;
-
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.util.IntegerUtils;
 
 
 /**
@@ -59,7 +55,8 @@ public class ConcatKDFTest extends TestCase {
 			(byte) 158, (byte) 86, (byte) 217, (byte) 29, (byte) 129, (byte) 113, (byte) 53, (byte) 211,
 			(byte) 114, (byte) 131, (byte) 66, (byte) 131, (byte) 191, (byte) 132, (byte) 38, (byte) 156,
 			(byte) 251, (byte) 49, (byte) 110, (byte) 163, (byte) 218, (byte) 128, (byte) 106, (byte) 72,
-			(byte) 246, (byte) 218, (byte) 167, (byte) 121, (byte) 140, (byte) 254, (byte) 144, (byte) 196};
+			(byte) 246, (byte) 218, (byte) 167, (byte) 121, (byte) 140, (byte) 254, (byte) 144, (byte) 196
+		};
 
 		int keyLength = 128;
 		String algId = "A128GCM";
@@ -68,6 +65,8 @@ public class ConcatKDFTest extends TestCase {
 		int pubInfo = 128;
 
 		ConcatKDF concatKDF = new ConcatKDF("SHA-256");
+
+		assertEquals("SHA-256", concatKDF.getHashAlgorithm());
 
 		SecretKey derivedKey = concatKDF.deriveKey(
 			new SecretKeySpec(Z, "AES"),

@@ -18,12 +18,7 @@ import com.nimbusds.jose.util.IntegerUtils;
 
 
 /**
- * Concatenation Key Derivation Function (KDF). Provides static
- * methods to generate Content Encryption Keys (CEKs) and Content Integrity 
- * Keys (CIKs) from a Content Master Key (CMKs), as used in 
- * {@code A128CBC+HS256} and {@code A256CBC+HS512} encryption (deprecated).
- *
- * <p>See draft-ietf-jose-json-web-encryption-08, appendices A.4 and A.5.
+ * Concatenation Key Derivation Function (KDF).
  *
  * <p>See NIST.800-56A.
  *
