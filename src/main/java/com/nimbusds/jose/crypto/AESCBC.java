@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2014-07-08)
+ * @version $version$ (2015-05-12)
  */
 @ThreadSafe
 class AESCBC {
@@ -249,12 +249,12 @@ class AESCBC {
 		}
 
 		// Generate alternative CEK using concat-KDF
-		SecretKey altCEK = ConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
+		SecretKey altCEK = LegacyConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
 
 		byte[] cipherText = AESCBC.encrypt(altCEK, iv, plainText, ceProvider);
 
 		// Generate content integrity key for HMAC
-		SecretKey cik = ConcatKDF.generateCIK(secretKey, header.getEncryptionMethod(), epu, epv);
+		SecretKey cik = LegacyConcatKDF.generateCIK(secretKey, header.getEncryptionMethod(), epu, epv);
 
 		String macInput = header.toBase64URL().toString() + "." +
 			encryptedKey.toString() + "." +
@@ -410,11 +410,11 @@ class AESCBC {
 			epv = new Base64URL((String)header.getCustomParam("epv")).decode();
 		}
 
-		SecretKey cekAlt = ConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
+		SecretKey cekAlt = LegacyConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
 
 		final byte[] plainText = AESCBC.decrypt(cekAlt, iv.decode(), cipherText.decode(), ceProvider);
 
-		SecretKey cik = ConcatKDF.generateCIK(secretKey, header.getEncryptionMethod(), epu, epv);
+		SecretKey cik = LegacyConcatKDF.generateCIK(secretKey, header.getEncryptionMethod(), epu, epv);
 
 		String macInput = header.toBase64URL().toString() + "." +
 			encryptedKey.toString() + "." +
