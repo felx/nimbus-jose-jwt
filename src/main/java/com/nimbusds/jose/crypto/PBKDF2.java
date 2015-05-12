@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.IntegerUtils;
 
 
 /**
@@ -178,7 +179,7 @@ class PBKDF2 {
 			byte[] inputBytes;
 			if (i == 1)
 			{
-				inputBytes = ByteUtils.concat(salt, ByteUtils.getBytes(blockIndex));
+				inputBytes = ByteUtils.concat(salt, IntegerUtils.toBytes(blockIndex));
 				currentU = prf.doFinal(inputBytes);
 				xorU = currentU;
 			}

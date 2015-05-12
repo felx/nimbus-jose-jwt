@@ -3,48 +3,39 @@ package com.nimbusds.jose.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 
 /**
  * Byte utilities.
  *
- * @version $version$ (2015-04-23)
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-05-12)
  */
 public class ByteUtils {
 
 
 	/**
-	 * Returns a byte array representation of the specified integer.
-	 *
-	 * @param intValue The integer value.
-	 *
-	 * @return The byte array representatio.
-	 */
-	public static byte[] getBytes(int intValue) {
-
-		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
-		byteBuffer.putInt(intValue);
-		return byteBuffer.array();
-	}
-
-
-	/**
 	 * Concatenates the specified byte arrays.
 	 *
-	 * @param byteArrays The byte arrays to concatenate.
+	 * @param byteArrays The byte arrays to concatenate, may be
+	 *                   {@code null}.
 	 *
 	 * @return The resulting byte array.
 	 */
 	public static byte[] concat(byte[]... byteArrays) {
 
 		try {
-			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			for (byte[] bytes : byteArrays) {
-				byteArrayOutputStream.write(bytes);
+
+				if (bytes == null) {
+					continue; // skip
+				}
+
+				baos.write(bytes);
 			}
-			return byteArrayOutputStream.toByteArray();
+			return baos.toByteArray();
 
 		} catch (IOException e) {
 			// Should never happen
@@ -68,5 +59,48 @@ public class ByteUtils {
 		byte[] subArray = new byte[length];
 		System.arraycopy(byteArray, beginIndex, subArray, 0, subArray.length);
 		return subArray;
+	}
+
+
+	/**
+	 * Returns the bit length of the specified byte length.
+	 *
+	 * @param byteLength The byte length.
+	 *
+	 * @return The bit length.
+	 */
+	public static int bitLength(final int byteLength) {
+
+		return byteLength * 8;
+	}
+
+
+	/**
+	 * Returns the byte length of the specified byte array.
+	 *
+	 * @param byteArray The byte array. May be {@code null}.
+	 *
+	 * @return The bite length, zero if the array is {@code null}.
+	 */
+	public static int bitLength(final byte[] byteArray) {
+
+		if (byteArray == null) {
+			return 0;
+		} else {
+			return bitLength(byteArray.length);
+		}
+	}
+
+
+	/**
+	 * Returns the byte length of the specified bit length.
+	 *
+	 * @param bitLength The bit length.
+	 *
+	 * @return The byte byte length.
+	 */
+	public static int byteLength(final int bitLength) {
+
+		return bitLength / 8;
 	}
 }

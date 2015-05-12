@@ -12,14 +12,25 @@ import junit.framework.TestCase;
 public class ByteUtilsTest extends TestCase {
 
 
-	public void testGetBytesFromZeroInteger() {
+	public void testConcat() {
 
-		assertTrue(Arrays.equals(new byte[]{0, 0, 0, 0}, ByteUtils.getBytes(0)));
+		byte[] a1 = { (byte)1, (byte)2 };
+		byte[] a2 = { (byte)3, (byte)4 };
+
+		byte[] out = ByteUtils.concat(a1, a2);
+
+		assertTrue(Arrays.equals(new byte[]{(byte)1, (byte)2, (byte)3, (byte)4}, out));
 	}
 
 
-	public void testGetBytesFromOneInteger() {
+	public void testConcatWithNullValue() {
 
-		assertTrue(Arrays.equals(new byte[]{0, 0, 0, 1}, ByteUtils.getBytes(1)));
+		byte[] a1 = { (byte)1, (byte)2 };
+		byte[] a2 = null;
+		byte[] a3 = { (byte)3, (byte)4 };
+
+		byte[] out = ByteUtils.concat(a1, a2, a3);
+
+		assertTrue(Arrays.equals(new byte[]{(byte)1, (byte)2, (byte)3, (byte)4}, out));
 	}
 }

@@ -17,10 +17,9 @@ public interface JCAProviderAware {
 	/**
 	 * Sets a JCA provider (for all or selected cryptographic operations).
 	 *
-	 * @param jcaProviderSpec The JCA provider, {@code null} if not
-	 *                        specified.
+	 * @param jcaProvider The JCA provider, {@code null} if not specified.
 	 */
-	void setJCAProvider(final Provider jcaProviderSpec);
+	void setJCAProvider(final Provider jcaProvider);
 
 
 	/**
