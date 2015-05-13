@@ -16,6 +16,7 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
@@ -29,7 +30,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-05-12)
+ * @version $version$ (2015-05-13)
  */
 @ThreadSafe
 class AESCBC {
@@ -148,7 +149,7 @@ class AESCBC {
 	 */
 	public static byte[] computeAADLength(final byte[] aad) {
 
-		final int bitLength = aad.length * 8;
+		final int bitLength = ByteUtils.bitLength(aad);
 
 		return ByteBuffer.allocate(8).putLong(bitLength).array();
 	}
@@ -342,7 +343,12 @@ class AESCBC {
 
 		// Check MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
-		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).put(aad).put(iv).put(cipherText).put(al).array();
+		byte[] hmacInput = ByteBuffer.allocate(hmacInputLength).
+			put(aad).
+			put(iv).
+			put(cipherText).
+			put(al).
+			array();
 		byte[] hmac = HMAC.compute(compositeKey.getMACKey(), hmacInput, macProvider);
 
 		byte[] expectedAuthTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
