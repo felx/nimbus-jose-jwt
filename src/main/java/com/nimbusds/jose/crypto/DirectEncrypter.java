@@ -90,18 +90,18 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 
 	@Override
-	public JWECryptoParts encrypt(final JWEHeader readOnlyJWEHeader, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
 		throws JOSEException {
 
-		JWEAlgorithm alg = readOnlyJWEHeader.getAlgorithm();
+		JWEAlgorithm alg = header.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
 
 			throw new JOSEException("Unsupported JWE algorithm, must be \"dir\"");
 		}
 
-		// Check key length matches matches encryption method
-		EncryptionMethod enc = readOnlyJWEHeader.getEncryptionMethod();
+		// Check key length matches encryption method
+		EncryptionMethod enc = header.getEncryptionMethod();
 
 		if (enc.cekBitLength() != getKey().getEncoded().length * 8) {
 
@@ -112,11 +112,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 
 		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(readOnlyJWEHeader, bytes);
+		byte[] plainText = DeflateHelper.applyCompression(header, bytes);
 
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(readOnlyJWEHeader.toBase64URL().toString());
+		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
 		
 
 		// Encrypt the plain text according to the JWE enc

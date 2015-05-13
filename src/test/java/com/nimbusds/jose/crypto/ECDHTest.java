@@ -3,6 +3,8 @@ package com.nimbusds.jose.crypto;
 
 import java.util.Arrays;
 
+import javax.crypto.SecretKey;
+
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.jwk.ECKey;
@@ -12,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Tests the ECDH key agreement derivation.
  *
- * @version $version$ (2015-05-10)
+ * @version $version$ (2015-05-13)
  */
 public class ECDHTest extends TestCase{
 
@@ -27,16 +29,17 @@ public class ECDHTest extends TestCase{
 			d(new Base64URL("870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE")).
 			build();
 
-		byte[] secret = ECDH.deriveSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
+		SecretKey sharedSecret = ECDH.deriveSharedSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
+		assertEquals("AES", sharedSecret.getAlgorithm());
 
-		assertEquals(256, secret.length * 8);
+		assertEquals(256, sharedSecret.getEncoded().length * 8);
 
 		// Repeat with BouncyCastle provider
-		byte[] secretCopy = ECDH.deriveSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(),
+		SecretKey sharedSecretCopy = ECDH.deriveSharedSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(),
 			BouncyCastleProviderSingleton.getInstance());
 
 		// The algorithm is deterministic, the two outputs must be identical
-		assertTrue(Arrays.equals(secret, secretCopy));
+		assertTrue(Arrays.equals(sharedSecret.getEncoded(), sharedSecretCopy.getEncoded()));
 	}
 
 
@@ -50,9 +53,9 @@ public class ECDHTest extends TestCase{
 			.d(new Base64URL("hUdUjG8Bru5knbrULOI-aDhtyZumcbFb025gnDBfwEas-W7kpFao8IEqnQHeQDVH"))
 			.build();
 
-		byte[] secret = ECDH.deriveSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
+		SecretKey sharedSecret = ECDH.deriveSharedSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
 
-		assertEquals(384, secret.length * 8);
+		assertEquals(384, sharedSecret.getEncoded().length * 8);
 	}
 
 
@@ -66,9 +69,9 @@ public class ECDHTest extends TestCase{
 			.d(new Base64URL("ADO81GOJgx5lfUevC1Ps5NiqEtkT4qIp68rhQzfY2Fb0IKgG07qyBwt6peV7yab7vlgaf01XUgPQQY1_xm4EK7CB"))
 			.build();
 
-		byte[] secret = ECDH.deriveSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
+		SecretKey sharedSecret = ECDH.deriveSharedSecret(ecJWK.toECPublicKey(), ecJWK.toECPrivateKey(), null);
 
-		assertEquals(528, secret.length * 8);
+		assertEquals(528, sharedSecret.getEncoded().length * 8);
 	}
 
 
@@ -90,7 +93,7 @@ public class ECDHTest extends TestCase{
 			"\"d\":\"VEmDZpDXXK8p8N0Cndsxs924q6nS1RXFASRl6BfUqdw\"" +
 			"}");
 
-		byte[] secret = ECDH.deriveSecret(consumerKey.toECPublicKey(), epk.toECPrivateKey(), null);
+		SecretKey sharedSecret = ECDH.deriveSharedSecret(consumerKey.toECPublicKey(), epk.toECPrivateKey(), null);
 
 		byte[] expected = {
 			(byte)158, (byte) 86, (byte)217, (byte) 29, (byte)129, (byte)113, (byte) 53, (byte)211,
@@ -98,6 +101,6 @@ public class ECDHTest extends TestCase{
 			(byte)251, (byte) 49, (byte)110, (byte)163, (byte)218, (byte)128, (byte)106, (byte) 72,
 			(byte)246, (byte)218, (byte)167, (byte)121, (byte)140, (byte)254, (byte)144, (byte)196 };
 
-		assertTrue(Arrays.equals(expected, secret));
+		assertTrue(Arrays.equals(expected, sharedSecret.getEncoded()));
 	}
 }

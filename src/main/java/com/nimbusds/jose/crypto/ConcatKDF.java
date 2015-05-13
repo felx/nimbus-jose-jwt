@@ -11,20 +11,24 @@ import java.security.Provider;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.jcip.annotations.ThreadSafe;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jca.JCAProviderAware;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.IntegerUtils;
 
 
 /**
- * Concatenation Key Derivation Function (KDF).
+ * Concatenation Key Derivation Function (KDF). This class is thread-safe.
  *
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-12)
+ * @version $version$ (2015-05-13)
  */
+@ThreadSafe
 class ConcatKDF implements JCAProviderAware {
 
 
@@ -82,6 +86,17 @@ class ConcatKDF implements JCAProviderAware {
 	}
 
 
+	/**
+	 * Derives a key from the specified inputs.
+	 *
+	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param keyLength    The length of the key to derive, in bits.
+	 * @param otherInfo    Other info, {@code null} if not specified.
+	 *
+	 * @return The derived key, with algorithm set to "AES".
+	 *
+	 * @throws JOSEException If the key derivation failed.
+	 */
 	public SecretKey deriveKey(final SecretKey sharedSecret,
 				   final int keyLength,
 				   final byte[] otherInfo)
@@ -97,7 +112,10 @@ class ConcatKDF implements JCAProviderAware {
 
 			md.update(counterBytes);
 			md.update(sharedSecret.getEncoded());
-			md.update(otherInfo);
+
+			if (otherInfo != null) {
+				md.update(otherInfo);
+			}
 
 			try {
 				baos.write(md.digest());
@@ -119,6 +137,22 @@ class ConcatKDF implements JCAProviderAware {
 	}
 
 
+	/**
+	 * Derives a key from the specified inputs.
+	 *
+	 * @param sharedSecret The shared secret. Must not be {@code null}.
+	 * @param keyLength    The length of the key to derive, in bits.
+	 * @param algID        The algorithm identifier, {@code null} if not
+	 *                     specified.
+	 * @param partyUInfo   The partyUInfo, {@code null} if not specified.
+	 * @param partyVInfo   The partyVInfo {@code null} if not specified.
+	 * @param suppPubInfo  The suppPubInfo, {@code null} if not specified.
+	 * @param suppPrivInfo The suppPrivInfo, {@code null} if not specified.
+	 *
+	 *  @return The derived key, with algorithm set to "AES".
+	 *
+	 * @throws JOSEException If the key derivation failed.
+	 */
 	public SecretKey deriveKey(final SecretKey sharedSecret,
 				   final int keyLength,
 				   final byte[] algID,
@@ -248,6 +282,21 @@ class ConcatKDF implements JCAProviderAware {
 		byte[] bytes = data != null ? data : new byte[0];
 		byte[] length = IntegerUtils.toBytes(bytes.length);
 		return ByteUtils.concat(length, bytes);
+	}
+
+
+	/**
+	 * Encodes the specified BASE64URL encoded data
+	 * {@code data.length || data}.
+	 *
+	 * @param data The data to encode, may be {@code null}.
+	 *
+	 * @return The encoded data.
+	 */
+	public static byte[] encodeDataWithLength(final Base64URL data) {
+
+		byte[] bytes = data != null ? data.decode() : null;
+		return encodeDataWithLength(bytes);
 	}
 }
 

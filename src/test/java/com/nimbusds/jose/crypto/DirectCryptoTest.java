@@ -381,6 +381,8 @@ public class DirectCryptoTest extends TestCase {
 	public void testCookbookExample()
 		throws Exception {
 
+		// Frpm http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.6
+
 		String json ="{"+
 			"\"kty\":\"oct\","+
 			"\"kid\":\"77c7e2b8-6e13-45cf-8672-617b5b45243a\","+
