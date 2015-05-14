@@ -147,7 +147,7 @@ public class ECDHCryptoTest extends TestCase {
 
 		System.out.println(header.decodeToString());
 
-		header.decode();
+		byte[] aad = header.decode();
 
 		Base64URL iv = new Base64URL("yc9N8v5sYyv3iGQT926IUg");
 
