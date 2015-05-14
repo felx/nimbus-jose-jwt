@@ -22,7 +22,6 @@ public class AESTest extends TestCase {
 		throws Exception {
 
 		KeyGenerator keyGenerator = AES.createKeyGenerator();
-
 		assertEquals("AES", keyGenerator.getAlgorithm());
 	}
 
@@ -31,11 +30,8 @@ public class AESTest extends TestCase {
 		throws Exception {
 
 		testGenerateKey(128);
-
 		testGenerateKey(256);
-
 		testGenerateKey(512);
-
 		testGenerateKey(1024);
 	}
 

@@ -16,7 +16,6 @@ public class ConstantTimeUtilsTest extends TestCase {
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7, 8};
 
 		assertTrue(ConstantTimeUtils.areEqual(a, b));
-
 	}
 
 
