@@ -63,7 +63,7 @@ public class ECDSAJose4JTest extends TestCase {
 		JsonWebSignature jws = new JsonWebSignature();
 		jws.setHeader("alg", "ES512");
 		jws.setPayload("Hello world!");
-		// jws.setKey(jwk.getKey()); // fails, check with jose4j
+		// jws.setKey(jwk.getKey()); // fails, check with jose4j todo - post ticket to jose4j
 		jws.setKey(ECKey.parse(EC_P521_JWK_JSON).toECPrivateKey());
 		jws.sign();
 		String compactJWS = jws.getCompactSerialization();
