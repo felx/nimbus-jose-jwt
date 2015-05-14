@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
@@ -12,7 +13,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StringUtils;
 import junit.framework.TestCase;
 
 
@@ -74,10 +77,28 @@ public class ECDHCryptoTest extends TestCase {
 	}
 
 
-	public void testCookbookExample_ES_CEK()
+	public void testCookbookExample_ES_steps()
 		throws Exception {
 
 		// From http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.5
+
+		String headerString = "{" +
+			"\"alg\":\"ECDH-ES\"," +
+			"\"kid\":\"meriadoc.brandybuck@buckland.example\"," +
+			"\"epk\":{" +
+			"\"kty\":\"EC\"," +
+			"\"crv\":\"P-256\"," +
+			"\"x\":\"mPUKT_bAWGHIhg0TpjjqVsP1rXWQu_vwVOHHtNkdYoA\"," +
+			"\"y\":\"8BQAsImGeAS46fyWw5MhYfGTT0IjBpFw2SS34Dv4Irs\"" +
+			"}," +
+			"\"enc\": \"A128CBC-HS256\"" +
+			"}";
+
+		String plainText = "You can trust us to stick with you through thick and " +
+			"thin–to the bitter end. And you can trust us to "+
+			"keep any secret of yours–closer than you keep it " +
+			"yourself. But you cannot trust us to let you face trouble " +
+			"alone, and go off without a word. We are your friends, Frodo.";
 
 		ECKey ecJWK = ECKey.parse("{" +
 			"\"kty\": \"EC\"," +
@@ -116,6 +137,39 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals(256, derivedKey.getEncoded().length * 8);
 
 		assertEquals(expectedDerivedKey, Base64URL.encode(derivedKey.getEncoded()));
+
+		Base64URL header = new Base64URL(
+			"eyJhbGciOiJFQ0RILUVTIiwia2lkIjoibWVyaWFkb2MuYnJhbmR5YnVja0BidW" +
+			"NrbGFuZC5leGFtcGxlIiwiZXBrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYi" +
+			"LCJ4IjoibVBVS1RfYkFXR0hJaGcwVHBqanFWc1AxclhXUXVfdndWT0hIdE5rZF" +
+			"lvQSIsInkiOiI4QlFBc0ltR2VBUzQ2ZnlXdzVNaFlmR1RUMElqQnBGdzJTUzM0" +
+			"RHY0SXJzIn0sImVuYyI6IkExMjhDQkMtSFMyNTYifQ");
+
+		System.out.println(header.decodeToString());
+
+		header.decode();
+
+		Base64URL iv = new Base64URL("yc9N8v5sYyv3iGQT926IUg");
+
+		AuthenticatedCipherText authCipherText =
+			AESCBC.encryptAuthenticated(
+				derivedKey, iv.decode(), plainText.getBytes(Charset.forName("UTF-8")), aad, null, null);
+
+		Base64URL expectedCipherText = new Base64URL(
+			"BoDlwPnTypYq-ivjmQvAYJLb5Q6l-F3LIgQomlz87yW4OPKbWE1zSTEFjDfhU9" +
+			"IPIOSA9Bml4m7iDFwA-1ZXvHteLDtw4R1XRGMEsDIqAYtskTTmzmzNa-_q4F_e" +
+			"vAPUmwlO-ZG45Mnq4uhM1fm_D9rBtWolqZSF3xGNNkpOMQKF1Cl8i8wjzRli7-" +
+			"IXgyirlKQsbhhqRzkv8IcY6aHl24j03C-AR2le1r7URUhArM79BY8soZU0lzwI" +
+				"-sD5PZ3l4NDCCei9XkoIAfsXJWmySPoeRb2Ni5UZL4mYpvKDiwmyzGd65KqVw7" +
+			"MsFfI_K767G9C9Azp73gKZD0DyUn1mn0WW5LmyX_yJ-3AROq8p1WZBfG-ZyJ61" +
+			"95_JGG2m9Csg");
+
+		assertEquals(expectedCipherText, Base64URL.encode(authCipherText.getCipherText()));
+
+		Base64URL expectedAuthTag = new Base64URL("WCCkNa-x4BeB9hIDIfFuhg");
+
+		// Fails! VVV
+		assertEquals(expectedAuthTag, Base64URL.encode(authCipherText.getAuthenticationTag()));
 	}
 
 
