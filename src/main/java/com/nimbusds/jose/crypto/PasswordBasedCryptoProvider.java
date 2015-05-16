@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
@@ -37,7 +36,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-24)
+ * @version $version$ (2015-05-16)
  */
 abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 
@@ -49,12 +48,6 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported encryption methods.
-	 */
-	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
-
-
-	/**
 	 * Initialises the supported algorithms and encryption methods.
 	 */
 	static {
@@ -63,17 +56,6 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.PBES2_HS384_A192KW);
 		algs.add(JWEAlgorithm.PBES2_HS512_A256KW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
-
-		Set<EncryptionMethod> methods = new HashSet<>();
-		methods.add(EncryptionMethod.A128CBC_HS256);
-		methods.add(EncryptionMethod.A192CBC_HS384);
-		methods.add(EncryptionMethod.A256CBC_HS512);
-		methods.add(EncryptionMethod.A128GCM);
-		methods.add(EncryptionMethod.A192GCM);
-		methods.add(EncryptionMethod.A256GCM);
-		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
-		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
-		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
 
 
@@ -125,7 +107,7 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 	 */
 	protected PasswordBasedCryptoProvider(final byte[] password) {
 
-		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 
 		if (password == null || password.length == 0) {
 			throw new IllegalArgumentException("The password must not be null or empty");

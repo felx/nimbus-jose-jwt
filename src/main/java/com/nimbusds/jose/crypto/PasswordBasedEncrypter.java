@@ -9,7 +9,6 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -36,7 +35,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-24)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -115,7 +114,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 
 
 	@Override
-	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] clearText)
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
@@ -128,7 +127,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 		final SecretKey psKey = PBKDF2.deriveKey(getPassword(), formattedSalt, iterationCount, prfParams);
 
 		// We need to work on the header
-		JWEHeader modifiableHeader = new JWEHeader.Builder(header).
+		final JWEHeader updatedHeader = new JWEHeader.Builder(header).
 			pbes2Salt(Base64URL.encode(salt)).
 			pbes2Count(iterationCount).
 			build();
@@ -136,60 +135,9 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
 
 		// The second JWE part
-		Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, psKey));
+		final Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, psKey));
 
-		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(modifiableHeader, bytes);
-
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(modifiableHeader.toBase64URL().toString());
-
-		// Encrypt the plain text according to the JWE enc
-		byte[] iv;
-		AuthenticatedCipherText authCipherText;
-
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-			enc.equals(EncryptionMethod.A192CBC_HS384) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512)	 ) {
-
-			iv = AESCBC.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESCBC.encryptAuthenticated(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			enc.equals(EncryptionMethod.A192GCM) ||
-			enc.equals(EncryptionMethod.A256GCM)    ) {
-
-			iv = AESGCM.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESGCM.encrypt(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
-
-			iv = AESCBC.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESCBC.encryptWithConcatKDF(
-				modifiableHeader, cek, encryptedKey, iv, plainText,
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
-		}
-
-		return new JWECryptoParts(
-			modifiableHeader,
-			encryptedKey,
-			Base64URL.encode(iv),
-			Base64URL.encode(authCipherText.getCipherText()),
-			Base64URL.encode(authCipherText.getAuthenticationTag()));
+		return  ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
 	}
 
 

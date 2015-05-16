@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -48,12 +47,6 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported encryption methods.
-	 */
-	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
-
-
-	/**
 	 * The JWE algorithms compatible with each key size.
 	 */
 	// public static final Map<Integer, Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS; TODO
@@ -69,17 +62,6 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.ECDH_ES_A192KW);
 		algs.add(JWEAlgorithm.ECDH_ES_A256KW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
-
-		Set<EncryptionMethod> methods = new HashSet<>();
-		methods.add(EncryptionMethod.A128CBC_HS256);
-		methods.add(EncryptionMethod.A192CBC_HS384);
-		methods.add(EncryptionMethod.A256CBC_HS512);
-		methods.add(EncryptionMethod.A128GCM);
-		methods.add(EncryptionMethod.A192GCM);
-		methods.add(EncryptionMethod.A256GCM);
-		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
-		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
-		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
 
 
@@ -95,7 +77,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 */
 	protected ECDHCryptoProvider() {
 
-		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 
 		concatKDF = new ConcatKDF("SHA-256"); // TODO set provider
 	}

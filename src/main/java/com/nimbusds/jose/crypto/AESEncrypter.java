@@ -15,7 +15,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -48,7 +47,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -103,7 +102,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 
 	@Override
-	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] clearText)
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
@@ -168,18 +167,21 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		}
 
 		// We need to work on the header
-		JWEHeader modifiableHeader;
+		JWEHeader updatedHeader;
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
+
 			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, getKey()));
-			modifiableHeader = header; // simply copy ref
+			updatedHeader = header; // simply copy ref
+
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {
+
 			keyIV = AESGCM.generateIV(randomGen);
 			authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJWEJCAProvider().getKeyEncryptionProvider());
 			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
 			// Add iv and tag to the header
-			modifiableHeader = new JWEHeader.Builder(header).
+			updatedHeader = new JWEHeader.Builder(header).
 				iv(Base64URL.encode(keyIV)).
 				authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
 				build();
@@ -188,57 +190,6 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
-		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(modifiableHeader, bytes);
-
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(modifiableHeader.toBase64URL().toString());
-
-		// Encrypt the plain text according to the JWE enc
-		byte[] iv;
-		AuthenticatedCipherText authCipherText;
-
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
-		    enc.equals(EncryptionMethod.A256CBC_HS512)	 ) {
-
-			iv = AESCBC.generateIV(randomGen);
-
-			authCipherText = AESCBC.encryptAuthenticated(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			   enc.equals(EncryptionMethod.A192GCM) ||
-			   enc.equals(EncryptionMethod.A256GCM)    ) {
-
-			iv = AESGCM.generateIV(randomGen);
-
-			authCipherText = AESGCM.encrypt(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
-
-			iv = AESCBC.generateIV(randomGen);
-
-			authCipherText = AESCBC.encryptWithConcatKDF(
-				modifiableHeader, cek, encryptedKey, iv, plainText,
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
-		}
-
-		return new JWECryptoParts(
-			modifiableHeader,
-			encryptedKey,
-			Base64URL.encode(iv),
-			Base64URL.encode(authCipherText.getCipherText()),
-			Base64URL.encode(authCipherText.getAuthenticationTag()));
+		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
 	}
 }

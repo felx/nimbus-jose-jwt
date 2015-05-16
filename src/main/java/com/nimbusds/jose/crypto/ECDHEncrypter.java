@@ -1,20 +1,18 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+
+import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
-import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -84,7 +82,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 
 
 	@Override
-	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] clearText)
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
@@ -124,55 +122,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			ephemeralPublicKey(new ECKey.Builder(ECKey.Curve.P_256, ephemeralPublicKey).build()).
 			build(); // TODO ec curve
 
-		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(updatedHeader, bytes);
-
-		// Compose the AAD
-		byte[] aad = AAD.compute(updatedHeader);
-
-		// Encrypt the plain text according to the JWE enc
-		byte[] iv;
-		AuthenticatedCipherText authCipherText;
-
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-			enc.equals(EncryptionMethod.A192CBC_HS384) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
-
-			iv = AESCBC.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESCBC.encryptAuthenticated(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			enc.equals(EncryptionMethod.A192GCM) ||
-			enc.equals(EncryptionMethod.A256GCM)    ) {
-
-			iv = AESGCM.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESGCM.encrypt(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
-
-			iv = AESCBC.generateIV(getJWEJCAProvider().getSecureRandom());
-
-			authCipherText = AESCBC.encryptWithConcatKDF(
-				updatedHeader, cek, encryptedKey, iv, plainText,
-				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
-		}
-
-		return new JWECryptoParts(updatedHeader,
-			encryptedKey,
-			Base64URL.encode(iv),
-			Base64URL.encode(authCipherText.getCipherText()),
-			Base64URL.encode(authCipherText.getAuthenticationTag()));
+		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
 	}
 
 

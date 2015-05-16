@@ -1,0 +1,122 @@
+package com.nimbusds.jose.crypto;
+
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import javax.crypto.SecretKey;
+
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWECryptoParts;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.jca.JWEJCAProviderSpec;
+import com.nimbusds.jose.util.Base64URL;
+
+
+/**
+ * JWE content encryption / decryption provider.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-05-16)
+ */
+class ContentCryptoProvider {
+
+
+	/**
+	 * The supported encryption methods.
+	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
+
+
+	static {
+		Set<EncryptionMethod> methods = new HashSet<>();
+		methods.add(EncryptionMethod.A128CBC_HS256);
+		methods.add(EncryptionMethod.A192CBC_HS384);
+		methods.add(EncryptionMethod.A256CBC_HS512);
+		methods.add(EncryptionMethod.A128GCM);
+		methods.add(EncryptionMethod.A192GCM);
+		methods.add(EncryptionMethod.A256GCM);
+		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
+	}
+
+
+	/**
+	 * Encrypts the specified clear text (content).
+	 *
+	 * @param header       The final JWE header. Must not be {@code null}.
+	 * @param clearText    The clear text to encrypt and optionally
+	 *                     compress. Must not be {@code null}.
+	 * @param cek          The Content Encryption Key (CEK). Must not be
+	 *                     {@code null}.
+	 * @param encryptedKey The encrypted CEK, {@code null} if not required.
+	 * @param jcaProvider  The JWE JCA provider specification. Must not be
+	 *                     {@code null}.
+	 *
+	 * @return The JWE crypto parts.
+	 *
+	 * @throws JOSEException If encryption failed.
+	 */
+	public static JWECryptoParts encrypt(final JWEHeader header,
+					     final byte[] clearText,
+					     final SecretKey cek,
+					     final Base64URL encryptedKey,
+					     final JWEJCAProviderSpec jcaProvider)
+		throws JOSEException {
+
+		// Apply compression if instructed
+		byte[] plainText = DeflateHelper.applyCompression(header, clearText);
+
+		// Compose the AAD
+		byte[] aad = AAD.compute(header);
+
+		// Encrypt the plain text according to the JWE enc
+		byte[] iv;
+		AuthenticatedCipherText authCipherText;
+
+		if (    header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A192CBC_HS384) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A256CBC_HS512)    ) {
+
+			iv = AESCBC.generateIV(jcaProvider.getSecureRandom());
+
+			authCipherText = AESCBC.encryptAuthenticated(
+				cek, iv, plainText, aad,
+				jcaProvider.getContentEncryptionProvider(),
+				jcaProvider.getMACProvider());
+
+		} else if (header.getEncryptionMethod().equals(EncryptionMethod.A128GCM) ||
+			   header.getEncryptionMethod().equals(EncryptionMethod.A192GCM) ||
+			   header.getEncryptionMethod().equals(EncryptionMethod.A256GCM)    ) {
+
+			iv = AESGCM.generateIV(jcaProvider.getSecureRandom());
+
+			authCipherText = AESGCM.encrypt(
+				cek, iv, plainText, aad,
+				jcaProvider.getContentEncryptionProvider());
+
+		} else if (header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
+			   header.getEncryptionMethod().equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
+
+			iv = AESCBC.generateIV(jcaProvider.getSecureRandom());
+
+			authCipherText = AESCBC.encryptWithConcatKDF(
+				header, cek, encryptedKey, iv, plainText,
+				jcaProvider.getContentEncryptionProvider(),
+				jcaProvider.getMACProvider());
+
+		} else {
+
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
+		}
+
+		return new JWECryptoParts(
+			header,
+			encryptedKey,
+			Base64URL.encode(iv),
+			Base64URL.encode(authCipherText.getCipherText()),
+			Base64URL.encode(authCipherText.getAuthenticationTag()));
+	}
+}

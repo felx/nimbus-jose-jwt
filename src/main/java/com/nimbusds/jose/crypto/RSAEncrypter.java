@@ -15,7 +15,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -45,7 +44,7 @@ import com.nimbusds.jose.util.StringUtils;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -98,7 +97,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 
 
 	@Override
-	public JWECryptoParts encrypt(final JWEHeader header, final byte[] bytes)
+	public JWECryptoParts encrypt(final JWEHeader header, final byte[] clearText)
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
@@ -108,7 +107,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		final SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
 
-		Base64URL encryptedKey; // The second JWE part
+		final Base64URL encryptedKey; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
@@ -127,54 +126,6 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5, RSA-OAEP, or RSA-OAEP-256");
 		}
 
-
-		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(header, bytes);
-
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
-
-		// Encrypt the plain text according to the JWE enc
-		byte[] iv;
-		AuthenticatedCipherText authCipherText;
-		
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-		    enc.equals(EncryptionMethod.A192CBC_HS384) ||
-		    enc.equals(EncryptionMethod.A256CBC_HS512)    ) {
-
-			iv = AESCBC.generateIV(randomGen);
-
-			authCipherText = AESCBC.encryptAuthenticated(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			   enc.equals(EncryptionMethod.A192GCM) ||
-			   enc.equals(EncryptionMethod.A256GCM)    ) {
-
-			iv = AESGCM.generateIV(randomGen);
-
-			authCipherText = AESGCM.encrypt(
-				cek, iv, plainText, aad,
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			   enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {
-
-			iv = AESCBC.generateIV(randomGen);
-
-			authCipherText = AESCBC.encryptWithConcatKDF(
-				header, cek, encryptedKey, iv, plainText,
-				getJWEJCAProvider().getContentEncryptionProvider(), getJWEJCAProvider().getMACProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
-		}
-
-		return new JWECryptoParts(encryptedKey,  
-			                  Base64URL.encode(iv), 
-			                  Base64URL.encode(authCipherText.getCipherText()),
-			                  Base64URL.encode(authCipherText.getAuthenticationTag()));
+		return ContentCryptoProvider.encrypt(header, clearText, cek, encryptedKey, getJWEJCAProvider());
 	}
 }

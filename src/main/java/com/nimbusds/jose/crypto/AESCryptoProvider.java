@@ -5,7 +5,6 @@ import java.util.*;
 
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -39,7 +38,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-16)
  */
 abstract class AESCryptoProvider extends BaseJWEProvider {
 
@@ -48,12 +47,6 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	 * The supported JWE algorithms.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
-
-
-	/**
-	 * The supported encryption methods.
-	 */
-	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
 
 
 	/**
@@ -75,17 +68,6 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.A192GCMKW);
 		algs.add(JWEAlgorithm.A256GCMKW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
-
-		Set<EncryptionMethod> methods = new HashSet<>();
-		methods.add(EncryptionMethod.A128CBC_HS256);
-		methods.add(EncryptionMethod.A192CBC_HS384);
-		methods.add(EncryptionMethod.A256CBC_HS512);
-		methods.add(EncryptionMethod.A128GCM);
-		methods.add(EncryptionMethod.A192GCM);
-		methods.add(EncryptionMethod.A256GCM);
-		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
-		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
-		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 
 
 		Map<Integer,Set<JWEAlgorithm>> algsMap = new HashMap<>();
@@ -120,7 +102,7 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	 */
 	protected AESCryptoProvider(final SecretKey kek) {
 
-		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 
 		byte[] keyBytes = kek.getEncoded();
 

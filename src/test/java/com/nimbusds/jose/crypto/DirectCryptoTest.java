@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-23)
+ * @version $version$ (2015-05-16)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -94,23 +94,27 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEEncrypter encrypter = new DirectEncrypter(key128);
 
-		assertEquals(6, encrypter.supportedEncryptionMethods().size());
+		assertEquals(8, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
 		JWEDecrypter decrypter = new DirectDecrypter(key128);
 
-		assertEquals(6, decrypter.supportedEncryptionMethods().size());
+		assertEquals(8, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 	}
 
 

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -36,7 +35,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version $version$ (2015-05-16)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -45,12 +44,6 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	 * The supported JWE algorithms.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
-
-
-	/**
-	 * The supported encryption methods.
-	 */
-	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
 
 
 	/**
@@ -63,17 +56,6 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.RSA_OAEP);
 		algs.add(JWEAlgorithm.RSA_OAEP_256);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
-
-		Set<EncryptionMethod> methods = new HashSet<>();
-		methods.add(EncryptionMethod.A128CBC_HS256);
-		methods.add(EncryptionMethod.A192CBC_HS384);
-		methods.add(EncryptionMethod.A256CBC_HS512);
-		methods.add(EncryptionMethod.A128GCM);
-		methods.add(EncryptionMethod.A192GCM);
-		methods.add(EncryptionMethod.A256GCM);
-		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
-		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
-		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
 	}
 
 
@@ -82,6 +64,6 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	 */
 	protected RSACryptoProvider() {
 
-		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 	}
 }
