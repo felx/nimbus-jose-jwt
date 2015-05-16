@@ -10,7 +10,6 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -37,7 +36,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-24)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -131,58 +130,6 @@ public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implemen
 
 		final SecretKey cek = AESKW.decryptCEK(psKey, encryptedKey.decode());
 
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
-
-		// Decrypt the cipher text according to the JWE enc
-		EncryptionMethod enc = header.getEncryptionMethod();
-
-		byte[] plainText;
-
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) ||
-			enc.equals(EncryptionMethod.A192CBC_HS384) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512)) {
-
-			plainText = AESCBC.decryptAuthenticated(
-				cek,
-				iv.decode(),
-				cipherText.decode(),
-				aad,
-				authTag.decode(),
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) ||
-			enc.equals(EncryptionMethod.A192GCM) ||
-			enc.equals(EncryptionMethod.A256GCM)) {
-
-			plainText = AESGCM.decrypt(
-				cek,
-				iv.decode(),
-				cipherText.decode(),
-				aad,
-				authTag.decode(),
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
-			enc.equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)) {
-
-			plainText = AESCBC.decryptWithConcatKDF(
-				header,
-				cek,
-				encryptedKey,
-				iv,
-				cipherText,
-				authTag,
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
-		}
-
-		// Apply decompression if requested
-		return DeflateHelper.applyDecompression(header, plainText);
+		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());
 	}
 }

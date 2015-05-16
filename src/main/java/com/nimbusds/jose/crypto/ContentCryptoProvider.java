@@ -119,4 +119,89 @@ class ContentCryptoProvider {
 			Base64URL.encode(authCipherText.getCipherText()),
 			Base64URL.encode(authCipherText.getAuthenticationTag()));
 	}
+
+
+	/**
+	 * Decrypts the specified cipher text.
+	 *
+	 * @param header       The JWE header. Must not be {@code null}.
+	 * @param encryptedKey The encrypted key, {@code null} if not
+	 *                     specified.
+	 * @param iv           The initialisation vector (IV). Must not be
+	 *                     {@code null}.
+	 * @param cipherText   The cipher text. Must not be {@code null}.
+	 * @param authTag      The authentication tag. Must not be
+	 *                     {@code null}.
+	 * @param cek          The Content Encryption Key (CEK). Must not be
+	 *                     {@code null}.
+	 * @param jcaProvider  The JWE JCA provider specification. Must not be
+	 *                     {@code null}.
+	 *
+	 * @return The clear text.
+	 *
+	 * @throws JOSEException If decryption failed.
+	 */
+	public static byte[] decrypt(final JWEHeader header,
+				     final Base64URL encryptedKey,
+				     final Base64URL iv,
+				     final Base64URL cipherText,
+				     final Base64URL authTag,
+				     final SecretKey cek,
+				     final JWEJCAProviderSpec jcaProvider)
+		throws JOSEException {
+
+		// Compose the AAD
+		byte[] aad = AAD.compute(header);
+
+		// Decrypt the cipher text according to the JWE enc
+
+		byte[] plainText;
+
+		if (header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A192CBC_HS384) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A256CBC_HS512)) {
+
+			plainText = AESCBC.decryptAuthenticated(
+				cek,
+				iv.decode(),
+				cipherText.decode(),
+				aad,
+				authTag.decode(),
+				jcaProvider.getContentEncryptionProvider(),
+				jcaProvider.getMACProvider());
+
+		} else if (header.getEncryptionMethod().equals(EncryptionMethod.A128GCM) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A192GCM) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A256GCM)) {
+
+			plainText = AESGCM.decrypt(
+				cek,
+				iv.decode(),
+				cipherText.decode(),
+				aad,
+				authTag.decode(),
+				jcaProvider.getContentEncryptionProvider());
+
+		} else if (header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
+			header.getEncryptionMethod().equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)) {
+
+			plainText = AESCBC.decryptWithConcatKDF(
+				header,
+				cek,
+				encryptedKey,
+				iv,
+				cipherText,
+				authTag,
+				jcaProvider.getContentEncryptionProvider(),
+				jcaProvider.getMACProvider());
+
+		} else {
+
+			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
+		}
+
+
+		// Apply decompression if requested
+		return DeflateHelper.applyDecompression(header, plainText);
+	}
 }

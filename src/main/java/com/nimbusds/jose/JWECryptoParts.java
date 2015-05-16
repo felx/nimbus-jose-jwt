@@ -165,14 +165,4 @@ public final class JWECryptoParts {
 
 		return authenticationTag;
 	}
-
-
-	/**
-	 * Use {@link #getAuthenticationTag} instead.
-	 */
-	@Deprecated
-	public Base64URL getIntegrityValue() {
-
-		return getAuthenticationTag();
-	}
 }

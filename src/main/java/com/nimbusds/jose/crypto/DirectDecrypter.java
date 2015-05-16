@@ -10,7 +10,6 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
@@ -35,7 +34,7 @@ import com.nimbusds.jose.util.StringUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -155,33 +154,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 			throw new JOSEException("Unsupported critical header parameter");
 		}
 
-		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
-
-		// Decrypt the cipher text according to the JWE enc
-		EncryptionMethod enc = header.getEncryptionMethod();
-
-		byte[] plainText;
-
-		if (enc.equals(EncryptionMethod.A128CBC_HS256) || enc.equals(EncryptionMethod.A192CBC_HS384) || enc.equals(EncryptionMethod.A256CBC_HS512)) {
-
-			plainText = AESCBC.decryptAuthenticated(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(),
-				getJWEJCAProvider().getContentEncryptionProvider(),
-				getJWEJCAProvider().getMACProvider());
-
-		} else if (enc.equals(EncryptionMethod.A128GCM) || enc.equals(EncryptionMethod.A192GCM) || enc.equals(EncryptionMethod.A256GCM)) {
-
-			plainText = AESGCM.decrypt(getKey(), iv.decode(), cipherText.decode(), aad, authTag.decode(),
-				getJWEJCAProvider().getContentEncryptionProvider());
-
-		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A128GCM");
-		}
-
-
-		// Apply decompression if requested
-		return DeflateHelper.applyDecompression(header, plainText);
+		return ContentCryptoProvider.decrypt(header, null, iv, cipherText, authTag, getKey(), getJWEJCAProvider());
 	}
 }
 
