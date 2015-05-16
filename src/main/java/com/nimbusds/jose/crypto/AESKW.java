@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
  * <p>See draft-ietf-jose-json-web-algorithms-40, section 4.4.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-08-19)
+ * @version $version$ (2015-05-14)
  */
 @ThreadSafe
 class AESKW {
@@ -81,15 +81,18 @@ class AESKW {
 		decrypter.init(false, new KeyParameter(kek.getEncoded()));
 
 		// decrypt
-		try {
-			byte[] cekBytes = decrypter.unwrap(encryptedCEK, 0, encryptedCEK.length);
-			return new SecretKeySpec(cekBytes, "AES");
-		} catch (Exception e) {
+		byte[] cekBytes;
 
+		try {
+			cekBytes = decrypter.unwrap(encryptedCEK, 0, encryptedCEK.length);
+
+		} catch (Exception e) {
 			// java.lang.IllegalStateException
 			// org.bouncycastle.crypto.InvalidCipherTextException
 			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
+
+		return new SecretKeySpec(cekBytes, "AES");
 	}
 
 

@@ -1,8 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.KeyPair;
-import java.security.SecureRandom;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Set;
@@ -12,11 +10,11 @@ import javax.crypto.SecretKey;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.StringUtils;
 
 
 /**
- * Created by vd on 15-5-13.
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-05-16)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -64,6 +62,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
+		final ECDH.AlgorithmMode algMode = ECDH.resolveAlgorithmMode(alg);
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		if (! critPolicy.headerPasses(header)) {
@@ -82,46 +81,24 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		// Derive 'Z'
 		SecretKey Z = ECDH.deriveSharedSecret(ephemeralPublicKey, privateKey, getJWEJCAProvider().getProvider());
 
-		System.out.println("Z: " + Base64URL.encode(Z.getEncoded()));
-
-		final int sharedKeyLength = sharedKeyLength(alg, enc);
-
-		ConcatKDF concatKDF = new ConcatKDF("SHA-256");
-
-		SecretKey sharedKey = concatKDF.deriveKey(
-			Z,
-			sharedKeyLength,
-			ConcatKDF.encodeStringData(header.getEncryptionMethod().getName()),
-			ConcatKDF.encodeDataWithLength(header.getAgreementPartyUInfo()),
-			ConcatKDF.encodeDataWithLength(header.getAgreementPartyVInfo()),
-			ConcatKDF.encodeIntData(sharedKeyLength),
-			ConcatKDF.encodeNoData());
-
-		System.out.println("Shared key: " + Base64URL.encode(sharedKey.getEncoded()));
+		// Derive shared key via concat KDF
+		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;
 
-		if (alg.equals(JWEAlgorithm.ECDH_ES)) {
-
-			// Direct ephemeral static
+		if (algMode.equals(ECDH.AlgorithmMode.DIRECT)) {
 			cek = sharedKey;
-
-		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A128KW)
-			|| alg.equals(JWEAlgorithm.ECDH_ES_A192KW)
-			|| alg.equals(JWEAlgorithm.ECDH_ES_A256KW)) {
-
+		} else if (algMode.equals(ECDH.AlgorithmMode.KW)) {
 			if (encryptedKey == null) {
 				throw new JOSEException("Missing JWE encrypted key");
 			}
-
 			cek = AESKW.decryptCEK(sharedKey, encryptedKey.decode());
-
 		} else {
-			throw new JOSEException("Unexpected JWE algorithm: " + alg);
+			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(header.toBase64URL().toString());
+		byte[] aad = AAD.compute(header);
 
 		// Decrypt the cipher text according to the JWE enc
 

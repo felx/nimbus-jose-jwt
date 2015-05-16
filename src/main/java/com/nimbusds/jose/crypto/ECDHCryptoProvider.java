@@ -3,11 +3,9 @@ package com.nimbusds.jose.crypto;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -38,7 +36,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-09)
+ * @version $version$ (2015-05-16)
  */
 abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
@@ -58,7 +56,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * The JWE algorithms compatible with each key size.
 	 */
-	// public static final Map<Integer, Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS;
+	// public static final Map<Integer, Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS; TODO
 
 
 	/**
@@ -86,37 +84,9 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * Returns the bit length of the shared key (derived via concat KDF)
-	 * for the specified JWE ECDH algorithm.
-	 *
-	 * @param alg The JWE ECDH algorithm. Must be
-	 *            {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *            {@code null}.
-	 * @param enc The encryption method. Must be
-	 *            {@link #SUPPORTED_ENCRYPTION_METHODS supported} ant not
-	 *            {@code null}.
-	 *
-	 * @return The bit length of the shared key.
-	 *
-	 * @throws JOSEException If the JWE algorithm or encryption method is
-	 *                       not supported.
+	 * The Concatenation Key Derivation Function (KDF).
 	 */
-	protected static int sharedKeyLength(final JWEAlgorithm alg,
-					     final EncryptionMethod enc)
-		throws JOSEException {
-
-		if (alg.equals(JWEAlgorithm.ECDH_ES)) {
-			return enc.cekBitLength();
-		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A128KW)) {
-			return 128;
-		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A192KW)) {
-			return  192;
-		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A256KW)) {
-			return  256;
-		} else {
-			throw new JOSEException("Unsupported JWE algorithm: " + alg);
-		}
-	}
+	private final ConcatKDF concatKDF;
 
 
 	/**
@@ -126,6 +96,18 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	protected ECDHCryptoProvider() {
 
 		super(SUPPORTED_ALGORITHMS, SUPPORTED_ENCRYPTION_METHODS);
+
+		concatKDF = new ConcatKDF("SHA-256"); // TODO set provider
 	}
 
+
+	/**
+	 * Returns the Concatenation Key Derivation Function (KDF).
+	 *
+	 * @return The concat KDF.
+	 */
+	protected ConcatKDF getConcatKDF() {
+
+		return concatKDF;
+	}
 }

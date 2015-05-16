@@ -1,6 +1,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.nio.charset.Charset;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
@@ -43,7 +44,7 @@ import net.jcip.annotations.ThreadSafe;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-12)
+ * @version $version$ (2015-05-16)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -87,11 +88,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
-
-		if (!supportedJWEAlgorithms().contains(alg)) {
-			throw new JOSEException("Unsupported JWE algorithm, must be \"dir\""); // todo
-		}
-
+		final ECDH.AlgorithmMode algMode = ECDH.resolveAlgorithmMode(alg);
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		if (!supportedEncryptionMethods().contains(enc)) {
@@ -106,37 +103,20 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		// Derive 'Z'
 		SecretKey Z = ECDH.deriveSharedSecret(publicKey, ephemeralPrivateKey, getJWEJCAProvider().getProvider());
 
-		final int sharedKeyLength = sharedKeyLength(alg, enc);
-
-		ConcatKDF concatKDF = new ConcatKDF("SHA-256");
-
-		SecretKey sharedKey = concatKDF.deriveKey(
-			Z,
-			sharedKeyLength,
-			ConcatKDF.encodeStringData(header.getEncryptionMethod().getName()),
-			ConcatKDF.encodeDataWithLength(header.getAgreementPartyUInfo()),
-			ConcatKDF.encodeDataWithLength(header.getAgreementPartyVInfo()),
-			ConcatKDF.encodeIntData(sharedKeyLength),
-			ConcatKDF.encodeNoData());
+		// Derive shared key via concat KDF
+		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;
-		final Base64URL encryptedKey; // The second JWE part
+		final Base64URL encryptedKey; // The CEK encrypted (second JWE part)
 
-		if (alg.equals(JWEAlgorithm.ECDH_ES)) {
-
-			// Direct ephemeral static
+		if (algMode.equals(ECDH.AlgorithmMode.DIRECT)) {
 			cek = sharedKey;
 			encryptedKey = null;
-
-		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A128KW)
-			|| alg.equals(JWEAlgorithm.ECDH_ES_A192KW)
-			|| alg.equals(JWEAlgorithm.ECDH_ES_A256KW)) {
-
-			SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
-			cek = AES.generateKey(enc.cekBitLength(), randomGen);
-			encryptedKey = Base64URL.encode(AESKW.encryptCEK(sharedKey, sharedKey));
+		} else if (algMode.equals(ECDH.AlgorithmMode.KW)) {
+			cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
+			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, sharedKey));
 		} else {
-			throw new JOSEException("Unexpected JWE algorithm: " + alg);
+			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}
 
 		// We need to work on the header
@@ -148,7 +128,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		byte[] plainText = DeflateHelper.applyCompression(updatedHeader, bytes);
 
 		// Compose the AAD
-		byte[] aad = StringUtils.toByteArray(updatedHeader.toBase64URL().toString());
+		byte[] aad = AAD.compute(updatedHeader);
 
 		// Encrypt the plain text according to the JWE enc
 		byte[] iv;

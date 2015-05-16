@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.IntegerUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
@@ -30,7 +31,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-05-13)
+ * @version $version$ (2015-05-14)
  */
 @ThreadSafe
 class AESCBC {
@@ -53,7 +54,7 @@ class AESCBC {
 	 */
 	public static byte[] generateIV(final SecureRandom randomGen) {
 		
-		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
+		byte[] bytes = new byte[ByteUtils.byteLength(IV_BIT_LENGTH)];
 		randomGen.nextBytes(bytes);
 		return bytes;
 	}
@@ -144,7 +145,7 @@ class AESCBC {
 	 * @param aad The Additional Authenticated Data (AAD). Must not be
 	 *            {@code null}.
 	 *
-	 * @return The computed AAD bit length, as a 64 bit big-ending 
+	 * @return The computed AAD bit length, as a 64 bit big-endian
 	 *         representation (8 byte array).
 	 */
 	public static byte[] computeAADLength(final byte[] aad) {
