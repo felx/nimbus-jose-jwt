@@ -11,7 +11,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.IntegerUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
@@ -31,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-05-14)
+ * @version $version$ (2015-05-17)
  */
 @ThreadSafe
 class AESCBC {
@@ -139,24 +138,6 @@ class AESCBC {
 
 
 	/**
-	 * Computes the bit length of the specified Additional Authenticated 
-	 * Data (AAD). Used in AES/CBC/PKCS5Padding/HMAC-SHA2 encryption.
-	 *
-	 * @param aad The Additional Authenticated Data (AAD). Must not be
-	 *            {@code null}.
-	 *
-	 * @return The computed AAD bit length, as a 64 bit big-endian
-	 *         representation (8 byte array).
-	 */
-	public static byte[] computeAADLength(final byte[] aad) {
-
-		final int bitLength = ByteUtils.bitLength(aad);
-
-		return ByteBuffer.allocate(8).putLong(bitLength).array();
-	}
-
-
-	/**
 	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
@@ -195,7 +176,7 @@ class AESCBC {
 		byte[] cipherText = encrypt(compositeKey.getAESKey(), iv, plainText, ceProvider);
 
 		// AAD length to 8 byte array
-		byte[] al = computeAADLength(aad);
+		byte[] al = AAD.computeLength(aad);
 
 		// Do MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;
@@ -340,7 +321,7 @@ class AESCBC {
 		CompositeKey compositeKey = new CompositeKey(secretKey);
 
 		// AAD length to 8 byte array
-		byte[] al = computeAADLength(aad);
+		byte[] al = AAD.computeLength(aad);
 
 		// Check MAC
 		int hmacInputLength = aad.length + iv.length + cipherText.length + al.length;

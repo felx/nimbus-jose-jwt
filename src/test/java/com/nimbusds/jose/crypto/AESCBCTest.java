@@ -14,7 +14,7 @@ import org.junit.Assert;
  * vectors from draft-ietf-jose-json-web-algorithms-10, appendix C.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version $version$ (2015-05-17)
  */
 public class AESCBCTest extends TestCase {
 
@@ -130,7 +130,7 @@ public class AESCBCTest extends TestCase {
 
 	public void testAADLengthComputation() {
 
-		Assert.assertArrayEquals(AAD_LENGTH, AESCBC.computeAADLength(AAD));
+		Assert.assertArrayEquals(AAD_LENGTH, com.nimbusds.jose.crypto.AAD.computeLength(AAD));
 	}
 
 
