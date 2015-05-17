@@ -1,6 +1,5 @@
 package com.nimbusds.jose.crypto;
 
-import java.security.SecureRandom;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -108,16 +107,8 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
-		// Generate and encrypt the CEK according to the enc method
-		final SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
-		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
-		byte[] keyIV;
-
-		final AuthenticatedCipherText authCiphCEK;
-
-		AlgFamily algFamily;
-
-		Base64URL encryptedKey; // The second JWE part
+		// Check the AES key size and determine the algorithm family
+		final AlgFamily algFamily;
 
 		if (alg.equals(JWEAlgorithm.A128KW)) {
 
@@ -166,8 +157,12 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
 		}
 
-		// We need to work on the header
-		JWEHeader updatedHeader;
+
+		final JWEHeader updatedHeader; // We need to work on the header
+		final Base64URL encryptedKey; // The second JWE part
+
+		// Generate and encrypt the CEK according to the enc method
+		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
 
@@ -176,8 +171,8 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {
 
-			keyIV = AESGCM.generateIV(randomGen);
-			authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJWEJCAProvider().getKeyEncryptionProvider());
+			final byte[] keyIV = AESGCM.generateIV(getJWEJCAProvider().getSecureRandom());
+			final AuthenticatedCipherText authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJWEJCAProvider().getKeyEncryptionProvider());
 			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
 			// Add iv and tag to the header
@@ -187,7 +182,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 				build();
 		} else {
 			// This should never happen
-			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
+			throw new JOSEException("Unexpected JWE algorithm: " + alg);
 		}
 
 		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
