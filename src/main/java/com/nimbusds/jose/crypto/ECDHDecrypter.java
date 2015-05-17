@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-17)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -63,7 +63,6 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final ECDH.AlgorithmMode algMode = ECDH.resolveAlgorithmMode(alg);
-		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		if (! critPolicy.headerPasses(header)) {
 			throw new JOSEException("Unsupported critical header parameter(s)");
@@ -73,13 +72,16 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		ECKey ephemeralKey = header.getEphemeralPublicKey();
 
 		if (ephemeralKey == null) {
-			throw new JOSEException("Missing ephemeral public EC key \"epk\" header parameter");
+			throw new JOSEException("Missing ephemeral public EC key \"epk\" JWE header parameter");
 		}
 
 		ECPublicKey ephemeralPublicKey = ephemeralKey.toECPublicKey();
 
 		// Derive 'Z'
-		SecretKey Z = ECDH.deriveSharedSecret(ephemeralPublicKey, privateKey, getJWEJCAProvider().getGeneralProvider());
+		SecretKey Z = ECDH.deriveSharedSecret(
+			ephemeralPublicKey,
+			privateKey,
+			getJWEJCAProvider().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());

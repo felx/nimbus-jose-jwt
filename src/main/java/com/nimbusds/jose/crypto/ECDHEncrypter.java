@@ -99,7 +99,10 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		ECPrivateKey ephemeralPrivateKey = (ECPrivateKey)ephemeralKeyPair.getPrivate();
 
 		// Derive 'Z'
-		SecretKey Z = ECDH.deriveSharedSecret(publicKey, ephemeralPrivateKey, getJWEJCAProvider().getGeneralProvider());
+		SecretKey Z = ECDH.deriveSharedSecret(
+			publicKey,
+			ephemeralPrivateKey,
+			getJWEJCAProvider().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
@@ -135,11 +138,20 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 	 *
 	 * @throws JOSEException If the EC key pair couldn't be generated.
 	 */
-	private static KeyPair generateEphemeralKeyPair(final ECParameterSpec ecParameterSpec)
+	private KeyPair generateEphemeralKeyPair(final ECParameterSpec ecParameterSpec)
 		throws JOSEException {
 
+		Provider keProvider = getJWEJCAProvider().getKeyEncryptionProvider();
+
 		try {
-			KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");  // TODO Provider
+			KeyPairGenerator generator;
+
+			if (keProvider != null) {
+				generator = KeyPairGenerator.getInstance("EC", keProvider);
+			} else {
+				generator = KeyPairGenerator.getInstance("EC");
+			}
+
 			generator.initialize(ecParameterSpec);
 			return generator.generateKeyPair();
 		} catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
