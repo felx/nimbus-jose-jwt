@@ -158,7 +158,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 		JWEAlgorithm alg = header.getAlgorithm();
 		int keyLength = header.getEncryptionMethod().cekBitLength();
 
-		SecretKey cek;
+		final SecretKey cek;
 
 		if (alg.equals(JWEAlgorithm.A128KW) ||
 		    alg.equals(JWEAlgorithm.A192KW) ||
