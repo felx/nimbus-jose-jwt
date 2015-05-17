@@ -79,7 +79,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		ECPublicKey ephemeralPublicKey = ephemeralKey.toECPublicKey();
 
 		// Derive 'Z'
-		SecretKey Z = ECDH.deriveSharedSecret(ephemeralPublicKey, privateKey, getJWEJCAProvider().getProvider());
+		SecretKey Z = ECDH.deriveSharedSecret(ephemeralPublicKey, privateKey, getJWEJCAProvider().getGeneralProvider());
 
 		// Derive shared key via concat KDF
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());

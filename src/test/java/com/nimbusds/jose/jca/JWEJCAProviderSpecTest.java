@@ -9,6 +9,9 @@ import junit.framework.TestCase;
 
 /**
  * Tests the JWE JCA provider spec.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-05-16)
  */
 public class JWEJCAProviderSpecTest extends TestCase {
 
@@ -17,7 +20,7 @@ public class JWEJCAProviderSpecTest extends TestCase {
 
 		JWEJCAProviderSpec spec = new JWEJCAProviderSpec();
 
-		assertNull(spec.getProvider());
+		assertNull(spec.getGeneralProvider());
 		assertNull(spec.getKeyEncryptionProvider());
 		assertNull(spec.getContentEncryptionProvider());
 		assertNull(spec.getMACProvider());
@@ -29,7 +32,7 @@ public class JWEJCAProviderSpecTest extends TestCase {
 
 		JWEJCAProviderSpec spec = new JWEJCAProviderSpec(null, null, null, null, null);
 
-		assertNull(spec.getProvider());
+		assertNull(spec.getGeneralProvider());
 		assertNull(spec.getKeyEncryptionProvider());
 		assertNull(spec.getContentEncryptionProvider());
 		assertNull(spec.getMACProvider());
@@ -41,13 +44,13 @@ public class JWEJCAProviderSpecTest extends TestCase {
 
 		JWEJCAProviderSpec spec = new JWEJCAProviderSpec();
 
-		spec = spec.withProvider(null);
+		spec = spec.withGeneralProvider(null);
 		spec = spec.withKeyEncryptionProvider(null);
 		spec = spec.withContentEncryptionProvider(null);
 		spec = spec.withMACProvider(null);
 		spec = spec.withSecureRandom(null);
 
-		assertNull(spec.getProvider());
+		assertNull(spec.getGeneralProvider());
 		assertNull(spec.getKeyEncryptionProvider());
 		assertNull(spec.getContentEncryptionProvider());
 		assertNull(spec.getMACProvider());
@@ -65,22 +68,29 @@ public class JWEJCAProviderSpecTest extends TestCase {
 	}
 
 
-	public void testSetProvider() {
+	public void testSetGeneralAndSpecificProviders() {
 
-		Provider provider = new Provider("c2id", 1.0, "test") { };
+		JWEJCAProviderSpec spec = new JWEJCAProviderSpec().
+			withGeneralProvider(new Provider("general", 1.0, "test") {
+			}).
+			withKeyEncryptionProvider(new Provider("ke", 1.0, "test") { }).
+			withContentEncryptionProvider(new Provider("ce", 1.0, "test") { }).
+			withMACProvider(new Provider("mac", 1.0, "test") { });
 
-		assertEquals("c2id", provider.getName());
-		assertEquals(1.0, provider.getVersion());
-		assertEquals("test", provider.getInfo());
+		assertEquals("general", spec.getGeneralProvider().getName());
+		assertEquals("ke", spec.getKeyEncryptionProvider().getName());
+		assertEquals("ce", spec.getContentEncryptionProvider().getName());
+		assertEquals("mac", spec.getMACProvider().getName());
+	}
 
-		JWEJCAProviderSpec spec = new JWEJCAProviderSpec();
 
-		spec = spec.withProvider(provider);
-		spec = spec.withKeyEncryptionProvider(provider);
-		spec = spec.withContentEncryptionProvider(provider);
-		spec = spec.withMACProvider(provider);
+	public void testFallbackToGeneralProvider() {
 
-		assertEquals(provider, spec.getProvider());
+		Provider provider = new Provider("general", 1.0, "test") { };
+
+		JWEJCAProviderSpec spec = new JWEJCAProviderSpec().withGeneralProvider(provider);
+
+		assertEquals(provider, spec.getGeneralProvider());
 		assertEquals(provider, spec.getKeyEncryptionProvider());
 		assertEquals(provider, spec.getContentEncryptionProvider());
 		assertEquals(provider, spec.getMACProvider());
