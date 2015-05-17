@@ -369,11 +369,14 @@ version 3.9.2 (2015-03-16)
 version 3.10 (2015-03-27)
     * JWT claims set serialised according to claim insertion order (iss #121).
 
-version 4.0 (2015-04-22)
+version 4.0 (2015-05-21)
     * Refactors the JOSE AlgorithmProvider interfaces and implementations.
     * Adds support for password-based JWE algorithms PBES2-HS256+A128KW,
       PBES2-HS384+A192KW and PBES2-HS512+A256KW.
-    * Factors out a JCA provider interface.
+    * Adds support for Elliptic Curve Diffie-Hellman JWE algorithms ECDH-ES,
+      ECDH-ES+A128KW, ECDH-ES+A192KW and ECDH-ES+A256KW.
+    * Factors out a common JCA provider interface intended for JWS and JWE
+      providers.
     * Adds new convenience constructors to JWS and JWE providers.
     * Extends JOSE and JWT processing framework and moves it to separate
       packages.
@@ -382,5 +385,5 @@ version 4.0 (2015-04-22)
     * Factors a JWKMatcher class out of the JWKSelector.
     * Adds JOSEMatcher class for filtering of JOSE objects by a set of
       application-specific criteria.
-    * Updates terminlogy and JavaDocs.
+    * Updates terminology and JavaDocs.
 
