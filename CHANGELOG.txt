@@ -385,5 +385,9 @@ version 4.0 (2015-05-21)
     * Factors a JWKMatcher class out of the JWKSelector.
     * Adds JOSEMatcher class for filtering of JOSE objects by a set of
       application-specific criteria.
+    * Fixes NPE in AESDecrypter on missing JWE "iv" header parameter when
+      decrypting JWE objects with the AxxxGCMKW family of algorithms.
+    * Fixes NPE in AESDecrypter on missing JWE "tag" header parameter when
+      decrypting JWE objects with the AxxxGCMKW family of algorithms.
     * Updates terminology and JavaDocs.
 

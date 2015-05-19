@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-19)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -170,8 +170,18 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 			   alg.equals(JWEAlgorithm.A192GCMKW) ||
 			   alg.equals(JWEAlgorithm.A256GCMKW)) {
 
-			byte[] keyIV = header.getIV().decode(); // todo check
-			byte[] keyTag = header.getAuthTag().decode(); // todo check
+			if (header.getIV() == null) {
+				throw new JOSEException("Missing JWE \"iv\" header parameter");
+			}
+
+			byte[] keyIV = header.getIV().decode();
+
+			if (header.getAuthTag() == null) {
+				throw new JOSEException("Missing JWE \"tag\" header parameter");
+			}
+
+			byte[] keyTag = header.getAuthTag().decode();
+
 			AuthenticatedCipherText authEncrCEK = new AuthenticatedCipherText(encryptedKey.decode(), keyTag);
 			cek = AESGCMKW.decryptCEK(getKey(), keyIV, authEncrCEK, keyLength, getJWEJCAProvider().getKeyEncryptionProvider());
 
