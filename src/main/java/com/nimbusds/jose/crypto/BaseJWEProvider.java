@@ -16,7 +16,7 @@ import com.nimbusds.jose.jca.JWEJCAProviderSpec;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-20)
  */
 abstract class BaseJWEProvider implements JWEAlgorithmProvider, JWEJCAProviderAware {
 

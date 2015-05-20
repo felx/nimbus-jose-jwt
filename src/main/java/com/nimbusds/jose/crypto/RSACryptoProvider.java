@@ -2,7 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.JWEAlgorithm;
@@ -35,7 +35,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
@@ -51,7 +51,7 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 	 */
 	static {
 
-		Set<JWEAlgorithm> algs = new HashSet<>();
+		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.RSA1_5);
 		algs.add(JWEAlgorithm.RSA_OAEP);
 		algs.add(JWEAlgorithm.RSA_OAEP_256);

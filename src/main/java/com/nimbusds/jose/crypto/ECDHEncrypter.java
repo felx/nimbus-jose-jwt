@@ -22,10 +22,18 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A128KW}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A192KW}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A128KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A192KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
+ * </ul>
+ *
+ * <p>Supports the following JOSE Elliptic Curves:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
  * </ul>
  *
  * <p>Supports the following encryption methods:
@@ -42,7 +50,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -55,6 +63,12 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 
 
 	/**
+	 * The elliptic curve of the key.
+	 */
+	private final ECKey.Curve keyCurve;
+
+
+	/**
 	 * Creates a new Elliptic Curve Diffie-Hellman encrypter.
 	 *
 	 * @param publicKey The public EC key. Must not be {@code null}.
@@ -64,6 +78,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		// TODO check curve
 
 		this.publicKey = publicKey;
+		keyCurve = null;
 	}
 
 
@@ -78,6 +93,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		throws JOSEException {
 
 		this.publicKey = ecJWK.toECPublicKey();
+		this.keyCurve = ecJWK.getCurve();
 	}
 
 
@@ -88,10 +104,6 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final ECDH.AlgorithmMode algMode = ECDH.resolveAlgorithmMode(alg);
 		final EncryptionMethod enc = header.getEncryptionMethod();
-
-		if (!supportedEncryptionMethods().contains(enc)) {
-			throw new JOSEException("Unsupported JWT encryption method, must be ..."); // todo
-		}
 
 		// Generate ephemeral EC key pair on the same curve as the consumer's public key
 		KeyPair ephemeralKeyPair = generateEphemeralKeyPair(publicKey.getParams());

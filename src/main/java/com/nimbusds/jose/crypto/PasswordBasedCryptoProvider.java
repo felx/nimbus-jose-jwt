@@ -3,7 +3,7 @@ package com.nimbusds.jose.crypto;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.JOSEException;
@@ -36,7 +36,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 
@@ -51,7 +51,7 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 	 * Initialises the supported algorithms and encryption methods.
 	 */
 	static {
-		Set<JWEAlgorithm> algs = new HashSet<>();
+		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.PBES2_HS256_A128KW);
 		algs.add(JWEAlgorithm.PBES2_HS384_A192KW);
 		algs.add(JWEAlgorithm.PBES2_HS512_A256KW);
@@ -86,7 +86,9 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 			jcaMagAlg = "HmacSHA512";
 			dkLen = 32;
 		} else {
-			throw new JOSEException("Unsupported JWE algorithm, must be PBES2-HS256+A128KW, PBES2-HS384+A192KW or PBES2-HS512+A256KW");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(
+				alg,
+				SUPPORTED_ALGORITHMS));
 		}
 
 		return new PRFParams(jcaMagAlg, getJWEJCAProvider().getMACProvider(), dkLen);

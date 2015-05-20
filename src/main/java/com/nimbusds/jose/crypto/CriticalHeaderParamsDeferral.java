@@ -6,6 +6,8 @@ import java.util.Set;
 
 import com.nimbusds.jose.CriticalHeaderParamsAware;
 import com.nimbusds.jose.Header;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEHeader;
 
 
 /**
@@ -14,7 +16,7 @@ import com.nimbusds.jose.Header;
  * @see CriticalHeaderParamsAware
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-20)
  */
 class CriticalHeaderParamsDeferral {
 
@@ -90,5 +92,22 @@ class CriticalHeaderParamsDeferral {
 
 		// Ensure all marked as deferred
 		return deferredParams != null && deferredParams.containsAll(crit);
+	}
+
+
+	/**
+	 * Throws a JOSE exception if the specified JWE header doesn't pass the
+	 * critical header parameters check.
+	 *
+	 * @param header The JWE header to check. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the JWE header doesn't pass the check.
+	 */
+	public void ensureHeaderPasses(final JWEHeader header)
+		throws JOSEException {
+
+		if (! headerPasses(header)) {
+			throw new JOSEException("Unsupported critical header parameter(s)");
+		}
 	}
 }

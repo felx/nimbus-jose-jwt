@@ -22,7 +22,7 @@ import com.nimbusds.jose.JWEHeader;
  * Elliptic Curve Diffie-Hellman key agreement functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 class ECDH {
 
@@ -70,7 +70,9 @@ class ECDH {
 			return AlgorithmMode.KW;
 		} else {
 
-			throw new JOSEException("Unsupported JWE ECDH algorithm");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(
+				alg,
+				ECDHCryptoProvider.SUPPORTED_ALGORITHMS));
 		}
 	}
 
@@ -97,7 +99,7 @@ class ECDH {
 			int length = enc.cekBitLength();
 
 			if (length == 0) {
-				throw new JOSEException("Unsupported JWE encryption method: " + enc);
+				throw new JOSEException("Unsupported JWE encryption method " + enc);
 			}
 
 			return length;
@@ -109,7 +111,8 @@ class ECDH {
 		} else if (alg.equals(JWEAlgorithm.ECDH_ES_A256KW)) {
 			return  256;
 		} else {
-			throw new JOSEException("Unsupported JWE ECDH algorithm: " + alg);
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(
+				alg, ECDHCryptoProvider.SUPPORTED_ALGORITHMS));
 		}
 	}
 

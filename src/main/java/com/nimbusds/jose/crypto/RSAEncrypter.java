@@ -44,7 +44,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-17)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -123,7 +123,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 			
 		} else {
 
-			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5, RSA-OAEP or RSA-OAEP-256");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
 		return ContentCryptoProvider.encrypt(header, clearText, cek, encryptedKey, getJWEJCAProvider());

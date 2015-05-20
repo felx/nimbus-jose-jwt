@@ -46,7 +46,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -105,7 +105,6 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		throws JOSEException {
 
 		final JWEAlgorithm alg = header.getAlgorithm();
-		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Check the AES key size and determine the algorithm family
 		final AlgFamily algFamily;
@@ -154,7 +153,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		} else {
 
-			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
 
@@ -162,6 +161,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		final Base64URL encryptedKey; // The second JWE part
 
 		// Generate and encrypt the CEK according to the enc method
+		final EncryptionMethod enc = header.getEncryptionMethod();
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
 
 		if(AlgFamily.AESKW.equals(algFamily)) {

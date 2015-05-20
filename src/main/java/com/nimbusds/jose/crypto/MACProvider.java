@@ -3,7 +3,7 @@ package com.nimbusds.jose.crypto;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
@@ -26,7 +26,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-19)
+ * @version $version$ (2015-05-20)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -41,7 +41,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 * Initialises the supported algorithms.
 	 */
 	static {
-		Set<JWSAlgorithm> algs = new HashSet<>();
+		Set<JWSAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWSAlgorithm.HS256);
 		algs.add(JWSAlgorithm.HS384);
 		algs.add(JWSAlgorithm.HS512);
@@ -70,7 +70,9 @@ abstract class MACProvider extends BaseJWSProvider {
 		} else if (alg.equals(JWSAlgorithm.HS512)) {
 			return "HMACSHA512";
 		} else {
-			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(
+				alg,
+				SUPPORTED_ALGORITHMS));
 		}
 	}
 
@@ -106,7 +108,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	public SecretKey getSecretKey() {
 
-		return new SecretKeySpec(secret, "MAC");
+		return new SecretKeySpec(secret, "MAC"); // todo test
 	}
 
 

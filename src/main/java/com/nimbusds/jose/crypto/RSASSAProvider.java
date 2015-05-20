@@ -8,7 +8,7 @@ import java.security.Signature;
 import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PSSParameterSpec;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.JOSEException;
@@ -31,7 +31,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-20)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
@@ -47,7 +47,7 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 	 */
 	static {
 
-		Set<JWSAlgorithm> algs = new HashSet<>();
+		Set<JWSAlgorithm> algs = new LinkedHashSet<>();
 
 		algs.add(JWSAlgorithm.RS256);
 		algs.add(JWSAlgorithm.RS384);
@@ -86,7 +86,7 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 		// The JCE crypto provider uses different alg names
 
-		String internalAlgName;
+		final String internalAlgName;
 
 		PSSParameterSpec pssSpec = null;
 
@@ -125,10 +125,10 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 		} else {
 			
-			throw new JOSEException("Unsupported RSASSA algorithm, must be RS256, RS384, RS512, PS256, PS384 or PS512");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
-		Signature signature;
+		final Signature signature;
 
 		try {
 			if (provider != null) {

@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-19)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -149,10 +149,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 			throw new JOSEException("Missing JWE authentication tag");
 		}
 
-		if (! critPolicy.headerPasses(header)) {
-			throw new JOSEException("Unsupported critical header parameter(s)");
-		}
-
+		critPolicy.ensureHeaderPasses(header);
 
 		// Derive the content encryption key
 		JWEAlgorithm alg = header.getAlgorithm();
@@ -187,7 +184,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 
 		} else {
 
-			throw new JOSEException("Unsupported JWE algorithm, must be A128KW, A192KW, A256KW, A128GCMKW, A192GCMKW orA256GCMKW");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
 		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());

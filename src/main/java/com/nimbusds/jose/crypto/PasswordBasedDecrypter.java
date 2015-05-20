@@ -119,9 +119,7 @@ public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implemen
 
 		final int iterationCount = header.getPBES2Count();
 
-		if (!critPolicy.headerPasses(header)) {
-			throw new JOSEException("Unsupported JWE algorithm, must be PBES2-HS256+A128KW, PBES2-HS384+A192KW or PBES2-HS512+A256KW");
-		}
+		critPolicy.ensureHeaderPasses(header);
 
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final byte[] formattedSalt = PBKDF2.formatSalt(alg, salt);

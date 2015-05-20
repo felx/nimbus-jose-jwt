@@ -38,7 +38,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 abstract class AESCryptoProvider extends BaseJWEProvider {
 
@@ -60,7 +60,7 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	 */
 	static {
 
-		Set<JWEAlgorithm> algs = new HashSet<>();
+		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.A128KW);
 		algs.add(JWEAlgorithm.A192KW);
 		algs.add(JWEAlgorithm.A256KW);

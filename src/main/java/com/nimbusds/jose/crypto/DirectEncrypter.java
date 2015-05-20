@@ -94,8 +94,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		JWEAlgorithm alg = header.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
-
-			throw new JOSEException("Unsupported JWE algorithm, must be \"dir\"");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
 		// Check key length matches encryption method

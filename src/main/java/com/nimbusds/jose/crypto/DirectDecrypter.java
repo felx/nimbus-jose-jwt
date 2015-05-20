@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -147,12 +147,10 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 		JWEAlgorithm alg = header.getAlgorithm();
 
 		if (! alg.equals(JWEAlgorithm.DIR)) {
-			throw new JOSEException("Unsupported algorithm, must be \"dir\"");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
-		if (! critPolicy.headerPasses(header)) {
-			throw new JOSEException("Unsupported critical header parameter");
-		}
+		critPolicy.ensureHeaderPasses(header);
 
 		return ContentCryptoProvider.decrypt(header, null, iv, cipherText, authTag, getKey(), getJWEJCAProvider());
 	}

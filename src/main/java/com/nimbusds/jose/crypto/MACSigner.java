@@ -10,6 +10,7 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 
@@ -26,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-20)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -36,25 +37,27 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 * Returns the minimal required secret length for the specified HMAC
 	 * JWS algorithm.
 	 *
-	 * @param hmacAlg The HMAC JWS algorithm. Must be
-	 *                {@link #SUPPORTED_ALGORITHMS supported} and not
-	 *                {@code null}.
+	 * @param alg The HMAC JWS algorithm. Must be
+	 *            {@link #SUPPORTED_ALGORITHMS supported} and not
+	 *            {@code null}.
 	 *
 	 * @return The minimal required secret length, in bits.
 	 *
 	 * @throws JOSEException If the algorithm is not supported.
 	 */
-	public static int getMinRequiredSecretLength(final JWSAlgorithm hmacAlg)
+	public static int getMinRequiredSecretLength(final JWSAlgorithm alg)
 		throws JOSEException {
 
-		if (JWSAlgorithm.HS256.equals(hmacAlg)) {
+		if (JWSAlgorithm.HS256.equals(alg)) {
 			return 256;
-		} else if (JWSAlgorithm.HS384.equals(hmacAlg)) {
+		} else if (JWSAlgorithm.HS384.equals(alg)) {
 			return 384;
-		} else if (JWSAlgorithm.HS512.equals(hmacAlg)) {
+		} else if (JWSAlgorithm.HS512.equals(alg)) {
 			return 512;
 		} else {
-			throw new JOSEException("Unsupported HMAC algorithm, must be HS256, HS384 or HS512");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(
+				alg,
+				SUPPORTED_ALGORITHMS));
 		}
 	}
 
@@ -113,7 +116,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 		final int minRequiredLength = getMinRequiredSecretLength(header.getAlgorithm());
 
-		if (getSecret().length < minRequiredLength / 8) {
+		if (getSecret().length < ByteUtils.byteLength(minRequiredLength)) {
 			throw new JOSEException("The secret length for " + header.getAlgorithm() + " must be at least " + minRequiredLength + " bits");
 		}
 

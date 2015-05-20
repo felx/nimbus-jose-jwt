@@ -40,7 +40,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-17)
+ * @version $version$ (2015-05-20)
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -156,9 +156,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 			throw new JOSEException("Missing JWE authentication tag");
 		}
 
-		if (! critPolicy.headerPasses(header)) {
-			throw new JOSEException("Unsupported critical header parameter(s)");
-		}
+		critPolicy.ensureHeaderPasses(header);
 		
 
 		// Derive the content encryption key
@@ -199,7 +197,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 			
 		} else {
 		
-			throw new JOSEException("Unsupported JWE algorithm, must be RSA1_5, RSA_OAEP or RSA-OAEP-256");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
 		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());

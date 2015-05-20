@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-17)
+ * @version $version$ (2015-05-20)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -64,9 +64,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final ECDH.AlgorithmMode algMode = ECDH.resolveAlgorithmMode(alg);
 
-		if (! critPolicy.headerPasses(header)) {
-			throw new JOSEException("Unsupported critical header parameter(s)");
-		}
+		critPolicy.ensureHeaderPasses(header);
 
 		// Get ephemeral EC key
 		ECKey ephemeralKey = header.getEphemeralPublicKey();

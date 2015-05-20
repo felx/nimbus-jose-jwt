@@ -2,7 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -33,7 +33,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-20)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 
@@ -48,7 +48,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	 * Initialises the supported algorithms.
 	 */
 	static {
-		Set<JWSAlgorithm> algs = new HashSet<>();
+		Set<JWSAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWSAlgorithm.ES256);
 		algs.add(JWSAlgorithm.ES384);
 		algs.add(JWSAlgorithm.ES512);
@@ -95,7 +95,9 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 		
 		} else {
 
-			throw new JOSEException("Unsupported ECDSA algorithm, must be ES256, ES384 or ES512");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(
+				alg,
+				SUPPORTED_ALGORITHMS));
 		}
 	}
 
@@ -133,7 +135,8 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 			digest = new SHA512Digest();
 
 		} else {
-			throw new JOSEException("Unsupported ECDSA algorithm, must be ES256, ES384 or ES512");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(
+				alg, SUPPORTED_ALGORITHMS));
 		}
 
 		X9ECParameters x9ECParams = SECNamedCurves.getByOID(oid);

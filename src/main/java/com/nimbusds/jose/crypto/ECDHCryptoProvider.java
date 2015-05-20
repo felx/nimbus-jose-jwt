@@ -2,10 +2,11 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.jwk.ECKey;
 
 
 /**
@@ -15,10 +16,18 @@ import com.nimbusds.jose.JWEAlgorithm;
  * <p>Supports the following JSON Web Algorithms (JWAs):
  *
  * <ul>
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A128KW}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A192KW}
- *      <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A128KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A192KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
+ * </ul>
+ *
+ * <p>Supports the following JOSE Elliptic Curves:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
  * </ul>
  *
  * <p>Supports the following encryption methods:
@@ -35,7 +44,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
@@ -47,21 +56,27 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The JWE algorithms compatible with each key size.
+	 * The supported EC JWK curves.
 	 */
-	// public static final Map<Integer, Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS; TODO
+	public static final Set<ECKey.Curve> SUPPORTED_EC;
 
 
 	/**
 	 * Initialises the supported algorithms and encryption methods.
 	 */
 	static {
-		Set<JWEAlgorithm> algs = new HashSet<>();
+		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.ECDH_ES);
 		algs.add(JWEAlgorithm.ECDH_ES_A128KW);
 		algs.add(JWEAlgorithm.ECDH_ES_A192KW);
 		algs.add(JWEAlgorithm.ECDH_ES_A256KW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
+
+		Set<ECKey.Curve> curves = new LinkedHashSet<>();
+		curves.add(ECKey.Curve.P_256);
+		curves.add(ECKey.Curve.P_384);
+		curves.add(ECKey.Curve.P_521);
+		SUPPORTED_EC = Collections.unmodifiableSet(curves);
 	}
 
 
@@ -91,5 +106,17 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	protected ConcatKDF getConcatKDF() {
 
 		return concatKDF;
+	}
+
+
+	/**
+	 * Returns the names of the supported elliptic curves. These correspond
+	 * to the {@code crv} EC JWK parameter.
+	 *
+	 * @return The supported elliptic curves.
+	 */
+	public Set<ECKey.Curve> supportedEllipticCurves() {
+
+		return SUPPORTED_EC;
 	}
 }

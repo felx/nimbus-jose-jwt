@@ -2,7 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.crypto.SecretKey;
 
@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 class ContentCryptoProvider {
 
@@ -30,7 +30,7 @@ class ContentCryptoProvider {
 
 
 	static {
-		Set<EncryptionMethod> methods = new HashSet<>();
+		Set<EncryptionMethod> methods = new LinkedHashSet<>();
 		methods.add(EncryptionMethod.A128CBC_HS256);
 		methods.add(EncryptionMethod.A192CBC_HS384);
 		methods.add(EncryptionMethod.A256CBC_HS512);
@@ -109,7 +109,9 @@ class ContentCryptoProvider {
 
 		} else {
 
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEncryptionMethod(
+				header.getEncryptionMethod(),
+				SUPPORTED_ENCRYPTION_METHODS));
 		}
 
 		return new JWECryptoParts(
@@ -196,8 +198,9 @@ class ContentCryptoProvider {
 				jcaProvider.getMACProvider());
 
 		} else {
-
-			throw new JOSEException("Unsupported encryption method, must be A128CBC_HS256, A192CBC_HS384, A256CBC_HS512, A128GCM, A192GCM or A256GCM");
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEncryptionMethod(
+				header.getEncryptionMethod(),
+				SUPPORTED_ENCRYPTION_METHODS));
 		}
 
 

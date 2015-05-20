@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-20)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -486,7 +486,7 @@ public class DirectCryptoTest extends TestCase {
 			fail();
 		} catch (JOSEException e) {
 			// ok
-			assertEquals("Unsupported critical header parameter", e.getMessage());
+			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
 		}
 	}
 }
