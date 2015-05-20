@@ -33,9 +33,24 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 
 	public ECDHDecrypter(final ECPrivateKey privateKey) {
 
-		// TODO check curve
-
 		this.privateKey = privateKey;
+	}
+
+
+	public ECDHDecrypter(final ECKey ecJWK)
+		throws JOSEException {
+
+		if (! ecJWK.isPrivate()) {
+			throw new JOSEException("The EC JWK doesn't contain a private part");
+		}
+
+		if (! SUPPORTED_EC.contains(ecJWK.getCurve())) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
+				ecJWK.getCurve(),
+				SUPPORTED_EC));
+		}
+
+		this.privateKey = ecJWK.toECPrivateKey();
 	}
 
 

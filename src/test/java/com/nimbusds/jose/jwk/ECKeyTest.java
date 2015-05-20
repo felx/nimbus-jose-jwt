@@ -6,11 +6,13 @@ import java.net.URI;
 import java.security.KeyPair;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.util.*;
 
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -19,7 +21,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version $version$ (2015-05-20)
  */
 public class ECKeyTest extends TestCase {
 
@@ -344,7 +346,7 @@ public class ECKeyTest extends TestCase {
 		ECKey key = new ECKey.Builder(ExampleKeyP256Alt.CRV, ExampleKeyP256Alt.X, ExampleKeyP256Alt.Y).build();
 
 		// Export
-		KeyPair pair = key.toKeyPair();
+		KeyPair pair = key.toKeyPair(BouncyCastleProviderSingleton.getInstance());
 
 		ECPublicKey pub = (ECPublicKey)pair.getPublic();
 		assertEquals(256, pub.getParams().getCurve().getField().getFieldSize());
@@ -479,5 +481,40 @@ public class ECKeyTest extends TestCase {
 
 		assertEquals("AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb" +
 			"KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt", jwk.getD().toString());
+	}
+
+
+	public void testUnsupportedCurveParams() {
+
+		assertNull(new ECKey.Curve("unsupported").toECParameterSpec());
+	}
+
+
+	public void testCurveParams() {
+
+		ECParameterSpec ecParameterSpec;
+
+		ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+		assertNotNull(ecParameterSpec);
+		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forECParameterSpec(ecParameterSpec));
+
+		ecParameterSpec = ECKey.Curve.P_384.toECParameterSpec();
+		assertNotNull(ecParameterSpec);
+		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forECParameterSpec(ecParameterSpec));
+
+		ecParameterSpec = ECKey.Curve.P_521.toECParameterSpec();
+		assertNotNull(ecParameterSpec);
+		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forECParameterSpec(ecParameterSpec));
+	}
+
+
+	public void testCurveForStdName() {
+
+		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forStdName("secp256r1"));
+		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forStdName("prime256v1"));
+
+		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forStdName("secp384r1"));
+
+		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forStdName("secp521r1"));
 	}
 }

@@ -93,6 +93,13 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		throws JOSEException {
 
 		this.publicKey = ecJWK.toECPublicKey();
+
+		if (! SUPPORTED_EC.contains(ecJWK.getCurve())) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
+				ecJWK.getCurve(),
+				SUPPORTED_EC));
+		}
+
 		this.keyCurve = ecJWK.getCurve();
 	}
 
