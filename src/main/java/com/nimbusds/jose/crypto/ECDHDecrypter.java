@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-21)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -31,7 +31,10 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
-	public ECDHDecrypter(final ECPrivateKey privateKey) {
+	public ECDHDecrypter(final ECPrivateKey privateKey)
+		throws JOSEException {
+
+		super(ECKey.Curve.forECParameterSpec(privateKey.getParams()));
 
 		this.privateKey = privateKey;
 	}
@@ -40,14 +43,10 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	public ECDHDecrypter(final ECKey ecJWK)
 		throws JOSEException {
 
+		super(ecJWK.getCurve());
+
 		if (! ecJWK.isPrivate()) {
 			throw new JOSEException("The EC JWK doesn't contain a private part");
-		}
-
-		if (! SUPPORTED_EC.contains(ecJWK.getCurve())) {
-			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
-				ecJWK.getCurve(),
-				SUPPORTED_EC));
 		}
 
 		this.privateKey = ecJWK.toECPrivateKey();

@@ -50,7 +50,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-21)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -63,22 +63,18 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 
 
 	/**
-	 * The elliptic curve of the key.
-	 */
-	private final ECKey.Curve keyCurve;
-
-
-	/**
 	 * Creates a new Elliptic Curve Diffie-Hellman encrypter.
 	 *
 	 * @param publicKey The public EC key. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve is not supported.
 	 */
-	public ECDHEncrypter(final ECPublicKey publicKey) {
+	public ECDHEncrypter(final ECPublicKey publicKey)
+		throws JOSEException {
 
-		// TODO check curve
+		super(ECKey.Curve.forECParameterSpec(publicKey.getParams()));
 
 		this.publicKey = publicKey;
-		keyCurve = null;
 	}
 
 
@@ -87,20 +83,14 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 	 *
 	 * @param ecJWK The EC JSON Web Key (JWK). Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the EC JWK is invalid.
+	 * @throws JOSEException If the elliptic curve is not supported.
 	 */
 	public ECDHEncrypter(final ECKey ecJWK)
 		throws JOSEException {
 
-		this.publicKey = ecJWK.toECPublicKey();
+		super(ecJWK.getCurve());
 
-		if (! SUPPORTED_EC.contains(ecJWK.getCurve())) {
-			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
-				ecJWK.getCurve(),
-				SUPPORTED_EC));
-		}
-
-		this.keyCurve = ecJWK.getCurve();
+		publicKey = ecJWK.toECPublicKey();
 	}
 
 
@@ -139,10 +129,10 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}
 
-		// We need to work on the header
+		// Add the ephemeral public EC key to the header
 		JWEHeader updatedHeader = new JWEHeader.Builder(header).
-			ephemeralPublicKey(new ECKey.Builder(ECKey.Curve.P_256, ephemeralPublicKey).build()).
-			build(); // TODO ec curve
+			ephemeralPublicKey(new ECKey.Builder(getCurve(), ephemeralPublicKey).build()).
+			build();
 
 		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
 	}

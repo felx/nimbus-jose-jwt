@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.jwk.ECKey;
 
@@ -44,7 +45,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-21)
  */
 abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
@@ -81,6 +82,12 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
+	 * The key curve.
+	 */
+	private final ECKey.Curve curve;
+
+
+	/**
 	 * The Concatenation Key Derivation Function (KDF).
 	 */
 	private final ConcatKDF concatKDF;
@@ -90,9 +97,19 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 * Creates a new Elliptic Curve Diffie-Hellman encryption /decryption
 	 * provider.
 	 */
-	protected ECDHCryptoProvider() {
+	protected ECDHCryptoProvider(final ECKey.Curve curve)
+		throws JOSEException {
 
 		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
+
+		ECKey.Curve definedCurve = curve != null ? curve : new ECKey.Curve("unknown");
+
+		if (! SUPPORTED_EC.contains(curve)) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
+				definedCurve, SUPPORTED_EC));
+		}
+
+		this.curve = curve;
 
 		concatKDF = new ConcatKDF("SHA-256"); // TODO set provider
 	}
@@ -118,5 +135,16 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	public Set<ECKey.Curve> supportedEllipticCurves() {
 
 		return SUPPORTED_EC;
+	}
+
+
+	/**
+	 * Returns the elliptic curve of the key (using JWK designation).
+	 *
+	 * @return The curve.
+	 */
+	public ECKey.Curve getCurve() {
+
+		return curve;
 	}
 }

@@ -1,7 +1,6 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.security.spec.ECFieldF2m;
 import java.security.spec.ECParameterSpec;
 
 import junit.framework.TestCase;

@@ -11,21 +11,24 @@ import java.security.spec.ECParameterSpec;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import junit.framework.TestCase;
+
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.jose4j.jwe.JsonWebEncryption;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
-import com.nimbusds.jose.util.StringUtils;
-import junit.framework.TestCase;
-import org.jose4j.jwe.JsonWebEncryption;
 
 
 /**
  * Tests ECDH encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-14)
+ * @version $version$ (2015-05-21)
  */
 public class ECDHCryptoTest extends TestCase {
 
@@ -95,6 +98,138 @@ public class ECDHCryptoTest extends TestCase {
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_256, epk.getCurve());
+		assertNotNull(epk.getX());
+		assertNotNull(epk.getY());
+		assertNull(epk.getD());
+
+		assertNotNull(jweObject.getEncryptedKey());
+
+		String jwe = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jwe);
+
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+	}
+
+
+	public void testCycle_ECDH_ES_Curve_P384()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_384);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128GCM).
+			agreementPartyUInfo(Base64URL.encode("Alice")).
+			agreementPartyVInfo(Base64URL.encode("Bob")).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+
+		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+
+		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
+		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertNotNull(epk.getX());
+		assertNotNull(epk.getY());
+		assertNull(epk.getD());
+
+		assertNull(jweObject.getEncryptedKey());
+
+		String jwe = jweObject.serialize();
+
+		System.out.println(jwe);
+
+		jweObject = JWEObject.parse(jwe);
+
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+	}
+
+
+	public void testCycle_ECDH_ES_Curve_P384_A128KW()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_384);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES_A128KW, EncryptionMethod.A128GCM).
+			agreementPartyUInfo(Base64URL.encode("Alice")).
+			agreementPartyVInfo(Base64URL.encode("Bob")).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+
+		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+
+		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
+		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertNotNull(epk.getX());
+		assertNotNull(epk.getY());
+		assertNull(epk.getD());
+
+		assertNotNull(jweObject.getEncryptedKey());
+
+		String jwe = jweObject.serialize();
+
+		jweObject = JWEObject.parse(jwe);
+
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+	}
+
+
+	public void testCycle_ECDH_ES_Curve_P521()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_521);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128GCM).
+			agreementPartyUInfo(Base64URL.encode("Alice")).
+			agreementPartyVInfo(Base64URL.encode("Bob")).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+
+		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+
+		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
+		assertEquals(ECKey.Curve.P_521, epk.getCurve());
+		assertNotNull(epk.getX());
+		assertNotNull(epk.getY());
+		assertNull(epk.getD());
+
+		assertNull(jweObject.getEncryptedKey());
+
+		String jwe = jweObject.serialize();
+
+		System.out.println(jwe);
+
+		jweObject = JWEObject.parse(jwe);
+
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+	}
+
+
+	public void testCycle_ECDH_ES_Curve_P521_A128KW()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_521);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES_A128KW, EncryptionMethod.A128GCM).
+			agreementPartyUInfo(Base64URL.encode("Alice")).
+			agreementPartyVInfo(Base64URL.encode("Bob")).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+
+		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+
+		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
+		assertEquals(ECKey.Curve.P_521, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -488,5 +623,70 @@ public class ECDHCryptoTest extends TestCase {
 			"alone, and go off without a word. We are your friends, Frodo.";
 
 		assertEquals(expectedPlainText, jweObject.getPayload().toString());
+	}
+
+
+	private static KeyPair createUnsupportedECKeyPair()
+		throws Exception {
+
+		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec("secp224r1");
+
+		ECParameterSpec ecParameterSpec = new ECNamedCurveSpec(curveParams.getName(),
+			curveParams.getCurve(),
+			curveParams.getG(),
+			curveParams.getN());
+
+
+		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+		generator.initialize(ecParameterSpec);
+		return generator.generateKeyPair();
+	}
+
+
+	public void testRejectECKeyWithUnsupportedCurve()
+		throws Exception {
+
+		KeyPair keyPair = createUnsupportedECKeyPair();
+		ECPublicKey ecPublicKey = (ECPublicKey)keyPair.getPublic();
+		ECPrivateKey ecPrivateKey = (ECPrivateKey)keyPair.getPrivate();
+
+		try {
+			new ECDHEncrypter(ecPublicKey);
+			fail();
+		} catch (JOSEException e) {
+			// ok
+		}
+
+		try {
+			new ECDHDecrypter(ecPrivateKey);
+			fail();
+		} catch (JOSEException e) {
+			// ok
+		}
+	}
+
+
+	public void testRejectECJWKWithUnsupportedCurve()
+		throws Exception {
+
+		KeyPair keyPair = createUnsupportedECKeyPair();
+		ECPublicKey ecPublicKey = (ECPublicKey)keyPair.getPublic();
+		ECPrivateKey ecPrivateKey = (ECPrivateKey)keyPair.getPrivate();
+
+		ECKey ecJWK = new ECKey.Builder(new ECKey.Curve("P-224"), ecPublicKey).privateKey(ecPrivateKey).build();
+
+		try {
+			new ECDHEncrypter(ecJWK);
+			fail();
+		} catch (JOSEException e) {
+			// ok
+		}
+
+		try {
+			new ECDHDecrypter(ecJWK);
+			fail();
+		} catch (JOSEException e) {
+			// ok
+		}
 	}
 }
