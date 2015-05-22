@@ -114,6 +114,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			getJWEJCAProvider().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
+		getConcatKDF().setJCAProvider(getJWEJCAProvider().getMACProvider()); // update before concat
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;

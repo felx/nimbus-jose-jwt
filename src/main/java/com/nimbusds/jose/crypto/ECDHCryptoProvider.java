@@ -111,7 +111,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 		this.curve = curve;
 
-		concatKDF = new ConcatKDF("SHA-256"); // TODO set provider
+		concatKDF = new ConcatKDF("SHA-256");
 	}
 
 
