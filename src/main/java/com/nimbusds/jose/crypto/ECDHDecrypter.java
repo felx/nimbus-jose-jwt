@@ -13,6 +13,39 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
+ * Elliptic Curve Diffie-Hellman decrypter of
+ * {@link com.nimbusds.jose.JWEObject JWE objects}. This class is thread-safe.
+ *
+ * <p>Supports the following JSON Web Algorithms (JWAs):
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A128KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A192KW}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
+ * </ul>
+ *
+ * <p>Supports the following JOSE Elliptic Curves:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
+ * </ul>
+ *
+ * <p>Supports the following encryption methods:
+ *
+ * <ul>
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192CBC_HS384}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
+ * </ul>
+ *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-05-22)
  */
@@ -31,6 +64,13 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	private final CriticalHeaderParamsDeferral critPolicy = new CriticalHeaderParamsDeferral();
 
 
+	/**
+	 * Creates a new Elliptic Curve Diffie-Hellman decrypter.
+	 *
+	 * @param privateKey The private EC key. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve is not supported.
+	 */
 	public ECDHDecrypter(final ECPrivateKey privateKey)
 		throws JOSEException {
 
@@ -40,6 +80,14 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	}
 
 
+	/**
+	 * Creates a new Elliptic Curve Diffie-Hellman decrypter.
+	 *
+	 * @param ecJWK The EC JSON Web Key (JWK). Must contain a private
+	 *              part. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve is not supported.
+	 */
 	public ECDHDecrypter(final ECKey ecJWK)
 		throws JOSEException {
 
