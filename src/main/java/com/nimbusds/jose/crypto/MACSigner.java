@@ -96,8 +96,12 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 *
 	 * @param secret The secret. Must be at least 256 bits long and not
 	 *               {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACSigner(final byte[] secret) {
+	public MACSigner(final byte[] secret)
+		throws JOSEException {
 
 		super(secret, getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)));
 	}
@@ -108,8 +112,12 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 *
 	 * @param secretString The secret as a UTF-8 encoded string. Must be at
 	 *                     least 256 bits long and not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACSigner(final String secretString) {
+	public MACSigner(final String secretString)
+		throws JOSEException {
 
 		this(secretString.getBytes(Charset.forName("UTF-8")));
 	}
@@ -120,8 +128,12 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 *
 	 * @param secretKey The secret key. Must be at least 256 bits long and
 	 *                  not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACSigner(final SecretKey secretKey) {
+	public MACSigner(final SecretKey secretKey)
+		throws JOSEException {
 
 		this(secretKey.getEncoded());
 	}
@@ -132,8 +144,12 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 *
 	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
 	 *            not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACSigner(final OctetSequenceKey jwk) {
+	public MACSigner(final OctetSequenceKey jwk)
+		throws JOSEException {
 
 		this(jwk.toByteArray());
 	}

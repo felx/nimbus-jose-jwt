@@ -87,14 +87,18 @@ abstract class MACProvider extends BaseJWSProvider {
 	 *                      not {@code null}.
 	 * @param supportedAlgs The supported HMAC algorithms. Must not be
 	 *                      {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
 	protected MACProvider(final byte[] secret,
-			      final Set<JWSAlgorithm> supportedAlgs) {
+			      final Set<JWSAlgorithm> supportedAlgs)
+		throws JOSEException {
 
 		super(supportedAlgs);
 
 		if (secret.length < 256 / 8) {
-			throw new IllegalArgumentException("The secret length must be at least 256 bits");
+			throw new JOSEException("The secret length must be at least 256 bits");
 		}
 
 		this.secret = secret;

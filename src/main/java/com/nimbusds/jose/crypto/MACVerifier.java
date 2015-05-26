@@ -43,8 +43,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	 *
 	 * @param secret The secret. Must be at least 256 bits long and not
 	 *               {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACVerifier(final byte[] secret) {
+	public MACVerifier(final byte[] secret)
+		throws JOSEException {
 
 		this(secret, null);
 	}
@@ -55,8 +59,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	 *
 	 * @param secretString The secret as a UTF-8 encoded string. Must be at
 	 *                     least 256 bits long and not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACVerifier(final String secretString) {
+	public MACVerifier(final String secretString)
+		throws JOSEException {
 
 		this(secretString.getBytes(Charset.forName("UTF-8")));
 	}
@@ -67,8 +75,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	 *
 	 * @param secretKey The secret key. Must be at least 256 bits long and
 	 *                  not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACVerifier(final SecretKey secretKey) {
+	public MACVerifier(final SecretKey secretKey)
+		throws JOSEException {
 
 		this(secretKey.getEncoded());
 	}
@@ -79,8 +91,12 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	 *
 	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
 	 *            not {@code null}.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
-	public MACVerifier(final OctetSequenceKey jwk) {
+	public MACVerifier(final OctetSequenceKey jwk)
+		throws JOSEException {
 
 		this(jwk.toByteArray());
 	}
@@ -94,9 +110,13 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	 * @param defCritHeaders The names of the critical header parameters
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
+	 *
+	 * @throws JOSEException If the secret length is shorter than the
+	 *                       minimum 256-bit requirement.
 	 */
 	public MACVerifier(final byte[] secret,
-			   final Set<String> defCritHeaders) {
+			   final Set<String> defCritHeaders)
+		throws JOSEException {
 
 		super(secret, SUPPORTED_ALGORITHMS);
 

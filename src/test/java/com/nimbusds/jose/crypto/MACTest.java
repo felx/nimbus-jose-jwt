@@ -59,7 +59,8 @@ public class MACTest extends TestCase {
 	}
 
 
-	public void testInstanceAlgorithmSupport() {
+	public void testInstanceAlgorithmSupport()
+		throws JOSEException {
 
 		// 256-bit key
 		byte[] key256 = new byte[32];
@@ -108,7 +109,7 @@ public class MACTest extends TestCase {
 	}
 
 
-	public void testDetermineHMACAlgorithmSupportForGivenSecretSize()
+	public void testDetermineCompatibleAlgorithmForSecretSize()
 		throws Exception {
 
 		Set<JWSAlgorithm> algs = MACSigner.getCompatibleAlgorithms(0);
@@ -176,9 +177,8 @@ public class MACTest extends TestCase {
 		throws Exception {
 
 		// Generate random 32-bit shared secret
-		SecureRandom random = new SecureRandom();
 		byte[] sharedSecret = new byte[32];
-		random.nextBytes(sharedSecret);
+		new SecureRandom().nextBytes(sharedSecret);
 
 		// Create HMAC signer
 		MACSigner signer = new MACSigner(sharedSecret);
@@ -211,8 +211,8 @@ public class MACTest extends TestCase {
 	public void testSignAndVerifyWithStringSecret()
 		throws Exception {
 
-		SecureRandom random = new SecureRandom();
 		byte[] sharedSecret = new byte[64];
+		new SecureRandom().nextBytes(sharedSecret);
 
 		final String stringSecret = new String(sharedSecret);
 
@@ -398,7 +398,7 @@ public class MACTest extends TestCase {
 		try {
 			new MACSigner(secret);
 			fail();
-		} catch (IllegalArgumentException e) {
+		} catch (JOSEException e) {
 			assertEquals("The secret length must be at least 256 bits", e.getMessage());
 		}
 	}
