@@ -1,15 +1,10 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWECryptoParts;
-import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.jca.JWEJCAProviderSpec;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -18,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 class ContentCryptoProvider {
 
@@ -27,6 +22,12 @@ class ContentCryptoProvider {
 	 * The supported encryption methods.
 	 */
 	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS;
+
+
+	/**
+	 * The encryption methods compatible with each key size in bits.
+	 */
+	public static final Map<Integer,Set<EncryptionMethod>> COMPATIBLE_ENCRYPTION_METHODS;
 
 
 	static {
@@ -40,6 +41,27 @@ class ContentCryptoProvider {
 		methods.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
 		methods.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
 		SUPPORTED_ENCRYPTION_METHODS = Collections.unmodifiableSet(methods);
+
+		Map<Integer,Set<EncryptionMethod>> encsMap = new HashMap<>();
+		Set<EncryptionMethod> bit128Encs = new HashSet<>();
+		Set<EncryptionMethod> bit192Encs = new HashSet<>();
+		Set<EncryptionMethod> bit256Encs = new HashSet<>();
+		Set<EncryptionMethod> bit384Encs = new HashSet<>();
+		Set<EncryptionMethod> bit512Encs = new HashSet<>();
+		bit128Encs.add(EncryptionMethod.A128GCM);
+		bit192Encs.add(EncryptionMethod.A192GCM);
+		bit256Encs.add(EncryptionMethod.A256GCM);
+		bit256Encs.add(EncryptionMethod.A128CBC_HS256);
+		bit256Encs.add(EncryptionMethod.A128CBC_HS256_DEPRECATED);
+		bit384Encs.add(EncryptionMethod.A192CBC_HS384);
+		bit512Encs.add(EncryptionMethod.A256CBC_HS512);
+		bit512Encs.add(EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		encsMap.put(128,Collections.unmodifiableSet(bit128Encs));
+		encsMap.put(192,Collections.unmodifiableSet(bit192Encs));
+		encsMap.put(256,Collections.unmodifiableSet(bit256Encs));
+		encsMap.put(384,Collections.unmodifiableSet(bit384Encs));
+		encsMap.put(512, Collections.unmodifiableSet(bit512Encs));
+		COMPATIBLE_ENCRYPTION_METHODS = Collections.unmodifiableMap(encsMap);
 	}
 
 

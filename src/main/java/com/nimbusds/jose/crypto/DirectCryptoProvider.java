@@ -1,14 +1,14 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
@@ -30,6 +30,8 @@ import com.nimbusds.jose.JWEAlgorithm;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
@@ -62,6 +64,29 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 
 
 	/**
+	 * Returns the compatible encryption methods for the specified Content
+	 * Encryption Key (CEK) length.
+	 *
+	 * @param cekLength The CEK length in bits.
+	 *
+	 * @return The compatible encryption methods.
+	 *
+	 * @throws JOSEException If the CEK length is not compatible.
+	 */
+	private static Set<EncryptionMethod> getCompatibleEncryptionMethods(final int cekLength)
+		throws JOSEException {
+
+		Set<EncryptionMethod> encs = ContentCryptoProvider.COMPATIBLE_ENCRYPTION_METHODS.get(cekLength);
+
+		if (encs == null) {
+			throw new JOSEException("The Content Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
+		}
+
+		return encs;
+	}
+
+
+	/**
 	 * The Content Encryption Key (CEK).
 	 */
 	private final SecretKey cek;
@@ -70,25 +95,17 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Creates a new direct encryption / decryption provider.
 	 *
-	 * @param cek The Content Encryption Key. Must be 128 bits (16 bytes),
-	 *            192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48
-	 *            bytes) or 512 bits (64 bytes) long. Must not be
+	 * @param cek The Content Encryption Key (CEK). Must be 128 bits (16
+	 *            bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
+	 *            bits (48 bytes) or 512 bits (64 bytes) long. Must not be
 	 *            {@code null}.
+	 *
+	 * @throws JOSEException If the CEK length is not compatible.
 	 */
-	protected DirectCryptoProvider(final SecretKey cek) {
+	protected DirectCryptoProvider(final SecretKey cek)
+		throws JOSEException {
 
-		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-
-		byte[] keyBytes = cek.getEncoded();
-
-		if (keyBytes.length != 16 &&
-		    keyBytes.length != 24 &&
-		    keyBytes.length != 32 &&
-		    keyBytes.length != 48 &&
-		    keyBytes.length != 64) {
-
-			throw new IllegalArgumentException("The Content Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
-		}
+		super(SUPPORTED_ALGORITHMS, getCompatibleEncryptionMethods(ByteUtils.bitLength(cek.getEncoded())));
 
 		this.cek = cek;
 	}

@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -66,15 +67,51 @@ public class DirectCryptoTest extends TestCase {
 
 	public void testKeyLengths() {
 
-		assertEquals(128, key128.length * 8);
-		assertEquals(192, key192.length * 8);
-		assertEquals(256, key256.length * 8);
-		assertEquals(384, key384.length * 8);
-		assertEquals(512, key512.length * 8);
+		assertEquals(128, ByteUtils.bitLength(key128));
+		assertEquals(192, ByteUtils.bitLength(key192));
+		assertEquals(256, ByteUtils.bitLength(key256));
+		assertEquals(384, ByteUtils.bitLength(key384));
+		assertEquals(512, ByteUtils.bitLength(key512));
 	}
 
 
-	public void testSupportedAlgorithms()
+	public void testClassAlgorithmSupport()
+		throws Exception {
+
+		assertEquals(1, DirectEncrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(DirectEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.DIR));
+
+		assertEquals(1, DirectDecrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(DirectDecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.DIR));
+	}
+
+
+	public void testClassEncryptionMethodSupport()
+		throws Exception {
+
+		assertEquals(8, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+
+		assertEquals(8, DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(DirectEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+	}
+
+
+	public void testInstanceAlgorithmSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new DirectEncrypter(key128);
@@ -89,32 +126,69 @@ public class DirectCryptoTest extends TestCase {
 	}
 
 
-	public void testSupportedEncryptionMethods()
+	public void testInstanceEncryptionMethodSupport()
 		throws Exception {
 
+		// 128-bit key
 		JWEEncrypter encrypter = new DirectEncrypter(key128);
 
-		assertEquals(8, encrypter.supportedEncryptionMethods().size());
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertEquals(1, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
-		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
 		JWEDecrypter decrypter = new DirectDecrypter(key128);
 
-		assertEquals(8, decrypter.supportedEncryptionMethods().size());
-		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
-		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
-		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertEquals(1, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128GCM));
+
+		// 192-bit key
+		encrypter = new DirectEncrypter(key192);
+
+		assertEquals(1, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
+
+		decrypter = new DirectDecrypter(key192);
+
+		assertEquals(1, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
-		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+
+		// 256-bit key
+		encrypter = new DirectEncrypter(key256);
+
+		assertEquals(3, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+
+		decrypter = new DirectDecrypter(key256);
+
+		assertEquals(3, decrypter.supportedEncryptionMethods().size());
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+
+		// 384-bit key
+		encrypter = new DirectEncrypter(key384);
+
+		assertEquals(1, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+
+		decrypter = new DirectDecrypter(key384);
+
+		assertEquals(1, decrypter.supportedEncryptionMethods().size());
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192CBC_HS384));
+
+		// 512-bit key
+		encrypter = new DirectEncrypter(key512);
+
+		assertEquals(2, encrypter.supportedEncryptionMethods().size());
+		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+
+		decrypter = new DirectDecrypter(key512);
+
+		assertEquals(2, decrypter.supportedEncryptionMethods().size());
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 	}
 
 

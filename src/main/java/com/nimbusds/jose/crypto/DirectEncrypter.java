@@ -36,10 +36,12 @@ import com.nimbusds.jose.util.ByteUtils;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-16)
+ * @version $version$ (2014-05-26)
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -52,8 +54,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *            128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32
 	 *            bytes), 384 bits (48 bytes) or 512 bits (64 bytes) long.
 	 *            Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectEncrypter(final SecretKey key) {
+	public DirectEncrypter(final SecretKey key)
+		throws JOSEException {
 
 		super(key);
 	}
@@ -66,8 +71,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *                 (16 bytes), 192 bits (24 bytes), 256 bits (32
 	 *                 bytes), 384 bits (48 bytes) or 512 bits (64 bytes)
 	 *                 long. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectEncrypter(final byte[] keyBytes) {
+	public DirectEncrypter(final byte[] keyBytes)
+		throws JOSEException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -80,8 +88,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *               bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectEncrypter(final OctetSequenceKey octJWK) {
+	public DirectEncrypter(final OctetSequenceKey octJWK)
+		throws JOSEException {
 
 		this(octJWK.toSecretKey("AES"));
 	}

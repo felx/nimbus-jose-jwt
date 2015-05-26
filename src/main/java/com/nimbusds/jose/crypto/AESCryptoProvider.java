@@ -62,11 +62,7 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	public static final Map<Integer,Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS;
 
 
-	/**
-	 * Initialises the supported algorithms and encryption methods.
-	 */
 	static {
-
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.A128KW);
 		algs.add(JWEAlgorithm.A192KW);
@@ -76,20 +72,19 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.A256GCMKW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
-
 		Map<Integer,Set<JWEAlgorithm>> algsMap = new HashMap<>();
-		Set<JWEAlgorithm> bit16Algs = new HashSet<>();
-		Set<JWEAlgorithm> bit24Algs = new HashSet<>();
-		Set<JWEAlgorithm> bit32Algs = new HashSet<>();
-		bit16Algs.add(JWEAlgorithm.A128GCMKW);
-		bit16Algs.add(JWEAlgorithm.A128KW);
-		bit24Algs.add(JWEAlgorithm.A192GCMKW);
-		bit24Algs.add(JWEAlgorithm.A192KW);
-		bit32Algs.add(JWEAlgorithm.A256GCMKW);
-		bit32Algs.add(JWEAlgorithm.A256KW);
-		algsMap.put(16,Collections.unmodifiableSet(bit16Algs));
-		algsMap.put(24,Collections.unmodifiableSet(bit24Algs));
-		algsMap.put(32,Collections.unmodifiableSet(bit32Algs));
+		Set<JWEAlgorithm> byte16Algs = new HashSet<>();
+		Set<JWEAlgorithm> byte24Algs = new HashSet<>();
+		Set<JWEAlgorithm> byte32Algs = new HashSet<>();
+		byte16Algs.add(JWEAlgorithm.A128GCMKW);
+		byte16Algs.add(JWEAlgorithm.A128KW);
+		byte24Algs.add(JWEAlgorithm.A192GCMKW);
+		byte24Algs.add(JWEAlgorithm.A192KW);
+		byte32Algs.add(JWEAlgorithm.A256GCMKW);
+		byte32Algs.add(JWEAlgorithm.A256KW);
+		algsMap.put(16,Collections.unmodifiableSet(byte16Algs));
+		algsMap.put(24,Collections.unmodifiableSet(byte24Algs));
+		algsMap.put(32,Collections.unmodifiableSet(byte32Algs));
 		COMPATIBLE_ALGORITHMS = Collections.unmodifiableMap(algsMap);
 	}
 

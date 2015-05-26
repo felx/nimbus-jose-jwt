@@ -111,28 +111,28 @@ public class MACTest extends TestCase {
 	public void testDetermineHMACAlgorithmSupportForGivenSecretSize()
 		throws Exception {
 
-		Set<JWSAlgorithm> algs = MACSigner.getHMACAlgorithms(0);
+		Set<JWSAlgorithm> algs = MACSigner.getCompatibleAlgorithms(0);
 		assertEquals(0, algs.size());
 
-		algs = MACSigner.getHMACAlgorithms(128);
+		algs = MACSigner.getCompatibleAlgorithms(128);
 		assertEquals(0, algs.size());
 
-		algs = MACSigner.getHMACAlgorithms(256);
+		algs = MACSigner.getCompatibleAlgorithms(256);
 		assertEquals(1, algs.size());
 		assertTrue(algs.contains(JWSAlgorithm.HS256));
 
-		algs = MACSigner.getHMACAlgorithms(384);
+		algs = MACSigner.getCompatibleAlgorithms(384);
 		assertEquals(2, algs.size());
 		assertTrue(algs.contains(JWSAlgorithm.HS256));
 		assertTrue(algs.contains(JWSAlgorithm.HS384));
 
-		algs = MACSigner.getHMACAlgorithms(512);
+		algs = MACSigner.getCompatibleAlgorithms(512);
 		assertEquals(3, algs.size());
 		assertTrue(algs.contains(JWSAlgorithm.HS256));
 		assertTrue(algs.contains(JWSAlgorithm.HS384));
 		assertTrue(algs.contains(JWSAlgorithm.HS512));
 
-		algs = MACSigner.getHMACAlgorithms(1024);
+		algs = MACSigner.getCompatibleAlgorithms(1024);
 		assertEquals(3, algs.size());
 		assertTrue(algs.contains(JWSAlgorithm.HS256));
 		assertTrue(algs.contains(JWSAlgorithm.HS384));

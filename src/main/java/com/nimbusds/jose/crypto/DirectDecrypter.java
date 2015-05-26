@@ -31,10 +31,12 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A192GCM}
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256GCM}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256_DEPRECATED}
+ *     <li>{@link com.nimbusds.jose.EncryptionMethod#A256CBC_HS512_DEPRECATED}
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -53,8 +55,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *            128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32
 	 *            bytes), 384 bits (48 bytes) or 512 bits (64 bytes) long.
 	 *            Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectDecrypter(final SecretKey key) {
+	public DirectDecrypter(final SecretKey key)
+		throws JOSEException {
 
 		super(key);
 	}
@@ -67,8 +72,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *                 (16 bytes), 192 bits (24 bytes), 256 bits (32
 	 *                 bytes), 384 bits (48 bytes) or 512 bits (64 bytes)
 	 *                 long. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectDecrypter(final byte[] keyBytes) {
+	public DirectDecrypter(final byte[] keyBytes)
+		throws JOSEException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -81,8 +89,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *               bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectDecrypter(final OctetSequenceKey octJWK) {
+	public DirectDecrypter(final OctetSequenceKey octJWK)
+		throws JOSEException {
 
 		this(octJWK.toSecretKey("AES"));
 	}
@@ -99,8 +110,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 * @param defCritHeaders The names of the critical header parameters
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
+	 *
+	 * @throws JOSEException If the symmetric key length is not compatible.
 	 */
-	public DirectDecrypter(final SecretKey key, final Set<String> defCritHeaders) {
+	public DirectDecrypter(final SecretKey key, final Set<String> defCritHeaders)
+		throws JOSEException {
 
 		super(key);
 

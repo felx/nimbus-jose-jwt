@@ -66,15 +66,15 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 
 	/**
-	 * Returns the supported JWS HMAC algorithms for the specified secret
+	 * Returns the compatible JWS HMAC algorithms for the specified secret
 	 * length.
 	 *
 	 * @param secretLength The secret length in bits. Must not be negative.
 	 *
-	 * @return The supported JWS HMAC algorithms, empty set if the secret
+	 * @return The compatible HMAC algorithms, empty set if the secret
 	 *         length is too short for any algorithm.
 	 */
-	public static Set<JWSAlgorithm> getHMACAlgorithms(final int secretLength) {
+	public static Set<JWSAlgorithm> getCompatibleAlgorithms(final int secretLength) {
 
 		Set<JWSAlgorithm> hmacAlgs = new LinkedHashSet<>();
 
@@ -99,7 +99,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final byte[] secret) {
 
-		super(secret, getHMACAlgorithms(ByteUtils.bitLength(secret.length)));
+		super(secret, getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)));
 	}
 
 
