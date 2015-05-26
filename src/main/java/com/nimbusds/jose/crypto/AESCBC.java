@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-05-17)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 class AESCBC {
@@ -141,7 +141,7 @@ class AESCBC {
 	 * Encrypts the specified plain text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-40, section 5.2.2.1
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
@@ -286,7 +286,7 @@ class AESCBC {
 	 * Decrypts the specified cipher text using AES/CBC/PKCS5Padding/
 	 * HMAC-SHA2.
 	 * 
-	 * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
+	 * <p>See draft-ietf-jose-json-web-algorithms-40, section 5.2.2.2
 	 *
 	 * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
 	 *
