@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
@@ -36,20 +37,25 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported JWE algorithms.
+	 * The supported JWE algorithms by the password-based crypto provider
+	 * class.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
 
 
 	/**
-	 * Initialises the supported algorithms and encryption methods.
+	 * The supported encryption methods by the password-base crypto
+	 * provider class.
 	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
+
+
 	static {
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.PBES2_HS256_A128KW);

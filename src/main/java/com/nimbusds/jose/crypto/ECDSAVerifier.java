@@ -33,7 +33,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -173,14 +173,14 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 			return false;
 		}
 
-		ECDSAParameters initParams = getECDSAParameters(header.getAlgorithm());
+		ECDSAParameters initParams = ECDSA.getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
 
 		byte[] signatureBytes = signature.decode();
 
 		// Split signature into R and S parts
-		int rsByteArrayLength = ECDSAProvider.getSignatureByteArrayLength(header.getAlgorithm());
+		int rsByteArrayLength = ECDSA.getSignatureByteArrayLength(header.getAlgorithm());
 
 		byte[] rBytes = new byte[rsByteArrayLength / 2];
 		byte[] sBytes = new byte[rsByteArrayLength / 2];

@@ -16,19 +16,19 @@ import com.nimbusds.jose.jca.JWEJCAProviderSpec;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
 
 
 	/**
-	 * The supported algorithms.
+	 * The supported algorithms by the JWE provider intance.
 	 */
 	private final Set<JWEAlgorithm> algs;
 
 
 	/**
-	 * The supported encryption methods.
+	 * The supported encryption methods by the JWE provider instance.
 	 */
 	private final Set<EncryptionMethod> encs;
 
@@ -42,9 +42,10 @@ abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
 	/**
 	 * Creates a new base JWE provider.
 	 *
-	 * @param algs The supported JWE algorithms. Must not be {@code null}.
-	 * @param encs The supported encryption methods. Must not be 
-	 *             {@code null}.
+	 * @param algs The supported algorithms by the JWE provider instance.
+	 *             Must not be {@code null}.
+	 * @param encs The supported encryption methods by the JWE provider
+	 *             instance. Must not be {@code null}.
 	 */
 	public BaseJWEProvider(final Set<JWEAlgorithm> algs,
 		               final Set<EncryptionMethod> encs) {

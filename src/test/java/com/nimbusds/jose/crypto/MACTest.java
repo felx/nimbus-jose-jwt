@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
@@ -16,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-26)
  */
 public class MACTest extends TestCase {
 
@@ -49,24 +50,94 @@ public class MACTest extends TestCase {
 	private static final Base64URL b64sig = new Base64URL("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk");
 
 
+	public void testClassAlgorithmSupport() {
 
-	public void testSupportedAlgorithms() {
+		assertEquals(3, MACProvider.SUPPORTED_ALGORITHMS.size());
+		assertTrue(MACProvider.SUPPORTED_ALGORITHMS.contains(JWSAlgorithm.HS256));
+		assertTrue(MACProvider.SUPPORTED_ALGORITHMS.contains(JWSAlgorithm.HS384));
+		assertTrue(MACProvider.SUPPORTED_ALGORITHMS.contains(JWSAlgorithm.HS512));
+	}
 
-		MACSigner signer = new MACSigner(sharedSecret);
 
+	public void testInstanceAlgorithmSupport() {
+
+		// 256-bit key
+		byte[] key256 = new byte[32];
+		new SecureRandom().nextBytes(key256);
+
+		MACSigner signer = new MACSigner(key256);
+		assertEquals(1, signer.supportedJWSAlgorithms().size());
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+
+		MACVerifier verifier = new MACVerifier(key256);
+		assertEquals(3, verifier.supportedJWSAlgorithms().size());
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
+
+		// 384-bit key
+		byte[] key384 = new byte[48];
+		new SecureRandom().nextBytes(key384);
+
+		signer = new MACSigner(key384);
+		assertEquals(2, signer.supportedJWSAlgorithms().size());
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
+
+		verifier = new MACVerifier(key384);
+		assertEquals(3, verifier.supportedJWSAlgorithms().size());
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
+		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
+
+		// 512-bit key
+		byte[] key512 = new byte[64];
+		new SecureRandom().nextBytes(key512);
+
+		signer = new MACSigner(key512);
 		assertEquals(3, signer.supportedJWSAlgorithms().size());
 		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
 		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
 		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
 
-		MACVerifier verifier = new MACVerifier(sharedSecret);
-
+		verifier = new MACVerifier(key512);
 		assertEquals(3, verifier.supportedJWSAlgorithms().size());
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS256));
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS384));
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.HS512));
 	}
 
+
+	public void testDetermineHMACAlgorithmSupportForGivenSecretSize()
+		throws Exception {
+
+		Set<JWSAlgorithm> algs = MACSigner.getHMACAlgorithms(0);
+		assertEquals(0, algs.size());
+
+		algs = MACSigner.getHMACAlgorithms(128);
+		assertEquals(0, algs.size());
+
+		algs = MACSigner.getHMACAlgorithms(256);
+		assertEquals(1, algs.size());
+		assertTrue(algs.contains(JWSAlgorithm.HS256));
+
+		algs = MACSigner.getHMACAlgorithms(384);
+		assertEquals(2, algs.size());
+		assertTrue(algs.contains(JWSAlgorithm.HS256));
+		assertTrue(algs.contains(JWSAlgorithm.HS384));
+
+		algs = MACSigner.getHMACAlgorithms(512);
+		assertEquals(3, algs.size());
+		assertTrue(algs.contains(JWSAlgorithm.HS256));
+		assertTrue(algs.contains(JWSAlgorithm.HS384));
+		assertTrue(algs.contains(JWSAlgorithm.HS512));
+
+		algs = MACSigner.getHMACAlgorithms(1024);
+		assertEquals(3, algs.size());
+		assertTrue(algs.contains(JWSAlgorithm.HS256));
+		assertTrue(algs.contains(JWSAlgorithm.HS384));
+		assertTrue(algs.contains(JWSAlgorithm.HS512));
+	}
 
 
 	public void testSignAndVerify()
@@ -110,7 +181,8 @@ public class MACTest extends TestCase {
 		random.nextBytes(sharedSecret);
 
 		// Create HMAC signer
-		JWSSigner signer = new MACSigner(sharedSecret);
+		MACSigner signer = new MACSigner(sharedSecret);
+		assertTrue(Arrays.equals(sharedSecret, signer.getSecretKey().getEncoded()));
 
 		// Prepare JWS object with "Hello, world!" payload
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello, world!"));
@@ -127,7 +199,8 @@ public class MACTest extends TestCase {
 		// To parse the JWS and verify it, e.g. on client-side
 		jwsObject = JWSObject.parse(s);
 
-		JWSVerifier verifier = new MACVerifier(sharedSecret);
+		MACVerifier verifier = new MACVerifier(sharedSecret);
+		assertTrue(Arrays.equals(sharedSecret, verifier.getSecretKey().getEncoded()));
 
 		assertTrue(jwsObject.verify(verifier));
 
@@ -346,7 +419,7 @@ public class MACTest extends TestCase {
 			jwsObject.sign(signer);
 			fail();
 		} catch (JOSEException e) {
-			assertEquals("The secret length for HS384 must be at least 384 bits", e.getMessage());
+			assertEquals("The \"HS384\" algorithm is not allowed or supported by the JWS signer", e.getMessage());
 		}
 	}
 

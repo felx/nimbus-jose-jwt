@@ -31,31 +31,25 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class RSASSAProvider extends BaseJWSProvider {
 
 
 	/**
-	 * The supported JWS algorithms.
+	 * The supported JWS algorithms by the RSA-SSA provider class.
 	 */
 	public static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
 
 
-	/**
-	 * Initialises the supported algorithms.
-	 */
 	static {
-
 		Set<JWSAlgorithm> algs = new LinkedHashSet<>();
-
 		algs.add(JWSAlgorithm.RS256);
 		algs.add(JWSAlgorithm.RS384);
 		algs.add(JWSAlgorithm.RS512);
 		algs.add(JWSAlgorithm.PS256);
 		algs.add(JWSAlgorithm.PS384);
 		algs.add(JWSAlgorithm.PS512);
-
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 	}
 

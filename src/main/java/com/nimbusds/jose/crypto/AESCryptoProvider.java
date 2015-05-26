@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -44,9 +45,15 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported JWE algorithms.
+	 * The supported JWE algorithms by the AES crypto provider class.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
+
+
+	/**
+	 * The supported encryption methods by the AES crypto provider class.
+	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
 
 
 	/**

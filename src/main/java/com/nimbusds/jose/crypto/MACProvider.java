@@ -26,20 +26,17 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class MACProvider extends BaseJWSProvider {
 
 
 	/**
-	 * The supported JWS algorithms.
+	 * The supported JWS algorithms by the MAC provider class.
 	 */
 	public static final Set<JWSAlgorithm> SUPPORTED_ALGORITHMS;
 
 
-	/**
-	 * Initialises the supported algorithms.
-	 */
 	static {
 		Set<JWSAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWSAlgorithm.HS256);
@@ -86,12 +83,15 @@ abstract class MACProvider extends BaseJWSProvider {
 	/**
 	 * Creates a new Message Authentication (MAC) provider.
 	 *
-	 * @param secret The secret. Must be at least 256 bits long and not
-	 *               {@code null}.
+	 * @param secret        The secret. Must be at least 256 bits long and
+	 *                      not {@code null}.
+	 * @param supportedAlgs The supported HMAC algorithms. Must not be
+	 *                      {@code null}.
 	 */
-	protected MACProvider(final byte[] secret) {
+	protected MACProvider(final byte[] secret,
+			      final Set<JWSAlgorithm> supportedAlgs) {
 
-		super(SUPPORTED_ALGORITHMS);
+		super(supportedAlgs);
 
 		if (secret.length < 256 / 8) {
 			throw new IllegalArgumentException("The secret length must be at least 256 bits");
@@ -108,7 +108,7 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	public SecretKey getSecretKey() {
 
-		return new SecretKeySpec(secret, "MAC"); // todo test
+		return new SecretKeySpec(secret, "MAC");
 	}
 
 

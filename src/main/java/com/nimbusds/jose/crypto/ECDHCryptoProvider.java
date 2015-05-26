@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.jwk.ECKey;
@@ -45,19 +46,25 @@ import com.nimbusds.jose.jwk.ECKey;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-21)
+ * @version $version$ (2015-05-26)
  */
 abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported JWE algorithms.
+	 * The supported JWE algorithms by the ECDH crypto provider class.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
 
 
 	/**
-	 * The supported EC JWK curves.
+	 * The supported encryption methods by the ECDH crypto provider class.
+	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
+
+
+	/**
+	 * The supported EC JWK curves by the ECDH crypto provider class.
 	 */
 	public static final Set<ECKey.Curve> SUPPORTED_EC;
 

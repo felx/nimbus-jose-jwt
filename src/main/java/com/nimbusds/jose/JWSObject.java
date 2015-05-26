@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -268,7 +268,7 @@ public class JWSObject extends JOSEObject {
 		if (! signer.supportedJWSAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-			                        "\" algorithm is not supported by the JWS signer");
+			                        "\" algorithm is not allowed or supported by the JWS signer");
 		}
 	}
 

@@ -14,13 +14,13 @@ import com.nimbusds.jose.jca.JCAProviderAware;
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
 
 
 	/**
-	 * The supported algorithms.
+	 * The supported algorithms by the JWS provider instance.
 	 */
 	private final Set<JWSAlgorithm> algs;
 
@@ -34,12 +34,13 @@ abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
 	/**
 	 * Creates a new base JWS provider.
 	 *
-	 * @param algs The supported JWS algorithms. Must not be {@code null}.
+	 * @param algs The supported algorithms by the JWS provider instance.
+	 *             Must not be {@code null}.
 	 */
 	public BaseJWSProvider(final Set<JWSAlgorithm> algs) {
 
-		if (algs == null || algs.isEmpty()) {
-			throw new IllegalArgumentException("The supported JWS algorithm set must not be null or empty");
+		if (algs == null) {
+			throw new IllegalArgumentException("The supported JWS algorithm set must not be null");
 		}
 
 		this.algs = Collections.unmodifiableSet(algs);

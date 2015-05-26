@@ -2,6 +2,9 @@ package com.nimbusds.jose.crypto;
 
 
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.crypto.SecretKey;
 
@@ -27,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -63,6 +66,32 @@ public class MACSigner extends MACProvider implements JWSSigner {
 
 
 	/**
+	 * Returns the supported JWS HMAC algorithms for the specified secret
+	 * length.
+	 *
+	 * @param secretLength The secret length in bits. Must not be negative.
+	 *
+	 * @return The supported JWS HMAC algorithms, empty set if the secret
+	 *         length is too short for any algorithm.
+	 */
+	public static Set<JWSAlgorithm> getHMACAlgorithms(final int secretLength) {
+
+		Set<JWSAlgorithm> hmacAlgs = new LinkedHashSet<>();
+
+		if (secretLength >= 256)
+			hmacAlgs.add(JWSAlgorithm.HS256);
+
+		if (secretLength >= 384)
+			hmacAlgs.add(JWSAlgorithm.HS384);
+
+		if (secretLength >= 512)
+			hmacAlgs.add(JWSAlgorithm.HS512);
+
+		return Collections.unmodifiableSet(hmacAlgs);
+	}
+
+
+	/**
 	 * Creates a new Message Authentication (MAC) signer.
 	 *
 	 * @param secret The secret. Must be at least 256 bits long and not
@@ -70,7 +99,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 */
 	public MACSigner(final byte[] secret) {
 
-		super(secret);
+		super(secret, getHMACAlgorithms(ByteUtils.bitLength(secret.length)));
 	}
 
 

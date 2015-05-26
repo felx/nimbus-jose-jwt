@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -35,20 +36,23 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported JWE algorithms.
+	 * The supported JWE algorithms by the RSA crypto provider class.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
 
 
 	/**
-	 * Initialises the supported algorithms and encryption methods.
+	 * The supported encryption methods by the RSA crypto provider class.
 	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
+
+
 	static {
 
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();

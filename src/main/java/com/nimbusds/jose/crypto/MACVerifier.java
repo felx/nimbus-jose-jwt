@@ -26,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -98,7 +98,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	public MACVerifier(final byte[] secret,
 			   final Set<String> defCritHeaders) {
 
-		super(secret);
+		super(secret, SUPPORTED_ALGORITHMS);
 
 		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}

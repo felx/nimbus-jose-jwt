@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -32,15 +33,22 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-26)
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The supported JWE algorithms.
+	 * The supported JWE algorithms by the direct crypto provider class.
 	 */
 	public static final Set<JWEAlgorithm> SUPPORTED_ALGORITHMS;
+
+
+	/**
+	 * The supported encryption methods by the direct crypto provider
+	 * class.
+	 */
+	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
 
 
 	/**
