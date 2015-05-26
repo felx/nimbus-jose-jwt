@@ -19,7 +19,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * The base abstract class for RSA Signature-Scheme-with-Appendix (RSASSA) 
  * signers and verifiers of {@link com.nimbusds.jose.JWSObject JWS objects}.
  *
- * <p>Supports the following RSA-based JWS algorithms:
+ * <p>Supports the following algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}

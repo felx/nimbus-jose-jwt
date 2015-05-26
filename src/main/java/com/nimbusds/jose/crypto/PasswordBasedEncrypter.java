@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Password-based encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}.
  * This class is thread-safe.
  *
- * <p>Supports the following JSON Web Algorithm (JWA):
+ * <p>Supports the following key management algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#PBES2_HS256_A128KW}
@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#PBES2_HS512_A256KW}
  * </ul>
  *
- * <p>Supports the following encryption methods:
+ * <p>Supports the following content encryption algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}

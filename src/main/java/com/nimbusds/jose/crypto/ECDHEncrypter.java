@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Elliptic Curve Diffie-Hellman encrypter of
  * {@link com.nimbusds.jose.JWEObject JWE objects}. This class is thread-safe.
  *
- * <p>Supports the following JSON Web Algorithms (JWAs):
+ * <p>Supports the following key management algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES}
@@ -28,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#ECDH_ES_A256KW}
  * </ul>
  *
- * <p>Supports the following JOSE Elliptic Curves:
+ * <p>Supports the following elliptic curves:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
  * </ul>
  *
- * <p>Supports the following encryption methods:
+ * <p>Supports the following content encryption algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}

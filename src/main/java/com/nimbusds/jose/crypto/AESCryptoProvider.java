@@ -13,7 +13,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * The base abstract class for AES encrypters and decrypters of {@link
  * com.nimbusds.jose.JWEObject JWE objects}.
  *
- * <p>Supports the following JSON Web Algorithms (JWAs):
+ * <p>Supports the following key management algorithms:
  *
  * <ul>
  *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A128KW}
@@ -24,7 +24,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  *      <li>{@link com.nimbusds.jose.JWEAlgorithm#A256GCMKW}
  * </ul>
  *
- * <p>Supports the following encryption methods:
+ * <p>Supports the following content encryption algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}

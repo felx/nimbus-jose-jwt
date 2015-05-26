@@ -16,13 +16,13 @@ import com.nimbusds.jose.util.Base64URL;
  * Direct decrypter of {@link com.nimbusds.jose.JWEObject JWE objects} with a
  * shared symmetric key. This class is thread-safe.
  *
- * <p>Supports the following JWE algorithms:
+ * <p>Supports the following key management algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#DIR}
  * </ul>
  *
- * <p>Supports the following encryption methods:
+ * <p>Supports the following content encryption algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}

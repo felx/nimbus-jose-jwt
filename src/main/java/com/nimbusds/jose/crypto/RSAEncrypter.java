@@ -21,7 +21,7 @@ import com.nimbusds.jose.util.Base64URL;
  * RSA encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
  * is thread-safe.
  *
- * <p>Supports the following JWE algorithms:
+ * <p>Supports the following key management algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP_256}
  * </ul>
  *
- * <p>Supports the following encryption methods:
+ * <p>Supports the following content encryption algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.EncryptionMethod#A128CBC_HS256}

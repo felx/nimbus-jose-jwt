@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * RSA Signature-Scheme-with-Appendix (RSASSA) signer of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
- * <p>Supports the following RSA-based JWS algorithms:
+ * <p>Supports the following algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#RS256}

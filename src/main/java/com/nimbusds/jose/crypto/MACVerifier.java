@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Message Authentication Code (MAC) verifier of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
- * <p>Supports the following HMAC-based JWS algorithms:
+ * <p>Supports the following algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS256}
