@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Elliptic Curve Digital Signature Algorithm (ECDSA) verifier of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
- * <p>Supports the following JWS algorithms:
+ * <p>Supports the following EC-based JWS algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES256}

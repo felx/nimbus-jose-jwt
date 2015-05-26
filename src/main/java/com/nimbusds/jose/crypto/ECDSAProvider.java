@@ -13,7 +13,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * (ECDSA) signers and validators of {@link com.nimbusds.jose.JWSObject JWS 
  * objects}.
  *
- * <p>Supports the following JWS algorithms:
+ * <p>Supports the following EC-based JWS algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES256}
