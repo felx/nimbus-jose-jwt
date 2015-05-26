@@ -21,7 +21,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-26)
  */
 public class RSA1_5Test extends TestCase {
 
@@ -134,7 +134,47 @@ public class RSA1_5Test extends TestCase {
 	}
 
 
-	public void testSupportedAlgorithms()
+	public void testClassAlgorithmSupport()
+		throws Exception {
+
+		assertEquals(3, RSAEncrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(RSAEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA1_5));
+		assertTrue(RSAEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(RSAEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA_OAEP_256));
+
+		assertEquals(3, RSADecrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(RSADecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA1_5));
+		assertTrue(RSADecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(RSADecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.RSA_OAEP_256));
+	}
+
+
+	public void testClassEncryptionMethodSupport()
+		throws Exception {
+
+		assertEquals(8, RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(RSAEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+
+		assertEquals(8, RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(RSADecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testInstanceAlgorithmSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
@@ -153,7 +193,7 @@ public class RSA1_5Test extends TestCase {
 	}
 
 
-	public void testSupportedEncryptionMethods()
+	public void testInstanceEncryptionMethodSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new RSAEncrypter(publicKey);

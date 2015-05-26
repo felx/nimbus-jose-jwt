@@ -54,7 +54,6 @@ abstract class RSACryptoProvider extends BaseJWEProvider {
 
 
 	static {
-
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.RSA1_5);
 		algs.add(JWEAlgorithm.RSA_OAEP);
