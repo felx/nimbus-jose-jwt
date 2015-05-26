@@ -5,19 +5,19 @@ import java.util.Set;
 
 
 /**
- * JSON Web Signature (JWS) algorithm provider
+ * JSON Web Signature (JWS) provider
  *
  * <p>The JWS provider can be queried to determine its algorithm capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-26)
  */
-public interface JWSAlgorithmProvider extends AlgorithmProvider {
+public interface JWSProvider extends JOSEProvider {
 
 
 	/**
-	 * Returns the names of the supported JWS algorithms. These correspond
-	 * to the {@code alg} JWS header parameter.
+	 * Returns the names of the supported algorithms by the JWS provider
+	 * instance. These correspond to the {@code alg} JWS header parameter.
 	 *
 	 * @return The supported JWS algorithms, empty set if none.
 	 */

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSAlgorithmProvider;
+import com.nimbusds.jose.JWSProvider;
 import com.nimbusds.jose.jca.JCAProviderAware;
 
 
@@ -16,7 +16,7 @@ import com.nimbusds.jose.jca.JCAProviderAware;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-20)
  */
-abstract class BaseJWSProvider implements JWSAlgorithmProvider, JCAProviderAware {
+abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
 
 
 	/**

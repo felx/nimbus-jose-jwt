@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEAlgorithmProvider;
+import com.nimbusds.jose.JWEProvider;
 import com.nimbusds.jose.jca.JWEJCAProviderAware;
 import com.nimbusds.jose.jca.JWEJCAProviderSpec;
 
@@ -18,7 +18,7 @@ import com.nimbusds.jose.jca.JWEJCAProviderSpec;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-05-20)
  */
-abstract class BaseJWEProvider implements JWEAlgorithmProvider, JWEJCAProviderAware {
+abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
 
 
 	/**

@@ -5,19 +5,19 @@ import java.util.Set;
 
 
 /**
- * JSON Web Encryption (JWE) algorithm provider.
+ * JSON Web Encryption (JWE) provider.
  *
  * <p>The JWE provider can be queried to determine its algorithm capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-26)
  */
-public interface JWEAlgorithmProvider extends AlgorithmProvider {
+public interface JWEProvider extends JOSEProvider {
 
 
 	/**
-	 * Returns the names of the supported JWE algorithms. These correspond
-	 * to the {@code alg} JWE header parameter.
+	 * Returns the names of the supported algorithms by the JWE provider
+	 * instance. These correspond to the {@code alg} JWE header parameter.
 	 *
 	 * @return The supported JWE algorithms, empty set if none.
 	 */
@@ -25,8 +25,8 @@ public interface JWEAlgorithmProvider extends AlgorithmProvider {
 
 
 	/**
-	 * Returns the names of the supported encryption methods. These
-	 * correspond to the {@code enc} JWE header parameter.
+	 * Returns the names of the supported encryption methods by the JWE
+	 * provier. These correspond to the {@code enc} JWE header parameter.
 	 *
 	 * @return The supported encryption methods, empty set if none.
 	 */

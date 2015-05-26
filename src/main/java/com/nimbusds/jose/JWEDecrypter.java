@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-21)
  */
-public interface JWEDecrypter extends JWEAlgorithmProvider {
+public interface JWEDecrypter extends JWEProvider {
 
 
 	/**

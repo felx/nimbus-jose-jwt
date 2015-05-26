@@ -7,7 +7,7 @@ package com.nimbusds.jose;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-05-21)
  */
-public interface JWEEncrypter extends JWEAlgorithmProvider {
+public interface JWEEncrypter extends JWEProvider {
 
 
 	/**
