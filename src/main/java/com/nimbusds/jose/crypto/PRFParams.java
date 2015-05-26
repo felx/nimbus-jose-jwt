@@ -5,13 +5,16 @@ import java.security.Provider;
 
 import net.jcip.annotations.Immutable;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
+
 
 /**
  * Pseudo-Random Function (PRF) parameters, intended for use in the Password-
  * Based Key Derivation Function 2 (PBKDF2).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-24)
+ * @version $version$ (2015-05-26)
  */
 @Immutable
 final class PRFParams {
@@ -82,5 +85,44 @@ final class PRFParams {
 	public int getDerivedKeyByteLength() {
 
 		return dkLen;
+	}
+
+
+	/**
+	 * Resolves the Pseudo-Random Function (PRF) parameters for the
+	 * specified PBES2 JWE algorithm.
+	 *
+	 * @param alg         The JWE algorithm. Must be supported and not
+	 *                    {@code null}.
+	 * @param macProvider The specific MAC JCA provider, {@code null} to
+	 *                    use the default one.
+	 *
+	 * @return The PRF parameters.
+	 *
+	 * @throws JOSEException If the JWE algorithm is not supported.
+	 */
+	public static PRFParams resolve(final JWEAlgorithm alg,
+					   final Provider macProvider)
+		throws JOSEException {
+
+		final String jcaMagAlg;
+		final int dkLen;
+
+		if (JWEAlgorithm.PBES2_HS256_A128KW.equals(alg)) {
+			jcaMagAlg = "HmacSHA256";
+			dkLen = 16;
+		} else if (JWEAlgorithm.PBES2_HS384_A192KW.equals(alg)) {
+			jcaMagAlg = "HmacSHA384";
+			dkLen = 24;
+		} else if (JWEAlgorithm.PBES2_HS512_A256KW.equals(alg)) {
+			jcaMagAlg = "HmacSHA512";
+			dkLen = 32;
+		} else {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(
+				alg,
+				PasswordBasedCryptoProvider.SUPPORTED_ALGORITHMS));
+		}
+
+		return new PRFParams(jcaMagAlg, macProvider, dkLen);
 	}
 }

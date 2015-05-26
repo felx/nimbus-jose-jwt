@@ -15,7 +15,46 @@ import com.nimbusds.jose.*;
 public class PBES2Test extends TestCase {
 
 
-	public void testSupportedAlgorithms() {
+	public void testClassAlgorithmSupport() {
+
+		assertEquals(3, PasswordBasedEncrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS256_A128KW));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS384_A192KW));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS512_A256KW));
+
+		assertEquals(3, PasswordBasedDecrypter.SUPPORTED_ALGORITHMS.size());
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS256_A128KW));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS384_A192KW));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ALGORITHMS.contains(JWEAlgorithm.PBES2_HS512_A256KW));
+	}
+
+
+	public void testClassEncryptionMethodSupport()
+		throws Exception {
+
+		assertEquals(8, PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(PasswordBasedEncrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+
+		assertEquals(8, PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.size());
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192CBC_HS384));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A128GCM));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A192GCM));
+		assertTrue(PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(EncryptionMethod.A256GCM));
+	}
+
+
+	public void testInstanceAlgorithmSupport() {
 
 		JWEEncrypter encrypter = new PasswordBasedEncrypter("secret", 8, 1000);
 
@@ -33,7 +72,7 @@ public class PBES2Test extends TestCase {
 	}
 
 
-	public void testSupportedEncryptionMethods()
+	public void testInstanceEncryptionMethodSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new PasswordBasedEncrypter("secret", 8, 1000);

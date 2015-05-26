@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 
 
@@ -62,42 +61,6 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.PBES2_HS384_A192KW);
 		algs.add(JWEAlgorithm.PBES2_HS512_A256KW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
-	}
-
-
-	/**
-	 * Gets the Pseudo-Random Function (PRF) parameters for the specified
-	 * PBES2 JWE algorithm.
-	 *
-	 * @param alg The JWE algorithm. Must be supported and not
-	 *            {@code null}.
-	 *
-	 * @return The PRF parameters.
-	 *
-	 * @throws JOSEException If the JWE algorithm is not supported.
-	 */
-	protected PRFParams getPRFParams(final JWEAlgorithm alg)
-		throws JOSEException {
-
-		final String jcaMagAlg;
-		final int dkLen;
-
-		if (JWEAlgorithm.PBES2_HS256_A128KW.equals(alg)) {
-			jcaMagAlg = "HmacSHA256";
-			dkLen = 16;
-		} else if (JWEAlgorithm.PBES2_HS384_A192KW.equals(alg)) {
-			jcaMagAlg = "HmacSHA384";
-			dkLen = 24;
-		} else if (JWEAlgorithm.PBES2_HS512_A256KW.equals(alg)) {
-			jcaMagAlg = "HmacSHA512";
-			dkLen = 32;
-		} else {
-			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(
-				alg,
-				SUPPORTED_ALGORITHMS));
-		}
-
-		return new PRFParams(jcaMagAlg, getJWEJCAProvider().getMACProvider(), dkLen);
 	}
 
 

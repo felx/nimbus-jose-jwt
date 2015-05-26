@@ -35,7 +35,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-16)
+ * @version $version$ (2015-05-26)
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -123,7 +123,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 		final byte[] salt = new byte[saltLength];
 		getJWEJCAProvider().getSecureRandom().nextBytes(salt);
 		final byte[] formattedSalt = PBKDF2.formatSalt(alg, salt);
-		final PRFParams prfParams = getPRFParams(alg);
+		final PRFParams prfParams = PRFParams.resolve(alg, getJWEJCAProvider().getMACProvider());
 		final SecretKey psKey = PBKDF2.deriveKey(getPassword(), formattedSalt, iterationCount, prfParams);
 
 		// We need to work on the header
