@@ -23,7 +23,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * Elliptic Curve Digital Signature Algorithm (ECDSA) signer of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
- * <p>Supports the following JSON Web Algorithms (JWAs):
+ * <p>Supports the following JWS algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#ES256}

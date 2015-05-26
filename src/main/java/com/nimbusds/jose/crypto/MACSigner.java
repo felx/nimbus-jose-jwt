@@ -21,7 +21,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * Message Authentication Code (MAC) signer of 
  * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
  *
- * <p>Supports the following JSON Web Algorithms (JWAs):
+ * <p>Supports the following JWS algorithms:
  *
  * <ul>
  *     <li>{@link com.nimbusds.jose.JWSAlgorithm#HS256}
