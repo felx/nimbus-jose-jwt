@@ -18,8 +18,8 @@ import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
- * AES encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
- * is thread-safe.
+ * AES and AES GCM key wrap encrypter of {@link com.nimbusds.jose.JWEObject JWE
+ * objects}. This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *

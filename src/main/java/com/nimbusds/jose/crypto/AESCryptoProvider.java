@@ -12,8 +12,8 @@ import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
- * The base abstract class for AES encrypters and decrypters of {@link
- * com.nimbusds.jose.JWEObject JWE objects}.
+ * The base abstract class for AES and AES GCM key wrap encrypters and
+ * decrypters of {@link com.nimbusds.jose.JWEObject JWE objects}.
  *
  * <p>Supports the following key management algorithms:
  *

@@ -14,8 +14,8 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * AES decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
- * is thread-safe.
+ * AES and AES GCM key wrap decrypter of {@link com.nimbusds.jose.JWEObject JWE
+ * objects}. This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *
