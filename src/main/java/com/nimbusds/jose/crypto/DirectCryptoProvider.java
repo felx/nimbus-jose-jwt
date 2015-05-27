@@ -53,9 +53,6 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	public static final Set<EncryptionMethod> SUPPORTED_ENCRYPTION_METHODS = ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS;
 
 
-	/**
-	 * Initialises the supported algorithms and encryption methods.
-	 */
 	static {
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.DIR);

@@ -19,7 +19,7 @@ import com.nimbusds.jwt.SignedJWT;
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2015-04-23)
+ * @version $version$ (2015-05-27)
  */
 public class A128KWTest extends TestCase {
 
@@ -36,32 +36,24 @@ public class A128KWTest extends TestCase {
 	}
 
 
-	public void testSupportedAlgorithms()
+	public void testInstanceAlgorithmSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new AESEncrypter(key128);
 
-		assertEquals(6, encrypter.supportedJWEAlgorithms().size());
+		assertEquals(2, encrypter.supportedJWEAlgorithms().size());
 		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
 		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 
 		JWEDecrypter decrypter = new AESDecrypter(key128);
 
-		assertEquals(6, decrypter.supportedJWEAlgorithms().size());
+		assertEquals(2, decrypter.supportedJWEAlgorithms().size());
 		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128KW));
-		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192KW));
-		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256KW));
 		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A128GCMKW));
-		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A192GCMKW));
-		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.A256GCMKW));
 	}
 
 
-	public void testSupportedEncryptionMethods()
+	public void testInstanceEncryptionMethodSupport()
 		throws Exception {
 
 		JWEEncrypter encrypter = new AESEncrypter(key128);

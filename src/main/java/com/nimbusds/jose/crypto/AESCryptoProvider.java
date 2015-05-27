@@ -6,7 +6,9 @@ import java.util.*;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
@@ -39,7 +41,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-05-27)
  */
 abstract class AESCryptoProvider extends BaseJWEProvider {
 
@@ -57,7 +59,7 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The JWE algorithms compatible with each key size.
+	 * The JWE algorithms compatible with each key size in bits.
 	 */
 	public static final Map<Integer,Set<JWEAlgorithm>> COMPATIBLE_ALGORITHMS;
 
@@ -73,18 +75,18 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
 		Map<Integer,Set<JWEAlgorithm>> algsMap = new HashMap<>();
-		Set<JWEAlgorithm> byte16Algs = new HashSet<>();
-		Set<JWEAlgorithm> byte24Algs = new HashSet<>();
-		Set<JWEAlgorithm> byte32Algs = new HashSet<>();
-		byte16Algs.add(JWEAlgorithm.A128GCMKW);
-		byte16Algs.add(JWEAlgorithm.A128KW);
-		byte24Algs.add(JWEAlgorithm.A192GCMKW);
-		byte24Algs.add(JWEAlgorithm.A192KW);
-		byte32Algs.add(JWEAlgorithm.A256GCMKW);
-		byte32Algs.add(JWEAlgorithm.A256KW);
-		algsMap.put(16,Collections.unmodifiableSet(byte16Algs));
-		algsMap.put(24,Collections.unmodifiableSet(byte24Algs));
-		algsMap.put(32,Collections.unmodifiableSet(byte32Algs));
+		Set<JWEAlgorithm> bit128Algs = new HashSet<>();
+		Set<JWEAlgorithm> bit192Algs = new HashSet<>();
+		Set<JWEAlgorithm> bit256Algs = new HashSet<>();
+		bit128Algs.add(JWEAlgorithm.A128GCMKW);
+		bit128Algs.add(JWEAlgorithm.A128KW);
+		bit192Algs.add(JWEAlgorithm.A192GCMKW);
+		bit192Algs.add(JWEAlgorithm.A192KW);
+		bit256Algs.add(JWEAlgorithm.A256GCMKW);
+		bit256Algs.add(JWEAlgorithm.A256KW);
+		algsMap.put(128,Collections.unmodifiableSet(bit128Algs));
+		algsMap.put(192,Collections.unmodifiableSet(bit192Algs));
+		algsMap.put(256,Collections.unmodifiableSet(bit256Algs));
 		COMPATIBLE_ALGORITHMS = Collections.unmodifiableMap(algsMap);
 	}
 
@@ -96,21 +98,41 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 
 
 	/**
+	 * Returns the compatible JWE algorithms for the specified Key
+	 * Encryption Key (CEK) length.
+	 *
+	 * @param kekLength The KEK length in bits.
+	 *
+	 * @return The compatible JWE algorithms.
+	 *
+	 * @throws JOSEException If the KEK length is not compatible.
+	 */
+	private static Set<JWEAlgorithm> getCompatibleJWEAlgorithms(final int kekLength)
+		throws JOSEException {
+
+		Set<JWEAlgorithm> algs = COMPATIBLE_ALGORITHMS.get(kekLength);
+
+		if (algs == null) {
+			throw new JOSEException("The Key Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32 bytes)");
+		}
+
+		return algs;
+	}
+
+
+	/**
 	 * Creates a new AES encryption / decryption provider.
 	 *
-	 *  @param kek The Key Encrypting Key. Must be 128 bits (16 bytes), 192
+	 *  @param kek The Key Encryption Key. Must be 128 bits (16 bytes), 192
 	 *             bits (24 bytes) or 256 bits (32 bytes). Must not be
 	 *             {@code null}.
+	 *
+	 * @throws JOSEException If the KEK length is invalid.
 	 */
-	protected AESCryptoProvider(final SecretKey kek) {
+	protected AESCryptoProvider(final SecretKey kek)
+		throws JOSEException {
 
-		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-
-		byte[] keyBytes = kek.getEncoded();
-
-		if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
-			throw new IllegalArgumentException("The Key Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32 bytes)");
-		}
+		super(getCompatibleJWEAlgorithms(ByteUtils.bitLength(kek.getEncoded())), ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 
 		this.kek = kek;
 	}
@@ -124,16 +146,5 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	public SecretKey getKey() {
 
 		return kek;
-	}
-
-
-	/**
-	 * Returns the JWE algorithms compatible with the key size.
-	 *
-	 * @return The set of compatible algorithms.
-	 */
-	public Set<JWEAlgorithm> compatibleJWEAlgorithms() {
-
-		return COMPATIBLE_ALGORITHMS.get(kek.getEncoded().length);
 	}
 }
