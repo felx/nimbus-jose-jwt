@@ -69,9 +69,6 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	public static final Set<ECKey.Curve> SUPPORTED_EC;
 
 
-	/**
-	 * Initialises the supported algorithms and encryption methods.
-	 */
 	static {
 		Set<JWEAlgorithm> algs = new LinkedHashSet<>();
 		algs.add(JWEAlgorithm.ECDH_ES);
@@ -89,7 +86,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * The key curve.
+	 * The elliptic curve.
 	 */
 	private final ECKey.Curve curve;
 
@@ -103,6 +100,11 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Creates a new Elliptic Curve Diffie-Hellman encryption /decryption
 	 * provider.
+	 *
+	 * @param curve The elliptic curve. Must be supported and not
+	 *              {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve is not supported.
 	 */
 	protected ECDHCryptoProvider(final ECKey.Curve curve)
 		throws JOSEException {
@@ -148,7 +150,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * Returns the elliptic curve of the key (using JWK designation).
 	 *
-	 * @return The curve.
+	 * @return The elliptic curve.
 	 */
 	public ECKey.Curve getCurve() {
 

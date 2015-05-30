@@ -28,7 +28,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * Tests ECDH encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-21)
+ * @version $version$ (2015-05-30)
  */
 public class ECDHCryptoTest extends TestCase {
 
@@ -688,5 +688,20 @@ public class ECDHCryptoTest extends TestCase {
 		} catch (JOSEException e) {
 			// ok
 		}
+	}
+
+
+	public void testECKeyGetters()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+
+		ECPublicKey ecPublicKey = ecJWK.toECPublicKey();
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecPublicKey);
+		assertEquals(ecPublicKey, encrypter.getPublicKey());
+
+		ECPrivateKey ecPrivateKey = ecJWK.toECPrivateKey();
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecPrivateKey);
+		assertEquals(ecPrivateKey, decrypter.getPrivateKey());
 	}
 }

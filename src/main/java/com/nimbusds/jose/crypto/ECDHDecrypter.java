@@ -47,7 +47,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-22)
+ * @version $version$ (2015-05-30)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -98,6 +98,17 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		}
 
 		this.privateKey = ecJWK.toECPrivateKey();
+	}
+
+
+	/**
+	 * Returns the private EC key.
+	 *
+	 * @return The private EC key.
+	 */
+	public ECPrivateKey getPrivateKey() {
+
+		return privateKey;
 	}
 
 

@@ -50,7 +50,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-21)
+ * @version $version$ (2015-05-30)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -91,6 +91,17 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		super(ecJWK.getCurve());
 
 		publicKey = ecJWK.toECPublicKey();
+	}
+
+
+	/**
+	 * Returns the public EC key.
+	 *
+	 * @return The public EC key.
+	 */
+	public ECPublicKey getPublicKey() {
+
+		return publicKey;
 	}
 
 
