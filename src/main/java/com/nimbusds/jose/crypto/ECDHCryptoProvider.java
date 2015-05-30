@@ -148,7 +148,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 
 	/**
-	 * Returns the elliptic curve of the key (using JWK designation).
+	 * Returns the elliptic curve of the key (JWK designation).
 	 *
 	 * @return The elliptic curve.
 	 */
