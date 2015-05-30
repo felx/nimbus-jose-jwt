@@ -92,8 +92,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 *              Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the EC JWK doesn't contain a private part,
-	 *                       its extraction failed, or elliptic curve is
-	 *                       not supported.
+	 *                       its extraction failed, or the elliptic curve
+	 *                       is not supported.
 	 */
 	public ECDSASigner(final ECKey ecJWK)
 		throws JOSEException {
