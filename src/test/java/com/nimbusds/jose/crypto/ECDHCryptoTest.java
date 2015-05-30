@@ -7,6 +7,8 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -709,6 +711,45 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCritParamDeferral()
 		throws Exception {
 
-		// todo
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+		jweObject.encrypt(new ECDHEncrypter(ecJWK));
+
+		jweObject = JWEObject.parse(jweObject.serialize());
+
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey(), new HashSet<String>(Arrays.asList("exp"))));
+
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+	}
+
+
+	public void testCritParamReject()
+		throws Exception {
+
+		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+
+		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
+			customParam("exp", "2014-04-24").
+			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			build();
+
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
+		jweObject.encrypt(new ECDHEncrypter(ecJWK));
+
+		jweObject = JWEObject.parse(jweObject.serialize());
+
+		try {
+			jweObject.decrypt(new ECDHDecrypter(ecJWK));
+			fail();
+		} catch (JOSEException e) {
+			// ok
+			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
+		}
 	}
 }
