@@ -74,9 +74,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	public ECDHDecrypter(final ECPrivateKey privateKey)
 		throws JOSEException {
 
-		super(ECKey.Curve.forECParameterSpec(privateKey.getParams()));
-
-		this.privateKey = privateKey;
+		this(privateKey, null);
 	}
 
 
@@ -98,6 +96,27 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		}
 
 		this.privateKey = ecJWK.toECPrivateKey();
+	}
+
+
+	/**
+	 * Creates a new Elliptic Curve Diffie-Hellman decrypter.
+	 *
+	 * @param privateKey     The private EC key. Must not be {@code null}.
+	 * @param defCritHeaders The names of the critical header parameters
+	 *                       that are deferred to the application for
+	 *                       processing, empty set or {@code null} if none.
+	 *
+	 * @throws JOSEException If the elliptic curve is not supported.
+	 */
+	public ECDHDecrypter(final ECPrivateKey privateKey, final Set<String> defCritHeaders)
+		throws JOSEException {
+
+		super(ECKey.Curve.forECParameterSpec(privateKey.getParams()));
+
+		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
+
+		this.privateKey = privateKey;
 	}
 
 

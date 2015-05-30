@@ -704,4 +704,11 @@ public class ECDHCryptoTest extends TestCase {
 		ECDHDecrypter decrypter = new ECDHDecrypter(ecPrivateKey);
 		assertEquals(ecPrivateKey, decrypter.getPrivateKey());
 	}
+
+
+	public void testCritParamDeferral()
+		throws Exception {
+
+		// todo
+	}
 }
