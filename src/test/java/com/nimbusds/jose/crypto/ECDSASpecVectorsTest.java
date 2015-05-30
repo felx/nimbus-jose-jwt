@@ -3,6 +3,7 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 
+import com.nimbusds.jose.jwk.ECKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -17,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-05-30)
  */
 public class ECDSASpecVectorsTest extends TestCase {
 
@@ -55,6 +56,12 @@ public class ECDSASpecVectorsTest extends TestCase {
 		(byte) 223, (byte) 132, (byte) 244, (byte) 178 };
 
 
+	private final static ECKey EC_JWK = new ECKey.Builder(ECKey.Curve.P_256,
+		Base64URL.encode(x), Base64URL.encode(y)).
+		d(Base64URL.encode(d)).
+		build();
+
+
 	private static final Base64URL b64header = new Base64URL("eyJhbGciOiJFUzI1NiJ9");
 
 
@@ -70,21 +77,18 @@ public class ECDSASpecVectorsTest extends TestCase {
 			"pmWQxfKTUJqPP3-Kg6NU1Q");
 
 
-	public void testSupportedAlgorithms() {
+	public void testInstanceAlgorithmSupport()
+		throws Exception {
 
-		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
+		ECDSASigner signer = new ECDSASigner(EC_JWK);
 
-		assertEquals(3, signer.supportedJWSAlgorithms().size());
+		assertEquals(1, signer.supportedJWSAlgorithms().size());
 		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.ES256));
-		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.ES384));
-		assertTrue(signer.supportedJWSAlgorithms().contains(JWSAlgorithm.ES512));
 
-		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		ECDSAVerifier verifier = new ECDSAVerifier(EC_JWK);
 
-		assertEquals(3, verifier.supportedJWSAlgorithms().size());
+		assertEquals(1, verifier.supportedJWSAlgorithms().size());
 		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES256));
-		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES384));
-		assertTrue(verifier.supportedJWSAlgorithms().contains(JWSAlgorithm.ES512));
 	}
 
 
@@ -101,17 +105,14 @@ public class ECDSASpecVectorsTest extends TestCase {
 		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
 
 
-		ECDSASigner signer = new ECDSASigner(new BigInteger(1, d));
-		assertEquals("Private key check", new BigInteger(1, d), signer.getD());
+		ECDSASigner signer = new ECDSASigner(EC_JWK);
 
 		jwsObject.sign(signer);
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
 
-		ECDSAVerifier verifier = new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
-		assertEquals("X check", new BigInteger(1, x), verifier.getX());
-		assertEquals("Y check", new BigInteger(1, y), verifier.getY());
+		ECDSAVerifier verifier = new ECDSAVerifier(EC_JWK);
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -141,7 +142,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 		JWSHeader header = JWSHeader.parse(b64header);
 
-		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		JWSVerifier verifier =  new ECDSAVerifier(EC_JWK);
 
 		boolean verified = verifier.verify(header, signable, b64sig);
 
@@ -160,7 +161,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 
-		JWSVerifier verifier =  new ECDSAVerifier(new BigInteger(1, x), new BigInteger(1, y));
+		JWSVerifier verifier =  new ECDSAVerifier(EC_JWK);
 
 		boolean verified = jwsObject.verify(verifier);
 

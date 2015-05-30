@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-05-30)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -46,15 +47,9 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 
 
 	/**
-	 * The 'x' EC coordinate.
+	 * The public EC key.
 	 */
-	private final BigInteger x;
-
-
-	/**
-	 * The 'y' EC coordinate.
-	 */
-	private final BigInteger y;
+	private final ECPublicKey publicKey;
 
 
 
@@ -62,27 +57,16 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * verifier.
 	 *
-	 * @param x The 'x' coordinate for the elliptic curve point. Must not 
-	 *          be {@code null}.
-	 * @param y The 'y' coordinate for the elliptic curve point. Must not 
-	 *          be {@code null}.
-	 */
-	public ECDSAVerifier(final BigInteger x, final BigInteger y) {
-
-		this(x, y, null);
-	}
-
-
-	/**
-	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
-	 * verifier.
-	 *
 	 * @param publicKey The public EC key. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
 	 */
-	public ECDSAVerifier(final ECPublicKey publicKey) {
+	public ECDSAVerifier(final ECPublicKey publicKey)
+		throws JOSEException {
 
-		this(publicKey.getW().getAffineX(), publicKey.getW().getAffineY());
+		this(publicKey, null);
 	}
+
 
 
 	/**
@@ -90,10 +74,13 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 	 * verifier.
 	 *
 	 * @param ecJWK The EC JSON Web Key (JWK). Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
 	 */
-	public ECDSAVerifier(final ECKey ecJWK) {
+	public ECDSAVerifier(final ECKey ecJWK)
+		throws JOSEException {
 
-		this(ecJWK.getX().decodeToBigInteger(), ecJWK.getY().decodeToBigInteger(), null);
+		this(ecJWK.toECPublicKey());
 	}
 
 
@@ -101,51 +88,32 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
 	 * verifier.
 	 *
-	 * @param x              The 'x' coordinate for the elliptic curve
-	 *                       point. Must not be {@code null}.
-	 * @param y              The 'y' coordinate for the elliptic curve
-	 *                       point. Must not be {@code null}.
+	 * @param publicKey      The public EC key. Must not be {@code null}.
 	 * @param defCritHeaders The names of the critical header parameters
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
 	 */
-	public ECDSAVerifier(final BigInteger x, final BigInteger y, final Set<String> defCritHeaders) {
+	public ECDSAVerifier(final ECPublicKey publicKey, final Set<String> defCritHeaders)
+		throws JOSEException {
 
-		if (x == null) {
-			throw new IllegalArgumentException("The \"x\" EC coordinate must not be null");
-		}
+		super(ECDSA.resolveAlgorithm(publicKey));
 
-		this.x = x;
-
-		if (y == null) {
-			throw new IllegalArgumentException("The \"y\" EC coordinate must not be null");
-		}
-
-		this.y = y;
+		this.publicKey = publicKey;
 
 		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}
 
 
 	/**
-	 * Gets the 'x' coordinate for the elliptic curve point.
+	 * Returns the public EC key.
 	 *
-	 * @return The 'x' coordinate.
+	 * @return The public EC key.
 	 */
-	public BigInteger getX() {
+	public ECPublicKey getPublicKey() {
 
-		return x;
-	}
-
-
-	/**
-	 * Gets the 'y' coordinate for the elliptic curve point.
-	 *
-	 * @return The 'y' coordinate.
-	 */
-	public BigInteger getY() {
-
-		return y;
+		return publicKey;
 	}
 
 
@@ -168,6 +136,12 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 		              final byte[] signedContent, 
 		              final Base64URL signature)
 		throws JOSEException {
+
+		final JWSAlgorithm alg = header.getAlgorithm();
+
+		if (! supportedJWSAlgorithms().contains(alg)) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(alg, supportedJWSAlgorithms()));
+		}
 
 		if (! critPolicy.headerPasses(header)) {
 			return false;
@@ -199,7 +173,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 
 
 		ECCurve curve = x9ECParameters.getCurve();
-		ECPoint q = curve.createPoint(x, y);
+		ECPoint q = curve.createPoint(publicKey.getW().getAffineX(), publicKey.getW().getAffineY());
 
 		ECDomainParameters ecDomainParameters = new ECDomainParameters(
 			curve, 

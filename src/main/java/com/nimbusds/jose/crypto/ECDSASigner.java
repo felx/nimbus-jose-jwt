@@ -9,9 +9,11 @@ import net.jcip.annotations.ThreadSafe;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.crypto.params.ECKeyParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.ECKey;
@@ -33,44 +35,52 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-05-30)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 
 	/**
-	 * The private key.
+	 * The private EC key.
 	 */
-	private final BigInteger privateKey;
+	private final ECPrivateKey privateKey;
 
 
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * signer.
 	 *
-	 * @param privateKey The private key ('d' parameter). Must not be 
-	 *                   {@code null}.
+	 * @param privateKey The private EC key. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
 	 */
-	public ECDSASigner(final BigInteger privateKey) {
+	public ECDSASigner(final ECPrivateKey privateKey)
+		throws JOSEException {
 
-		if (privateKey == null) {
-			throw new IllegalArgumentException("The private key must not be null");
-		}
+		super(ECDSA.resolveAlgorithm(privateKey));
 
 		this.privateKey = privateKey;
 	}
 
 
 	/**
-	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
-	 * signer.
+	 * Extracts the private EC key from the specified EC JWK.
 	 *
-	 * @param privateKey The private EC key. Must not be {@code null}.
+	 * @param ecJWK The EC JWK. Must not be {@code null}.
+	 *
+	 * @return The private EC key.
+	 *
+	 * @throws JOSEException If the EC JWK doesn't contain a private part.
 	 */
-	public ECDSASigner(final ECPrivateKey privateKey) {
+	private static ECPrivateKey extractPrivateKey(final ECKey ecJWK)
+		throws JOSEException {
 
-		this(privateKey.getS());
+		if (! ecJWK.isPrivate()) {
+			throw new JOSEException("The EC JWK doesn't contain a private part");
+		}
+
+		return ecJWK.toECPrivateKey(); // JCA provider not supported due to static context
 	}
 
 
@@ -81,26 +91,23 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 * @param ecJWK The EC JSON Web Key (JWK). Must contain a private part.
 	 *              Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the EC JWK doesn't contain a private part
-	 *                       or its extraction failed.
+	 * @throws JOSEException If the EC JWK doesn't contain a private part,
+	 *                       its extraction failed, or elliptic curve is
+	 *                       not supported.
 	 */
 	public ECDSASigner(final ECKey ecJWK)
 		throws JOSEException {
 
-		if (! ecJWK.isPrivate()) {
-			throw new JOSEException("The EC JWK doesn't contain a private part");
-		}
-
-		privateKey = ecJWK.getD().decodeToBigInteger();
+		this(extractPrivateKey(ecJWK));
 	}
 
 
 	/**
-	 * Gets the private key 'd' parameter.
+	 * Returns the private EC key.
 	 *
-	 * @return The private key 'd' parameter.
+	 * @return The private EC key.
 	 */
-	public BigInteger getD() {
+	public ECPrivateKey getPrivateKey() {
 
 		return privateKey;
 	}
@@ -179,6 +186,13 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
+		final JWSAlgorithm alg = header.getAlgorithm();
+
+		if (! supportedJWSAlgorithms().contains(alg)) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(alg, supportedJWSAlgorithms()));
+		}
+
+		// todo refactor for JCA
 		ECDSAParameters initParams = ECDSA.getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
@@ -191,7 +205,9 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 			x9ECParameters.getSeed());
 
 		ECPrivateKeyParameters ecPrivateKeyParameters = 
-			new ECPrivateKeyParameters(privateKey, ecParameterSpec);
+			new ECPrivateKeyParameters(privateKey.getS(), ecParameterSpec);
+
+		ECKeyParameters params;
 
 		digest.update(signingInput, 0, signingInput.length);
 		byte[] out = new byte[digest.getDigestSize()];

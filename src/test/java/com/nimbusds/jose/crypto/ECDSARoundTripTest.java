@@ -29,7 +29,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Tests round-trip ES256, EC384 and EC512 JWS signing and verification.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version $version$ (2015-05-30)
  */
 public class ECDSARoundTripTest extends TestCase {
 
@@ -49,7 +49,7 @@ public class ECDSARoundTripTest extends TestCase {
 		COFACTOR);
 
 
-	private static final ECParameterSpec EC384SPEC = new ECParameterSpec(
+	public static final ECParameterSpec EC384SPEC = new ECParameterSpec(
 		new EllipticCurve(
 			new ECFieldFp(new BigInteger("39402006196394479212279040100143613805079739270465" +
 				                     "44666794829340424572177149687032904726608825893800" +
@@ -106,7 +106,7 @@ public class ECDSARoundTripTest extends TestCase {
 		COFACTOR);
 
 
-	private static KeyPair createECKeyPair(final AlgorithmParameterSpec spec)
+	public static KeyPair createECKeyPair(final AlgorithmParameterSpec spec)
 		throws Exception {
 
 		// Create the public and private keys
@@ -116,7 +116,7 @@ public class ECDSARoundTripTest extends TestCase {
 	}
 
 
-	private static JWSObject createInitialJWSObject(final JWSAlgorithm alg) {
+	public static JWSObject createInitialJWSObject(final JWSAlgorithm alg) {
 
 		JWSHeader header = new JWSHeader.Builder(alg).
 			contentType("text/plain").
@@ -138,16 +138,14 @@ public class ECDSARoundTripTest extends TestCase {
 		JWSObject jwsObject = createInitialJWSObject(JWSAlgorithm.ES256);
 
 		// Initialise signer
-		JWSSigner signer = new ECDSASigner(privateKey.getS());
+		JWSSigner signer = new ECDSASigner(privateKey);
 
 		jwsObject.sign(signer);
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
 		// Initialise verifier
-		BigInteger x = publicKey.getW().getAffineX();
-		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y);
+		JWSVerifier verifier = new ECDSAVerifier(publicKey);
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -167,16 +165,14 @@ public class ECDSARoundTripTest extends TestCase {
 		JWSObject jwsObject = createInitialJWSObject(JWSAlgorithm.ES384);
 
 		// Initialise signer
-		JWSSigner signer = new ECDSASigner(privateKey.getS());
+		JWSSigner signer = new ECDSASigner(privateKey);
 
 		jwsObject.sign(signer);
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
 		// Initialise verifier
-		BigInteger x = publicKey.getW().getAffineX();
-		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y);
+		JWSVerifier verifier = new ECDSAVerifier(publicKey);
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -196,16 +192,14 @@ public class ECDSARoundTripTest extends TestCase {
 		JWSObject jwsObject = createInitialJWSObject(JWSAlgorithm.ES512);
 
 		// Initialise signer
-		JWSSigner signer = new ECDSASigner(privateKey.getS());
+		JWSSigner signer = new ECDSASigner(privateKey);
 
 		jwsObject.sign(signer);
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
 		// Initialise verifier
-		BigInteger x = publicKey.getW().getAffineX();
-		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y);
+		JWSVerifier verifier = new ECDSAVerifier(publicKey);
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -226,7 +220,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Initialise signer
 		ECDSASigner signer = new ECDSASigner(privateKey);
-		assertEquals(privateKey.getS(), signer.getD());
+		assertEquals(privateKey, signer.getPrivateKey());
 
 		jwsObject.sign(signer);
 
@@ -234,8 +228,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Initialise verifier
 		ECDSAVerifier verifier = new ECDSAVerifier(publicKey);
-		assertEquals(publicKey.getW().getAffineX(), verifier.getX());
-		assertEquals(publicKey.getW().getAffineY(), verifier.getY());
+		assertEquals(publicKey, verifier.getPublicKey());
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -257,7 +250,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Initialise signer
 		ECDSASigner signer = new ECDSASigner(ecJWK);
-		assertEquals(ecJWK.getD().decodeToBigInteger(), signer.getD());
+		assertEquals(ecJWK.getD().decodeToBigInteger(), signer.getPrivateKey().getS());
 
 		jwsObject.sign(signer);
 
@@ -265,8 +258,8 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Initialise verifier
 		ECDSAVerifier verifier = new ECDSAVerifier(ecJWK);
-		assertEquals(ecJWK.getX().decodeToBigInteger(), verifier.getX());
-		assertEquals(ecJWK.getY().decodeToBigInteger(), verifier.getY());
+		assertEquals(ecJWK.getX().decodeToBigInteger(), verifier.getPublicKey().getW().getAffineX());
+		assertEquals(ecJWK.getY().decodeToBigInteger(), verifier.getPublicKey().getW().getAffineY());
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -288,15 +281,13 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSObject jwsObject = new JWSObject(header, new Payload("Hello world!"));
 
-		JWSSigner signer = new ECDSASigner(privateKey.getS());
+		JWSSigner signer = new ECDSASigner(privateKey);
 
 		jwsObject.sign(signer);
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
-		BigInteger x = publicKey.getW().getAffineX();
-		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y, new HashSet<>(Arrays.asList("exp")));
+		JWSVerifier verifier = new ECDSAVerifier(publicKey, new HashSet<>(Arrays.asList("exp")));
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -320,15 +311,13 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSObject jwsObject = new JWSObject(header, new Payload("Hello world!"));
 
-		JWSSigner signer = new ECDSASigner(privateKey.getS());
+		JWSSigner signer = new ECDSASigner(privateKey);
 
 		jwsObject.sign(signer);
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
-		BigInteger x = publicKey.getW().getAffineX();
-		BigInteger y = publicKey.getW().getAffineY();
-		JWSVerifier verifier = new ECDSAVerifier(x, y);
+		JWSVerifier verifier = new ECDSAVerifier(publicKey);
 
 		boolean verified = jwsObject.verify(verifier);
 

@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.ECKey;
 /**
  * Jose4j interop test.
  *
- * @version $version$ (2015-05-04)
+ * @version $version$ (2015-05-30)
  */
 public class ECDSAJose4JTest extends TestCase {
 

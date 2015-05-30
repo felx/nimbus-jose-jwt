@@ -1,6 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.interfaces.ECKey;
+import java.security.spec.ECParameterSpec;
+
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
@@ -12,15 +15,61 @@ import org.bouncycastle.crypto.digests.SHA512Digest;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import static com.nimbusds.jose.jwk.ECKey.Curve;
 
 
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-05-30)
  */
 class ECDSA {
+
+
+	/**
+	 * Resolves the matching EC DSA algorithm for the specified EC key
+	 * (public or private).
+	 *
+	 * @param ecKey The EC key. Must not be {@code null}.
+	 *
+	 * @return The matching EC DSA algorithm.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
+	 */
+	public static JWSAlgorithm resolveAlgorithm(final ECKey ecKey)
+		throws JOSEException {
+
+		ECParameterSpec ecParameterSpec = ecKey.getParams();
+		return resolveAlgorithm(Curve.forECParameterSpec(ecParameterSpec));
+	}
+
+
+	/**
+	 * Resolves the matching EC DSA algorithm for the specified elliptic
+	 * curve.
+	 *
+	 * @param curve The elliptic curve. May be {@code null}.
+	 *
+	 * @return The matching EC DSA algorithm.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
+	 */
+	public static JWSAlgorithm resolveAlgorithm(final Curve curve)
+		throws JOSEException {
+
+		if (curve == null) {
+			throw new JOSEException("The EC key curve is not supported, must be P256, P384 or P521");
+		} else if (Curve.P_256.equals(curve)) {
+			return JWSAlgorithm.ES256;
+		} else if (Curve.P_384.equals(curve)) {
+			return JWSAlgorithm.ES384;
+		} else if (Curve.P_521.equals(curve)) {
+			return JWSAlgorithm.ES512;
+		} else {
+			throw new JOSEException("Unexpected curve: " + curve);
+		}
+	}
 
 
 	/**

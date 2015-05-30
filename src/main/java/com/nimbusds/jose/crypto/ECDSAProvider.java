@@ -1,10 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 
 
@@ -23,7 +22,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-05-30)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 
@@ -46,10 +45,20 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA) 
 	 * provider.
+	 *
+	 * @param alg The EC-DSA algorithm. Must be supported and not
+	 *            {@code null}.
+	 *
+	 * @throws JOSEException If JWS algorithm is not supported.
 	 */
-	protected ECDSAProvider() {
+	protected ECDSAProvider(final JWSAlgorithm alg)
+		throws JOSEException {
 
-		super(SUPPORTED_ALGORITHMS);
+		super(new HashSet<JWSAlgorithm>(Arrays.asList(alg)));
+
+		if (! SUPPORTED_ALGORITHMS.contains(alg)) {
+			throw new JOSEException("Unsupported EC DSA algorithm: " + alg);
+		}
 	}
 }
 

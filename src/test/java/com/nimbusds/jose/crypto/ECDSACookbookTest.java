@@ -13,7 +13,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Tests EC JWS verification. Uses test vectors from the JOSE cookbook.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-22)
+ * @version $version$ (2015-05-22)
  */
 public class ECDSACookbookTest extends TestCase {
 
@@ -55,7 +55,7 @@ public class ECDSACookbookTest extends TestCase {
 		assertEquals(JWSAlgorithm.ES512, jwsObject.getHeader().getAlgorithm());
 		assertEquals("bilbo.baggins@hobbiton.example", jwsObject.getHeader().getKeyID());
 
-		JWSVerifier verifier = new ECDSAVerifier(jwk.getX().decodeToBigInteger(), jwk.getY().decodeToBigInteger());
+		JWSVerifier verifier = new ECDSAVerifier(jwk);
 
 		assertTrue(jwsObject.verify(verifier));
 
