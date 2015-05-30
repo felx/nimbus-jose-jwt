@@ -66,7 +66,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * The supported EC JWK curves by the ECDH crypto provider class.
 	 */
-	public static final Set<ECKey.Curve> SUPPORTED_EC;
+	public static final Set<ECKey.Curve> SUPPORTED_ELLIPTIC_CURVES;
 
 
 	static {
@@ -81,7 +81,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 		curves.add(ECKey.Curve.P_256);
 		curves.add(ECKey.Curve.P_384);
 		curves.add(ECKey.Curve.P_521);
-		SUPPORTED_EC = Collections.unmodifiableSet(curves);
+		SUPPORTED_ELLIPTIC_CURVES = Collections.unmodifiableSet(curves);
 	}
 
 
@@ -113,9 +113,9 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 
 		ECKey.Curve definedCurve = curve != null ? curve : new ECKey.Curve("unknown");
 
-		if (! SUPPORTED_EC.contains(curve)) {
+		if (! SUPPORTED_ELLIPTIC_CURVES.contains(curve)) {
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
-				definedCurve, SUPPORTED_EC));
+				definedCurve, SUPPORTED_ELLIPTIC_CURVES));
 		}
 
 		this.curve = curve;
@@ -143,7 +143,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 */
 	public Set<ECKey.Curve> supportedEllipticCurves() {
 
-		return SUPPORTED_EC;
+		return SUPPORTED_ELLIPTIC_CURVES;
 	}
 
 
