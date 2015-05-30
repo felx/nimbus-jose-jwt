@@ -147,6 +147,8 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 			return false;
 		}
 
+		// TODO refactor for JCA
+
 		ECDSAParameters initParams = ECDSA.getECDSAParameters(header.getAlgorithm());
 		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
 		Digest digest = initParams.getDigest();
