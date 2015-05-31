@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-22)
+ * @version $version$ (2015-05-31)
  */
 @ThreadSafe
 public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -129,7 +129,7 @@ public class RSASSAVerifier extends RSASSAProvider implements JWSVerifier, Criti
 			return false;
 		}
 
-		final Signature verifier = getRSASignerAndVerifier(header.getAlgorithm(), getJCAProvider());
+		final Signature verifier = RSASSA.getSignerAndVerifier(header.getAlgorithm(), getJCAProvider());
 
 		try {
 			verifier.initVerify(publicKey);
