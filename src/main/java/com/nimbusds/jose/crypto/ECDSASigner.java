@@ -35,7 +35,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-05-31)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -65,26 +65,6 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 
 	/**
-	 * Extracts the private EC key from the specified EC JWK.
-	 *
-	 * @param ecJWK The EC JWK. Must not be {@code null}.
-	 *
-	 * @return The private EC key.
-	 *
-	 * @throws JOSEException If the EC JWK doesn't contain a private part.
-	 */
-	private static ECPrivateKey extractPrivateKey(final ECKey ecJWK)
-		throws JOSEException {
-
-		if (! ecJWK.isPrivate()) {
-			throw new JOSEException("The EC JWK doesn't contain a private part");
-		}
-
-		return ecJWK.toECPrivateKey(); // JCA provider not supported due to static context
-	}
-
-
-	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
 	 * signer.
 	 *
@@ -98,7 +78,13 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	public ECDSASigner(final ECKey ecJWK)
 		throws JOSEException {
 
-		this(extractPrivateKey(ecJWK));
+		super(ECDSA.resolveAlgorithm(ecJWK.getCurve()));
+
+		if (! ecJWK.isPrivate()) {
+			throw new JOSEException("The EC JWK doesn't contain a private part");
+		}
+
+		privateKey = ecJWK.toECPrivateKey();
 	}
 
 
