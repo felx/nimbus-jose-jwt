@@ -3,10 +3,13 @@ package com.nimbusds.jose.crypto;
 
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECPrivateKeySpec;
+import java.security.spec.ECPublicKeySpec;
 
 import junit.framework.TestCase;
 
@@ -26,21 +29,51 @@ import com.nimbusds.jose.Payload;
 public class OpenSSLWithECKeyTest extends TestCase {
 
 
+	private static ECPublicKey fixAlg(final ECPublicKey key)
+		throws Exception {
+
+		KeyFactory keyFactory = KeyFactory.getInstance("EC");
+
+		return (ECPublicKey)keyFactory.generatePublic(
+			new ECPublicKeySpec(key.getW(), key.getParams()));
+	}
+
+
+	private static ECPrivateKey fixAlg(final ECPrivateKey key)
+		throws Exception {
+
+		KeyFactory keyFactory = KeyFactory.getInstance("EC");
+
+		return (ECPrivateKey)keyFactory.generatePrivate(
+			new ECPrivateKeySpec(key.getS(), key.getParams()));
+	}
+
+
+	private static KeyPair parseKeyPair(final String file)
+		throws Exception {
+
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream(file)));
+		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
+		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
+		pemParser.close();
+		Security.removeProvider("BC");
+		return keyPair;
+	}
+
+
 	public void testES256()
 		throws Exception {
 
 		// Extract EC key pair generated with
 		// openssl ecparam -genkey -name prime256v1 -noout -out testprivatekey-ec256.pem
-
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec256-key.pem")));
-		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
-		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
-		pemParser.close();
+		KeyPair keyPair = parseKeyPair("./src/test/keys/test-ec256-key.pem");
 
 		ECPrivateKey privateKey = (ECPrivateKey)keyPair.getPrivate();
+		privateKey = fixAlg(privateKey); // BC parses key alg as ECDSA instead of EC
 		ECPublicKey publicKey = (ECPublicKey)keyPair.getPublic();
+		publicKey = fixAlg(publicKey); // BC parses key alg as ECDSA instead of EC
 
 		// Sign
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.ES256), new Payload("Hello world!"));
@@ -61,15 +94,12 @@ public class OpenSSLWithECKeyTest extends TestCase {
 		// Extract EC key pair generated with
 		// openssl ecparam -genkey -name secp384r1 -noout -out test-ec384-key.pem
 
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec384-key.pem")));
-		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
-		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
-		pemParser.close();
+		KeyPair keyPair = parseKeyPair("./src/test/keys/test-ec384-key.pem");
 
 		ECPrivateKey privateKey = (ECPrivateKey)keyPair.getPrivate();
+		privateKey = fixAlg(privateKey); // BC parses key alg as ECDSA instead of EC
 		ECPublicKey publicKey = (ECPublicKey)keyPair.getPublic();
+		publicKey = fixAlg(publicKey); // BC parses key alg as ECDSA instead of EC
 
 		// Sign
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.ES384), new Payload("Hello world!"));
@@ -90,15 +120,12 @@ public class OpenSSLWithECKeyTest extends TestCase {
 		// Extract EC key pair generated with
 		// openssl ecparam -genkey -name secp521r1 -noout -out test-ec512-key.pem
 
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-		PEMParser pemParser = new PEMParser(new InputStreamReader(new FileInputStream("./src/test/keys/test-ec512-key.pem")));
-		PEMKeyPair pemKeyPair = (PEMKeyPair)pemParser.readObject();
-		JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
-		KeyPair keyPair = converter.getKeyPair(pemKeyPair);
-		pemParser.close();
+		KeyPair keyPair = parseKeyPair("./src/test/keys/test-ec512-key.pem");
 
 		ECPrivateKey privateKey = (ECPrivateKey)keyPair.getPrivate();
+		privateKey = fixAlg(privateKey); // BC parses key alg as ECDSA instead of EC
 		ECPublicKey publicKey = (ECPublicKey)keyPair.getPublic();
+		publicKey = fixAlg(publicKey); // BC parses key alg as ECDSA instead of EC
 
 		// Sign
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.ES512), new Payload("Hello world!"));

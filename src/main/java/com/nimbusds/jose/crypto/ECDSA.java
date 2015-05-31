@@ -7,15 +7,6 @@ import java.security.Signature;
 import java.security.interfaces.ECKey;
 import java.security.spec.ECParameterSpec;
 
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.sec.SECNamedCurves;
-import org.bouncycastle.asn1.sec.SECObjectIdentifiers;
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.digests.SHA384Digest;
-import org.bouncycastle.crypto.digests.SHA512Digest;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import static com.nimbusds.jose.jwk.ECKey.Curve;
@@ -25,7 +16,7 @@ import static com.nimbusds.jose.jwk.ECKey.Curve;
  * Elliptic Curve Digital Signature Algorithm (ECDSA) functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-05-31)
  */
 class ECDSA {
 
@@ -138,48 +129,6 @@ class ECDSA {
 				alg,
 				ECDSAProvider.SUPPORTED_ALGORITHMS));
 		}
-	}
-
-
-	/**
-	 * Returns the initial parameters for the specified ECDSA algorithm.
-	 *
-	 * @param alg The ECDSA algorithm. Must be supported and not
-	 *            {@code null}.
-	 *
-	 * @return The initial ECDSA parameters.
-	 *
-	 * @throws JOSEException If the algorithm is not supported.
-	 */
-	public static ECDSAParameters getECDSAParameters(final JWSAlgorithm alg)
-		throws JOSEException {
-
-		ASN1ObjectIdentifier oid;
-		Digest digest;
-
-		if (alg.equals(JWSAlgorithm.ES256)) {
-
-			oid = SECObjectIdentifiers.secp256r1;
-			digest = new SHA256Digest();
-
-		} else if (alg.equals(JWSAlgorithm.ES384)) {
-
-			oid = SECObjectIdentifiers.secp384r1;
-			digest = new SHA384Digest();
-
-		} else if (alg.equals(JWSAlgorithm.ES512)) {
-
-			oid = SECObjectIdentifiers.secp521r1;
-			digest = new SHA512Digest();
-
-		} else {
-			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(
-				alg, ECDSAProvider.SUPPORTED_ALGORITHMS));
-		}
-
-		X9ECParameters x9ECParams = SECNamedCurves.getByOID(oid);
-
-		return new ECDSAParameters(x9ECParams, digest);
 	}
 
 

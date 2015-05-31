@@ -1,19 +1,19 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.math.BigInteger;
-import java.security.interfaces.ECPrivateKey;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.interfaces.ECPublicKey;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECPublicKeyParameters;
-import org.bouncycastle.math.ec.ECCurve;
-import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERSequence;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-05-31)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -50,7 +50,6 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 	 * The public EC key.
 	 */
 	private final ECPublicKey publicKey;
-
 
 
 	/**
@@ -147,12 +146,6 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 			return false;
 		}
 
-		// TODO refactor for JCA
-
-		ECDSAParameters initParams = ECDSA.getECDSAParameters(header.getAlgorithm());
-		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
-		Digest digest = initParams.getDigest();
-
 		byte[] signatureBytes = signature.decode();
 
 		// Split signature into R and S parts
@@ -164,38 +157,27 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 		try {
 			System.arraycopy(signatureBytes, 0, rBytes, 0, rBytes.length);
 			System.arraycopy(signatureBytes, rBytes.length, sBytes, 0, sBytes.length);
-
 		} catch (Exception e) {
-
 			throw new JOSEException("Invalid ECDSA signature format: " + e.getMessage(), e);
 		}
 
-		BigInteger r = new BigInteger(1, rBytes);
-		BigInteger s = new BigInteger(1, sBytes);
+		ASN1Encodable[] rsArray = new ASN1Encodable[2];
+		rsArray[0] = new ASN1Integer(rBytes);
+		rsArray[1] = new ASN1Integer(sBytes);
 
+		ASN1Sequence sequence = new DERSequence(rsArray);
 
-		ECCurve curve = x9ECParameters.getCurve();
-		ECPoint q = curve.createPoint(publicKey.getW().getAffineX(), publicKey.getW().getAffineY());
+		Signature sig = ECDSA.getSignerAndVerifier(alg, getJCAProvider());
 
-		ECDomainParameters ecDomainParameters = new ECDomainParameters(
-			curve, 
-			x9ECParameters.getG(), 
-			x9ECParameters.getN(), 
-			x9ECParameters.getH(),
-			x9ECParameters.getSeed());
+		try {
+			sig.initVerify(publicKey);
+			sig.update(signedContent);
+			return sig.verify(sequence.getEncoded());
 
-		ECPublicKeyParameters ecPublicKeyParameters = new ECPublicKeyParameters(
-			q, ecDomainParameters);
-
-		org.bouncycastle.crypto.signers.ECDSASigner verifier = 
-			new org.bouncycastle.crypto.signers.ECDSASigner();
-
-		verifier.init(false, ecPublicKeyParameters);
-
-		digest.update(signedContent, 0, signedContent.length);
-		byte[] out = new byte[digest.getDigestSize()];
-		digest.doFinal(out, 0);
-
-		return verifier.verifySignature(out, r, s);
+		} catch (InvalidKeyException | IOException e) {
+			throw new JOSEException(e.getMessage(), e);
+		} catch (SignatureException e) {
+			return false;
+		}
 	}
 }
