@@ -1,6 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Signature;
 import java.security.interfaces.ECKey;
 import java.security.spec.ECParameterSpec;
 
@@ -68,6 +71,37 @@ class ECDSA {
 			return JWSAlgorithm.ES512;
 		} else {
 			throw new JOSEException("Unexpected curve: " + curve);
+		}
+	}
+
+
+	public static Signature getSignerAndVerifier(final JWSAlgorithm alg,
+						     final Provider jcaProvider)
+		throws JOSEException {
+
+		String jcaAlg;
+
+		if (alg.equals(JWSAlgorithm.ES256)) {
+			jcaAlg = "SHA256withECDSA";
+		} else if (alg.equals(JWSAlgorithm.ES384)) {
+			jcaAlg = "SHA384withECDSA";
+		} else if (alg.equals(JWSAlgorithm.ES512)) {
+			jcaAlg = "SHA512withECDSA";
+		} else {
+			throw new JOSEException(
+				AlgorithmSupportMessage.unsupportedJWSAlgorithm(
+					alg,
+					ECDSAProvider.SUPPORTED_ALGORITHMS));
+		}
+
+		try {
+			if (jcaProvider != null) {
+				return Signature.getInstance(jcaAlg, jcaProvider);
+			} else {
+				return Signature.getInstance(jcaAlg);
+			}
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Unsupported ECDSA algorithm: " + e.getMessage(), e);
 		}
 	}
 

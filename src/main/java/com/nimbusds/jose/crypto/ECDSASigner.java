@@ -2,20 +2,21 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Signature;
+import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.bouncycastle.asn1.x9.X9ECParameters;
-import org.bouncycastle.crypto.Digest;
-import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.crypto.params.ECKeyParameters;
-import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Sequence;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.BigIntegerUtils;
@@ -100,28 +101,6 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 
 	/**
-	 * Performs the actual ECDSA signing.
-	 *
-	 * @param ecPrivateKeyParameters The EC private key parameters. Must 
-	 *                               not be {@code null}.
-	 * @param bytes                  The byte array to sign. Must not be 
-	 *                               {@code null}.
-	 *
-	 * @return The ECDSA signature parts R and S.
-	 */
-	private static BigInteger[] doECDSA(final ECPrivateKeyParameters ecPrivateKeyParameters, 
-		                            final byte[] bytes) {
-
-		org.bouncycastle.crypto.signers.ECDSASigner signer = 
-			new org.bouncycastle.crypto.signers.ECDSASigner();
-
-		signer.init(true, ecPrivateKeyParameters);
-		
-		return signer.generateSignature(bytes);
-	}
-
-
-	/**
 	 * Converts the specified big integers to byte arrays and returns their
 	 * array concatenation.
 	 *
@@ -178,33 +157,28 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWSAlgorithm(alg, supportedJWSAlgorithms()));
 		}
 
-		// todo refactor for JCA
-		ECDSAParameters initParams = ECDSA.getECDSAParameters(header.getAlgorithm());
-		X9ECParameters x9ECParameters = initParams.getX9ECParameters();
-		Digest digest = initParams.getDigest();
+		// DER-encoded signature, according to JCA spec
+		byte[] jcaSignature;
 
-		ECDomainParameters ecParameterSpec = new ECDomainParameters(
-			x9ECParameters.getCurve(), 
-			x9ECParameters.getG(), 
-			x9ECParameters.getN(), 
-			x9ECParameters.getH(), 
-			x9ECParameters.getSeed());
+		try {
+			Signature dsa = ECDSA.getSignerAndVerifier(alg, getJCAProvider());
+			dsa.initSign(privateKey);
+			dsa.update(signingInput);
+			jcaSignature = dsa.sign();
 
-		ECPrivateKeyParameters ecPrivateKeyParameters = 
-			new ECPrivateKeyParameters(privateKey.getS(), ecParameterSpec);
+		} catch (InvalidKeyException | SignatureException e) {
 
-		ECKeyParameters params;
+			throw new JOSEException(e.getMessage(), e);
+		}
 
-		digest.update(signingInput, 0, signingInput.length);
-		byte[] out = new byte[digest.getDigestSize()];
-		digest.doFinal(out, 0);
-
-		BigInteger[] signatureParts = doECDSA(ecPrivateKeyParameters, out);
+		ASN1Sequence sequence = ASN1Sequence.getInstance(jcaSignature);
+		ASN1Integer r = (ASN1Integer)sequence.getObjectAt(0);
+		ASN1Integer s = (ASN1Integer)sequence.getObjectAt(1);
 
 		int rsByteArrayLength = ECDSA.getSignatureByteArrayLength(header.getAlgorithm());
 
-		return Base64URL.encode(formatSignature(signatureParts[0], 
-			                                signatureParts[1], 
+		return Base64URL.encode(formatSignature(r.getValue(),
+			                                s.getValue(),
 			                                rsByteArrayLength));
 	}
 }

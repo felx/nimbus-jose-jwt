@@ -80,39 +80,39 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 		// The JCE crypto provider uses different alg names
 
-		final String internalAlgName;
+		final String jcaAlg;
 
 		PSSParameterSpec pssSpec = null;
 
 		if (alg.equals(JWSAlgorithm.RS256)) {
 
-			internalAlgName = "SHA256withRSA";
+			jcaAlg = "SHA256withRSA";
 
 		} else if (alg.equals(JWSAlgorithm.RS384)) {
 
-			internalAlgName = "SHA384withRSA";
+			jcaAlg = "SHA384withRSA";
 
 		} else if (alg.equals(JWSAlgorithm.RS512)) {
 
-			internalAlgName = "SHA512withRSA";
+			jcaAlg = "SHA512withRSA";
 
 		} else if (alg.equals(JWSAlgorithm.PS256)) {
 
-			internalAlgName = "SHA256withRSAandMGF1";
+			jcaAlg = "SHA256withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
 			pssSpec = new PSSParameterSpec("SHA256", "MGF1", MGF1ParameterSpec.SHA256, 32, 1);
 
 		} else if (alg.equals(JWSAlgorithm.PS384)) {
 
-			internalAlgName = "SHA384withRSAandMGF1";
+			jcaAlg = "SHA384withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
 			pssSpec = new PSSParameterSpec("SHA384", "MGF1", MGF1ParameterSpec.SHA384, 48, 1);
 
 		} else if (alg.equals(JWSAlgorithm.PS512)) {
 
-			internalAlgName = "SHA512withRSAandMGF1";
+			jcaAlg = "SHA512withRSAandMGF1";
 
 			// JWA mandates salt length must equal hash
 			pssSpec = new PSSParameterSpec("SHA512", "MGF1", MGF1ParameterSpec.SHA512, 64, 1);
@@ -126,9 +126,9 @@ abstract class RSASSAProvider extends BaseJWSProvider {
 
 		try {
 			if (provider != null) {
-				signature = Signature.getInstance(internalAlgName, provider);
+				signature = Signature.getInstance(jcaAlg, provider);
 			} else {
-				signature = Signature.getInstance(internalAlgName);
+				signature = Signature.getInstance(jcaAlg);
 			}
 
 		} catch (NoSuchAlgorithmException e) {
