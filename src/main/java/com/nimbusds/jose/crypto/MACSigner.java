@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -166,7 +166,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-		byte[] hmac = HMAC.compute(jcaAlg, getSecret(), signingInput, getJCAProvider());
+		byte[] hmac = HMAC.compute(jcaAlg, getSecret(), signingInput, getJCAContext().getProvider());
 		return Base64URL.encode(hmac);
 	}
 }

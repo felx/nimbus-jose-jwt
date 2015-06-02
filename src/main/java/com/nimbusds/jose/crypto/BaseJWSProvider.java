@@ -7,16 +7,17 @@ import java.util.Set;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSProvider;
-import com.nimbusds.jose.jca.JCAProviderAware;
+import com.nimbusds.jose.jca.JCAAware;
+import com.nimbusds.jose.jca.JCAContext;
 
 
 /**
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
-abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
+abstract class BaseJWSProvider implements JWSProvider, JCAAware<JCAContext> {
 
 
 	/**
@@ -26,9 +27,9 @@ abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
 
 
 	/**
-	 * The JCA provider, {@code null} implies the default one.
+	 * The JCA context.
 	 */
-	private Provider jcaProvider;
+	private JCAContext jcaContext = new JCAContext();
 
 
 	/**
@@ -55,16 +56,20 @@ abstract class BaseJWSProvider implements JWSProvider, JCAProviderAware {
 
 
 	@Override
-	public void setJCAProvider(final Provider jcaProvider) {
+	public void setJCAContext(final JCAContext jcaContext) {
 
-		this.jcaProvider = jcaProvider;
+		if (jcaContext == null) {
+			throw new IllegalArgumentException("The JCA context must not be null");
+		}
+
+		this.jcaContext = jcaContext;
 	}
 
 
 	@Override
-	public Provider getJCAProvider() {
+	public JCAContext getJCAContext() {
 
-		return jcaProvider;
+		return jcaContext;
 	}
 }
 

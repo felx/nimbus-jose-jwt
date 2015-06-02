@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-27)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -191,13 +191,13 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 			byte[] keyTag = header.getAuthTag().decode();
 
 			AuthenticatedCipherText authEncrCEK = new AuthenticatedCipherText(encryptedKey.decode(), keyTag);
-			cek = AESGCMKW.decryptCEK(getKey(), keyIV, authEncrCEK, keyLength, getJWEJCAProvider().getKeyEncryptionProvider());
+			cek = AESGCMKW.decryptCEK(getKey(), keyIV, authEncrCEK, keyLength, getJCAContext().getKeyEncryptionProvider());
 
 		} else {
 
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
-		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());
+		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJCAContext());
 	}
 }

@@ -26,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -149,7 +149,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());
-		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, getJCAProvider());
+		byte[] expectedHMAC = HMAC.compute(jcaAlg, getSecret(), signedContent, getJCAContext().getProvider());
 		return ConstantTimeUtils.areEqual(expectedHMAC, signature.decode());
 	}
 }

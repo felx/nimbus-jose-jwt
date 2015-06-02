@@ -66,6 +66,18 @@ class ECDSA {
 	}
 
 
+	/**
+	 * Creates a new JCA signer / verifier for ECDSA.
+	 *
+	 * @param alg         The ECDSA JWS algorithm. Must not be
+	 *                    {@code null}.
+	 * @param jcaProvider The JCA provider, {@code null} if not specified.
+	 *
+	 * @return The JCA signer / verifier instance.
+	 *
+	 * @throws JOSEException If a JCA signer / verifier couldn't be
+	 *                       created.
+	 */
 	public static Signature getSignerAndVerifier(final JWSAlgorithm alg,
 						     final Provider jcaProvider)
 		throws JOSEException {

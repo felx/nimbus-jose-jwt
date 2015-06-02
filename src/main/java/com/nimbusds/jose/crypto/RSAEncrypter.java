@@ -44,7 +44,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -104,28 +104,28 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Generate and encrypt the CEK according to the enc method
-		final SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
+		final SecureRandom randomGen = getJCAContext().getSecureRandom();
 		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
 
 		final Base64URL encryptedKey; // The second JWE part
 
 		if (alg.equals(JWEAlgorithm.RSA1_5)) {
 
-			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
+			encryptedKey = Base64URL.encode(RSA1_5.encryptCEK(publicKey, cek, getJCAContext().getKeyEncryptionProvider()));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
+			encryptedKey = Base64URL.encode(RSA_OAEP.encryptCEK(publicKey, cek, getJCAContext().getKeyEncryptionProvider()));
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
 			
-			encryptedKey = Base64URL.encode(RSA_OAEP_256.encryptCEK(publicKey, cek, getJWEJCAProvider().getKeyEncryptionProvider()));
+			encryptedKey = Base64URL.encode(RSA_OAEP_256.encryptCEK(publicKey, cek, getJCAContext().getKeyEncryptionProvider()));
 			
 		} else {
 
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
-		return ContentCryptoProvider.encrypt(header, clearText, cek, encryptedKey, getJWEJCAProvider());
+		return ContentCryptoProvider.encrypt(header, clearText, cek, encryptedKey, getJCAContext());
 	}
 }

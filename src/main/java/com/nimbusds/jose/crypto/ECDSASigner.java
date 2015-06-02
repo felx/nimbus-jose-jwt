@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-31)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -161,8 +161,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		byte[] jcaSignature;
 
 		try {
-			Signature dsa = ECDSA.getSignerAndVerifier(alg, getJCAProvider());
-			dsa.initSign(privateKey);
+			Signature dsa = ECDSA.getSignerAndVerifier(alg, getJCAContext().getProvider());
+			dsa.initSign(privateKey, getJCAContext().getSecureRandom());
 			dsa.update(signingInput);
 			jcaSignature = dsa.sign();
 

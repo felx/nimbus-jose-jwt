@@ -8,6 +8,7 @@ import java.security.spec.ECParameterSpec;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.jca.JCAContext;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
@@ -50,7 +51,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -122,10 +123,10 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 		SecretKey Z = ECDH.deriveSharedSecret(
 			publicKey,
 			ephemeralPrivateKey,
-			getJWEJCAProvider().getKeyEncryptionProvider());
+			getJCAContext().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
-		getConcatKDF().setJCAProvider(getJWEJCAProvider().getMACProvider()); // update before concat
+		getConcatKDF().setJCAContext(new JCAContext(getJCAContext().getMACProvider(), null)); // update before concat
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;
@@ -135,7 +136,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			cek = sharedKey;
 			encryptedKey = null;
 		} else if (algMode.equals(ECDH.AlgorithmMode.KW)) {
-			cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
+			cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getSecureRandom());
 			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, sharedKey));
 		} else {
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
@@ -146,7 +147,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			ephemeralPublicKey(new ECKey.Builder(getCurve(), ephemeralPublicKey).build()).
 			build();
 
-		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
+		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJCAContext());
 	}
 
 
@@ -162,7 +163,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 	private KeyPair generateEphemeralKeyPair(final ECParameterSpec ecParameterSpec)
 		throws JOSEException {
 
-		Provider keProvider = getJWEJCAProvider().getKeyEncryptionProvider();
+		Provider keProvider = getJCAContext().getKeyEncryptionProvider();
 
 		try {
 			KeyPairGenerator generator;

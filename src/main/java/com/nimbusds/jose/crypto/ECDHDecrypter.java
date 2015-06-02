@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jca.JCAContext;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -47,7 +48,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-06-02)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -171,10 +172,10 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		SecretKey Z = ECDH.deriveSharedSecret(
 			ephemeralPublicKey,
 			privateKey,
-			getJWEJCAProvider().getKeyEncryptionProvider());
+			getJCAContext().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
-		getConcatKDF().setJCAProvider(getJWEJCAProvider().getMACProvider()); // update before concat
+		getConcatKDF().setJCAContext(new JCAContext(getJCAContext().getMACProvider(), null)); // update before concat
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;
@@ -190,6 +191,6 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}
 
-		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());
+		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJCAContext());
 	}
 }

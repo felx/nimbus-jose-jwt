@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -166,7 +166,7 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 
 		critPolicy.ensureHeaderPasses(header);
 
-		return ContentCryptoProvider.decrypt(header, null, iv, cipherText, authTag, getKey(), getJWEJCAProvider());
+		return ContentCryptoProvider.decrypt(header, null, iv, cipherText, authTag, getKey(), getJCAContext());
 	}
 }
 

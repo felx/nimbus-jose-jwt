@@ -170,11 +170,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 			// Protect against MMA attack by generating random CEK on failure,
 			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
-			SecureRandom randomGen = getJWEJCAProvider().getSecureRandom();
+			SecureRandom randomGen = getJCAContext().getSecureRandom();
 			SecretKey randomCEK = AES.generateKey(keyLength, randomGen);
 
 			try {
-				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, getJWEJCAProvider().getKeyEncryptionProvider());
+				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, getJCAContext().getKeyEncryptionProvider());
 
 				if (cek == null) {
 					// CEK length mismatch, signalled by null instead of
@@ -189,18 +189,18 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
-			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), getJWEJCAProvider().getKeyEncryptionProvider());
+			cek = RSA_OAEP.decryptCEK(privateKey, encryptedKey.decode(), getJCAContext().getKeyEncryptionProvider());
 
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP_256)) {
 			
-			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), getJWEJCAProvider().getKeyEncryptionProvider());
+			cek = RSA_OAEP_256.decryptCEK(privateKey, encryptedKey.decode(), getJCAContext().getKeyEncryptionProvider());
 			
 		} else {
 		
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedJWEAlgorithm(alg, SUPPORTED_ALGORITHMS));
 		}
 
-		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());
+		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJCAContext());
 	}
 }
 

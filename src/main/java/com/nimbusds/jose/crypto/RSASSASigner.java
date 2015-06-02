@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-31)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
@@ -94,7 +94,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
 
-		Signature signer = RSASSA.getSignerAndVerifier(header.getAlgorithm(), getJCAProvider());
+		Signature signer = RSASSA.getSignerAndVerifier(header.getAlgorithm(), getJCAContext().getProvider());
 
 		try {
 			signer.initSign(privateKey);

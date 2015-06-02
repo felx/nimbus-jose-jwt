@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-26)
+ * @version $version$ (2014-06-02)
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -118,6 +118,6 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 
 		final Base64URL encryptedKey = null; // The second JWE part
 
-		return ContentCryptoProvider.encrypt(header, clearText, getKey(), encryptedKey, getJWEJCAProvider());
+		return ContentCryptoProvider.encrypt(header, clearText, getKey(), encryptedKey, getJCAContext());
 	}
 }

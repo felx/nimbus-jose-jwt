@@ -47,7 +47,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-27)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -172,7 +172,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		// Generate and encrypt the CEK according to the enc method
 		final EncryptionMethod enc = header.getEncryptionMethod();
-		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
+		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getSecureRandom());
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
 
@@ -181,8 +181,8 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {
 
-			final byte[] keyIV = AESGCM.generateIV(getJWEJCAProvider().getSecureRandom());
-			final AuthenticatedCipherText authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJWEJCAProvider().getKeyEncryptionProvider());
+			final byte[] keyIV = AESGCM.generateIV(getJCAContext().getSecureRandom());
+			final AuthenticatedCipherText authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJCAContext().getKeyEncryptionProvider());
 			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
 			// Add iv and tag to the header
@@ -195,6 +195,6 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 			throw new JOSEException("Unexpected JWE algorithm: " + alg);
 		}
 
-		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
+		return ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJCAContext());
 	}
 }

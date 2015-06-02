@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -123,9 +123,9 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		final byte[] salt = new byte[saltLength];
-		getJWEJCAProvider().getSecureRandom().nextBytes(salt);
+		getJCAContext().getSecureRandom().nextBytes(salt);
 		final byte[] formattedSalt = PBKDF2.formatSalt(alg, salt);
-		final PRFParams prfParams = PRFParams.resolve(alg, getJWEJCAProvider().getMACProvider());
+		final PRFParams prfParams = PRFParams.resolve(alg, getJCAContext().getMACProvider());
 		final SecretKey psKey = PBKDF2.deriveKey(getPassword(), formattedSalt, iterationCount, prfParams);
 
 		// We need to work on the header
@@ -134,12 +134,12 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 			pbes2Count(iterationCount).
 			build();
 
-		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJWEJCAProvider().getSecureRandom());
+		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getSecureRandom());
 
 		// The second JWE part
 		final Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, psKey));
 
-		return  ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJWEJCAProvider());
+		return  ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJCAContext());
 	}
 
 

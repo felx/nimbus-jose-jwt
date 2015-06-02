@@ -38,7 +38,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -125,11 +125,11 @@ public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implemen
 
 		final JWEAlgorithm alg = header.getAlgorithm();
 		final byte[] formattedSalt = PBKDF2.formatSalt(alg, salt);
-		final PRFParams prfParams = PRFParams.resolve(alg, getJWEJCAProvider().getMACProvider());
+		final PRFParams prfParams = PRFParams.resolve(alg, getJCAContext().getMACProvider());
 		final SecretKey psKey = PBKDF2.deriveKey(getPassword(), formattedSalt, iterationCount, prfParams);
 
 		final SecretKey cek = AESKW.decryptCEK(psKey, encryptedKey.decode());
 
-		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJWEJCAProvider());
+		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJCAContext());
 	}
 }

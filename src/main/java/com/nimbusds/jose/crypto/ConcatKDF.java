@@ -14,7 +14,8 @@ import javax.crypto.spec.SecretKeySpec;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jca.JCAProviderAware;
+import com.nimbusds.jose.jca.JCAAware;
+import com.nimbusds.jose.jca.JCAContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.IntegerUtils;
@@ -26,10 +27,10 @@ import com.nimbusds.jose.util.IntegerUtils;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-13)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
-class ConcatKDF implements JCAProviderAware {
+class ConcatKDF implements JCAAware<JCAContext> {
 
 
 	/**
@@ -39,9 +40,9 @@ class ConcatKDF implements JCAProviderAware {
 
 
 	/**
-	 * The JCA provider, {@code null} implies the default one.
+	 * The JCA context..
 	 */
-	private Provider jcaProvider;
+	private JCAContext jcaContext = new JCAContext();
 
 
 	/**
@@ -73,16 +74,20 @@ class ConcatKDF implements JCAProviderAware {
 
 
 	@Override
-	public void setJCAProvider(Provider jcaProvider) {
+	public void setJCAContext(JCAContext jcaContext) {
 
-		this.jcaProvider = jcaProvider;
+		if (jcaContext == null) {
+			throw new IllegalArgumentException("The JCA context must not be null");
+		}
+
+		this.jcaContext = jcaContext;
 	}
 
 
 	@Override
-	public Provider getJCAProvider() {
+	public JCAContext getJCAContext() {
 
-		return jcaProvider;
+		return jcaContext;
 	}
 
 
@@ -203,7 +208,7 @@ class ConcatKDF implements JCAProviderAware {
 	private MessageDigest getMessageDigest()
 		throws JOSEException {
 
-		final Provider provider = getJCAProvider();
+		final Provider provider = getJCAContext().getProvider();
 
 		try {
 			if (provider == null)

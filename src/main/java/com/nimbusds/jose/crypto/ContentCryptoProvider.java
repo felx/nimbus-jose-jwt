@@ -5,7 +5,7 @@ import java.util.*;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.jca.JWEJCAProviderSpec;
+import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -85,7 +85,7 @@ class ContentCryptoProvider {
 					     final byte[] clearText,
 					     final SecretKey cek,
 					     final Base64URL encryptedKey,
-					     final JWEJCAProviderSpec jcaProvider)
+					     final JWEJCAContext jcaProvider)
 		throws JOSEException {
 
 		// Apply compression if instructed
@@ -171,7 +171,7 @@ class ContentCryptoProvider {
 				     final Base64URL cipherText,
 				     final Base64URL authTag,
 				     final SecretKey cek,
-				     final JWEJCAProviderSpec jcaProvider)
+				     final JWEJCAContext jcaProvider)
 		throws JOSEException {
 
 		// Compose the AAD

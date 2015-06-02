@@ -7,8 +7,8 @@ import java.util.Set;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEProvider;
-import com.nimbusds.jose.jca.JWEJCAProviderAware;
-import com.nimbusds.jose.jca.JWEJCAProviderSpec;
+import com.nimbusds.jose.jca.JCAAware;
+import com.nimbusds.jose.jca.JWEJCAContext;
 
 
 /**
@@ -16,9 +16,9 @@ import com.nimbusds.jose.jca.JWEJCAProviderSpec;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-02)
  */
-abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
+abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
 
 
 	/**
@@ -34,9 +34,9 @@ abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
 
 
 	/**
-	 * The JWE JCA provider specification.
+	 * The JWE JCA context.
 	 */
-	private JWEJCAProviderSpec jcaProviderSpec = new JWEJCAProviderSpec();
+	private JWEJCAContext jcaContext = new JWEJCAContext();
 
 
 	/**
@@ -80,20 +80,20 @@ abstract class BaseJWEProvider implements JWEProvider, JWEJCAProviderAware {
 
 
 	@Override
-	public void setJWEJCAProvider(final JWEJCAProviderSpec jcaProviderSpec) {
+	public void setJCAContext(final JWEJCAContext jcaContext) {
 
-		if (jcaProviderSpec == null) {
-			throw new IllegalArgumentException("The JCA provider specification must not be null");
+		if (jcaContext == null) {
+			throw new IllegalArgumentException("The JCA context must not be null");
 		}
 
-		this.jcaProviderSpec = jcaProviderSpec;
+		this.jcaContext = jcaContext;
 	}
 
 
 	@Override
-	public JWEJCAProviderSpec getJWEJCAProvider() {
+	public JWEJCAContext getJCAContext() {
 
-		return jcaProviderSpec;
+		return jcaContext;
 	}
 }
 

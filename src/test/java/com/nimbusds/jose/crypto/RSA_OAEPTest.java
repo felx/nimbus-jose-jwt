@@ -18,7 +18,7 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.jca.JWEJCAProviderSpec;
+import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.jwk.RSAKey;
 
 
@@ -27,7 +27,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version $version$ (2015-06-02)
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -185,7 +185,7 @@ public class RSA_OAEPTest extends TestCase {
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
 		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
-		encrypter.setJWEJCAProvider(new JWEJCAProviderSpec().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
+		encrypter.setJCAContext(new JWEJCAContext().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		jweObject.encrypt(encrypter);
 
@@ -196,7 +196,7 @@ public class RSA_OAEPTest extends TestCase {
 		jweObject = JWEObject.parse(jweString);
 
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
-		decrypter.setJWEJCAProvider(new JWEJCAProviderSpec().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
+		decrypter.setJCAContext(new JWEJCAContext().withKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		assertEquals(privateKey, (decrypter).getPrivateKey());
 
@@ -458,12 +458,12 @@ public class RSA_OAEPTest extends TestCase {
 		
 		// Get bouncycastle for the test
 		Provider provider = BouncyCastleProviderSingleton.getInstance();
-		JWEJCAProviderSpec jcaSpec = new JWEJCAProviderSpec().
+		JWEJCAContext jcaSpec = new JWEJCAContext().
 			withKeyEncryptionProvider(provider).
 			withContentEncryptionProvider(provider).
 			withMACProvider(provider);
 
-		decrypter.setJWEJCAProvider(jcaSpec);
+		decrypter.setJCAContext(jcaSpec);
 		
 		jweObject.decrypt(decrypter);
 		

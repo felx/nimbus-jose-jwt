@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-31)
+ * @version $version$ (2015-06-02)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -167,7 +167,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 
 		ASN1Sequence sequence = new DERSequence(rsArray);
 
-		Signature sig = ECDSA.getSignerAndVerifier(alg, getJCAProvider());
+		Signature sig = ECDSA.getSignerAndVerifier(alg, getJCAContext().getProvider());
 
 		try {
 			sig.initVerify(publicKey);

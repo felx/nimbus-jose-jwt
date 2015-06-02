@@ -11,7 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.jca.JWEJCAProviderSpec;
+import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -63,7 +63,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		new SecureRandom().nextBytes(cekBytes);
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
-		final JWEJCAProviderSpec jcaProvider = new JWEJCAProviderSpec();
+		final JWEJCAContext jcaProvider = new JWEJCAContext();
 
 		JWECryptoParts jweParts = ContentCryptoProvider.encrypt(
 			header,
@@ -91,7 +91,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		new SecureRandom().nextBytes(cekBytes);
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
-		final JWEJCAProviderSpec jcaProvider = new JWEJCAProviderSpec();
+		final JWEJCAContext jcaProvider = new JWEJCAContext();
 
 
 		try {
@@ -118,7 +118,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		new SecureRandom().nextBytes(cekBytes);
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
-		final JWEJCAProviderSpec jcaProvider = new JWEJCAProviderSpec();
+		final JWEJCAContext jcaProvider = new JWEJCAContext();
 
 
 		try {
