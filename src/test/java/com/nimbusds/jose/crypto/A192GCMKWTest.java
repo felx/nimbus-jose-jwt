@@ -221,9 +221,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key192);
+		AESDecrypter decrypter = new AESDecrypter(key192);
+		decrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -260,9 +261,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key192);
+		AESDecrypter decrypter = new AESDecrypter(key192);
+		decrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -299,9 +301,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key192);
+		AESDecrypter decrypter = new AESDecrypter(key192);
+		decrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 

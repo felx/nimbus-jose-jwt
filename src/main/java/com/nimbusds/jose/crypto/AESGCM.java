@@ -7,12 +7,6 @@ import javax.crypto.spec.GCMParameterSpec;
 
 import net.jcip.annotations.ThreadSafe;
 
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.ByteUtils;
 
@@ -25,7 +19,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2013-05-07)
+ * @version $version$ (2015-06-05)
  */
 @ThreadSafe
 class AESGCM {
@@ -59,40 +53,6 @@ class AESGCM {
 		byte[] bytes = new byte[IV_BIT_LENGTH / 8];
 		randomGen.nextBytes(bytes);
 		return bytes;
-	}
-
-
-	/**
-	 * Creates a new AES/GCM/NoPadding cipher.
-	 *
-	 * @param secretKey     The AES key. Must not be {@code null}.
-	 * @param forEncryption If {@code true} creates an encryption cipher,
-	 *                      else creates a decryption cipher.
-	 * @param iv            The initialisation vector (IV). Must not be
-	 *                      {@code null}.
-	 * @param authData      The authenticated data. Must not be 
-	 *                      {@code null}.
-	 *
-	 * @return The AES/GCM/NoPadding cipher.
-	 */
-	private static GCMBlockCipher createAESGCMCipher(final SecretKey secretKey,
-		                                         final boolean forEncryption,
-		                                         final byte[] iv,
-		                                         final byte[] authData) {
-
-		// Initialise AES cipher
-		BlockCipher cipher = AES.createCipher(secretKey, forEncryption);
-
-		// Create GCM cipher with AES
-		GCMBlockCipher gcm = new GCMBlockCipher(cipher);
-
-		AEADParameters aeadParams = new AEADParameters(new KeyParameter(secretKey.getEncoded()), 
-			                                       AUTH_TAG_BIT_LENGTH, 
-			                                       iv, 
-			                                       authData);
-		gcm.init(forEncryption, aeadParams);
-
-		return gcm;
 	}
 
 
@@ -176,34 +136,32 @@ class AESGCM {
 		                     final Provider provider)
 		throws JOSEException {
 
-		// Initialise AES/GCM cipher for decryption
-		GCMBlockCipher cipher = createAESGCMCipher(secretKey, false, iv, authData);
+		Cipher cipher;
 
-
-		// Join cipher text and authentication tag to produce cipher input
-		byte[] input = new byte[cipherText.length + authTag.length];
-
-		System.arraycopy(cipherText, 0, input, 0, cipherText.length);
-		System.arraycopy(authTag, 0, input, cipherText.length, authTag.length);
-
-		int outputLength = cipher.getOutputSize(input.length);
-
-		byte[] output = new byte[outputLength];
-
-
-		// Decrypt
-		int outputOffset = cipher.processBytes(input, 0, input.length, output, 0);
-
-		// Validate authentication tag
 		try {
-			outputOffset += cipher.doFinal(output, outputOffset);
-				
-		} catch (InvalidCipherTextException e) {
+			if (provider != null) {
+				cipher = Cipher.getInstance("AES/GCM/NoPadding", provider);
+			} else {
+				cipher = Cipher.getInstance("AES/GCM/NoPadding");
+			}
 
-			throw new JOSEException("Couldn't validate GCM authentication tag: " + e.getMessage(), e);
+			GCMParameterSpec gcmSpec = new GCMParameterSpec(AUTH_TAG_BIT_LENGTH, iv);
+			cipher.init(Cipher.DECRYPT_MODE, secretKey, gcmSpec);
+
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+
+			throw new JOSEException("Couldn't create AES/GCM/NoPadding cipher: " + e.getMessage(), e);
 		}
 
-		return output;
+		cipher.updateAAD(authData);
+
+		try {
+			return cipher.doFinal(ByteUtils.concat(cipherText, authTag));
+
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+
+			throw new JOSEException("AES/GCM/NoPadding decryption failed: " + e.getMessage(), e);
+		}
 	}
 
 

@@ -197,6 +197,7 @@ public class EncryptedJWTTest extends TestCase {
 
 		// Create an decrypter with the specified private RSA key
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		// Decrypt
 		jwt.decrypt(decrypter);
