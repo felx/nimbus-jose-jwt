@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * Unsecured ({@code alg=none}) JOSE object. This class is thread-safe.
+ * Unsecured (plain / {@code alg=none}) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2014-04-08)

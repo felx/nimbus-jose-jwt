@@ -12,8 +12,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * The base abstract class for unsecured ({@code alg=none}), JSON Web Signature
- * (JWS) and JSON Web Encryption (JWE) objects.
+ * The base abstract class for unsecured (plain / {@code alg=none}), JSON Web
+ * Signature (JWS) secured and JSON Web Encryption (JWE) secured objects.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)

@@ -9,7 +9,7 @@ import com.nimbusds.jose.util.Base64URL;
 
 
 /**
- * JSON Web Encryption (JWE) object. This class is thread-safe.
+ * JSON Web Encryption (JWE) secured object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-21)
