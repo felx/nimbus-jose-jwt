@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
  * AES/GSM/NoPadding encryption and decryption methods. Uses the 
  * BouncyCastle.org provider. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.1 and appendix 3.
+ * <p>See RFC 7518 (JWA), section 5.1 and appendix 3.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
@@ -46,7 +46,7 @@ class AESGCM {
 	 * Generates a random 96 bit (12 byte) Initialisation Vector(IV) for
 	 * use in AES-GCM encryption.
 	 *
-	 * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.3.
+	 * <p>See RFC 7518 (JWA), section 5.3.
 	 *
 	 * @param randomGen The secure random generator to use. Must be 
 	 *                  correctly initialised and not {@code null}.

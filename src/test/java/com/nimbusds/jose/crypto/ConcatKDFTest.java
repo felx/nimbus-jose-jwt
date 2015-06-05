@@ -24,7 +24,7 @@ public class ConcatKDFTest extends TestCase {
 
 	public void testComposeOtherInfo() {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#appendix-C
+		// From http://tools.ietf.org/html/rfc7518#appendix-C
 
 		String algId = "A128GCM";
 		String producer = "Alice";
@@ -52,7 +52,7 @@ public class ConcatKDFTest extends TestCase {
 	public void testECDHVector()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#appendix-C
+		// From http://tools.ietf.org/html/rfc7518#appendix-C
 
 		byte[] Z = {
 			(byte) 158, (byte) 86, (byte) 217, (byte) 29, (byte) 129, (byte) 113, (byte) 53, (byte) 211,

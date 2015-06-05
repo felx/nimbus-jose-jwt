@@ -13,7 +13,7 @@ import com.nimbusds.jose.JOSEException;
  * Composite key used in AES/CBC/PKCS5Padding/HMAC-SHA2 encryption. This class
  * is immutable.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-26, section 5.2.
+ * <p>See RFC 7518 (JWA), section 5.2.
  *
  * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
  *

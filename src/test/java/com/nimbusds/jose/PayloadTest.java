@@ -16,7 +16,7 @@ public class PayloadTest extends TestCase {
 	public void testJWSObject()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+		// From http://tools.ietf.org/html/rfc7515#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
 			"." +
 			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
@@ -38,7 +38,7 @@ public class PayloadTest extends TestCase {
 	public void testJWSObjectFromString()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+		// From http://tools.ietf.org/html/rfc7515#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
 			"." +
 			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
@@ -59,7 +59,7 @@ public class PayloadTest extends TestCase {
 	public void testSignedJWT()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+		// From http://tools.ietf.org/html/rfc7515#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
 			"." +
 			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +
@@ -84,7 +84,7 @@ public class PayloadTest extends TestCase {
 	public void testSignedJWTFromString()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-json-web-signature-31#appendix-A.1
+		// From http://tools.ietf.org/html/rfc7515#appendix-A.1
 		String s = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9" +
 			"." +
 			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt" +

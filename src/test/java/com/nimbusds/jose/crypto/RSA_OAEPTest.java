@@ -323,7 +323,7 @@ public class RSA_OAEPTest extends TestCase {
 	public void testCookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.2
+		// See http://tools.ietf.org/html/rfc7520#section-5.2
 
 		String json="{"+
 			"\"kty\":\"RSA\","+

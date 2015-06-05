@@ -502,7 +502,7 @@ public class RSASSATest extends TestCase {
 	public void testRS256CookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.1.3
+		// See http://tools.ietf.org/html/rfc7520#section-4.1
 
 		String json = "{" +
 			"\"kty\": \"RSA\"," +
@@ -581,7 +581,7 @@ public class RSASSATest extends TestCase {
 	public void testPS384CookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.2
+		// See http://tools.ietf.org/html/rfc7520#section-4.2
 
 		String json = "{" +
 			"\"kty\": \"RSA\"," +

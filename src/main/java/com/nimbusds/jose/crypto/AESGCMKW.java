@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
  * AES GCM methods for Content Encryption Key (CEK) encryption and
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-26, section 4.7.
+ * <p>See RFC 7518 (JWA), section 4.7.
  *
  * @author Melisa Halsband
  * @version $version$ (2014-06-18)

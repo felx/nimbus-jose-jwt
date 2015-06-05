@@ -181,7 +181,7 @@ public class PBES2Test extends TestCase {
 	}
 
 
-	// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.3.1
+	// See http://tools.ietf.org/html/rfc7520#section-5.3.1
 	public void testDecryptCookbookExample()
 		throws Exception {
 

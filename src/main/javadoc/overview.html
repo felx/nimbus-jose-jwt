@@ -21,33 +21,34 @@
 		</ul>
 
 		<p>The library {@link com.nimbusds.jose.crypto implements} all standard
-            JWS algorithms and 6/9 of the JWE algorithms:</p>
+            JWS and JWE algorithms:</p>
 
         <p>JWS algorithms:</p>
-		<ul>
+		<ol>
 			<li>HMAC integrity protection: HS256, HS384 and HS512</li>
 			<li>RSA signatures: RS256, RS384, RS512, PS256, PS384 and PS512.</li>
 			<li>EC signatures: ES256, ES384 and ES512</li>
-		</ul>
+		</ol>
 
         <p>JWE key management algorithms:</p>
 
-        <ul>
+        <ol>
             <li>Key encryption with RSAES-PKCS1-V1_5: RSA1_5</li>
             <li>Key encryption with RSAES OAEP: RSA-OAEP and RSA-OAEP-256</li>
             <li>Key encryption with AES key wrap: A128KW, A192KW and A256KW</li>
             <li>Key encryption with AES GCM key wrap: A128CGMKW, A192CGMKW and A256CGMKW</li>
             <li>Direct encryption with a symmetric key: dir</li>
-			<li>Password-based encryption with PBES2-HS256+A128KW, PBES2-HS384+A192KW and PBES2-HS512+A256KW</li>
-        </ul>
+			<li>Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static: ECDH-ES, ECDH-ES+A128KW, ECDH-ES+A192KW and ECDH-ES+A256KW</li>
+			<li>Password-based encryption: PBES2-HS256+A128KW, PBES2-HS384+A192KW and PBES2-HS512+A256KW</li>
+        </ol>
 
         <p>JWE content encryption algorithms:</p>
 
-        <ul>
+        <ol>
             <li>AES_CBC_HMAC_SHA2: A128CBC-HS256, A192CBC-HS384, A256CBC-HS512,
                 the deprecated A128CBC+HS256 and A256CBC+HS512 are also supported</li>
             <li>AES GCM: A128GCM, A192GCM and A256GCM</li>
-        </ul>
+        </ol>
 
         <p>New JWA algorithms can be easily added. The library provides a set
 			of simple interfaces to decouple the representation of JOSE / JWT
@@ -57,21 +58,21 @@
 		
 		<p>Supported IETF standards:</p>
 		
-		<ul>
-			<li>[JWS] <a href="https://tools.ietf.org/html/rfc7515">RFC 7515 (JWS)</a></li>
-			<li>[JWE] <a href="https://tools.ietf.org/html/rfc7516">RFC 7516 (JWE)</a></li>
-			<li>[JWK] <a href="https://tools.ietf.org/html/rfc7517">RFC 7517 (JWK)</a></li>
-			<li>[JWA] <a href="https://tools.ietf.org/html/rfc7518">RFC 7518 (JWA)</a></li>
-			<li>[JWT] <a href="https://tools.ietf.org/html/rfc7519">RFC 7519 (JWT)</a></li>
-		</ul>
+		<ol>
+			<li><a href="https://tools.ietf.org/html/rfc7515">RFC 7515 (JWS)</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc7516">RFC 7516 (JWE)</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc7517">RFC 7517 (JWK)</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc7518">RFC 7518 (JWA)</a></li>
+			<li><a href="https://tools.ietf.org/html/rfc7519">RFC 7519 (JWT)</a></li>
+		</ol>
 		
 		<p>Dependencies (see the Maven pom.xml for details):</p>
 		
-		<ul>
+		<ol>
 			<li>JSON Smart for highly efficient parsing and serialisation of JSON.</li>
 			<li>JCIP for concurrency annotations.</li>
 			<li>[optional] The BouncyCastle.org cryptography provider for Java.</li>
-		</ul>
+		</ol>
 	</body>
 
 </html>

@@ -11,13 +11,13 @@
  *         objects}.
  *     <li>{@link com.nimbusds.jose.JWEObject JSON Web Encryption (JWE) 
  *         objects}.
- *     <li>{@link com.nimbusds.jose.jwk.JWK JSON Web Key (JWK) objects}.
  * </ul>
  *
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/wg/jose/
+ *     <li><a href="http://tools.ietf.org/html/rfc7515">RFC 7515 (JWS)</a>
+ *     <li><a href="http://tools.ietf.org/html/rfc7516">RFC 7516 (JWE)</a>
  * </ul>
  */
 package com.nimbusds.jose;

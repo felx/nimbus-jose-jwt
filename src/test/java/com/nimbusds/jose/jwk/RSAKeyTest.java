@@ -599,7 +599,7 @@ public class RSAKeyTest extends TestCase {
 	public void testParseCookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.1.1
+		// See http://tools.ietf.org/html/rfc7520#section-3.4
 
 		String json = "{" +
 			"\"kty\": \"RSA\"," +
@@ -720,7 +720,7 @@ public class RSAKeyTest extends TestCase {
 	public void testParseCookbookExample2()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.1.1
+		// See http://tools.ietf.org/html/rfc7520#section-5.1.1
 
 		String json="{"+
 			"\"kty\":\"RSA\","+

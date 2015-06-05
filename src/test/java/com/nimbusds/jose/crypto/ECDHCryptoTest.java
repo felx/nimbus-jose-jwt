@@ -343,7 +343,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCookbookExample_ES_steps()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.5
+		// From http://tools.ietf.org/html/rfc7520#section-5.5
 
 		final String plainText = "You can trust us to stick with you through thick and " +
 			"thin–to the bitter end. And you can trust us to "+
@@ -433,7 +433,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCookbookExample_ES_A128KW_steps()
 		throws Exception {
 
-		// From http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.4
+		// From http://tools.ietf.org/html/rfc7520#section-5.4
 
 		final String plainText = "You can trust us to stick with you through thick and " +
 			"thin–to the bitter end. And you can trust us to "+
@@ -523,7 +523,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCookbookExample_ECDH_ES_A128KW()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.4
+		// See http://tools.ietf.org/html/rfc7520#section-5.4
 
 		ECKey ecJWK = ECKey.parse("{" +
 			"\"kty\": \"EC\"," +
@@ -575,7 +575,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCookbookExample_ECDH_ES_A128CBC_HS256()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-08#section-5.5
+		// See http://tools.ietf.org/html/rfc7520#section-5.5
 
 		ECKey ecJWK = ECKey.parse("{" +
 			"\"kty\": \"EC\"," +

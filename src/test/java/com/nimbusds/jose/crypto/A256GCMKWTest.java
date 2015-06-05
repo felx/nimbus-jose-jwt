@@ -479,7 +479,7 @@ public class A256GCMKWTest extends TestCase {
 	}
 
 
-	// http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.7
+	// http://tools.ietf.org/html/rfc7520#section-5.7.5
 	public void testDecryptCookbookExample()
 		throws Exception {
 

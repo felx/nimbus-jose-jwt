@@ -436,7 +436,7 @@ public class ECKeyTest extends TestCase {
 	public void testCookbookExampleKey()
 		throws Exception {
 		
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.3.1
+		// See http://tools.ietf.org/html/rfc7520#section-3.2
 		
 		String json = "{"+
 			"\"kty\":\"EC\","+

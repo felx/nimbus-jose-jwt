@@ -269,7 +269,7 @@ public class OctetSequenceKeyTest extends TestCase {
 	public void testCookbookHMACKeyExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.1
+		// See http://tools.ietf.org/html/rfc7c520#section-3.5
 		
 		String json ="{"+
 			"\"kty\":\"oct\","+
@@ -291,7 +291,7 @@ public class OctetSequenceKeyTest extends TestCase {
 	public void testCookbookAESKeyExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.6.1
+		// See http://tools.ietf.org/html/rfc7520#section-5.3.1
 
 		String json ="{"+
 			"\"kty\":\"oct\","+

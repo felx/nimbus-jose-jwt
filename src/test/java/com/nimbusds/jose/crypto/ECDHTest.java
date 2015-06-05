@@ -77,7 +77,7 @@ public class ECDHTest extends TestCase{
 
 	public void testSpecExample()
 		throws Exception {
-		// http://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40#appendix-C
+		// http://tools.ietf.org/html/rfc7518#appendix-C
 
 		ECKey epk = ECKey.parse("{\"kty\":\"EC\"," +
 			"\"crv\":\"P-256\"," +

@@ -46,7 +46,7 @@ public class PBKDF2Test extends TestCase {
 	}
 
 
-	// From http://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#appendix-C
+	// From http://tools.ietf.org/html/rfc7517#appendix-C
 	public void testSaltFormatVector()
 		throws Exception {
 
@@ -71,7 +71,7 @@ public class PBKDF2Test extends TestCase {
 	}
 
 
-	// From http://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#appendix-C
+	// From http://tools.ietf.org/html/rfc7517#appendix-C
 	public void testDeriveKeyExample()
 		throws Exception {
 

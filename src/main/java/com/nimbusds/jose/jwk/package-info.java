@@ -7,8 +7,7 @@
  * <p>References:
  *
  * <ul>
- *     <li>http://tools.ietf.org/html/draft-ietf-jose-json-web-key-39
- *     <li>http://tools.ietf.org/wg/jose/
+ *     <li><a href="http://tools.ietf.org/html/rfc7517">RFC 7517 (JWK)</a>
  * </ul>
  */
 package com.nimbusds.jose.jwk;

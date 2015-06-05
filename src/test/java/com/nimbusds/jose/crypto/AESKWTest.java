@@ -14,7 +14,7 @@ import junit.framework.TestCase;
 public class AESKWTest extends TestCase {
 
 
-	// From http://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#appendix-C
+	// From http://tools.ietf.org/html/rfc7517#appendix-C
 	public void testVectorEncryptCEK()
 		throws Exception {
 

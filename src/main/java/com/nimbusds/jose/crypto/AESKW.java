@@ -17,7 +17,7 @@ import com.nimbusds.jose.JOSEException;
  * AES Key Wrapping methods for Content Encryption Key (CEK) encryption and
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe.
  *
- * <p>See draft-ietf-jose-json-web-algorithms-40, section 4.4.
+ * <p>See RFC 7518 (JWA), section 4.4.
  *
  * @author Melisa Halsband
  * @version $version$ (2015-05-14)

@@ -482,7 +482,7 @@ public class RSA1_5Test extends TestCase {
 	public void testExampleDecrypt()
 		throws Exception {
 
-		// From JWE spec draft-ietf-jose-json-web-encryption-10, appendix-A.2
+		// From JWE spec http://tools.ietf.org/html/rfc7516#appendix-A.2
 
 		String jweString = "eyJhbGciOiJSU0ExXzUiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0." +
 			"UGhIOguC7IuEvf_NPVaXsGMoLOmwvc1GyqlIKOK1nN94nHPoltGRhWhw7Zx0-kFm" +
@@ -551,7 +551,7 @@ public class RSA1_5Test extends TestCase {
 	public void testCookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-4.1
+		// See http://tools.ietf.org/html/rfc7520#section-5.1
 
 		String json="{"+
 			"\"kty\":\"RSA\","+

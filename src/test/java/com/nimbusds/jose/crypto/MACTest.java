@@ -294,7 +294,7 @@ public class MACTest extends TestCase {
 	public void testCookbookExample()
 		throws Exception {
 
-		// See http://tools.ietf.org/html/draft-ietf-jose-cookbook-02#section-3.4.3
+		// See http://tools.ietf.org/html/rfc7520#section-4.4.3
 
 		String json ="{"+
 			"\"kty\":\"oct\","+

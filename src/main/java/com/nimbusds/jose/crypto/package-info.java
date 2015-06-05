@@ -56,5 +56,11 @@
  *             <li>
  *         </ul>
  * </ul>
+ *
+ * <p>References:
+ *
+ * <ul>
+ *     <li><a href="http://tools.ietf.org/html/rfc7518">RFC 7518 (JWA)</a>
+ * </ul>
  */
 package com.nimbusds.jose.crypto;

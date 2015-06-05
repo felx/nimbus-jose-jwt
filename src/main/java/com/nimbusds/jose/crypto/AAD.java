@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.ByteUtils;
 /**
  * Additional authenticated data (AAD).
  *
- * <p>See draft-ietf-jose-json-web-encryption-40, section 5.1, point 14.
+ * <p>See RFC 7518 (JWA), section 5.1, point 14.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-05-14)

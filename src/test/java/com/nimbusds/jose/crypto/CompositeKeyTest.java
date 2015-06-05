@@ -13,7 +13,7 @@ import com.nimbusds.jose.JOSEException;
 
 /**
  * Tests composite MAC + AES key extraction. Test cases from 
- * draft-ietf-jose-json-web-algorithms-18, appendix B.
+ * http://tools.ietf.org/html/rfc7518#appendix-B
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2013-05-06)

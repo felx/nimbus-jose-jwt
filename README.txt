@@ -53,6 +53,12 @@ algorithms:
 
 * Direct shared symmetric key encryption: dir
 
+* Key Agreement with Elliptic Curve Diffie-Hellman Ephemeral Static: ECDH-ES,
+  ECDH-ES+A128KW, ECDH-ES+A192KW and ECDH-ES+A256KW
+
+* Password-based encryption: PBES2-HS256+A128KW, PBES2-HS384+A192KW and
+  PBES2-HS512+A256KW
+
 * Content encryption with AES_CBC_HMAC_SHA2: A128CBC-HS256, A192CBC-HS384,
   A256CBC-HS512, the deprecated A128CBC+HS256 and A256CBC+HS512 are also
   supported
@@ -66,7 +72,7 @@ AES Key Wrap and ECDH-ES encryption is on the roadmap, you're welcome to
 contribute in their development.
 
 
-Related IETF drafts:
+Related IETF standards:
 
 * RFC 7515 - JSON Web Signature (JWS)
 
