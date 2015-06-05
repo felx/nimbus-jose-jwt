@@ -28,7 +28,7 @@ objects (in compact format):
 
 * JSON Web Key (JWK) objects and JSON Web Key (JWK) Sets.
 
-* Plain, signed and encrypted JSON Web Tokens (JWTs).
+* Plain (unsecured), signed and encrypted JSON Web Tokens (JWTs).
 
 
 
@@ -68,15 +68,21 @@ contribute in their development.
 
 Related IETF drafts:
 
-* [JWA] draft-ietf-jose-json-web-algorithms-40
+* RFC 7515 - JSON Web Signature (JWS)
 
-* [JWS] draft-ietf-jose-json-web-signature-40
+* RFC 7516 - JSON Web Encryption (JWE)
 
-* [JWE] draft-ietf-jose-json-web-encryption-40
+* RFC 7517 - JSON Web Key (JWK)
 
-* [JWK] draft-ietf-jose-json-web-key-40
+* RFC 7518 - JSON Web Algorithms (JWA)
 
-* [JWT] draft-ietf-oauth-json-web-token-32
+* RFC 7519 - JSON Web Token (JWT)
+
+* RFC 7520 - Examples of Protecting Content Using JSON Object Signing and
+  Encryption (JOSE)
+
+* RFC 7165 - Use Cases and Requirements for JSON Object Signing and Encryption
+  (JOSE)
 
 
 System requirements and dependencies
@@ -87,8 +93,7 @@ The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
 * JCIP for concurrency annotations.
 
-* [optional] The BouncyCastle.org library, for ECDSA signing and verification,
-  and for AES/CBC and AES/GCM encryption.
+* [optional] The BouncyCastle.org library, for AES/CBC and AES/GCM encryption.
 
 
 For Maven add:
@@ -106,7 +111,7 @@ To post bug reports and suggestions:
 https://bitbucket.org/connect2id/nimbus-jose-jwt/issues
 
 
-Follow us on Twitter:
+Follow updates and new releases on Twitter:
 
 https://twitter.com/connect2id
 
