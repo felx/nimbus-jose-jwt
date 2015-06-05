@@ -6,11 +6,11 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.jca.JWEJCAContext;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jca.JWEJCAContext;
 
 
 /**
@@ -206,9 +206,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -244,9 +245,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -282,9 +284,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 

@@ -6,11 +6,11 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.jca.JWEJCAContext;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -209,9 +209,10 @@ public class A128KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -247,9 +248,10 @@ public class A128KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -285,9 +287,10 @@ public class A128KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -322,9 +325,10 @@ public class A128KWTest extends TestCase {
 
 		OctetSequenceKey oct = new OctetSequenceKey.Builder(key128).build();
 
-		JWEEncrypter encrypter = new AESEncrypter(oct);
+		AESEncrypter encrypter = new AESEncrypter(oct);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -581,7 +585,8 @@ public class A128KWTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.A128KW, EncryptionMethod.A128GCM), payload);
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		jweObject.encrypt(encrypter);
 

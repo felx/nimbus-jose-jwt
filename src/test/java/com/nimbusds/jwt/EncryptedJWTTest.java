@@ -17,15 +17,17 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.jca.JWEJCAContext;
 
 
 /**
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-08)
+ * @version $version$ (2015-06-05)
  */
 public class EncryptedJWTTest extends TestCase {
 
@@ -180,6 +182,7 @@ public class EncryptedJWTTest extends TestCase {
 
 		// Create an encrypter with the specified public RSA key
 		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		// Do the actual encryption
 		jwt.encrypt(encrypter);

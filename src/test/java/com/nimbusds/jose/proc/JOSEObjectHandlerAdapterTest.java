@@ -9,6 +9,8 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.jca.JWEJCAContext;
 
 
 /**
@@ -47,7 +49,9 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
 		keyGen.initialize(512);
 
-		jweObject.encrypt(new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic()));
+		RSAEncrypter encrypter = new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic());
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
+		jweObject.encrypt(encrypter);
 
 		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerAdapter<String, SimpleContext>(), null));
 	}

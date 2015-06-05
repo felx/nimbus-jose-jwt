@@ -1,9 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.Provider;
-import java.security.SecureRandom;
-import javax.crypto.SecretKey;
+import java.security.*;
+import javax.crypto.*;
+import javax.crypto.spec.GCMParameterSpec;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -14,6 +14,7 @@ import org.bouncycastle.crypto.params.AEADParameters;
 import org.bouncycastle.crypto.params.KeyParameter;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
@@ -115,36 +116,39 @@ class AESGCM {
 		                                      final Provider provider)
 		throws JOSEException {
 
-		// Initialise AES/GCM cipher for encryption
-		GCMBlockCipher cipher = createAESGCMCipher(secretKey, true, iv, authData);
+		Cipher cipher;
 
-
-		// Prepare output buffer
-		int outputLength = cipher.getOutputSize(plainText.length);
-		byte[] output = new byte[outputLength];
-
-
-		// Produce cipher text
-		int outputOffset = cipher.processBytes(plainText, 0, plainText.length, output, 0);
-
-
-		// Produce authentication tag
 		try {
-			outputOffset += cipher.doFinal(output, outputOffset);
+			if (provider != null) {
+				cipher = Cipher.getInstance("AES/GCM/NoPadding", provider);
+			} else {
+				cipher = Cipher.getInstance("AES/GCM/NoPadding");
+			}
 
-		} catch (InvalidCipherTextException e) {
+			GCMParameterSpec gcmSpec = new GCMParameterSpec(AUTH_TAG_BIT_LENGTH, iv);
+			cipher.init(Cipher.ENCRYPT_MODE, secretKey, gcmSpec);
 
-			throw new JOSEException("Couldn't generate GCM authentication tag: " + e.getMessage(), e);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+
+			throw new JOSEException("Couldn't create AES/GCM/NoPadding cipher: " + e.getMessage(), e);
 		}
 
-		// Split output into cipher text and authentication tag
-		int authTagLength = AUTH_TAG_BIT_LENGTH / 8;
+		cipher.updateAAD(authData);
 
-		byte[] cipherText = new byte[outputOffset - authTagLength];
-		byte[] authTag = new byte[authTagLength];
+		byte[] cipherOutput;
 
-		System.arraycopy(output, 0, cipherText, 0, cipherText.length);
-		System.arraycopy(output, outputOffset - authTagLength, authTag, 0, authTag.length);
+		try {
+			cipherOutput = cipher.doFinal(plainText);
+
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+
+			throw new JOSEException("Couldn't encrypt with AES/GCM/NoPadding: " + e.getMessage(), e);
+		}
+
+		final int tagPos = cipherOutput.length - ByteUtils.byteLength(AUTH_TAG_BIT_LENGTH);
+
+		byte[] cipherText = ByteUtils.subArray(cipherOutput, 0, tagPos);
+		byte[] authTag = ByteUtils.subArray(cipherOutput, tagPos, ByteUtils.byteLength(AUTH_TAG_BIT_LENGTH));
 
 		return new AuthenticatedCipherText(cipherText, authTag);
 	}
