@@ -47,7 +47,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-05)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -172,7 +172,10 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		// Generate and encrypt the CEK according to the enc method
 		final EncryptionMethod enc = header.getEncryptionMethod();
-		final SecretKey cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getSecureRandom());
+		final SecretKey cek = AES.generateKey(
+			enc.cekBitLength(),
+			getJCAContext().getKeyEncryptionProvider(),
+			getJCAContext().getSecureRandom());
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
 

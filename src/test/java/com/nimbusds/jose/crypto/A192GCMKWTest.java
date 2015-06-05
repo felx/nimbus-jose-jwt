@@ -6,6 +6,7 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.jca.JWEJCAContext;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
@@ -16,7 +17,7 @@ import com.nimbusds.jose.*;
  * Tests A192GCMKW JWE encryption and decryption. 
  *
  * @author Melisa Halsband 
- * @version $version$ (2014-04-21)
+ * @version $version$ (2015-06-05)
  */
 public class A192GCMKWTest extends TestCase {
 
@@ -127,9 +128,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -165,9 +167,10 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -451,7 +454,8 @@ public class A192GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key192);
+		AESEncrypter encrypter = new AESEncrypter(key192);
+		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
 
 		jweObject.encrypt(encrypter);
 

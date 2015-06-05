@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 import javax.crypto.SecretKey;
 
@@ -44,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-05)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -104,8 +103,10 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Generate and encrypt the CEK according to the enc method
-		final SecureRandom randomGen = getJCAContext().getSecureRandom();
-		final SecretKey cek = AES.generateKey(enc.cekBitLength(), randomGen);
+		final SecretKey cek = AES.generateKey(
+			enc.cekBitLength(),
+			getJCAContext().getKeyEncryptionProvider(),
+			getJCAContext().getSecureRandom());
 
 		final Base64URL encryptedKey; // The second JWE part
 
