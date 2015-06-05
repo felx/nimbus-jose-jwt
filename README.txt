@@ -11,8 +11,8 @@ Nimbus JOSE + JWT
 
 
 Nimbus JOSE + JWT is an open source Java 7+ library which implements the
-Javascript Object Signing and Encryption (JOSE) spec suite and the closely
-related JSON Web Token (JWT) spec.
+Javascript Object Signing and Encryption (JOSE) standard suite and the closely
+related JSON Web Token (JWT) standard.
 
 
 Supported JOSE and JWT objects
