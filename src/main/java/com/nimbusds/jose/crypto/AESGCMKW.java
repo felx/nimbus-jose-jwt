@@ -5,6 +5,7 @@ import java.security.Provider;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import org.bouncycastle.crypto.BlockCipher;
@@ -139,15 +140,9 @@ class AESGCMKW {
 		byte[] authTag = authEncrCEK.getAuthenticationTag();
 
 		// Join encrypted CEK and authentication tag to produce cipher input
-		byte[] input = new byte[cipherText.length + authTag.length];
-
-		System.arraycopy(cipherText, 0, input, 0, cipherText.length);
-		System.arraycopy(authTag, 0, input, cipherText.length, authTag.length);
-
-		int keyBytesLength = gcm.getOutputSize(input.length);
-
+		final byte[] input = ByteUtils.concat(cipherText, authTag);
+		final int keyBytesLength = gcm.getOutputSize(input.length);
 		byte[] keyBytes = new byte[keyBytesLength];
-
 
 		// Decrypt
 		int keyBytesOffset = gcm.processBytes(input, 0, input.length, keyBytes, 0);
