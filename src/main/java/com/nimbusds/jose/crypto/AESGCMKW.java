@@ -5,14 +5,7 @@ import java.security.Provider;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.ThreadSafe;
-
-import org.bouncycastle.crypto.BlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.modes.GCMBlockCipher;
-import org.bouncycastle.crypto.params.AEADParameters;
-import org.bouncycastle.crypto.params.KeyParameter;
 
 import com.nimbusds.jose.JOSEException;
 
@@ -58,45 +51,7 @@ class AESGCMKW {
 							 Provider provider)
 		throws JOSEException {
 
-		// Initialise AES cipher
-		BlockCipher cipher = AES.createCipher(kek, true);
-
-		// Create GCM cipher with AES
-		GCMBlockCipher gcm = new GCMBlockCipher(cipher);
-
-		AEADParameters aeadParams = new AEADParameters(new KeyParameter(kek.getEncoded()),
-			AUTH_TAG_BIT_LENGTH,
-			iv,
-			null);
-		gcm.init(true, aeadParams);
-
-		// Prepare output buffer
-		int outputLength = gcm.getOutputSize(cek.getEncoded().length);
-		byte[] output = new byte[outputLength];
-
-		// Produce cipher text
-		int outputOffset = gcm.processBytes(cek.getEncoded(), 0, cek.getEncoded().length, output, 0);
-
-		// Produce authentication tag
-		try {
-			outputOffset += gcm.doFinal(output, outputOffset);
-
-		} catch (InvalidCipherTextException e) {
-
-			throw new JOSEException("Couldn't generate GCM authentication tag for key: " + e.getMessage(), e);
-		}
-
-		// Split output into cipher text and authentication tag
-		int authTagLength = AUTH_TAG_BIT_LENGTH / 8;
-
-		byte[] cipherText = new byte[outputOffset - authTagLength];
-		byte[] authTag = new byte[authTagLength];
-
-		System.arraycopy(output, 0, cipherText, 0, cipherText.length);
-		System.arraycopy(output, outputOffset - authTagLength, authTag, 0, authTag.length);
-
-		return new AuthenticatedCipherText(cipherText, authTag);
-
+		return AESGCM.encrypt(kek, iv, cek.getEncoded(), new byte[0], provider);
 	}
 
 
@@ -124,38 +79,7 @@ class AESGCMKW {
 					   final Provider provider)
 		throws JOSEException {
 
-		// Initialise AES cipher
-		BlockCipher cipher = AES.createCipher(kek, false);
-
-		// Create GCM cipher with AES
-		GCMBlockCipher gcm = new GCMBlockCipher(cipher);
-
-		AEADParameters aeadParams = new AEADParameters(new KeyParameter(kek.getEncoded()),
-			AUTH_TAG_BIT_LENGTH,
-			iv,
-			null);
-		gcm.init(false, aeadParams);
-
-		byte[] cipherText = authEncrCEK.getCipherText();
-		byte[] authTag = authEncrCEK.getAuthenticationTag();
-
-		// Join encrypted CEK and authentication tag to produce cipher input
-		final byte[] input = ByteUtils.concat(cipherText, authTag);
-		final int keyBytesLength = gcm.getOutputSize(input.length);
-		byte[] keyBytes = new byte[keyBytesLength];
-
-		// Decrypt
-		int keyBytesOffset = gcm.processBytes(input, 0, input.length, keyBytes, 0);
-
-
-		// Validate authentication tag
-		try {
-			keyBytesOffset += gcm.doFinal(keyBytes, keyBytesOffset);
-
-		} catch (InvalidCipherTextException e) {
-
-			throw new JOSEException("Couldn't validate GCM authentication tag: " + e.getMessage(), e);
-		}
+		byte[] keyBytes = AESGCM.decrypt(kek, iv, authEncrCEK.getCipherText(), new byte[0], authEncrCEK.getAuthenticationTag(), provider);
 
 		if (8 * keyBytes.length != keyLength) {
 
@@ -163,8 +87,8 @@ class AESGCMKW {
 				keyBytes.length + " != " + keyLength);
 		}
 
+		// pad up to key length?
 		return new SecretKeySpec(keyBytes, "AES");
-
 	}
 
 
