@@ -473,7 +473,7 @@ public class ECDHCryptoTest extends TestCase {
 			ConcatKDF.encodeNoData());
 
 		SecretKey cek = new SecretKeySpec(new Base64URL("Nou2ueKlP70ZXDbq9UrRwg").decode(), "AES");
-		Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, derivedKey));
+		Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, derivedKey, null));
 
 		final Base64URL expectedEncryptedKey = new Base64URL("0DJjBXri_kBcC46IkU5_Jk9BqaQeHdv2");
 		assertEquals(expectedEncryptedKey, encryptedKey);

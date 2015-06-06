@@ -1,6 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -38,23 +44,25 @@ class AESKW {
 	 *
 	 * @throws JOSEException If encryption failed.
 	 */
-	public static byte[] encryptCEK(final SecretKey cek, final SecretKey kek)
+	public static byte[] encryptCEK(final SecretKey cek, final SecretKey kek, final Provider provider)
 		throws JOSEException {
 
-		// Get CEK bytes
-		byte[] cekBytes = cek.getEncoded();
-
-		// Create and initialise AES wrapper
-		Wrapper encrypter = new AESWrapEngine();
-		encrypter.init(true, new KeyParameter(kek.getEncoded()));
-
-		// Produce cipher text
 		try {
-			return encrypter.wrap(cekBytes, 0, cekBytes.length);
-		} catch (Exception e) {
-			// java.lang.IllegalStateException
-			// org.bouncycastle.crypto.DataLengthException
-			throw new JOSEException("Couldn't encrypt Content Encryption Key (CEK): " + e.getMessage(), e);
+			Cipher cipher;
+
+			if (provider != null) {
+				cipher = Cipher.getInstance("AESWrap", provider);
+			} else {
+				cipher = Cipher.getInstance("AESWrap");
+			}
+
+			cipher.init(Cipher.WRAP_MODE, kek);
+
+			return cipher.wrap(cek);
+
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException e) {
+
+			throw new JOSEException(e.getMessage(), e);
 		}
 	}
 

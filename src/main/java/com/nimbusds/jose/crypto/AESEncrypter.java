@@ -47,7 +47,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -179,7 +179,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
 
-			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, getKey()));
+			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, getKey(), getJCAContext().getKeyEncryptionProvider()));
 			updatedHeader = header; // simply copy ref
 
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {

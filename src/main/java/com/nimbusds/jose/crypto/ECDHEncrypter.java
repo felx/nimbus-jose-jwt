@@ -51,7 +51,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
@@ -137,7 +137,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			encryptedKey = null;
 		} else if (algMode.equals(ECDH.AlgorithmMode.KW)) {
 			cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getKeyEncryptionProvider(), getJCAContext().getSecureRandom());
-			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, sharedKey));
+			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, sharedKey, getJCAContext().getKeyEncryptionProvider()));
 		} else {
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}

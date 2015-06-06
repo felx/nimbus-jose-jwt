@@ -28,7 +28,7 @@ public class AESKWTest extends TestCase {
 			(byte)110, (byte)171, (byte)169, (byte) 92, (byte)129, (byte) 92, (byte)109, (byte)117,
 			(byte)233, (byte)242, (byte)116, (byte)233, (byte)170, (byte) 14, (byte) 24, (byte) 75 };
 
-		final byte[] encryptedCEK = AESKW.encryptCEK(new SecretKeySpec(cek, "AES"), new SecretKeySpec(kek, "AES"));
+		final byte[] encryptedCEK = AESKW.encryptCEK(new SecretKeySpec(cek, "AES"), new SecretKeySpec(kek, "AES"), null);
 
 		final byte[] expectedEncryptedCEK = {
 			(byte) 78, (byte)186, (byte)151, (byte) 59, (byte) 11, (byte)141, (byte) 81, (byte)240,

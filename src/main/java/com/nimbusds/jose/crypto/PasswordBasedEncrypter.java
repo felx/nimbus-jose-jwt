@@ -37,7 +37,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -140,7 +140,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 			getJCAContext().getSecureRandom());
 
 		// The second JWE part
-		final Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, psKey));
+		final Base64URL encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, psKey, getJCAContext().getKeyEncryptionProvider()));
 
 		return  ContentCryptoProvider.encrypt(updatedHeader, clearText, cek, encryptedKey, getJCAContext());
 	}
