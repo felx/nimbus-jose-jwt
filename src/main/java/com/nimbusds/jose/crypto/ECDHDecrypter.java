@@ -48,7 +48,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-07)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -186,7 +186,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 			if (encryptedKey == null) {
 				throw new JOSEException("Missing JWE encrypted key");
 			}
-			cek = AESKW.decryptCEK(sharedKey, encryptedKey.decode());
+			cek = AESKW.unwrapCEK(sharedKey, encryptedKey.decode(), getJCAContext().getKeyEncryptionProvider());
 		} else {
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);
 		}

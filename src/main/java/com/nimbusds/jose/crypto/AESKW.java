@@ -8,43 +8,43 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
-
-import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.crypto.Wrapper;
-import org.bouncycastle.crypto.engines.AESWrapEngine;
 
 import com.nimbusds.jose.JOSEException;
 
 
 /**
  * AES Key Wrapping methods for Content Encryption Key (CEK) encryption and
- * decryption. Uses the BouncyCastle.org provider. This class is thread-safe.
+ * decryption. This class is thread-safe.
  *
  * <p>See RFC 7518 (JWA), section 4.4.
  *
  * @author Melisa Halsband
- * @version $version$ (2015-05-14)
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 class AESKW {
 
 
 	/**
-	 * Encrypts the specified Content Encryption Key (CEK).
+	 * Wraps the specified Content Encryption Key (CEK).
 	 *
-	 * @param cek The Content Encryption Key (CEK) to encrypt. Must not be
-	 *            {@code null}.
-	 * @param kek The AES Key Encryption Key (KEK). Must not be
-	 *            {@code null}.
+	 * @param cek      The Content Encryption Key (CEK) to wrap. Must not
+	 *                 be {@code null}.
+	 * @param kek      The AES Key Encryption Key (KEK) (wrapping key).
+	 *                 Must not be {@code null}.
+	 * @param provider The specific JCA provider to use, {@code null}
+	 *                 implies the default system one.
 	 *
-	 * @return The encrypted Content Encryption Key (CEK).
+	 * @return The wrapped Content Encryption Key (CEK).
 	 *
-	 * @throws JOSEException If encryption failed.
+	 * @throws JOSEException If wrapping failed.
 	 */
-	public static byte[] encryptCEK(final SecretKey cek, final SecretKey kek, final Provider provider)
+	public static byte[] wrapCEK(final SecretKey cek,
+				     final SecretKey kek,
+				     final Provider provider)
 		throws JOSEException {
 
 		try {
@@ -57,50 +57,49 @@ class AESKW {
 			}
 
 			cipher.init(Cipher.WRAP_MODE, kek);
-
 			return cipher.wrap(cek);
 
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException e) {
-
-			throw new JOSEException(e.getMessage(), e);
+			throw new JOSEException("Couldn't wrap AES key: " + e.getMessage(), e);
 		}
 	}
 
 
 	/**
-	 * Decrypts the specified encrypted Content Encryption Key (CEK).
+	 * Unwraps the specified encrypted Content Encryption Key (CEK).
 	 *
-	 * @param kek          The AES Key Encryption Key. Must not be
-	 *                     {@code null}.
-	 * @param encryptedCEK The encrypted Content Encryption Key (CEK) to
-	 *                     decrypt and authentication tag. Must not be
-	 *                     {@code null}.
+	 * @param kek          The AES Key Encryption Key (KEK) (wrapping key).
+	 *                     Must not be {@code null}.
+	 * @param encryptedCEK The wrapped Content Encryption Key (CEK) with
+	 *                     authentication tag. Must not be {@code null}.
+	 * @param provider     The specific JCA provider to use, {@code null}
+	 *                     implies the default system one.
 	 *
-	 * @return The decrypted Content Encryption Key (CEK).
+	 * @return The unwrapped Content Encryption Key (CEK).
 	 *
-	 * @throws JOSEException If decryption failed.
+	 * @throws JOSEException If unwrapping failed.
 	 */
-	public static SecretKey decryptCEK(final SecretKey kek,
-					   final byte[] encryptedCEK)
+	public static SecretKey unwrapCEK(final SecretKey kek,
+					  final byte[] encryptedCEK,
+					  final Provider provider)
 		throws JOSEException {
 
-		// Create and initialise AES unwrapper
-		Wrapper decrypter = new AESWrapEngine();
-		decrypter.init(false, new KeyParameter(kek.getEncoded()));
-
-		// decrypt
-		byte[] cekBytes;
-
 		try {
-			cekBytes = decrypter.unwrap(encryptedCEK, 0, encryptedCEK.length);
+			Cipher cipher;
 
-		} catch (Exception e) {
-			// java.lang.IllegalStateException
-			// org.bouncycastle.crypto.InvalidCipherTextException
-			throw new JOSEException("Couldn't decrypt Content Encryption Key (CEK): " + e.getMessage(), e);
+			if (provider != null) {
+				cipher = Cipher.getInstance("AESWrap", provider);
+			} else {
+				cipher = Cipher.getInstance("AESWrap");
+			}
+
+			cipher.init(Cipher.UNWRAP_MODE, kek);
+			return (SecretKey)cipher.unwrap(encryptedCEK, "AES", Cipher.SECRET_KEY);
+
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException e) {
+
+			throw new JOSEException("Couldn't unwrap AES key: " + e.getMessage(), e);
 		}
-
-		return new SecretKeySpec(cekBytes, "AES");
 	}
 
 

@@ -179,7 +179,7 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		if(AlgFamily.AESKW.equals(algFamily)) {
 
-			encryptedKey = Base64URL.encode(AESKW.encryptCEK(cek, getKey(), getJCAContext().getKeyEncryptionProvider()));
+			encryptedKey = Base64URL.encode(AESKW.wrapCEK(cek, getKey(), getJCAContext().getKeyEncryptionProvider()));
 			updatedHeader = header; // simply copy ref
 
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {

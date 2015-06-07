@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -172,7 +172,7 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 		    alg.equals(JWEAlgorithm.A192KW) ||
 		    alg.equals(JWEAlgorithm.A256KW))   {
 
-			cek = AESKW.decryptCEK(getKey(), encryptedKey.decode());
+			cek = AESKW.unwrapCEK(getKey(), encryptedKey.decode(), getJCAContext().getKeyEncryptionProvider());
 
 		} else if (alg.equals(JWEAlgorithm.A128GCMKW) ||
 			   alg.equals(JWEAlgorithm.A192GCMKW) ||
