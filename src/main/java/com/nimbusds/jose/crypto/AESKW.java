@@ -15,7 +15,7 @@ import com.nimbusds.jose.JOSEException;
 
 
 /**
- * AES Key Wrapping methods for Content Encryption Key (CEK) encryption and
+ * AES key Wrapping methods for Content Encryption Key (CEK) encryption and
  * decryption. This class is thread-safe.
  *
  * <p>See RFC 7518 (JWA), section 4.4.

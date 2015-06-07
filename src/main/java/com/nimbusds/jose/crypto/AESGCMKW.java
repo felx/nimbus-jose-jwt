@@ -8,25 +8,21 @@ import javax.crypto.spec.SecretKeySpec;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
  * AES GCM methods for Content Encryption Key (CEK) encryption and
- * decryption. Uses the BouncyCastle.org provider. This class is thread-safe.
+ * decryption. This class is thread-safe.
  *
  * <p>See RFC 7518 (JWA), section 4.7.
  *
  * @author Melisa Halsband
- * @version $version$ (2014-06-18)
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 class AESGCMKW {
-
-
-	/**
-	 * The standard authentication tag length (128 bits).
-	 */
-	public static final int AUTH_TAG_BIT_LENGTH = 128;
 
 
 	/**
@@ -36,10 +32,10 @@ class AESGCMKW {
 	 *		   not be {@code null}.
 	 * @param iv	   The initialisation vector (IV). Must not be
 	 *		   {@code null}.
-	 * @param kek	   The AES Key Encription Key (KEK). Must not be
+	 * @param kek	   The AES Key Encryption Key (KEK). Must not be
 	 *		   {@code null}.
-	 * @param provider The JCA provider, or {@code null} to use the default
-	 *		   one.
+	 * @param provider The specific JCA provider to use, {@code null}
+	 *                 implies the default system one.
 	 *
 	 * @return The encrypted Content Encryption Key (CEK).
 	 *
@@ -81,13 +77,12 @@ class AESGCMKW {
 
 		byte[] keyBytes = AESGCM.decrypt(kek, iv, authEncrCEK.getCipherText(), new byte[0], authEncrCEK.getAuthenticationTag(), provider);
 
-		if (8 * keyBytes.length != keyLength) {
+		if (ByteUtils.bitLength(keyBytes) != keyLength) {
 
 			throw new JOSEException("CEK key length mismatch: " +
-				keyBytes.length + " != " + keyLength);
+				ByteUtils.bitLength(keyBytes) + " != " + keyLength);
 		}
 
-		// pad up to key length?
 		return new SecretKeySpec(keyBytes, "AES");
 	}
 
