@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.Provider;
 import java.util.Collections;
 import java.util.Set;
 

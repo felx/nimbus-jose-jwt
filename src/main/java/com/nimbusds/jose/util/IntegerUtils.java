@@ -1,9 +1,6 @@
 package com.nimbusds.jose.util;
 
 
-import java.nio.ByteBuffer;
-
-
 /**
  * Integer utilities.
  *

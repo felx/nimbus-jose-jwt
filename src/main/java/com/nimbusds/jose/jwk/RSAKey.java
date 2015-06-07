@@ -32,7 +32,6 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
-import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
