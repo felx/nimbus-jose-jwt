@@ -13,7 +13,7 @@ import net.jcip.annotations.Immutable;
  * providers for key encryption, content encryption and MAC computation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-07)
  */
 @Immutable
 public final class JWEJCAContext extends JCAContext {
@@ -47,7 +47,23 @@ public final class JWEJCAContext extends JCAContext {
 
 
 	/**
-	 * Creates a new JCA context for JWE.
+	 * Creates a new JCA context for JWE with the specified general JCA
+	 * provider.
+	 *
+	 * @param generalProvider The general JCA provider to be used for all
+	 *                        operations where a more specific one is
+	 *                        absent, {@code null} to use the default
+	 *                        system provider.
+	 */
+	public JWEJCAContext(final Provider generalProvider) {
+
+		this(generalProvider, null, null, null, null);
+	}
+
+
+	/**
+	 * Creates a new JCA context for JWE with the specified JCA providers
+	 * and secure random generator.
 	 *
 	 * @param generalProvider The general JCA provider to be used for all
 	 *                        operations where a more specific one is
