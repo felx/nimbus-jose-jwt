@@ -22,7 +22,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version $version$ (2015-06-07)
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 
@@ -54,7 +54,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	protected ECDSAProvider(final JWSAlgorithm alg)
 		throws JOSEException {
 
-		super(new HashSet<JWSAlgorithm>(Arrays.asList(alg)));
+		super(new HashSet<>(Arrays.asList(alg)));
 
 		if (! SUPPORTED_ALGORITHMS.contains(alg)) {
 			throw new JOSEException("Unsupported EC DSA algorithm: " + alg);

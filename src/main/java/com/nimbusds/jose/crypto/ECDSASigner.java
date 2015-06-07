@@ -1,17 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.math.BigInteger;
 import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
 
 import net.jcip.annotations.ThreadSafe;
-
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1Sequence;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -19,7 +14,6 @@ import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.BigIntegerUtils;
 
 
 /**
@@ -36,7 +30,7 @@ import com.nimbusds.jose.util.BigIntegerUtils;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
@@ -100,53 +94,6 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	}
 
 
-	/**
-	 * Converts the specified big integers to byte arrays and returns their
-	 * array concatenation.
-	 *
-	 * @param r                 The R parameter. Must not be {@code null}.
-	 * @param s                 The S parameter. Must not be {@code null}.
-	 * @param rsByteArrayLength The expected concatenated array length.
-	 *
-	 * @return The resulting concatenated array.
-	 */
-	private static byte[] formatSignature(final BigInteger r, 
-		                              final BigInteger s,
-		                              final int rsByteArrayLength) {
-
-		byte[] rBytes = BigIntegerUtils.toBytesUnsigned(r);
-		byte[] sBytes = BigIntegerUtils.toBytesUnsigned(s);
-
-		byte[] rsBytes = new byte[rsByteArrayLength];
-
-		int i = 0;
-
-		// Copy R bytes to first array half, zero pad front
-		int offset = (rsByteArrayLength / 2) - rBytes.length;
-
-		i += offset;
-
-		for (byte rB: rBytes) {
-
-			rsBytes[i++] = rB;
-		}
-
-		// Copy S bytes to second array half, zero pad front
-		i = rsByteArrayLength / 2;
-
-		offset = (rsByteArrayLength / 2) - sBytes.length;
-
-		i += offset;
-
-		for (byte sB: sBytes) {
-
-			rsBytes[i++] = sB;
-		}
-
-		return rsBytes;
-	}
-
-
 	@Override
 	public Base64URL sign(final JWSHeader header, final byte[] signingInput)
 		throws JOSEException {
@@ -158,7 +105,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		}
 
 		// DER-encoded signature, according to JCA spec
-		byte[] jcaSignature;
+		// (sequence of two integers - R + S)
+		final byte[] jcaSignature;
 
 		try {
 			Signature dsa = ECDSA.getSignerAndVerifier(alg, getJCAContext().getProvider());
@@ -171,14 +119,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 			throw new JOSEException(e.getMessage(), e);
 		}
 
-		ASN1Sequence sequence = ASN1Sequence.getInstance(jcaSignature);
-		ASN1Integer r = (ASN1Integer)sequence.getObjectAt(0);
-		ASN1Integer s = (ASN1Integer)sequence.getObjectAt(1);
-
-		int rsByteArrayLength = ECDSA.getSignatureByteArrayLength(header.getAlgorithm());
-
-		return Base64URL.encode(formatSignature(r.getValue(),
-			                                s.getValue(),
-			                                rsByteArrayLength));
+		final int rsByteArrayLength = ECDSA.getSignatureByteArrayLength(header.getAlgorithm());
+		final byte[] jwsSignature = ECDSA.transcodeSignatureToConcat(jcaSignature, rsByteArrayLength);
+		return Base64URL.encode(jwsSignature);
 	}
 }

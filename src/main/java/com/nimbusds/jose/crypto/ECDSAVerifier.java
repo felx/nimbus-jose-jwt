@@ -1,7 +1,6 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Signature;
 import java.security.SignatureException;
@@ -9,11 +8,6 @@ import java.security.interfaces.ECPublicKey;
 import java.util.Set;
 
 import net.jcip.annotations.ThreadSafe;
-
-import org.bouncycastle.asn1.ASN1Encodable;
-import org.bouncycastle.asn1.ASN1Integer;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.DERSequence;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
@@ -34,7 +28,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-07)
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -146,36 +140,26 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 			return false;
 		}
 
-		byte[] signatureBytes = signature.decode();
+		final byte[] jwsSignature = signature.decode();
 
-		// Split signature into R and S parts
-		int rsByteArrayLength = ECDSA.getSignatureByteArrayLength(header.getAlgorithm());
-
-		byte[] rBytes = new byte[rsByteArrayLength / 2];
-		byte[] sBytes = new byte[rsByteArrayLength / 2];
+		final byte[] derSignature;
 
 		try {
-			System.arraycopy(signatureBytes, 0, rBytes, 0, rBytes.length);
-			System.arraycopy(signatureBytes, rBytes.length, sBytes, 0, sBytes.length);
-		} catch (Exception e) {
-			throw new JOSEException("Invalid ECDSA signature format: " + e.getMessage(), e);
+			derSignature = ECDSA.transcodeSignatureToDER(jwsSignature);
+		} catch (JOSEException e) {
+			// Invalid signature format
+			return false;
 		}
-
-		ASN1Encodable[] rsArray = new ASN1Encodable[2];
-		rsArray[0] = new ASN1Integer(rBytes);
-		rsArray[1] = new ASN1Integer(sBytes);
-
-		ASN1Sequence sequence = new DERSequence(rsArray);
 
 		Signature sig = ECDSA.getSignerAndVerifier(alg, getJCAContext().getProvider());
 
 		try {
 			sig.initVerify(publicKey);
 			sig.update(signedContent);
-			return sig.verify(sequence.getEncoded());
+			return sig.verify(derSignature);
 
-		} catch (InvalidKeyException | IOException e) {
-			throw new JOSEException(e.getMessage(), e);
+		} catch (InvalidKeyException e) {
+			throw new JOSEException("Invalid EC public key: " + e.getMessage(), e);
 		} catch (SignatureException e) {
 			return false;
 		}
