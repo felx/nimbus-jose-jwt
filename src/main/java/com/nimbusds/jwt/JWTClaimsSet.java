@@ -4,6 +4,7 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
+import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -31,7 +32,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-02-13)
+ * @version $version$ (2015-05-08)
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 
@@ -188,7 +189,11 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 	@Override
 	public List<String> getAudience() {
 
-		return aud;
+		if (aud == null) {
+			return null;
+		}
+
+		return Collections.unmodifiableList(aud);
 	}
 
 
@@ -422,7 +427,7 @@ public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 			return null;
 		}
 
-		return Arrays.asList(stringArray);
+		return Collections.unmodifiableList(Arrays.asList(stringArray));
 	}
 	
 	
