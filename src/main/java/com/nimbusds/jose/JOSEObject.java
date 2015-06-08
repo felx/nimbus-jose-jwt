@@ -5,8 +5,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.proc.Context;
-import com.nimbusds.jose.proc.JOSEObjectHandler;
+import com.nimbusds.jose.handler.Context;
+import com.nimbusds.jose.handler.JOSEObjectHandler;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 

@@ -10,7 +10,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.proc.SimpleContext;
+import com.nimbusds.jose.handler.SimpleContext;
 import com.nimbusds.jwt.*;
 
 

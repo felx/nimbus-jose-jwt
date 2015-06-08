@@ -1,7 +1,7 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jose.proc.Context;
+import com.nimbusds.jose.handler.Context;
 import com.nimbusds.jwt.*;
 
 
