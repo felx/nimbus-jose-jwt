@@ -11,6 +11,7 @@ import javax.crypto.spec.SecretKeySpec;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -19,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-08)
  */
 public class ContentCryptoProviderTest extends TestCase {
 
@@ -64,6 +65,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
 		final JWEJCAContext jcaProvider = new JWEJCAContext();
+		jcaProvider.setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		JWECryptoParts jweParts = ContentCryptoProvider.encrypt(
 			header,
@@ -92,7 +94,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
 		final JWEJCAContext jcaProvider = new JWEJCAContext();
-
+		jcaProvider.setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		try {
 			ContentCryptoProvider.encrypt(
@@ -102,9 +104,11 @@ public class ContentCryptoProviderTest extends TestCase {
 				encryptedKey,
 				jcaProvider);
 
+			fail();
+
 		} catch (JOSEException e) {
 
-			assertEquals("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256, 384 or 512 bits", e.getMessage());
+			assertEquals("The Content Encryption Key (CEK) length for A256CBC-HS512 must be 512 bits", e.getMessage());
 		}
 	}
 
@@ -119,9 +123,9 @@ public class ContentCryptoProviderTest extends TestCase {
 		SecretKey cek = new SecretKeySpec(cekBytes, "AES");
 		final Base64URL encryptedKey = null;
 		final JWEJCAContext jcaProvider = new JWEJCAContext();
+		jcaProvider.setProvider(BouncyCastleProviderSingleton.getInstance());
 
-
-		try {
+			try {
 			ContentCryptoProvider.encrypt(
 				header,
 				clearText,
@@ -129,9 +133,11 @@ public class ContentCryptoProviderTest extends TestCase {
 				encryptedKey,
 				jcaProvider);
 
+			fail();
+
 		} catch (JOSEException e) {
 
-			assertEquals("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256, 384 or 512 bits", e.getMessage());
+			assertEquals("The Content Encryption Key (CEK) length for A256GCM must be 256 bits", e.getMessage());
 		}
 	}
 }

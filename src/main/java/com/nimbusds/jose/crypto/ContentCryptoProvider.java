@@ -7,13 +7,14 @@ import javax.crypto.SecretKey;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-08)
  */
 class ContentCryptoProvider {
 
@@ -66,6 +67,25 @@ class ContentCryptoProvider {
 
 
 	/**
+	 * Checks the length of the Content Encryption Key (CEK) according to
+	 * the encryption method.
+	 *
+	 * @param cek The CEK. Must not be {@code null}.
+	 * @param enc The encryption method. Must not be {@code null}.
+	 *
+	 * @throws JOSEException If the CEK length doesn't match the encryption
+	 *                       method.
+	 */
+	private static void checkCEKLength(final SecretKey cek, final EncryptionMethod enc)
+		throws JOSEException {
+
+		if (enc.cekBitLength() != ByteUtils.bitLength(cek.getEncoded())) {
+			throw new JOSEException("The Content Encryption Key (CEK) length for " + enc + " must be " + enc.cekBitLength() + " bits");
+		}
+	}
+
+
+	/**
 	 * Encrypts the specified clear text (content).
 	 *
 	 * @param header       The final JWE header. Must not be {@code null}.
@@ -87,6 +107,8 @@ class ContentCryptoProvider {
 					     final Base64URL encryptedKey,
 					     final JWEJCAContext jcaProvider)
 		throws JOSEException {
+
+		checkCEKLength(cek, header.getEncryptionMethod());
 
 		// Apply compression if instructed
 		byte[] plainText = DeflateHelper.applyCompression(header, clearText);
@@ -173,6 +195,8 @@ class ContentCryptoProvider {
 				     final SecretKey cek,
 				     final JWEJCAContext jcaProvider)
 		throws JOSEException {
+
+		checkCEKLength(cek, header.getEncryptionMethod());
 
 		// Compose the AAD
 		byte[] aad = AAD.compute(header);
