@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;

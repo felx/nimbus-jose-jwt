@@ -17,10 +17,9 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.jca.JWEJCAContext;
 
 
 /**

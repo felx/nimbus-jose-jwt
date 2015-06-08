@@ -1,13 +1,14 @@
-package com.nimbusds.jose.crypto;
+package com.nimbusds.jose.crypto.bc;
 
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 
 /**
- * BouncyCastle provider singleton. Intended to guard against memory leaks. All
- * JOSE+JWT code that makes use of BouncyCastle's JCE provider must use this
- * singleton class to obtain an instance.
+ * BouncyCastle JCA provider singleton, intended to prevent memory leaks by
+ * ensuring a single instance is loaded at all times. Application code that
+ * needs a BouncyCastle JCA provider should use the {@link #getInstance()}
+ * method to obtain an instance.
  *
  * @author Vladimir Dzhuvinov
  */
@@ -27,9 +28,9 @@ public final class BouncyCastleProviderSingleton {
 
 
 	/**
-	 * Returns a BouncyCastle provider instance.
+	 * Returns a BouncyCastle JCA provider instance.
 	 *
-	 * @return The BouncyCastle provider instance.
+	 * @return The BouncyCastle JCA provider instance.
 	 */
 	public static BouncyCastleProvider getInstance() {
 

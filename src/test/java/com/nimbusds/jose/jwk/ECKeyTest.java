@@ -12,7 +12,7 @@ import java.util.*;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 

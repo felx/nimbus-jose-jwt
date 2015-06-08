@@ -6,11 +6,11 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;

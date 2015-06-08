@@ -4,6 +4,7 @@ package com.nimbusds.jose.crypto;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import java.security.Provider;

@@ -7,10 +7,9 @@ import java.security.interfaces.RSAPublicKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
-import com.nimbusds.jose.crypto.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.proc.SimpleContext;
 import com.nimbusds.jwt.*;
 

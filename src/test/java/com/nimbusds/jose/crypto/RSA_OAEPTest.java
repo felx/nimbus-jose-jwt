@@ -3,12 +3,12 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
-import java.security.Provider;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.EncryptionMethod;
@@ -18,7 +18,6 @@ import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
-import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.jwk.RSAKey;
 
 

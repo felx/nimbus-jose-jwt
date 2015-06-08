@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.jwk.ECKey;

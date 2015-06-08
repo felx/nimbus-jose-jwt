@@ -11,6 +11,7 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import org.bouncycastle.openssl.PEMKeyPair;
