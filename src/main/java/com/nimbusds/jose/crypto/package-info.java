@@ -29,27 +29,27 @@
  * Web Encryption (JWE) algorithms:
  *
  * <ul>
- *     <li>For RSAES-PKCS1-V1_5 and RSA OAEP with A128CBC-HS256, A192CBC-HS384,
- *         A256CBC-HS512, A128GCM, A192GCM and A256GCM encryption:
+ *     <li>For RSA PKCS#1 v1.5 and RSA OAEP:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.RSAEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.RSADecrypter}
  *         </ul>
- *     <li>For AES key wrap and AES GCM with A128CBC-HS256, A192CBC-HS384,
- *         A256CBC-HS512, A128GCM, A192GCM and A256GCM encryption:
+ *     <li>For AES key wrap and AES GCM key encryption:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.AESEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.AESDecrypter}
  *         </ul>
- *     <li>For direct A128CBC-HS256, A192CBC-HS384, A256CBC-HS512, A128GCM,
- *         A192GCM and A256GCM encryption (using a shared symmetric key):
+ *     <li>For direct encryption (using a shared symmetric key):
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.DirectEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.DirectDecrypter}
  *         </ul>
- *     <li>For password-based (PBKDF2) key encryption with A128CBC-HS256,
- *         A192CBC-HS384, A256CBC-HS512, A128GCM, A192GCM and A256GCM
- *         encryption:
+ *     <li>For Elliptic Curve Diffie-Hellman (ECDH) encryption:
+ *         <ul>
+ *             <li>{@link com.nimbusds.jose.crypto.ECDHEncrypter}
+ *             <li>{@link com.nimbusds.jose.crypto.ECDHDecrypter}
+ *         </ul>
+ *     <li>For password-based (PBKDF2) encryption:
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedDecrypter}
