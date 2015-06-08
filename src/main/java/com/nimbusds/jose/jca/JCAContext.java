@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  * {@link java.security.SecureRandom secure random generator}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-08)
  */
 public class JCAContext {
 
@@ -19,13 +19,13 @@ public class JCAContext {
 	/**
 	 * The JCA provider.
 	 */
-	private final Provider provider;
+	private Provider provider;
 
 
 	/**
 	 * The secure random generator.
 	 */
-	private final SecureRandom randomGen;
+	private SecureRandom randomGen;
 
 
 	/**
@@ -71,12 +71,10 @@ public class JCAContext {
 	 * @param provider The JCA provider to be used for all operations where
 	 *                 a more specific one is absent, {@code null} to use
 	 *                 the default system provider.
-	 *
-	 * @return The updated JCA context.
 	 */
-	public JCAContext withProvider(final Provider provider) {
+	public void setProvider(final Provider provider) {
 
-		return new JCAContext(provider, getSecureRandom());
+		this.provider = provider;
 	}
 
 
@@ -100,11 +98,9 @@ public class JCAContext {
 	 *
 	 * @param randomGen The secure random generator, {@code null} to use
 	 *                  the default system one.
-	 *
-	 * @return The updated JCA context.
 	 */
-	public JCAContext withSecureRandom(final SecureRandom randomGen) {
+	public void setSecureRandom(final SecureRandom randomGen) {
 
-		return new JCAContext(provider, randomGen);
+		this.randomGen = randomGen;
 	}
 }

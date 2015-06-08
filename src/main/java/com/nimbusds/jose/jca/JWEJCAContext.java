@@ -4,8 +4,6 @@ package com.nimbusds.jose.jca;
 import java.security.Provider;
 import java.security.SecureRandom;
 
-import net.jcip.annotations.Immutable;
-
 
 /**
  * Java Cryptography Architecture (JCA) context intended specifically for
@@ -13,28 +11,27 @@ import net.jcip.annotations.Immutable;
  * providers for key encryption, content encryption and MAC computation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version $version$ (2015-06-08)
  */
-@Immutable
 public final class JWEJCAContext extends JCAContext {
 
 
 	/**
 	 * The key encryption provider.
 	 */
-	private final Provider keProvider;
+	private Provider keProvider;
 
 
 	/**
 	 * The content encryption provider.
 	 */
-	private final Provider ceProvider;
+	private Provider ceProvider;
 
 
 	/**
 	 * The MAC provider.
 	 */
-	private final Provider macProvider;
+	private Provider macProvider;
 
 
 	/**
@@ -43,21 +40,6 @@ public final class JWEJCAContext extends JCAContext {
 	public JWEJCAContext() {
 
 		this(null, null, null, null, null);
-	}
-
-
-	/**
-	 * Creates a new JCA context for JWE with the specified general JCA
-	 * provider.
-	 *
-	 * @param generalProvider The general JCA provider to be used for all
-	 *                        operations where a more specific one is
-	 *                        absent, {@code null} to use the default
-	 *                        system provider.
-	 */
-	public JWEJCAContext(final Provider generalProvider) {
-
-		this(generalProvider, null, null, null, null);
 	}
 
 
@@ -100,20 +82,6 @@ public final class JWEJCAContext extends JCAContext {
 	}
 
 
-	/**
-	 * Sets the general JCA provider to be used for all operations.
-	 *
-	 * @param provider The JCA provider to be used for all operations where
-	 *                 a more specific one is absent, {@code null} to use
-	 *                 the default system provider.
-	 *
-	 * @return The updated JCA context.
-	 */
-	public JWEJCAContext withProvider(final Provider provider) {
-
-		return new JWEJCAContext(provider, keProvider, ceProvider, macProvider, getSecureRandom());
-	}
-
 
 	/**
 	 * Sets a specific JCA provider for the key encryption.
@@ -122,12 +90,10 @@ public final class JWEJCAContext extends JCAContext {
 	 *                   encryption, {@code null} to fall back to the
 	 *                   general one, and if that is not specified to the
 	 *                   default system provider.
-	 *
-	 * @return The updated JCA context.
 	 */
-	public JWEJCAContext withKeyEncryptionProvider(final Provider keProvider) {
+	public void setKeyEncryptionProvider(final Provider keProvider) {
 
-		return new JWEJCAContext(getProvider(), keProvider, ceProvider, macProvider, getSecureRandom());
+		this.keProvider = keProvider;
 	}
 
 
@@ -150,12 +116,10 @@ public final class JWEJCAContext extends JCAContext {
 	 *                   content encryption, {@code null} to fall back to
 	 *                   the general one, and if that is not specified to
 	 *                   the default system provider.
-	 *
-	 * @return The updated JCA context.
 	 */
-	public JWEJCAContext withContentEncryptionProvider(final Provider ceProvider) {
+	public void setContentEncryptionProvider(final Provider ceProvider) {
 
-		return new JWEJCAContext(getProvider(), keProvider, ceProvider, macProvider, getSecureRandom());
+		this.ceProvider = ceProvider;
 	}
 
 
@@ -180,12 +144,10 @@ public final class JWEJCAContext extends JCAContext {
 	 *                    method), {@code null} to fall back to the general
 	 *                    one, and if that is not specified to the default
 	 *                    system provider.
-	 *
-	 * @return The updated JCA context.
 	 */
-	public JWEJCAContext withMACProvider(final Provider macProvider) {
+	public void setMACProvider(final Provider macProvider) {
 
-		return new JWEJCAContext(getProvider(), keProvider, ceProvider, macProvider, getSecureRandom());
+		this.macProvider = macProvider;
 	}
 
 
@@ -199,20 +161,5 @@ public final class JWEJCAContext extends JCAContext {
 	public Provider getMACProvider() {
 
 		return macProvider != null ? macProvider : getProvider();
-	}
-
-
-	/**
-	 * Sets a specific secure random generator for the initialisation
-	 * vector and other purposes requiring a random number.
-	 *
-	 * @param randomGen The secure random generator, {@code null} to use
-	 *                  the default system one.
-	 *
-	 * @return The updated JCA context.
-	 */
-	public JWEJCAContext withSecureRandom(final SecureRandom randomGen) {
-
-		return new JWEJCAContext(getProvider(), keProvider, ceProvider, macProvider, randomGen);
 	}
 }

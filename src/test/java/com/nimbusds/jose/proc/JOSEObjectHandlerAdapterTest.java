@@ -50,7 +50,7 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 		keyGen.initialize(512);
 
 		RSAEncrypter encrypter = new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic());
-		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
+		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 		jweObject.encrypt(encrypter);
 
 		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerAdapter<String, SimpleContext>(), null));

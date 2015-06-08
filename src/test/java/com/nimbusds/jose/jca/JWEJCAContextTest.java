@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  * Tests the JWE JCA context.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version $version$ (2015-06-08)
  */
 public class JWEJCAContextTest extends TestCase {
 
@@ -24,18 +24,6 @@ public class JWEJCAContextTest extends TestCase {
 		assertNull(ctx.getKeyEncryptionProvider());
 		assertNull(ctx.getContentEncryptionProvider());
 		assertNull(ctx.getMACProvider());
-		assertNotNull(ctx.getSecureRandom());
-	}
-	
-	
-	public void testGeneralProviderConstructor() {
-		
-		JWEJCAContext ctx = new JWEJCAContext(new Provider("general", 1.0, "test") {});
-		
-		assertEquals("general", ctx.getProvider().getName());
-		assertEquals("general", ctx.getKeyEncryptionProvider().getName());
-		assertEquals("general", ctx.getContentEncryptionProvider().getName());
-		assertEquals("general", ctx.getMACProvider().getName());
 		assertNotNull(ctx.getSecureRandom());
 	}
 
@@ -56,11 +44,11 @@ public class JWEJCAContextTest extends TestCase {
 
 		JWEJCAContext ctx = new JWEJCAContext();
 
-		ctx = ctx.withProvider(null);
-		ctx = ctx.withKeyEncryptionProvider(null);
-		ctx = ctx.withContentEncryptionProvider(null);
-		ctx = ctx.withMACProvider(null);
-		ctx = ctx.withSecureRandom(null);
+		ctx.setProvider(null);
+		ctx.setKeyEncryptionProvider(null);
+		ctx.setContentEncryptionProvider(null);
+		ctx.setMACProvider(null);
+		ctx.setSecureRandom(null);
 
 		assertNull(ctx.getProvider());
 		assertNull(ctx.getKeyEncryptionProvider());
@@ -74,7 +62,8 @@ public class JWEJCAContextTest extends TestCase {
 
 		SecureRandom sr = new SecureRandom();
 
-		JWEJCAContext ctx = new JWEJCAContext().withSecureRandom(sr);
+		JWEJCAContext ctx = new JWEJCAContext();
+		ctx.setSecureRandom(sr);
 
 		assertEquals(sr, ctx.getSecureRandom());
 	}
@@ -82,12 +71,12 @@ public class JWEJCAContextTest extends TestCase {
 
 	public void testSetGeneralAndSpecificProviders() {
 
-		JWEJCAContext ctx = new JWEJCAContext().
-			withProvider(new Provider("general", 1.0, "test") {
-			}).
-			withKeyEncryptionProvider(new Provider("ke", 1.0, "test") { }).
-			withContentEncryptionProvider(new Provider("ce", 1.0, "test") { }).
-			withMACProvider(new Provider("mac", 1.0, "test") { });
+		JWEJCAContext ctx = new JWEJCAContext();
+		ctx.setProvider(new Provider("general", 1.0, "test") {
+			});
+		ctx.setKeyEncryptionProvider(new Provider("ke", 1.0, "test") { });
+		ctx.setContentEncryptionProvider(new Provider("ce", 1.0, "test") { });
+		ctx.setMACProvider(new Provider("mac", 1.0, "test") { });
 
 		assertEquals("general", ctx.getProvider().getName());
 		assertEquals("ke", ctx.getKeyEncryptionProvider().getName());
@@ -100,7 +89,8 @@ public class JWEJCAContextTest extends TestCase {
 
 		Provider provider = new Provider("general", 1.0, "test") { };
 
-		JWEJCAContext ctx = new JWEJCAContext().withProvider(provider);
+		JWEJCAContext ctx = new JWEJCAContext();
+		ctx.setProvider(provider);
 
 		assertEquals(provider, ctx.getProvider());
 		assertEquals(provider, ctx.getKeyEncryptionProvider());

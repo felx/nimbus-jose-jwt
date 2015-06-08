@@ -61,7 +61,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 		keyGen.initialize(512);
 
 		RSAEncrypter encrypter = new RSAEncrypter((RSAPublicKey) keyGen.generateKeyPair().getPublic());
-		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
+		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 		encryptedJWT.encrypt(encrypter);
 
 		assertNull(JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));

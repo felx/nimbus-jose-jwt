@@ -14,7 +14,7 @@ import com.nimbusds.jose.jca.JCAContext;
  * The base abstract class for JSON Web Signature (JWS) signers and verifiers.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-08)
  */
 abstract class BaseJWSProvider implements JWSProvider, JCAAware<JCAContext> {
 
@@ -28,7 +28,7 @@ abstract class BaseJWSProvider implements JWSProvider, JCAAware<JCAContext> {
 	/**
 	 * The JCA context.
 	 */
-	private JCAContext jcaContext = new JCAContext();
+	private final JCAContext jcaContext = new JCAContext();
 
 
 	/**
@@ -51,17 +51,6 @@ abstract class BaseJWSProvider implements JWSProvider, JCAAware<JCAContext> {
 	public Set<JWSAlgorithm> supportedJWSAlgorithms() {
 
 		return algs;
-	}
-
-
-	@Override
-	public void setJCAContext(final JCAContext jcaContext) {
-
-		if (jcaContext == null) {
-			throw new IllegalArgumentException("The JCA context must not be null");
-		}
-
-		this.jcaContext = jcaContext;
 	}
 
 

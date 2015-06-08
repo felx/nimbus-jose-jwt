@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-08)
  */
 @ThreadSafe
 class ConcatKDF implements JCAAware<JCAContext> {
@@ -42,7 +42,7 @@ class ConcatKDF implements JCAAware<JCAContext> {
 	/**
 	 * The JCA context..
 	 */
-	private JCAContext jcaContext = new JCAContext();
+	private final JCAContext jcaContext = new JCAContext();
 
 
 	/**
@@ -70,17 +70,6 @@ class ConcatKDF implements JCAAware<JCAContext> {
 	public String getHashAlgorithm() {
 
 		return jcaHashAlg;
-	}
-
-
-	@Override
-	public void setJCAContext(JCAContext jcaContext) {
-
-		if (jcaContext == null) {
-			throw new IllegalArgumentException("The JCA context must not be null");
-		}
-
-		this.jcaContext = jcaContext;
 	}
 
 

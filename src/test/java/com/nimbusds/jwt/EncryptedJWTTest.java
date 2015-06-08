@@ -27,7 +27,7 @@ import com.nimbusds.jose.jca.JWEJCAContext;
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-08)
  */
 public class EncryptedJWTTest extends TestCase {
 
@@ -182,7 +182,7 @@ public class EncryptedJWTTest extends TestCase {
 
 		// Create an encrypter with the specified public RSA key
 		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
-		encrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
+		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		// Do the actual encryption
 		jwt.encrypt(encrypter);
@@ -197,7 +197,7 @@ public class EncryptedJWTTest extends TestCase {
 
 		// Create an decrypter with the specified private RSA key
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
-		decrypter.setJCAContext(new JWEJCAContext().withProvider(BouncyCastleProviderSingleton.getInstance()));
+		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		// Decrypt
 		jwt.decrypt(decrypter);

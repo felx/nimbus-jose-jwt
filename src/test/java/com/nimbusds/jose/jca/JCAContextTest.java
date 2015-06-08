@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  * Tests the simple JCA context.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-02)
+ * @version $version$ (2015-06-08)
  */
 public class JCAContextTest extends TestCase {
 
@@ -40,11 +40,12 @@ public class JCAContextTest extends TestCase {
 
 		JCAContext context = new JCAContext();
 
-		context = context.withProvider(new Provider("general", 1.0, "test") {});
+		context.setProvider(new Provider("general", 1.0, "test") {
+		});
 		assertEquals("general", context.getProvider().getName());
 
 		SecureRandom sr = new SecureRandom();
-		context = context.withSecureRandom(sr);
+		context.setSecureRandom(sr);
 		assertEquals(sr, context.getSecureRandom());
 	}
 }

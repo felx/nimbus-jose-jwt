@@ -48,7 +48,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version $version$ (2015-06-08)
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -175,7 +175,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 			getJCAContext().getKeyEncryptionProvider());
 
 		// Derive shared key via concat KDF
-		getConcatKDF().setJCAContext(new JCAContext(getJCAContext().getMACProvider(), null)); // update before concat
+		getConcatKDF().getJCAContext().setProvider(getJCAContext().getMACProvider()); // update before concat
 		SecretKey sharedKey = ECDH.deriveSharedKey(header, Z, getConcatKDF());
 
 		final SecretKey cek;

@@ -16,7 +16,7 @@ import com.nimbusds.jose.jca.JWEJCAContext;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-08)
  */
 abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
 
@@ -36,7 +36,7 @@ abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
 	/**
 	 * The JWE JCA context.
 	 */
-	private JWEJCAContext jcaContext = new JWEJCAContext();
+	private final JWEJCAContext jcaContext = new JWEJCAContext();
 
 
 	/**
@@ -76,17 +76,6 @@ abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
 	public Set<EncryptionMethod> supportedEncryptionMethods() {
 
 		return encs;
-	}
-
-
-	@Override
-	public void setJCAContext(final JWEJCAContext jcaContext) {
-
-		if (jcaContext == null) {
-			throw new IllegalArgumentException("The JCA context must not be null");
-		}
-
-		this.jcaContext = jcaContext;
 	}
 
 
