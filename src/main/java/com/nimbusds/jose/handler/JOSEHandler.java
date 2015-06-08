@@ -124,12 +124,16 @@ public class JOSEHandler <C extends Context> implements JOSEObjectHandler<Payloa
 			try {
 				validSignature = jwsObject.verify(verifier);
 			} catch (JOSEException e) {
+
 				return null;
 			}
 
 			if (validSignature) {
 				return jwsObject.getPayload();
 			}
+
+			// Invalid signature
+			return null;
 		}
 
 		return null;

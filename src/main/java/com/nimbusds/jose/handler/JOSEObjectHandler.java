@@ -7,10 +7,7 @@ import com.nimbusds.jose.PlainObject;
 
 
 /**
- * Handler of parsed {@link com.nimbusds.jose.JOSEObject}s. Invoked by the
- * {@link com.nimbusds.jose.JOSEObject#parse(String,JOSEObjectHandler,Context)}
- * method to indicate the exact type of the parsed object - {@link PlainObject
- * plain}, {@link JWSObject signed} or {@link JWEObject encrypted object}.
+ * Handler of {@link com.nimbusds.jose.JOSEObject}s.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)
@@ -19,10 +16,9 @@ public interface JOSEObjectHandler<T, C extends Context> {
 
 
 	/**
-	 * Invoked when the parsed JOSE object is unsecured (plain).
+	 * Invoked when the JOSE object is unsecured (plain).
 	 *
-	 * @param plainObject The parsed unsecured JOSE object. Not
-	 *                    {@code null}.
+	 * @param plainObject The unsecured JOSE object. Not {@code null}.
 	 * @param context     Optional context of the unsecured JOSE object,
 	 *                    {@code null} if not required.
 	 *
@@ -33,9 +29,9 @@ public interface JOSEObjectHandler<T, C extends Context> {
 
 
 	/**
-	 * Invoked when the the parsed JOSE object is a JWS object.
+	 * Invoked when the the JOSE object is a JWS object.
 	 *
-	 * @param jwsObject The parsed JWS object. Not {@code null}.
+	 * @param jwsObject The JWS object. Not {@code null}.
 	 * @param context   Optional context of the JWS object, {@code null} if
 	 *                  not required.
 	 *
@@ -46,9 +42,9 @@ public interface JOSEObjectHandler<T, C extends Context> {
 
 
 	/**
-	 * Invoked when the parsed JOSE object is a JWE object.
+	 * Invoked when the JOSE object is a JWE object.
 	 *
-	 * @param jweObject The parsed JWE object. Not {@code null}.
+	 * @param jweObject The JWE object. Not {@code null}.
 	 * @param context   Optional context of the JWE object, {@code null} if
 	 *                  not required.
 	 *
