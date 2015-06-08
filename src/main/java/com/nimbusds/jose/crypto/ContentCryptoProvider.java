@@ -1,8 +1,10 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.SecureRandom;
 import java.util.*;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jca.JWEJCAContext;
@@ -63,6 +65,33 @@ class ContentCryptoProvider {
 		encsMap.put(384,Collections.unmodifiableSet(bit384Encs));
 		encsMap.put(512, Collections.unmodifiableSet(bit512Encs));
 		COMPATIBLE_ENCRYPTION_METHODS = Collections.unmodifiableMap(encsMap);
+	}
+
+
+	/**
+	 * Generates a Content Encryption Key (CEK) for the specified JOSE
+	 * encryption method.
+	 *
+	 * @param enc       The encryption method. Must not be {@code null}.
+	 * @param randomGen The secure random generator to use. Must not be
+	 *                  {@code null}.
+	 *
+	 * @return The generated CEK (with algorithm "AES").
+	 *
+	 * @throws JOSEException If the encryption method is not supported.
+	 */
+	public static SecretKey generateCEK(final EncryptionMethod enc, final SecureRandom randomGen)
+		throws JOSEException {
+
+		if (! SUPPORTED_ENCRYPTION_METHODS.contains(enc)) {
+			throw new JOSEException(AlgorithmSupportMessage.unsupportedEncryptionMethod(enc, SUPPORTED_ENCRYPTION_METHODS));
+		}
+
+		final byte[] cekMaterial = new byte[ByteUtils.byteLength(enc.cekBitLength())];
+
+		randomGen.nextBytes(cekMaterial);
+
+		return new SecretKeySpec(cekMaterial, "AES");
 	}
 
 

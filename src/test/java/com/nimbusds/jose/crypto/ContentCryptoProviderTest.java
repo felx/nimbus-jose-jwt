@@ -3,17 +3,21 @@ package com.nimbusds.jose.crypto;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Arrays;
 
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
+import org.jose4j.lang.ByteUtil;
 
 
 /**
@@ -139,5 +143,22 @@ public class ContentCryptoProviderTest extends TestCase {
 
 			assertEquals("The Content Encryption Key (CEK) length for A256GCM must be 256 bits", e.getMessage());
 		}
+	}
+
+
+	public void testKeyGen()
+		throws Exception {
+
+		SecureRandom randomGen = new SecureRandom();
+
+		assertEquals(ByteUtils.byteLength(128), ContentCryptoProvider.generateCEK(EncryptionMethod.A128GCM, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(192), ContentCryptoProvider.generateCEK(EncryptionMethod.A192GCM, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(256), ContentCryptoProvider.generateCEK(EncryptionMethod.A256GCM, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(256), ContentCryptoProvider.generateCEK(EncryptionMethod.A128CBC_HS256, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(384), ContentCryptoProvider.generateCEK(EncryptionMethod.A192CBC_HS384, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(512), ContentCryptoProvider.generateCEK(EncryptionMethod.A256CBC_HS512, randomGen).getEncoded().length);
+
+		assertEquals(ByteUtils.byteLength(256), ContentCryptoProvider.generateCEK(EncryptionMethod.A128CBC_HS256_DEPRECATED, randomGen).getEncoded().length);
+		assertEquals(ByteUtils.byteLength(512), ContentCryptoProvider.generateCEK(EncryptionMethod.A256CBC_HS512_DEPRECATED, randomGen).getEncoded().length);
 	}
 }

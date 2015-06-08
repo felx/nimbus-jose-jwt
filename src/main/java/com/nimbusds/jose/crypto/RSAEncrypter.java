@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-08)
  */
 @ThreadSafe
 public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
@@ -103,10 +103,7 @@ public class RSAEncrypter extends RSACryptoProvider implements JWEEncrypter {
 		final EncryptionMethod enc = header.getEncryptionMethod();
 
 		// Generate and encrypt the CEK according to the enc method
-		final SecretKey cek = AES.generateKey(
-			enc.cekBitLength(),
-			getJCAContext().getKeyEncryptionProvider(),
-			getJCAContext().getSecureRandom());
+		final SecretKey cek = ContentCryptoProvider.generateCEK(enc, getJCAContext().getSecureRandom());
 
 		final Base64URL encryptedKey; // The second JWE part
 

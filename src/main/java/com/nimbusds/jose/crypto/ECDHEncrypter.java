@@ -136,7 +136,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 			cek = sharedKey;
 			encryptedKey = null;
 		} else if (algMode.equals(ECDH.AlgorithmMode.KW)) {
-			cek = AES.generateKey(enc.cekBitLength(), getJCAContext().getKeyEncryptionProvider(), getJCAContext().getSecureRandom());
+			cek = ContentCryptoProvider.generateCEK(enc, getJCAContext().getSecureRandom());
 			encryptedKey = Base64URL.encode(AESKW.wrapCEK(cek, sharedKey, getJCAContext().getKeyEncryptionProvider()));
 		} else {
 			throw new JOSEException("Unexpected JWE ECDH algorithm mode: " + algMode);

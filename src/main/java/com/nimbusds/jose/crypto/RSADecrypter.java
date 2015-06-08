@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-05)
+ * @version $version$ (2015-06-08)
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -169,10 +169,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 			// Protect against MMA attack by generating random CEK on failure,
 			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
-			SecretKey randomCEK = AES.generateKey(
-				keyLength,
-				getJCAContext().getKeyEncryptionProvider(),
-				getJCAContext().getSecureRandom());
+			final SecretKey randomCEK = ContentCryptoProvider.generateCEK(header.getEncryptionMethod(), getJCAContext().getSecureRandom());
 
 			try {
 				cek = RSA1_5.decryptCEK(privateKey, encryptedKey.decode(), keyLength, getJCAContext().getKeyEncryptionProvider());
