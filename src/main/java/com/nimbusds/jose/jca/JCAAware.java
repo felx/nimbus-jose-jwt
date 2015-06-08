@@ -10,7 +10,9 @@ public interface JCAAware<T extends JCAContext> {
 
 
 	/**
-	 * Returns the Java Cryptography Architecture (JCA) context.
+	 * Returns the Java Cryptography Architecture (JCA) context. May be
+	 * used to set a specific JCA security provider or secure random
+	 * generator.
 	 *
 	 * @return The JCA context. Not {@code null}.
 	 */
