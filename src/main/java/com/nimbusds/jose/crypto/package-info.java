@@ -53,7 +53,6 @@
  *         <ul>
  *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedEncrypter}
  *             <li>{@link com.nimbusds.jose.crypto.PasswordBasedDecrypter}
- *             <li>
  *         </ul>
  * </ul>
  *
