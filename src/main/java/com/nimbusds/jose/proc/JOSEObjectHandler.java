@@ -19,7 +19,7 @@ public interface JOSEObjectHandler<T, C extends Context> {
 
 
 	/**
-	 * Invoked when the parsed JOSE object is unsecured.
+	 * Invoked when the parsed JOSE object is unsecured (plain).
 	 *
 	 * @param plainObject The parsed unsecured JOSE object. Not
 	 *                    {@code null}.
