@@ -9,7 +9,7 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.handler.Context;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jwt.proc.JWTHandler;
@@ -86,7 +86,7 @@ public final class JWTParser {
 	 * @throws ParseException If the string couldn't be parsed to a valid
 	 *                        unsecured, signed or encrypted JWT.
 	 */
-	public static <T, C extends Context> T parse(final String s, final JWTHandler<T,C> handler, final C context)
+	public static <T, C extends SecurityContext> T parse(final String s, final JWTHandler<T,C> handler, final C context)
 		throws ParseException {
 
 		JWT jwt = parse(s);

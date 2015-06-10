@@ -5,8 +5,6 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.handler.Context;
-import com.nimbusds.jose.handler.JOSEObjectHandler;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
 
@@ -16,7 +14,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Signature (JWS) secured and JSON Web Encryption (JWE) secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-22)
+ * @version $version$ (2015-06-10)
  */
 public abstract class JOSEObject {
 	
@@ -279,38 +277,6 @@ public abstract class JOSEObject {
 			return JWEObject.parse(s);
 		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
-		}
-	}
-
-
-	/**
-	 * Parses an {@link PlainObject unsecured}, {@link JWSObject JWS} or
-	 * {@link JWEObject JWE object} from the specified string in compact
-	 * format.
-	 *
-	 * @param s       The string to parse. Must not be {@code null}.
-	 * @param handler Handler for the parsed JOSE object. Must not be
-	 *                {@code null}.
-	 * @param context Optional context of the JOSE object, {@code null} if
-	 *                not required.
-	 *
-	 * @return The object returned by the handler, {@code null} if none is
-	 *         returned.
-	 *
-	 * @throws ParseException If the string couldn't be parsed to a valid
-	 *                        unsecured, JWS or JWE object.
-	 */
-	public static <T, C extends Context> T parse(final String s, JOSEObjectHandler<T,C> handler, final C context)
-		throws ParseException {
-
-		JOSEObject joseObject = parse(s);
-
-		if (joseObject instanceof PlainObject) {
-			return handler.onPlainObject((PlainObject)joseObject, context);
-		} else if (joseObject instanceof JWSObject) {
-			return handler.onJWSObject((JWSObject)joseObject, context);
-		} else {
-			return handler.onJWEObject((JWEObject)joseObject, context);
 		}
 	}
 }

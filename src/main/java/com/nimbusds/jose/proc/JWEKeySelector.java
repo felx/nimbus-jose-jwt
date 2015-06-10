@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import java.security.Key;
@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWEHeader;
  *
  * <p>The key selection should be based on application specific criteria, such
  * as recognised header parameters referencing the key (e.g. {@code kid},
- * {@code x5t}) and / or the JWE object {@link Context}.
+ * {@code x5t}) and / or the JWE object {@link SecurityContext}.
  *
  * <p>See JSON Web Signature (JWE), Appendix D. Notes on Key Selection for
  * suggestions.
@@ -32,7 +32,7 @@ import com.nimbusds.jose.JWEHeader;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-06-08)
  */
-public interface JWEKeySelector <C extends Context> {
+public interface JWEKeySelector <C extends SecurityContext> {
 
 
 	/**

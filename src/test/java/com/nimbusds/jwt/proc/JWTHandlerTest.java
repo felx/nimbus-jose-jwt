@@ -10,7 +10,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.handler.SimpleContext;
+import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.*;
 
 
@@ -20,23 +20,23 @@ import com.nimbusds.jwt.*;
 public class JWTHandlerTest extends TestCase {
 
 
-	public static class JWTHandlerImpl implements JWTHandler<String,SimpleContext> {
+	public static class JWTHandlerImpl implements JWTHandler<String,SimpleSecurityContext> {
 
 
 		@Override
-		public String onPlainJWT(PlainJWT plainJWT, SimpleContext ctx) {
+		public String onPlainJWT(PlainJWT plainJWT, SimpleSecurityContext ctx) {
 			return "plain";
 		}
 
 
 		@Override
-		public String onSignedJWT(SignedJWT signedJWT, SimpleContext ctx) {
+		public String onSignedJWT(SignedJWT signedJWT, SimpleSecurityContext ctx) {
 			return "signed";
 		}
 
 
 		@Override
-		public String onEncryptedJWT(EncryptedJWT encryptedJWT, SimpleContext ctx) {
+		public String onEncryptedJWT(EncryptedJWT encryptedJWT, SimpleSecurityContext ctx) {
 			return "encrypted";
 		}
 	}

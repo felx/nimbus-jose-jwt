@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -15,26 +15,26 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 /**
  * Tests the JOSE object handler interface.
  */
-public class JOSEObjectHandlerTest extends TestCase {
+public class JOSEProcessorTest extends TestCase {
 
 
-	public static class JOSEObjectHandlerImpl implements JOSEObjectHandler<String,SimpleContext> {
+	public static class JOSEProcessorImpl implements JOSEProcessor<String,SimpleSecurityContext> {
 
 
 		@Override
-		public String onPlainObject(PlainObject plainObject, SimpleContext ctx) {
+		public String process(PlainObject plainObject, SimpleSecurityContext ctx) {
 			return "plain";
 		}
 
 
 		@Override
-		public String onJWSObject(JWSObject jwsObject, SimpleContext ctx) {
+		public String verify(JWSObject jwsObject, SimpleSecurityContext ctx) {
 			return "jws";
 		}
 
 
 		@Override
-		public String onJWEObject(JWEObject jweObject, SimpleContext ctx) {
+		public String decrypt(JWEObject jweObject, SimpleSecurityContext ctx) {
 			return "jwe";
 		}
 	}
@@ -45,7 +45,7 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		PlainObject plainObject = new PlainObject(new Payload("Hello world!"));
 
-		assertEquals("plain", JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerImpl(), null));
+		assertEquals("plain", JOSEObject.parse(plainObject.serialize(), new JOSEProcessorImpl(), null));
 	}
 
 
@@ -58,7 +58,7 @@ public class JOSEObjectHandlerTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		assertEquals("jws", JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerImpl(), null));
+		assertEquals("jws", JOSEObject.parse(jwsObject.serialize(), new JOSEProcessorImpl(), null));
 	}
 
 
@@ -74,6 +74,6 @@ public class JOSEObjectHandlerTest extends TestCase {
 		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 		jweObject.encrypt(encrypter);
 
-		assertEquals("jwe", JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerImpl(), null));
+		assertEquals("jwe", JOSEObject.parse(jweObject.serialize(), new JOSEProcessorImpl(), null));
 	}
 }

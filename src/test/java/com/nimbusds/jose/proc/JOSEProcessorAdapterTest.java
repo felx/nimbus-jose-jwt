@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import java.security.KeyPairGenerator;
@@ -15,7 +15,7 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 /**
  * Tests the JOSE object handler adapter.
  */
-public class JOSEObjectHandlerAdapterTest extends TestCase {
+public class JOSEProcessorAdapterTest extends TestCase {
 
 
 	public void testParsePlainObject()
@@ -23,7 +23,7 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 		PlainObject plainObject = new PlainObject(new Payload("Hello world!"));
 
-		assertNull(JOSEObject.parse(plainObject.serialize(), new JOSEObjectHandlerAdapter<String,SimpleContext>(), null));
+		assertNull(JOSEObject.parse(plainObject.serialize(), new JOSEProcessorAdapter<String,SimpleSecurityContext>(), null));
 	}
 
 
@@ -36,7 +36,7 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		assertNull(JOSEObject.parse(jwsObject.serialize(), new JOSEObjectHandlerAdapter<String,SimpleContext>(), null));
+		assertNull(JOSEObject.parse(jwsObject.serialize(), new JOSEProcessorAdapter<String,SimpleSecurityContext>(), null));
 	}
 
 
@@ -52,6 +52,6 @@ public class JOSEObjectHandlerAdapterTest extends TestCase {
 		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 		jweObject.encrypt(encrypter);
 
-		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEObjectHandlerAdapter<String, SimpleContext>(), null));
+		assertNull(JOSEObject.parse(jweObject.serialize(), new JOSEProcessorAdapter<String, SimpleSecurityContext>(), null));
 	}
 }

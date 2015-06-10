@@ -1,7 +1,7 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jose.handler.Context;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.*;
 
 
@@ -14,7 +14,7 @@ import com.nimbusds.jwt.*;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)
  */
-public interface JWTHandler<T, C extends Context> {
+public interface JWTHandler<T, C extends SecurityContext> {
 
 
 	/**

@@ -1,7 +1,7 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jose.handler.Context;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
@@ -14,7 +14,7 @@ import com.nimbusds.jwt.SignedJWT;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)
  */
-public class JWTHandlerAdapter<T,C extends Context> implements JWTHandler<T,C> {
+public class JWTHandlerAdapter<T,C extends SecurityContext> implements JWTHandler<T,C> {
 
 
 	@Override

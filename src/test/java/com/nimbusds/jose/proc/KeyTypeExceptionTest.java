@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import junit.framework.TestCase;

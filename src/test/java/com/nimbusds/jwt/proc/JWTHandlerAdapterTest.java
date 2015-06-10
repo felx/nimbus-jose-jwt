@@ -10,7 +10,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.RSAEncrypter;
-import com.nimbusds.jose.handler.SimpleContext;
+import com.nimbusds.jose.proc.SimpleSecurityContext;
 import com.nimbusds.jwt.*;
 
 
@@ -34,7 +34,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		JWT plainJWT = new PlainJWT(generateClaimsSet());
 
-		TestCase.assertNull(JWTParser.parse(plainJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
+		TestCase.assertNull(JWTParser.parse(plainJWT.serialize(), new JWTHandlerAdapter<String,SimpleSecurityContext>(), null));
 	}
 
 
@@ -47,7 +47,7 @@ public class JWTHandlerAdapterTest extends TestCase {
 
 		signedJWT.sign(new MACSigner(key));
 
-		assertNull(JWTParser.parse(signedJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
+		assertNull(JWTParser.parse(signedJWT.serialize(), new JWTHandlerAdapter<String,SimpleSecurityContext>(), null));
 	}
 
 
@@ -63,6 +63,6 @@ public class JWTHandlerAdapterTest extends TestCase {
 		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 		encryptedJWT.encrypt(encrypter);
 
-		assertNull(JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerAdapter<String,SimpleContext>(), null));
+		assertNull(JWTParser.parse(encryptedJWT.serialize(), new JWTHandlerAdapter<String,SimpleSecurityContext>(), null));
 	}
 }

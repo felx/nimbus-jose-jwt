@@ -1,52 +1,73 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import java.security.Key;
 import java.text.ParseException;
 import java.util.List;
 
-import com.nimbusds.jose.*;
 import net.jcip.annotations.ThreadSafe;
+
+import com.nimbusds.jose.*;
 
 
 /**
- * Created by vd on 15-6-8.
+ * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version $version$ (2015-06-10)
  */
 @ThreadSafe
-public class JOSEHandler <C extends Context> implements JOSEObjectHandler<Payload, C> {
+public class DefaultJOSEProcessor<C extends SecurityContext>
+	implements JOSEProcessor<Payload, C>, JWSKeySelectorAware<C>, JWEKeySelectorAware<C> {
 
 
+	/**
+	 * The JWS key selector.
+	 */
 	private JWSKeySelector<C> jwsKeySelector;
 
 
+	/**
+	 * The JWE key selector.
+	 */
 	private JWEKeySelector<C> jweKeySelector;
 
 
+	/**
+	 * The JWS verifier factory.
+	 */
 	private JWSVerifierFactory jwsVerifierFactory;
 
 
+	/**
+	 * The JWE decrypter factory.
+	 */
 	private JWEDecrypterFactory jweDecrypterFactory;
 
 
 
+	@Override
 	public JWSKeySelector<C> getJWSKeySelector() {
 
 		return jwsKeySelector;
 	}
 
 
+	@Override
 	public void setJWSKeySelector(final JWSKeySelector jwsKeySelector) {
 
 		this.jwsKeySelector = jwsKeySelector;
 	}
 
 
+	@Override
 	public JWEKeySelector<C> getJWEKeySelector() {
 
 		return jweKeySelector;
 	}
 
 
+	@Override
 	public void setJWEKeySelector(final JWEKeySelector jweKeySelector) {
 
 		this.jweKeySelector = jweKeySelector;
@@ -77,22 +98,23 @@ public class JOSEHandler <C extends Context> implements JOSEObjectHandler<Payloa
 	}
 
 
-	public Payload handle(final String compactJOSE, final C context)
+	public Payload process(final String compactJOSE, final C context)
 		throws ParseException, JOSEException {
-
-		return JOSEObject.parse(compactJOSE, this, context);
-	}
-
-
-	@Override
-	public Payload onPlainObject(final PlainObject plainObject, C context) {
 
 		return null;
 	}
 
 
 	@Override
-	public Payload onJWSObject(final JWSObject jwsObject, C context) {
+	public Payload process(final PlainObject plainObject, C context)
+		throws BadJOSEException {
+
+		throw new BadJOSEException();
+	}
+
+
+	@Override
+	public Payload process(final JWSObject jwsObject, C context) {
 
 		if (jwsKeySelector == null || jwsVerifierFactory == null) {
 			return null;
@@ -141,7 +163,7 @@ public class JOSEHandler <C extends Context> implements JOSEObjectHandler<Payloa
 
 
 	@Override
-	public Payload onJWEObject(final JWEObject jweObject, C context) {
+	public Payload process(final JWEObject jweObject, C context) {
 
 		if (jweKeySelector == null || jweDecrypterFactory == null) {
 			return null;

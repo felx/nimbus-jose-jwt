@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import com.nimbusds.jose.JWEObject;
@@ -13,23 +13,23 @@ import com.nimbusds.jose.PlainObject;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)
  */
-public class JOSEObjectHandlerAdapter<T,C extends Context> implements JOSEObjectHandler<T,C> {
+public class JOSEProcessorAdapter<T,C extends SecurityContext> implements JOSEProcessor<T,C> {
 
 
 	@Override
-	public T onPlainObject(final PlainObject plainObject, final C context) {
+	public T process(final PlainObject plainObject, final C context) {
 		return null;
 	}
 
 
 	@Override
-	public T onJWSObject(final JWSObject jwsObject, final C context) {
+	public T verify(final JWSObject jwsObject, final C context) {
 		return null;
 	}
 
 
 	@Override
-	public T onJWEObject(final JWEObject jweObject, final C context) {
+	public T decrypt(final JWEObject jweObject, final C context) {
 		return null;
 	}
 }

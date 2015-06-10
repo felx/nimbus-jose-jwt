@@ -1,4 +1,4 @@
-package com.nimbusds.jose.handler;
+package com.nimbusds.jose.proc;
 
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.HashMap;
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)
  */
-public class SimpleContext extends HashMap<String,Object> implements Context {
+public class SimpleSecurityContext extends HashMap<String,Object> implements SecurityContext {
 
 
 }
