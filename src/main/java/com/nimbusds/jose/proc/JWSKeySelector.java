@@ -8,11 +8,11 @@ import com.nimbusds.jose.JWSHeader;
 
 
 /**
- * Interface for selecting the key candidates for verifying a JSON Web
- * Signature (JWS) object. Applications should utilise this interface or a
- * similar framework to determine whether a received JWS object (or signed JWT)
- * is eligible for {@link com.nimbusds.jose.JWSVerifier verification} and
- * further processing.
+ * Interface for selecting key candidates for verifying a JSON Web Signature
+ * (JWS) object. Applications should utilise this interface or a similar
+ * framework to determine whether a received JWS object (or signed JWT) is
+ * eligible for {@link com.nimbusds.jose.JWSVerifier verification} and further
+ * processing.
  *
  * <p>The key selection should be based on application specific criteria, such
  * as recognised header parameters referencing the key (e.g. {@code kid},

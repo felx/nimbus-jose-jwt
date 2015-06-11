@@ -8,11 +8,11 @@ import com.nimbusds.jose.JWEHeader;
 
 
 /**
- * Interface for selecting the key candidates for decrypting a JSON Web
- * Encryption (JWS) object. Applications should utilise this interface or a
- * similar framework to determine whether a received JWE object (or encrypted
- * JWT) is eligible for {@link com.nimbusds.jose.JWEDecrypter decryption} and
- * further processing.
+ * Interface for selecting key candidates for decrypting a JSON Web Encryption
+ * (JWE) object. Applications should utilise this interface or a similar
+ * framework to determine whether a received JWE object (or encrypted JWT) is
+ * eligible for {@link com.nimbusds.jose.JWEDecrypter decryption} and further 
+ * processing.
  *
  * <p>The key selection should be based on application specific criteria, such
  * as recognised header parameters referencing the key (e.g. {@code kid},

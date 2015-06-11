@@ -14,11 +14,11 @@ import com.nimbusds.jose.*;
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version $version$ (2015-06-11)
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
-	implements JOSEProcessor<Payload, C>, JWSKeySelectorAware<C>, JWEKeySelectorAware<C> {
+	implements JOSEProcessor<Payload, C> {
 
 
 	/**
@@ -46,58 +46,99 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 
 
 
-	@Override
+	/**
+	 * Gets the JWS key selector.
+	 *
+	 * @return The JWS key selector, {@code null} if not specified.
+	 */
 	public JWSKeySelector<C> getJWSKeySelector() {
 
 		return jwsKeySelector;
 	}
 
 
-	@Override
-	public void setJWSKeySelector(final JWSKeySelector jwsKeySelector) {
+	/**
+	 * Sets the JWS key selector.
+	 *
+	 * @param jwsKeySelector The JWS key selector, {@code null} if not
+	 *                       specified.
+	 */
+	public void setJWSKeySelector(final JWSKeySelector<C> jwsKeySelector) {
 
 		this.jwsKeySelector = jwsKeySelector;
 	}
 
 
-	@Override
+	/**
+	 * Gets the JWE key selector.
+	 *
+	 * @return The JWE key selector, {@code null} if not specified.
+	 */
 	public JWEKeySelector<C> getJWEKeySelector() {
 
 		return jweKeySelector;
 	}
 
 
-	@Override
-	public void setJWEKeySelector(final JWEKeySelector jweKeySelector) {
+	/**
+	 * Sets the JWE key selector.
+	 *
+	 * @param jweKeySelector The JWE key selector, {@code null} if not
+	 *                       specified.
+	 */
+	public void setJWEKeySelector(final JWEKeySelector<C> jweKeySelector) {
 
 		this.jweKeySelector = jweKeySelector;
 	}
 
 
+	/**
+	 * Gets the factory for creating JWS verifier instances.
+	 *
+	 * @return The JWS verifier factory, {@code null} if not specified.
+	 */
 	public JWSVerifierFactory getJWSVerifierFactory() {
 
 		return jwsVerifierFactory;
 	}
 
 
+	/**
+	 * Sets the factory for creating JWS verifier instances.
+	 *
+	 * @param factory The JWS verifier factory, {@code null} if not
+	 *                specified.
+	 */
 	public void setJWSVerifierFactory(final JWSVerifierFactory factory) {
 
 		jwsVerifierFactory = factory;
 	}
 
 
+	/**
+	 * Gets the factory for creating JWE decrypter instances.
+	 *
+	 * @return The JWE decrypter factory, {@code null} if not specified.
+	 */
 	public JWEDecrypterFactory getJWEDecrypterFactory() {
 
 		return jweDecrypterFactory;
 	}
 
 
+	/**
+	 * Sets the factory for creating JWE decrypter instances.
+	 *
+	 * @param factory The JWE decrypter factory, {@code null} if not
+	 *                specified.
+	 */
 	public void setJWEDecrypterFactory(final JWEDecrypterFactory factory) {
 
 		jweDecrypterFactory = factory;
 	}
 
 
+	@Override
 	public Payload process(final String compactJOSE, final C context)
 		throws ParseException, JOSEException {
 
@@ -109,72 +150,89 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	public Payload process(final PlainObject plainObject, C context)
 		throws BadJOSEException {
 
-		throw new BadJOSEException();
+		throw new BadJOSEException("Unsecured (plain) JOSE objects are rejected");
 	}
 
 
 	@Override
-	public Payload process(final JWSObject jwsObject, C context) {
+	public Payload process(final JWSObject jwsObject, C context)
+		throws BadJOSEException, JOSEException {
 
-		if (jwsKeySelector == null || jwsVerifierFactory == null) {
-			return null;
+		if (jwsKeySelector == null) {
+			throw new BadJOSEException("JWS object rejected: No JWS key selector is configured");
+		}
+
+		if (jwsVerifierFactory == null) {
+			throw new BadJOSEException("JWS object rejected: No JWS verifier is configured");
 		}
 
 		List<? extends Key> keyCandidates = jwsKeySelector.selectJWSKeys(jwsObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
-			return null;
+			throw new BadJOSEException("JWS object rejected: No matching key(s) found");
 		}
 
 		for (Key key: keyCandidates) {
 
-			JWSVerifier verifier;
-
-			try {
-				verifier = jwsVerifierFactory.createJWSVerifier(jwsObject.getHeader(), key);
-
-			} catch (JOSEException e) {
-				return null;
-			}
+			JWSVerifier verifier = jwsVerifierFactory.createJWSVerifier(jwsObject.getHeader(), key);
 
 			if (verifier == null) {
 				continue;
 			}
 
-			final boolean validSignature;
-
-			try {
-				validSignature = jwsObject.verify(verifier);
-			} catch (JOSEException e) {
-
-				return null;
-			}
+			final boolean validSignature = jwsObject.verify(verifier);
 
 			if (validSignature) {
 				return jwsObject.getPayload();
 			}
 
 			// Invalid signature
-			return null;
+			throw new BadJWSException("JWS object rejected: Invalid signature");
 		}
 
-		return null;
+		throw new BadJOSEException("JWS object rejected: No matching verifier(s) found");
 	}
 
 
 	@Override
-	public Payload process(final JWEObject jweObject, C context) {
+	public Payload process(final JWEObject jweObject, C context)
+		throws BadJOSEException, JOSEException {
 
-		if (jweKeySelector == null || jweDecrypterFactory == null) {
-			return null;
+		if (jweKeySelector == null) {
+			throw new BadJOSEException("JWE object rejected: No JWE key selector is configured");
+		}
+
+		if (jweDecrypterFactory == null) {
+			throw new BadJOSEException("JWE object rejected: No JWE decrypter is configured");
 		}
 
 		List<? extends Key> keyCandidates = jweKeySelector.selectJWEKeys(jweObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
-			return null;
+			throw new BadJOSEException("JWE object rejected: No matching key(s) found");
 		}
 
-		return null;
+		for (Key key: keyCandidates) {
+
+			JWEDecrypter decrypter = jweDecrypterFactory.createJWEDecrypter(jweObject.getHeader(), key);
+
+			if (decrypter == null) {
+				continue;
+			}
+
+			try {
+				jweObject.decrypt(decrypter);
+
+			} catch (JOSEException e) {
+				// Decryption failed
+				throw new BadJWEException("JWE object rejected: " + e.getMessage(), e);
+			}
+
+			// TODO check for nested JWS
+
+			return jweObject.getPayload();
+		}
+
+		throw new BadJOSEException("JWE object rejected: No matching decrypter(s) found");
 	}
 }

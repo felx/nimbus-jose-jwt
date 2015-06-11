@@ -1,4 +1,4 @@
 /**
- * Framework for application-specific consuming of JOSE objects.
+ * Framework for application-specific processing of JOSE objects.
  */
 package com.nimbusds.jose.proc;

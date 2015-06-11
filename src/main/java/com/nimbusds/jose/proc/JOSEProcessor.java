@@ -10,7 +10,9 @@ import com.nimbusds.jose.PlainObject;
 
 
 /**
- * Interface for processing received {@link com.nimbusds.jose.JOSEObject}s.
+ * Interface for parsing and processing {@link com.nimbusds.jose.PlainObject
+ * unsecured} (plain), {@link com.nimbusds.jose.JWSObject JWS} and
+ * {@link com.nimbusds.jose.JWEObject JWE} objects.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-06-10)

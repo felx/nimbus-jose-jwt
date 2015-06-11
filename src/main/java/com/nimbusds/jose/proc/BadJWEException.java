@@ -7,9 +7,30 @@ package com.nimbusds.jose.proc;
  * compromised.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version $version$ (2015-06-11)
  */
 public class BadJWEException extends BadJOSEException {
 
 
+	/**
+	 * Creates a new bad JWE exception.
+	 *
+	 * @param message The exception message.
+	 */
+	public BadJWEException(final String message) {
+
+		super(message);
+	}
+
+
+	/**
+	 * Creates a new bad JWE exception.
+	 *
+	 * @param message The exception message.
+	 * @param cause   The exception cause.
+	 */
+	public BadJWEException(final String message, final Throwable cause) {
+
+		super(message, cause);
+	}
 }
