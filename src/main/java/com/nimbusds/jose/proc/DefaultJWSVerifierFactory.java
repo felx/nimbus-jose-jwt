@@ -24,7 +24,7 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
  * {@link com.nimbusds.jose.crypto} package.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 @ThreadSafe
 public class DefaultJWSVerifierFactory implements JWSVerifierFactory {
@@ -66,7 +66,7 @@ public class DefaultJWSVerifierFactory implements JWSVerifierFactory {
 
 		} else {
 
-			throw new JOSEException("Unsupported JWS algorithm");
+			throw new JOSEException("Unsupported JWS algorithm: " + header.getAlgorithm());
 		}
 	}
 }

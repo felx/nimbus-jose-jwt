@@ -5,7 +5,8 @@ import java.util.HashMap;
 
 
 /**
- * Simple map-based context.
+ * Simple map-based security context. May be extended to provide typed setters
+ * and getters.
  *
  * @author Vladimir Dzhuvinov
  * @version $version$ (2015-04-22)

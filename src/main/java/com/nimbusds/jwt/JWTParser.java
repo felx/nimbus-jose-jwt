@@ -9,10 +9,8 @@ import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
-import com.nimbusds.jwt.proc.JWTHandler;
 
 
 /**
@@ -20,7 +18,7 @@ import com.nimbusds.jwt.proc.JWTHandler;
  *
  * @author Vladimir Dzhuvinov
  * @author Junya Hayashi
- * @version $version$ (2015-04-22)
+ * @version $version$ (2015-06-14)
  */
 public final class JWTParser {
 
@@ -67,36 +65,6 @@ public final class JWTParser {
 			return EncryptedJWT.parse(s);
 		} else {
 			throw new AssertionError("Unexpected algorithm type: " + alg);
-		}
-	}
-
-
-	/**
-	 * Parses an unsecured (plain), signed or encrypted JSON Web Token
-	 * (JWT) from the specified string in compact format.
-	 *
-	 * @param s       The string to parse. Must not be {@code null}.
-	 * @param handler Handler for the parsed JWT. Must not be {@code null}.
-	 * @param context Optional context of the JWT, {@code null} if not
-	 *                required.
-	 *
-	 * @return The object returned by the handler, {@code null} if none is
-	 *         returned.
-	 *
-	 * @throws ParseException If the string couldn't be parsed to a valid
-	 *                        unsecured, signed or encrypted JWT.
-	 */
-	public static <T, C extends SecurityContext> T parse(final String s, final JWTHandler<T,C> handler, final C context)
-		throws ParseException {
-
-		JWT jwt = parse(s);
-
-		if (jwt instanceof PlainJWT) {
-			return handler.onPlainJWT((PlainJWT)jwt, context);
-		} else if (jwt instanceof SignedJWT) {
-			return handler.onSignedJWT((SignedJWT)jwt, context);
-		} else {
-			return handler.onEncryptedJWT((EncryptedJWT)jwt, context);
 		}
 	}
 
