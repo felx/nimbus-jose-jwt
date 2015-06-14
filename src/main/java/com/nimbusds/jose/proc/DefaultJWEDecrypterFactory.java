@@ -7,6 +7,7 @@ import java.security.interfaces.RSAPrivateKey;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
@@ -22,7 +23,7 @@ import com.nimbusds.jose.crypto.*;
  * {@link com.nimbusds.jose.crypto} package.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 @ThreadSafe
 public class DefaultJWEDecrypterFactory implements JWEDecrypterFactory {
@@ -61,7 +62,14 @@ public class DefaultJWEDecrypterFactory implements JWEDecrypterFactory {
 			}
 
 			SecretKey aesKey = (SecretKey)key;
-			return new DirectDecrypter(aesKey);
+			DirectDecrypter directDecrypter =  new DirectDecrypter(aesKey);
+
+			// TODO
+			if (! directDecrypter.supportedEncryptionMethods().contains(header.getEncryptionMethod())) {
+				throw new JOSEException("Key length (" + ByteUtils.bitLength(aesKey.getEncoded()) + " bits) is not compatible with " + header.getEncryptionMethod() + " encryption method");
+			}
+
+			return directDecrypter;
 
 		} else if (AESDecrypter.SUPPORTED_ALGORITHMS.contains(header.getAlgorithm()) &&
 			AESDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(header.getEncryptionMethod())) {
@@ -71,7 +79,14 @@ public class DefaultJWEDecrypterFactory implements JWEDecrypterFactory {
 			}
 
 			SecretKey aesKey = (SecretKey)key;
-			return new AESDecrypter(aesKey);
+			AESDecrypter aesDecrypter = new AESDecrypter(aesKey);
+
+			// TODO
+			if (! aesDecrypter.supportedJWEAlgorithms().contains(header.getAlgorithm())) {
+				throw new JOSEException("Key length (" + ByteUtils.bitLength(aesKey.getEncoded()) + " bits) is not compatible with " + header.getAlgorithm() + " algorithm");
+			}
+
+			return aesDecrypter;
 
 		} else if (PasswordBasedDecrypter.SUPPORTED_ALGORITHMS.contains(header.getAlgorithm()) &&
 			PasswordBasedDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(header.getEncryptionMethod())) {
