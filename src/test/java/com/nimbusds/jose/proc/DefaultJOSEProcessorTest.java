@@ -3,10 +3,14 @@ package com.nimbusds.jose.proc;
 
 import java.security.Key;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 
@@ -156,6 +160,85 @@ public class DefaultJOSEProcessorTest extends TestCase {
 		assertEquals("joe", jsonObject.get("iss"));
 		assertEquals(1300819380, ((Number)jsonObject.get("exp")).intValue());
 		assertTrue((Boolean)jsonObject.get("http://example.com/is_root"));
+		assertEquals(3, jsonObject.size());
+	}
+
+
+	public void testRejectPlain()
+		throws Exception {
+
+		PlainObject plainObject = new PlainObject(new Payload("Hello world1"));
+
+		try {
+			new DefaultJOSEProcessor().process(plainObject, null);
+		} catch (BadJOSEException e) {
+			assertEquals("Unsecured (plain) JOSE objects are rejected", e.getMessage());
+		}
+
+		try {
+			new DefaultJOSEProcessor().process(plainObject.serialize(), null);
+		} catch (BadJOSEException e) {
+			assertEquals("Unsecured (plain) JOSE objects are rejected", e.getMessage());
+		}
+	}
+	
+	
+	public void testNoJWSKeyCandidates()
+		throws Exception {
+
+		// See http://tools.ietf.org/html/rfc7515#appendix-A.1
+		String jws = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9"+
+			"."+
+			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt"+
+			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"+
+			"."+
+			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+				return new LinkedList<>(); // empty
+			}
+		});
+
+		try {
+			processor.process(jws, null);
+		} catch (BadJOSEException e) {
+			assertEquals("JWS object rejected: No matching key(s) found", e.getMessage());
+		}
+	}
+
+
+	public void testMatchHmacKey()
+		throws Exception {
+
+		// See http://tools.ietf.org/html/rfc7515#appendix-A.1
+		String jws = "eyJ0eXAiOiJKV1QiLA0KICJhbGciOiJIUzI1NiJ9"+
+			"."+
+			"eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFt"+
+			"cGxlLmNvbS9pc19yb290Ijp0cnVlfQ"+
+			"."+
+			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+
+				Key key = new SecretKeySpec(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow").decode(), "HMAC");
+
+				return Arrays.asList(key);
+			}
+		});
+
+		JSONObject jsonObject = processor.process(jws, null).toJSONObject();
+
+		assertEquals("joe", jsonObject.get("iss"));
+		assertEquals(1300819380, ((Number)jsonObject.get("exp")).intValue());
+		assertTrue((Boolean) jsonObject.get("http://example.com/is_root"));
 		assertEquals(3, jsonObject.size());
 	}
 }
