@@ -37,6 +37,10 @@ import com.nimbusds.jwt.*;
  * unsecured (plain) JWTs. Override the {@link #process(PlainJWT, SecurityContext)}
  * if you need to handle plain JWTs as well.
  *
+ * <p>An optional {@link JWTClaimsVerifier JWT claims verifier} may be set to
+ * perform various application-specific JWT claims checks, such as issuer
+ * acceptance, after successful JWS verification / JWE decryption.
+ *
  * <p>To process generic JOSE objects (with arbitrary payloads) use the
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
@@ -46,6 +50,70 @@ import com.nimbusds.jwt.*;
 public class DefaultJWTProcessor<C extends SecurityContext>
 	extends BaseJOSEProcessor<C>
 	implements JWTProcessor<ReadOnlyJWTClaimsSet, C> {
+
+
+	/**
+	 * Optional claims verifier.
+	 */
+	private JWTClaimsVerifier claimsVerifier;
+
+
+	/**
+	 * Gets the optional JWT claims verifier. Intended to perform various
+	 * application-specific JWT claims checks, such as issuer acceptance,
+	 * after successful JWS verification / JWE decryption.
+	 *
+	 * @return The JWT claims verifier, {@code null} if not specified.
+	 */
+	public JWTClaimsVerifier getJWTClaimsVerifier() {
+
+		return claimsVerifier;
+	}
+
+
+	/**
+	 * Sets the optional JWT claims verifier. Intended to perform various
+	 * application-specific JWT claims checks, such as issuer acceptance,
+	 * after successful JWS verification / JWE decryption.
+	 *
+	 * @param claimsVerifier The JWT claims verifier, {@code null} if not
+	 *                       specified.
+	 */
+	public void setJWTClaimsVerifier(final JWTClaimsVerifier claimsVerifier) {
+
+		this.claimsVerifier = claimsVerifier;
+	}
+
+
+	/**
+	 * Verifies the claims of the specified JWT.
+	 *
+	 * @param jwt The JWT. Must be in a state which allows the claims to
+	 *            be extracted.
+	 *
+	 * @return The JWT claims set.
+	 *
+	 * @throws BadJWTException If the JWT claims are invalid or rejected.
+	 */
+	private ReadOnlyJWTClaimsSet verifyAndReturnClaims(final JWT jwt)
+		throws BadJWTException {
+
+		ReadOnlyJWTClaimsSet claimsSet;
+
+		try {
+			claimsSet = jwt.getJWTClaimsSet();
+
+		} catch (ParseException e) {
+			// Payload not a JSON object
+			throw new BadJWTException(e.getMessage(), e);
+		}
+
+		if (claimsVerifier != null) {
+			claimsVerifier.verify(claimsSet);
+		}
+
+		return claimsSet;
+	}
 
 
 	@Override
@@ -74,6 +142,8 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	@Override
 	public ReadOnlyJWTClaimsSet process(final PlainJWT plainJWT, final C context)
 		throws BadJOSEException, JOSEException {
+
+		verifyAndReturnClaims(plainJWT); // just check claims, no return
 
 		throw new BadJOSEException("Unsecured (plain) JWTs are rejected, extend class to handle");
 	}
@@ -111,13 +181,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			final boolean validSignature = signedJWT.verify(verifier);
 
 			if (validSignature) {
-				try {
-					return signedJWT.getJWTClaimsSet();
-
-				} catch (ParseException e) {
-					// Payload not a JSON object
-					throw new BadJWTException(e.getMessage(), e);
-				}
+				return verifyAndReturnClaims(signedJWT);
 			}
 
 			if (! it.hasNext()) {
@@ -186,13 +250,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 				return process(nestedJWT, context);
 			}
 
-			try {
-				return encryptedJWT.getJWTClaimsSet();
-
-			} catch (ParseException e) {
-				// Payload not a JSON object
-				throw new BadJWTException(e.getMessage(), e);
-			}
+			return verifyAndReturnClaims(encryptedJWT);
 		}
 
 		throw new BadJOSEException("Encrypted JWT rejected: No matching decrypter(s) found");

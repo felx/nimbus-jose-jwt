@@ -30,6 +30,19 @@ import com.nimbusds.jose.util.Base64URL;
 public class DefaultJOSEProcessorTest extends TestCase {
 
 
+	public void testConstructor()
+		throws Exception {
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		assertNull(processor.getJWSKeySelector());
+		assertNull(processor.getJWEKeySelector());
+
+		assertNotNull(processor.getJWSVerifierFactory());
+		assertNotNull(processor.getJWEDecrypterFactory());
+	}
+
+
 	public void testProcessJWS()
 		throws Exception {
 

@@ -30,6 +30,98 @@ import com.nimbusds.jwt.*;
 public class DefaultJWTProcessorTest extends TestCase {
 
 
+	public void testConstructor()
+		throws Exception {
+
+		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+
+		assertNull(processor.getJWSKeySelector());
+		assertNull(processor.getJWEKeySelector());
+
+		assertNotNull(processor.getJWSVerifierFactory());
+		assertNotNull(processor.getJWEDecrypterFactory());
+
+		assertNull(processor.getJWTClaimsVerifier());
+	}
+
+
+	public void testVerifyClaimsAllow()
+		throws Exception {
+
+		JWTClaimsSet claims = new JWTClaimsSet();
+		claims.setIssuer("https://openid.c2id.com");
+		claims.setSubject("alice");
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+				return Arrays.asList(key);
+			}
+		});
+
+		processor.setJWTClaimsVerifier(new JWTClaimsVerifier() {
+			@Override
+			public void verify(ReadOnlyJWTClaimsSet claimsSet) throws BadJWTException {
+				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
+					throw new BadJWTException("Unexpected/missing issuer");
+			}
+		});
+
+		assertEquals("alice", processor.process(jwt.serialize(), null).getSubject());
+		assertEquals("https://openid.c2id.com", processor.process(jwt.serialize(), null).getIssuer());
+	}
+
+
+	public void testVerifyClaimsDeny()
+		throws Exception {
+
+		JWTClaimsSet claims = new JWTClaimsSet();
+		claims.setIssuer("https://test.c2id.com");
+		claims.setSubject("alice");
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+				return Arrays.asList(key);
+			}
+		});
+
+		processor.setJWTClaimsVerifier(new JWTClaimsVerifier() {
+			@Override
+			public void verify(ReadOnlyJWTClaimsSet claimsSet) throws BadJWTException {
+				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
+					throw new BadJWTException("Unexpected/missing issuer");
+			}
+		});
+
+		try {
+			processor.process(jwt.serialize(), null);
+			fail();
+		} catch (BadJWTException e) {
+
+			assertEquals("Unexpected/missing issuer", e.getMessage());
+		}
+	}
+
+
 	public void testProcessHmacJWTWithTwoKeyCandidates()
 		throws Exception {
 
@@ -39,7 +131,6 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		byte[] keyBytes = new byte[32];
 		new SecureRandom().nextBytes(keyBytes);
-
 		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
 
 		jwt.sign(new MACSigner(key));
