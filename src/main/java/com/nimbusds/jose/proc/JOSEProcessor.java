@@ -44,8 +44,8 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified unsecured (plain) JOSE object by checking
-	 * its context.
+	 * Processes the specified unsecured (plain) JOSE object, typically by
+	 * checking its context.
 	 *
 	 * @param plainObject The unsecured (plain) JOSE object. Not
 	 *                    {@code null}.
@@ -65,8 +65,9 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified JWS object by verifying its signature and
-	 * checking its context.
+	 * Processes the specified JWS object by verifying its signature. The
+	 * key candidate(s) are selected by examining the JWS header and / or
+	 * the message context.
 	 *
 	 * @param jwsObject The JWS object. Not {@code null}.
 	 * @param context   Optional context of the JWS object, {@code null} if
@@ -85,8 +86,9 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified JWE object by decrypting it and checking its
-	 * context.
+	 * Processes the specified JWE object by decrypting it. The key
+	 * candidate(s) are selected by examining the JWS header and / or the
+	 * message context.
 	 *
 	 * @param jweObject The JWE object. Not {@code null}.
 	 * @param context   Optional context of the JWE object, {@code null} if

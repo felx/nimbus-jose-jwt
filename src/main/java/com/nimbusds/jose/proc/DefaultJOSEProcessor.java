@@ -3,7 +3,6 @@ package com.nimbusds.jose.proc;
 
 import java.security.Key;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -15,8 +14,31 @@ import com.nimbusds.jose.*;
 /**
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
- * <p>Use {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} to process JSON
- * Web Tokens (JWTs).
+ * <p>Must be supplied with a {@link JWSKeySelector JWS key selector} to
+ * determine the key candidate(s) for the signature verification. The exact key
+ * selection procedure is application-specific and may involve key ID lookup, a
+ * certificate check and / or other information supplied in the message
+ * {@link SecurityContext context}.
+ *
+ * <p>Similarly, the processor must be supplied with a {@link JWEKeySelector
+ * JWE key selector} if JWE messages are expected to be processed.
+ *
+ * <p>See sections 6 of RFC 7515 (JWS) and RFC 7516 (JWE) for guidelines on key
+ * selection.
+ *
+ * <p>This processor comes with the default {@link DefaultJWSVerifierFactory
+ * JWS verifier factory} and the default {@link DefaultJWEDecrypterFactory
+ * JWE decrypter factory}; they can construct verifiers / decrypters for all
+ * standard JOSE algorithms implemented by the library.
+ *
+ *
+ *
+ * <p>Note that for security reasons this processor is hardwired to reject
+ * unsecured (plain) JOSE objects. Override the {@link #process(PlainObject,
+ * SecurityContext)} if you need to handle plain JOSE objects as well.
+ *
+ * <p>To process JSON Web Tokens (JWTs) use the
+ * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} class.
  *
  * @author Vladimir Dzhuvinov
  * @version 2015-06-29

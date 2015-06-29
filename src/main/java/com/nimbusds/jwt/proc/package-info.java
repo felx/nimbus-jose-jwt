@@ -1,6 +1,6 @@
 /**
- * Interfaces and classes which can be used for application-specific processing
- * of JSON Web Tokens (JWTs).
+ * Secure and robust framework for application-specific processing of JSON Web
+ * Tokens (JWTs).
  *
  * <p>References:
  *

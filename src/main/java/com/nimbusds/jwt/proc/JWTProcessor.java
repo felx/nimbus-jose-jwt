@@ -45,8 +45,8 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified unsecured (plain) JWT by checking its
-	 * context.
+	 * Processes the specified unsecured (plain) JWT, typically by checking
+	 * its context.
 	 *
 	 * @param plainJWT The unsecured (plain) JWT. Not {@code null}.
 	 * @param context  Optional context of the unsecured JWT, {@code null}
@@ -66,8 +66,9 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified signed JWT by verifying its signature and
-	 * checking its context.
+	 * Processes the specified signed JWT by verifying its signature. The
+	 * key candidate(s) are selected by examining the JWS header and / or
+	 * the message context.
 	 *
 	 * @param signedJWT The signed JWT. Not {@code null}.
 	 * @param context   Optional context of the signed JWT, {@code null} if
@@ -87,8 +88,9 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 
 
 	/**
-	 * Processes the specified encrypted JWT by decrypting it and checking
-	 * its context.
+	 * Processes the specified encrypted JWT by decrypting it. The key
+	 * candidate(s) are selected by examining the JWS header and / or the
+	 * message context.
 	 *
 	 * @param encryptedJWT The encrypted JWT. Not {@code null}.
 	 * @param context      Optional context of the encrypted JWT,
