@@ -15,7 +15,7 @@ import com.nimbusds.jose.PlainObject;
  * {@link com.nimbusds.jose.JWEObject JWE} objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version 2015-06-10
  */
 public interface JOSEProcessor<T, C extends SecurityContext> {
 

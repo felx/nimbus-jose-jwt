@@ -14,7 +14,7 @@ import com.nimbusds.jose.*;
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-11)
+ * @version 2015-06-29
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
@@ -36,13 +36,13 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	/**
 	 * The JWS verifier factory.
 	 */
-	private JWSVerifierFactory jwsVerifierFactory;
+	private JWSVerifierFactory jwsVerifierFactory = new DefaultJWSVerifierFactory();
 
 
 	/**
 	 * The JWE decrypter factory.
 	 */
-	private JWEDecrypterFactory jweDecrypterFactory;
+	private JWEDecrypterFactory jweDecrypterFactory = new DefaultJWEDecrypterFactory();
 
 
 
@@ -140,9 +140,24 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 
 	@Override
 	public Payload process(final String compactJOSE, final C context)
-		throws ParseException, JOSEException {
+		throws ParseException, BadJOSEException, JOSEException {
 
-		return null;
+		JOSEObject joseObject = JOSEObject.parse(compactJOSE);
+
+		if (joseObject instanceof JWSObject) {
+			return process((JWSObject)joseObject, context);
+		}
+
+		if (joseObject instanceof JWEObject) {
+			return process((JWEObject)joseObject, context);
+		}
+
+		if (joseObject instanceof PlainObject) {
+			return process((PlainObject)joseObject, context);
+		}
+
+		// Should never happen
+		throw new JOSEException("Unexpected JOSE object type: " + joseObject.getClass());
 	}
 
 
@@ -228,7 +243,18 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 				throw new BadJWEException("JWE object rejected: " + e.getMessage(), e);
 			}
 
-			// TODO check for nested JWS
+			if ("JWT".equalsIgnoreCase(jweObject.getHeader().getContentType())) {
+
+				// Handle nested signed JWT, see http://tools.ietf.org/html/rfc7519#section-5.2
+				JWSObject nestedJWS = jweObject.getPayload().toJWSObject();
+
+				if (nestedJWS == null) {
+					// Cannot parse payload to JWS object, return original form
+					return jweObject.getPayload();
+				}
+
+				return process(nestedJWS, context);
+			}
 
 			return jweObject.getPayload();
 		}
