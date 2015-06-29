@@ -14,129 +14,12 @@ import com.nimbusds.jose.*;
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2015-06-30
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
-	implements JOSEProcessor<Payload, C> {
-
-
-	/**
-	 * The JWS key selector.
-	 */
-	private JWSKeySelector<C> jwsKeySelector;
-
-
-	/**
-	 * The JWE key selector.
-	 */
-	private JWEKeySelector<C> jweKeySelector;
-
-
-	/**
-	 * The JWS verifier factory.
-	 */
-	private JWSVerifierFactory jwsVerifierFactory = new DefaultJWSVerifierFactory();
-
-
-	/**
-	 * The JWE decrypter factory.
-	 */
-	private JWEDecrypterFactory jweDecrypterFactory = new DefaultJWEDecrypterFactory();
-
-
-
-	/**
-	 * Gets the JWS key selector.
-	 *
-	 * @return The JWS key selector, {@code null} if not specified.
-	 */
-	public JWSKeySelector<C> getJWSKeySelector() {
-
-		return jwsKeySelector;
-	}
-
-
-	/**
-	 * Sets the JWS key selector.
-	 *
-	 * @param jwsKeySelector The JWS key selector, {@code null} if not
-	 *                       specified.
-	 */
-	public void setJWSKeySelector(final JWSKeySelector<C> jwsKeySelector) {
-
-		this.jwsKeySelector = jwsKeySelector;
-	}
-
-
-	/**
-	 * Gets the JWE key selector.
-	 *
-	 * @return The JWE key selector, {@code null} if not specified.
-	 */
-	public JWEKeySelector<C> getJWEKeySelector() {
-
-		return jweKeySelector;
-	}
-
-
-	/**
-	 * Sets the JWE key selector.
-	 *
-	 * @param jweKeySelector The JWE key selector, {@code null} if not
-	 *                       specified.
-	 */
-	public void setJWEKeySelector(final JWEKeySelector<C> jweKeySelector) {
-
-		this.jweKeySelector = jweKeySelector;
-	}
-
-
-	/**
-	 * Gets the factory for creating JWS verifier instances.
-	 *
-	 * @return The JWS verifier factory, {@code null} if not specified.
-	 */
-	public JWSVerifierFactory getJWSVerifierFactory() {
-
-		return jwsVerifierFactory;
-	}
-
-
-	/**
-	 * Sets the factory for creating JWS verifier instances.
-	 *
-	 * @param factory The JWS verifier factory, {@code null} if not
-	 *                specified.
-	 */
-	public void setJWSVerifierFactory(final JWSVerifierFactory factory) {
-
-		jwsVerifierFactory = factory;
-	}
-
-
-	/**
-	 * Gets the factory for creating JWE decrypter instances.
-	 *
-	 * @return The JWE decrypter factory, {@code null} if not specified.
-	 */
-	public JWEDecrypterFactory getJWEDecrypterFactory() {
-
-		return jweDecrypterFactory;
-	}
-
-
-	/**
-	 * Sets the factory for creating JWE decrypter instances.
-	 *
-	 * @param factory The JWE decrypter factory, {@code null} if not
-	 *                specified.
-	 */
-	public void setJWEDecrypterFactory(final JWEDecrypterFactory factory) {
-
-		jweDecrypterFactory = factory;
-	}
-
+	extends BaseJOSEProcessor<C>
+	implements JOSEProcessor<Payload, C>{
 
 	@Override
 	public Payload process(final String compactJOSE, final C context)
@@ -173,15 +56,15 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	public Payload process(final JWSObject jwsObject, C context)
 		throws BadJOSEException, JOSEException {
 
-		if (jwsKeySelector == null) {
+		if (getJWSKeySelector() == null) {
 			throw new BadJOSEException("JWS object rejected: No JWS key selector is configured");
 		}
 
-		if (jwsVerifierFactory == null) {
+		if (getJWSVerifierFactory() == null) {
 			throw new BadJOSEException("JWS object rejected: No JWS verifier is configured");
 		}
 
-		List<? extends Key> keyCandidates = jwsKeySelector.selectJWSKeys(jwsObject.getHeader(), context);
+		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw new BadJOSEException("JWS object rejected: No matching key(s) found");
@@ -189,7 +72,7 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 
 		for (Key key: keyCandidates) {
 
-			JWSVerifier verifier = jwsVerifierFactory.createJWSVerifier(jwsObject.getHeader(), key);
+			JWSVerifier verifier = getJWSVerifierFactory().createJWSVerifier(jwsObject.getHeader(), key);
 
 			if (verifier == null) {
 				continue;
@@ -213,15 +96,15 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	public Payload process(final JWEObject jweObject, C context)
 		throws BadJOSEException, JOSEException {
 
-		if (jweKeySelector == null) {
+		if (getJWEKeySelector() == null) {
 			throw new BadJOSEException("JWE object rejected: No JWE key selector is configured");
 		}
 
-		if (jweDecrypterFactory == null) {
+		if (getJWEDecrypterFactory() == null) {
 			throw new BadJOSEException("JWE object rejected: No JWE decrypter is configured");
 		}
 
-		List<? extends Key> keyCandidates = jweKeySelector.selectJWEKeys(jweObject.getHeader(), context);
+		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw new BadJOSEException("JWE object rejected: No matching key(s) found");
@@ -229,7 +112,7 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 
 		for (Key key: keyCandidates) {
 
-			JWEDecrypter decrypter = jweDecrypterFactory.createJWEDecrypter(jweObject.getHeader(), key);
+			JWEDecrypter decrypter = getJWEDecrypterFactory().createJWEDecrypter(jweObject.getHeader(), key);
 
 			if (decrypter == null) {
 				continue;
