@@ -51,7 +51,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	public ReadOnlyJWTClaimsSet process(final PlainJWT plainJWT, final C context)
 		throws BadJOSEException, JOSEException {
 
-		throw new BadJOSEException("Unsecured (plain) JWTs are rejected");
+		throw new BadJOSEException("Unsecured (plain) JWTs are rejected, extend class to handle");
 	}
 
 
@@ -60,11 +60,12 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 		throws BadJOSEException, JOSEException {
 
 		if (getJWSKeySelector() == null) {
+			// JWS key selector may have been deliberately omitted
 			throw new BadJOSEException("Signed JWT rejected: No JWS key selector is configured");
 		}
 
 		if (getJWSVerifierFactory() == null) {
-			throw new BadJOSEException("Signed JWT rejected: No JWS verifier is configured");
+			throw new JOSEException("No JWS verifier is configured");
 		}
 
 		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(signedJWT.getHeader(), context);
@@ -110,11 +111,12 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 		throws BadJOSEException, JOSEException {
 
 		if (getJWEKeySelector() == null) {
+			// JWE key selector may have been deliberately omitted
 			throw new BadJOSEException("Encrypted JWT rejected: No JWE key selector is configured");
 		}
 
 		if (getJWEDecrypterFactory() == null) {
-			throw new BadJOSEException("Encrypted JWT rejected: No JWE decrypter is configured");
+			throw new JOSEException("No JWE decrypter is configured");
 		}
 
 		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(encryptedJWT.getHeader(), context);

@@ -62,11 +62,12 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 		throws BadJOSEException, JOSEException {
 
 		if (getJWSKeySelector() == null) {
+			// JWS key selector may have been deliberately omitted
 			throw new BadJOSEException("JWS object rejected: No JWS key selector is configured");
 		}
 
 		if (getJWSVerifierFactory() == null) {
-			throw new BadJOSEException("JWS object rejected: No JWS verifier is configured");
+			throw new JOSEException("No JWS verifier is configured");
 		}
 
 		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
@@ -106,11 +107,12 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 		throws BadJOSEException, JOSEException {
 
 		if (getJWEKeySelector() == null) {
+			// JWE key selector may have been deliberately omitted
 			throw new BadJOSEException("JWE object rejected: No JWE key selector is configured");
 		}
 
 		if (getJWEDecrypterFactory() == null) {
-			throw new BadJOSEException("JWE object rejected: No JWE decrypter is configured");
+			throw new JOSEException("No JWE decrypter is configured");
 		}
 
 		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
