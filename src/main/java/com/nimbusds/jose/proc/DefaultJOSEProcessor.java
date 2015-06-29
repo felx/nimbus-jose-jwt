@@ -3,7 +3,9 @@ package com.nimbusds.jose.proc;
 
 import java.security.Key;
 import java.text.ParseException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.jcip.annotations.ThreadSafe;
 
@@ -13,8 +15,11 @@ import com.nimbusds.jose.*;
 /**
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
+ * <p>Use {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} to process JSON
+ * Web Tokens (JWTs).
+ *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-30
+ * @version 2015-06-29
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
@@ -48,7 +53,7 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	public Payload process(final PlainObject plainObject, C context)
 		throws BadJOSEException {
 
-		throw new BadJOSEException("Unsecured (plain) JOSE objects are rejected");
+		throw new BadJOSEException("Unsecured (plain) JOSE objects are rejected, extend class to handle");
 	}
 
 
@@ -70,9 +75,11 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 			throw new BadJOSEException("JWS object rejected: No matching key(s) found");
 		}
 
-		for (Key key: keyCandidates) {
+		ListIterator<? extends Key> it = keyCandidates.listIterator();
 
-			JWSVerifier verifier = getJWSVerifierFactory().createJWSVerifier(jwsObject.getHeader(), key);
+		while (it.hasNext()) {
+
+			JWSVerifier verifier = getJWSVerifierFactory().createJWSVerifier(jwsObject.getHeader(), it.next());
 
 			if (verifier == null) {
 				continue;
@@ -84,8 +91,10 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 				return jwsObject.getPayload();
 			}
 
-			// Invalid signature
-			throw new BadJWSException("JWS object rejected: Invalid signature");
+			if (! it.hasNext()) {
+				// No more keys to try out
+				throw new BadJWSException("JWS object rejected: Invalid signature");
+			}
 		}
 
 		throw new BadJOSEException("JWS object rejected: No matching verifier(s) found");
@@ -110,9 +119,11 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 			throw new BadJOSEException("JWE object rejected: No matching key(s) found");
 		}
 
-		for (Key key: keyCandidates) {
+		ListIterator<? extends Key> it = keyCandidates.listIterator();
 
-			JWEDecrypter decrypter = getJWEDecrypterFactory().createJWEDecrypter(jweObject.getHeader(), key);
+		while (it.hasNext()) {
+
+			JWEDecrypter decrypter = getJWEDecrypterFactory().createJWEDecrypter(jweObject.getHeader(), it.next());
 
 			if (decrypter == null) {
 				continue;
@@ -122,7 +133,13 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 				jweObject.decrypt(decrypter);
 
 			} catch (JOSEException e) {
-				// Decryption failed
+
+				if (it.hasNext()) {
+					// Try next key
+					continue;
+				}
+
+				// No more keys to try
 				throw new BadJWEException("JWE object rejected: " + e.getMessage(), e);
 			}
 

@@ -55,7 +55,9 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @return An application-specific object (the JWT claims) on success,
 	 *         or {@code null} if no return value is necessary.
 	 *
-	 * @throws BadJOSEException If the unsecured (plain) JWT is rejected.
+	 * @throws BadJOSEException If the unsecured (plain) JWT is rejected,
+	 *                          after examining the context or due to the
+	 *                          payload not being a JSON object.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
@@ -75,7 +77,8 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 *         or {@code null} if no return value is necessary.
 	 *
 	 * @throws BadJOSEException If the signed JWT is rejected, typically
-	 *                          due to a bad signature.
+	 *                          due to a bad signature or the payload not
+	 *                          being a JSON object.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
@@ -95,7 +98,8 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 *         or {@code null} if no return value is necessary.
 	 *
 	 * @throws BadJOSEException If the encrypted JWT is rejected, typically
-	 *                          due to failed decryption.
+	 *                          due to failed decryption or the payload not
+	 *                          being a JSON object.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */

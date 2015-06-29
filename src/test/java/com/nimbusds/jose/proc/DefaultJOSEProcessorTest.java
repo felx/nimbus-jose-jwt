@@ -2,17 +2,25 @@ package com.nimbusds.jose.proc;
 
 
 import java.security.Key;
+import java.security.SecureRandom;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.nimbusds.jose.crypto.DirectEncrypter;
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import junit.framework.TestCase;
+
+import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
-import junit.framework.TestCase;
-import net.minidev.json.JSONObject;
 
 
 /**
@@ -21,6 +29,120 @@ import net.minidev.json.JSONObject;
  * @version 2015-06-29
  */
 public class DefaultJOSEProcessorTest extends TestCase {
+
+
+	public void testProcessJWS()
+		throws Exception {
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwsObject.sign(new MACSigner(key));
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+				return Arrays.asList(key);
+			}
+		});
+
+		assertEquals("Hello world!", processor.process(jwsObject, null).toString());
+		assertEquals("Hello world!", processor.process(jwsObject.serialize(), null).toString());
+	}
+
+
+	public void testProcessJWSWithTwoKeyCandidates()
+		throws Exception {
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwsObject.sign(new MACSigner(key));
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+				// first key candidate invalid, the second is correct
+				return Arrays.asList(new SecretKeySpec(new byte[32], "HMAC"), key);
+			}
+		});
+
+		assertEquals("Hello world!", processor.process(jwsObject, null).toString());
+		assertEquals("Hello world!", processor.process(jwsObject.serialize(), null).toString());
+	}
+
+
+	public void testProcessJWE()
+		throws Exception {
+
+		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[16];
+		new SecureRandom().nextBytes(keyBytes);
+
+		final SecretKey key = new SecretKeySpec(keyBytes, "AES");
+
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
+		jweObject.encrypt(new DirectEncrypter(key));
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWEKeySelector(new JWEKeySelector() {
+			@Override
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+				return Arrays.asList(key);
+			}
+		});
+
+		assertEquals("Hello world!", processor.process(jweObject, null).toString());
+		assertEquals("Hello world!", processor.process(jweObject.serialize(), null).toString());
+
+		Security.removeProvider(BouncyCastleProviderSingleton.getInstance().getName());
+	}
+
+
+	public void testProcessJWEWithTwoKeyCandidates()
+		throws Exception {
+
+		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[16];
+		new SecureRandom().nextBytes(keyBytes);
+
+		final SecretKey key = new SecretKeySpec(keyBytes, "AES");
+
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
+		jweObject.encrypt(new DirectEncrypter(key));
+
+		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+
+		processor.setJWEKeySelector(new JWEKeySelector() {
+			@Override
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+				// First key invalid, second valid
+				return Arrays.asList(new SecretKeySpec(new byte[16], "AES"), key);
+			}
+		});
+
+		assertEquals("Hello world!", processor.process(jweObject, null).toString());
+		assertEquals("Hello world!", processor.process(jweObject.serialize(), null).toString());
+
+		Security.removeProvider(BouncyCastleProviderSingleton.getInstance().getName());
+	}
 
 
 	public void testProcessNestedJWT()
@@ -172,13 +294,13 @@ public class DefaultJOSEProcessorTest extends TestCase {
 		try {
 			new DefaultJOSEProcessor().process(plainObject, null);
 		} catch (BadJOSEException e) {
-			assertEquals("Unsecured (plain) JOSE objects are rejected", e.getMessage());
+			assertEquals("Unsecured (plain) JOSE objects are rejected, extend class to handle", e.getMessage());
 		}
 
 		try {
 			new DefaultJOSEProcessor().process(plainObject.serialize(), null);
 		} catch (BadJOSEException e) {
-			assertEquals("Unsecured (plain) JOSE objects are rejected", e.getMessage());
+			assertEquals("Unsecured (plain) JOSE objects are rejected, extend class to handle", e.getMessage());
 		}
 	}
 	
