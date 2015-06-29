@@ -6,12 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWECryptoParts;
-import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
@@ -41,7 +36,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-06-02)
+ * @version $version$ (2014-06-29)
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -55,10 +50,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *            bytes), 384 bits (48 bytes) or 512 bits (64 bytes) long.
 	 *            Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectEncrypter(final SecretKey key)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(key);
 	}
@@ -72,10 +68,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *                 bytes), 384 bits (48 bytes) or 512 bits (64 bytes)
 	 *                 long. Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectEncrypter(final byte[] keyBytes)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -89,10 +86,11 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectEncrypter(final OctetSequenceKey octJWK)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(octJWK.toSecretKey("AES"));
 	}
@@ -112,8 +110,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		EncryptionMethod enc = header.getEncryptionMethod();
 
 		if (enc.cekBitLength() != ByteUtils.bitLength(getKey().getEncoded())) {
-
-			throw new JOSEException("The Content Encryption Key (CEK) length must be " + enc.cekBitLength() + " bits for " + enc + " encryption");
+			throw new KeyLengthException(enc.cekBitLength(), enc);
 		}
 
 		final Base64URL encryptedKey = null; // The second JWE part

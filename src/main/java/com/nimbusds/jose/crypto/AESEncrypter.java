@@ -6,12 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWECryptoParts;
-import com.nimbusds.jose.JWEEncrypter;
-import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
@@ -47,7 +42,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version $version$ (2015-06-29)
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -69,10 +64,10 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	 *            bits (24 bytes) or 256 bits (32 bytes). Must not be
 	 *            {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESEncrypter(final SecretKey kek)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(kek);
 	}
@@ -84,10 +79,10 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	 *                 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32
 	 *                 bytes). Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESEncrypter(final byte[] keyBytes)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -101,10 +96,10 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESEncrypter(final OctetSequenceKey octJWK)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(octJWK.toSecretKey("AES"));
 	}
@@ -122,42 +117,42 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 		if (alg.equals(JWEAlgorithm.A128KW)) {
 
 			if(ByteUtils.bitLength(getKey().getEncoded()) != 128){
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128KW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 128 bits for A128KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192KW)) {
 
 			if(ByteUtils.bitLength(getKey().getEncoded()) != 192){
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192KW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 192 bits for A192KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256KW)) {
 
 			if (ByteUtils.bitLength(getKey().getEncoded()) != 256) {
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256KW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 256 bits for A256KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A128GCMKW)) {
 
 			if(ByteUtils.bitLength(getKey().getEncoded()) != 128){
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 128 bits for A128GCMKW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 128 bits for A128GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192GCMKW)) {
 
 			if(ByteUtils.bitLength(getKey().getEncoded()) != 192){
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 192 bits for A192GCMKW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 192 bits for A192GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256GCMKW)) {
 
 			if(ByteUtils.bitLength(getKey().getEncoded()) != 256){
-				throw new JOSEException("The Key Encryption Key (KEK) length must be 256 bits for A256GCMKW encryption");
+				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 256 bits for A256GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;
 

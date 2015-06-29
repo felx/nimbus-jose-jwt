@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version $version$ (2015-06-29)
  */
 @ThreadSafe
 public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -56,10 +56,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *            bytes), 384 bits (48 bytes) or 512 bits (64 bytes) long.
 	 *            Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectDecrypter(final SecretKey key)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(key);
 	}
@@ -73,10 +74,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *                 bytes), 384 bits (48 bytes) or 512 bits (64 bytes)
 	 *                 long. Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectDecrypter(final byte[] keyBytes)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -90,10 +92,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectDecrypter(final OctetSequenceKey octJWK)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(octJWK.toSecretKey("AES"));
 	}
@@ -111,10 +114,11 @@ public class DirectDecrypter extends DirectCryptoProvider implements JWEDecrypte
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
 	 *
-	 * @throws JOSEException If the symmetric key length is not compatible.
+	 * @throws KeyLengthException If the symmetric key length is not
+	 *                            compatible.
 	 */
 	public DirectDecrypter(final SecretKey key, final Set<String> defCritHeaders)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(key);
 

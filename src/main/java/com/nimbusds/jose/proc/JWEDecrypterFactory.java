@@ -12,7 +12,7 @@ import com.nimbusds.jose.JWEHeader;
  * JSON Web Encryption (JWE) decrypter factory.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public interface JWEDecrypterFactory {
 
@@ -27,8 +27,8 @@ public interface JWEDecrypterFactory {
 	 * @return The JWE decrypter.
 	 *
 	 * @throws JOSEException If the JWE algorithm / encryption method is
-	 *                       not supported or the key type doesn't match
-	 *                       expected for the JWE algorithm.
+	 *                       not supported or the key type or length
+	 *                       doesn't match expected for the JWE algorithm.
 	 */
 	JWEDecrypter createJWEDecrypter(final JWEHeader header, final Key key)
 		throws JOSEException;

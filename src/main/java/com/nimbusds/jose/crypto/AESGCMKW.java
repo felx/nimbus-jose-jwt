@@ -8,6 +8,7 @@ import javax.crypto.spec.SecretKeySpec;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.util.ByteUtils;
 
 
@@ -19,7 +20,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version 2015-06-29
  */
 @ThreadSafe
 class AESGCMKW {
@@ -79,8 +80,7 @@ class AESGCMKW {
 
 		if (ByteUtils.bitLength(keyBytes) != keyLength) {
 
-			throw new JOSEException("CEK key length mismatch: " +
-				ByteUtils.bitLength(keyBytes) + " != " + keyLength);
+			throw new KeyLengthException("CEK key length mismatch: " + ByteUtils.bitLength(keyBytes) + " != " + keyLength);
 		}
 
 		return new SecretKeySpec(keyBytes, "AES");

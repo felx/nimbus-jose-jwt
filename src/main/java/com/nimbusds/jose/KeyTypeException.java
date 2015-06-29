@@ -1,18 +1,16 @@
-package com.nimbusds.jose.proc;
+package com.nimbusds.jose;
 
 
 import java.security.Key;
-
-import com.nimbusds.jose.JOSEException;
 
 
 /**
  * Key type exception.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-29
  */
-public class KeyTypeException extends JOSEException {
+public class KeyTypeException extends KeyException {
 
 
 	/**

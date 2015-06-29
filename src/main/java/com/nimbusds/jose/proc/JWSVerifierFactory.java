@@ -12,7 +12,7 @@ import com.nimbusds.jose.JWSVerifier;
  * JSON Web Signature (JWS) verifier factory.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public interface JWSVerifierFactory {
 
@@ -27,8 +27,8 @@ public interface JWSVerifierFactory {
 	 * @return The JWS verifier.
 	 *
 	 * @throws JOSEException If the JWS algorithm is not supported or the
-	 *                       key type doesn't match the expected for the
-	 *                       JWS algorithm.
+	 *                       key type or length doesn't match the expected
+	 *                       for the JWS algorithm.
 	 */
 	JWSVerifier createJWSVerifier(final JWSHeader header, final Key key)
 		throws JOSEException;

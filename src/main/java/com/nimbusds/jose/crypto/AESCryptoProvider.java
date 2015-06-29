@@ -6,8 +6,8 @@ import java.util.*;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.util.ByteUtils;
 
 
@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-27)
+ * @version $version$ (2015-06-29)
  */
 abstract class AESCryptoProvider extends BaseJWEProvider {
 
@@ -105,15 +105,15 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	 *
 	 * @return The compatible JWE algorithms.
 	 *
-	 * @throws JOSEException If the KEK length is not compatible.
+	 * @throws KeyLengthException If the KEK length is not compatible.
 	 */
 	private static Set<JWEAlgorithm> getCompatibleJWEAlgorithms(final int kekLength)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		Set<JWEAlgorithm> algs = COMPATIBLE_ALGORITHMS.get(kekLength);
 
 		if (algs == null) {
-			throw new JOSEException("The Key Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32 bytes)");
+			throw new KeyLengthException("The Key Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32 bytes)");
 		}
 
 		return algs;
@@ -127,10 +127,10 @@ abstract class AESCryptoProvider extends BaseJWEProvider {
 	 *             bits (24 bytes) or 256 bits (32 bytes). Must not be
 	 *             {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	protected AESCryptoProvider(final SecretKey kek)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(getCompatibleJWEAlgorithms(ByteUtils.bitLength(kek.getEncoded())), ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 

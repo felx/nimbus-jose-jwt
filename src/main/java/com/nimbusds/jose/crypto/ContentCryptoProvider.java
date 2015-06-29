@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version $version$ (2015-06-29)
  */
 class ContentCryptoProvider {
 
@@ -102,14 +102,14 @@ class ContentCryptoProvider {
 	 * @param cek The CEK. Must not be {@code null}.
 	 * @param enc The encryption method. Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the CEK length doesn't match the encryption
-	 *                       method.
+	 * @throws KeyLengthException If the CEK length doesn't match the
+	 *                            encryption method.
 	 */
 	private static void checkCEKLength(final SecretKey cek, final EncryptionMethod enc)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		if (enc.cekBitLength() != ByteUtils.bitLength(cek.getEncoded())) {
-			throw new JOSEException("The Content Encryption Key (CEK) length for " + enc + " must be " + enc.cekBitLength() + " bits");
+			throw new KeyLengthException("The Content Encryption Key (CEK) length for " + enc + " must be " + enc.cekBitLength() + " bits");
 		}
 	}
 

@@ -12,17 +12,18 @@ import java.security.interfaces.RSAPrivateKey;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import junit.framework.TestCase;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.ByteUtils;
-import junit.framework.TestCase;
 
 
 /**
  * Tests the default JWE decrypter factory.
  *
- * @version 2015-06-14
+ * @version 2015-06-29
  */
 public class DefaultJWEDecrypterFactoryTest extends TestCase {
 
@@ -137,7 +138,7 @@ public class DefaultJWEDecrypterFactoryTest extends TestCase {
 			factory.createJWEDecrypter(header, key);
 			fail();
 		} catch (JOSEException e) {
-			assertEquals("Key length (256 bits) is not compatible with A128GCM encryption method", e.getMessage());
+			assertEquals("The expected key length is 128 bits (for A128GCM algorithm)", e.getMessage());
 		}
 	}
 
@@ -172,7 +173,7 @@ public class DefaultJWEDecrypterFactoryTest extends TestCase {
 			factory.createJWEDecrypter(header, key);
 			fail();
 		} catch (JOSEException e) {
-			assertEquals("Key length (256 bits) is not compatible with A128KW algorithm", e.getMessage());
+			assertEquals("Unexpected key length (for A128KW algorithm)", e.getMessage());
 		}
 	}
 

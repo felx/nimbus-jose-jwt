@@ -14,10 +14,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -28,7 +25,7 @@ import com.nimbusds.jose.util.ByteUtils;
 /**
  * Tests the default JWS verifier factory.
  *
- * @version 2015-06-14
+ * @version 2015-06-29
  */
 public class DefaultJWSVerifierFactoryTest extends TestCase {
 

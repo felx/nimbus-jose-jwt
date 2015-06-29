@@ -7,6 +7,7 @@ import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.KeyTypeException;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;

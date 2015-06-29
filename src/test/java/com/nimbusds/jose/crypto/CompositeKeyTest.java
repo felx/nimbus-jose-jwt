@@ -5,10 +5,9 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import junit.framework.TestCase;
-
 import org.junit.Assert;
 
-import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.KeyLengthException;
 
 
 /**
@@ -16,7 +15,7 @@ import com.nimbusds.jose.JOSEException;
  * http://tools.ietf.org/html/rfc7518#appendix-B
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-06)
+ * @version 2013-06-29
  */
 public class CompositeKeyTest extends TestCase {
 
@@ -145,7 +144,7 @@ public class CompositeKeyTest extends TestCase {
 
 			fail("Failed to raise exception");
 
-		} catch (JOSEException e) {
+		} catch (KeyLengthException e) {
 
 			// ok
 		}

@@ -6,7 +6,7 @@ import java.util.*;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.util.ByteUtils;
 
@@ -35,7 +35,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version $version$ (2015-06-29)
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 
@@ -68,15 +68,15 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	 *
 	 * @return The compatible encryption methods.
 	 *
-	 * @throws JOSEException If the CEK length is not compatible.
+	 * @throws KeyLengthException If the CEK length is not compatible.
 	 */
 	private static Set<EncryptionMethod> getCompatibleEncryptionMethods(final int cekLength)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		Set<EncryptionMethod> encs = ContentCryptoProvider.COMPATIBLE_ENCRYPTION_METHODS.get(cekLength);
 
 		if (encs == null) {
-			throw new JOSEException("The Content Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
+			throw new KeyLengthException("The Content Encryption Key length must be 128 bits (16 bytes), 192 bits (24 bytes), 256 bits (32 bytes), 384 bits (48 bytes) or 512 bites (64 bytes)");
 		}
 
 		return encs;
@@ -97,10 +97,10 @@ abstract class DirectCryptoProvider extends BaseJWEProvider {
 	 *            bits (48 bytes) or 512 bits (64 bytes) long. Must not be
 	 *            {@code null}.
 	 *
-	 * @throws JOSEException If the CEK length is not compatible.
+	 * @throws KeyLengthException If the CEK length is not compatible.
 	 */
 	protected DirectCryptoProvider(final SecretKey cek)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(SUPPORTED_ALGORITHMS, getCompatibleEncryptionMethods(ByteUtils.bitLength(cek.getEncoded())));
 

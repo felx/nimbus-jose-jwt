@@ -3,28 +3,25 @@ package com.nimbusds.jose.crypto;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.util.Arrays;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
-import org.jose4j.lang.ByteUtil;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**
  * Tests the content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-29
  */
 public class ContentCryptoProviderTest extends TestCase {
 
@@ -110,14 +107,14 @@ public class ContentCryptoProviderTest extends TestCase {
 
 			fail();
 
-		} catch (JOSEException e) {
+		} catch (KeyLengthException e) {
 
 			assertEquals("The Content Encryption Key (CEK) length for A256CBC-HS512 must be 512 bits", e.getMessage());
 		}
 	}
 
 
-	public void test_A256GCM_cekTooShort() // todo
+	public void test_A256GCM_cekTooShort()
 		throws Exception {
 
 		final JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A256GCM);
@@ -129,7 +126,7 @@ public class ContentCryptoProviderTest extends TestCase {
 		final JWEJCAContext jcaProvider = new JWEJCAContext();
 		jcaProvider.setProvider(BouncyCastleProviderSingleton.getInstance());
 
-			try {
+		try {
 			ContentCryptoProvider.encrypt(
 				header,
 				clearText,
@@ -139,7 +136,7 @@ public class ContentCryptoProviderTest extends TestCase {
 
 			fail();
 
-		} catch (JOSEException e) {
+		} catch (KeyLengthException e) {
 
 			assertEquals("The Content Encryption Key (CEK) length for A256GCM must be 256 bits", e.getMessage());
 		}

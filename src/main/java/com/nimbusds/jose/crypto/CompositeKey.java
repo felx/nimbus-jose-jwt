@@ -6,7 +6,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import net.jcip.annotations.Immutable;
 
-import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.KeyLengthException;
 
 
 /**
@@ -18,7 +18,7 @@ import com.nimbusds.jose.JOSEException;
  * <p>See draft-mcgrew-aead-aes-cbc-hmac-sha2-01
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-11-25)
+ * @version 2015-06-29
  */
 @Immutable
 final class CompositeKey {
@@ -54,10 +54,10 @@ final class CompositeKey {
 	 * @param inputKey The input key. Must be 256, 384 or 512 bits long.
 	 *                 Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the input key length is not supported.
+	 * @throws KeyLengthException If the input key length is not supported.
 	 */
 	public CompositeKey(final SecretKey inputKey)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this.inputKey = inputKey;
 
@@ -90,7 +90,7 @@ final class CompositeKey {
 
 		} else {
 
-			throw new JOSEException("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256, 384 or 512 bits");
+			throw new KeyLengthException("Unsupported AES/CBC/PKCS5Padding/HMAC-SHA2 key length, must be 256, 384 or 512 bits");
 		}
 	}
 

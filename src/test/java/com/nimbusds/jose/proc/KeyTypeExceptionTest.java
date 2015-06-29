@@ -3,6 +3,8 @@ package com.nimbusds.jose.proc;
 
 import junit.framework.TestCase;
 
+import com.nimbusds.jose.KeyTypeException;
+
 
 /**
  * Key type exception test.

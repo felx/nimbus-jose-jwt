@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-02)
+ * @version 2015-06-29
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -97,11 +97,11 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 * @param secret The secret. Must be at least 256 bits long and not
 	 *               {@code null}.
 	 *
-	 * @throws JOSEException If the secret length is shorter than the
-	 *                       minimum 256-bit requirement.
+	 * @throws KeyLengthException If the secret length is shorter than the
+	 *                            minimum 256-bit requirement.
 	 */
 	public MACSigner(final byte[] secret)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(secret, getCompatibleAlgorithms(ByteUtils.bitLength(secret.length)));
 	}
@@ -113,11 +113,11 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 * @param secretString The secret as a UTF-8 encoded string. Must be at
 	 *                     least 256 bits long and not {@code null}.
 	 *
-	 * @throws JOSEException If the secret length is shorter than the
-	 *                       minimum 256-bit requirement.
+	 * @throws KeyLengthException If the secret length is shorter than the
+	 *                            minimum 256-bit requirement.
 	 */
 	public MACSigner(final String secretString)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(secretString.getBytes(Charset.forName("UTF-8")));
 	}
@@ -129,11 +129,11 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 * @param secretKey The secret key. Must be at least 256 bits long and
 	 *                  not {@code null}.
 	 *
-	 * @throws JOSEException If the secret length is shorter than the
-	 *                       minimum 256-bit requirement.
+	 * @throws KeyLengthException If the secret length is shorter than the
+	 *                            minimum 256-bit requirement.
 	 */
 	public MACSigner(final SecretKey secretKey)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(secretKey.getEncoded());
 	}
@@ -145,11 +145,11 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	 * @param jwk The secret as a JWK. Must be at least 256 bits long and
 	 *            not {@code null}.
 	 *
-	 * @throws JOSEException If the secret length is shorter than the
-	 *                       minimum 256-bit requirement.
+	 * @throws KeyLengthException If the secret length is shorter than the
+	 *                            minimum 256-bit requirement.
 	 */
 	public MACSigner(final OctetSequenceKey jwk)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(jwk.toByteArray());
 	}
@@ -162,7 +162,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 		final int minRequiredLength = getMinRequiredSecretLength(header.getAlgorithm());
 
 		if (getSecret().length < ByteUtils.byteLength(minRequiredLength)) {
-			throw new JOSEException("The secret length for " + header.getAlgorithm() + " must be at least " + minRequiredLength + " bits");
+			throw new KeyLengthException("The secret length for " + header.getAlgorithm() + " must be at least " + minRequiredLength + " bits");
 		}
 
 		String jcaAlg = getJCAAlgorithmName(header.getAlgorithm());

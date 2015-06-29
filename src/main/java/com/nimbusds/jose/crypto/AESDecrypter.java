@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version $version$ (2015-06-29)
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -62,10 +62,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 	 *            bits (24 bytes) or 256 bits (32 bytes). Must not be
 	 *            {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESDecrypter(final SecretKey kek)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(kek, null);
 	}
@@ -78,10 +78,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 	 *                 bits (16 bytes), 192 bits (24 bytes) or 256 bits (32
 	 *                 bytes). Must not be {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESDecrypter(final byte[] keyBytes)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(new SecretKeySpec(keyBytes, "AES"));
 	}
@@ -95,10 +95,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 	 *               bits (48 bytes) or 512 bits (64 bytes) long. Must not
 	 *               be {@code null}.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESDecrypter(final OctetSequenceKey octJWK)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		this(octJWK.toSecretKey("AES"));
 	}
@@ -114,10 +114,10 @@ public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, Cri
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
 	 *
-	 * @throws JOSEException If the KEK length is invalid.
+	 * @throws KeyLengthException If the KEK length is invalid.
 	 */
 	public AESDecrypter(final SecretKey kek, final Set<String> defCritHeaders)
-		throws JOSEException {
+		throws KeyLengthException {
 
 		super(kek);
 
