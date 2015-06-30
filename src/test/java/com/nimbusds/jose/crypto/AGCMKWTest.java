@@ -13,7 +13,7 @@ import junit.framework.TestCase;
  * General AxxxGCMKW tests.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-19)
+ * @version 2015-05-19
  */
 public class AGCMKWTest extends TestCase {
 

@@ -25,7 +25,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2014-01-24)
+ * @version 2014-01-24
  */
 @ThreadSafe
 class RSA_OAEP_256 {

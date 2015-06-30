@@ -41,7 +41,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version 2014-08-20
  */
 @Immutable
 public final class PlainHeader extends Header {

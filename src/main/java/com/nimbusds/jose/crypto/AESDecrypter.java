@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-29)
+ * @version 2015-06-29
  */
 @ThreadSafe
 public class AESDecrypter extends AESCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {

@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests the base JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-02-04)
+ * @version 2014-02-04
  */
 public class JWKTest extends TestCase {
 

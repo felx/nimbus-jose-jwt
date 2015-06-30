@@ -10,7 +10,7 @@ import junit.framework.TestCase;
  * Tests the Base64URL class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-13)
+ * @version 2014-07-13
  */
 public class Base64Test extends TestCase {
 

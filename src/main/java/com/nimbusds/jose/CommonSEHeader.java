@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 abstract class CommonSEHeader extends Header {
 

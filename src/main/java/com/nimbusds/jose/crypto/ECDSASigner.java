@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version 2015-06-07
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {

@@ -5,7 +5,7 @@ package com.nimbusds.jose.crypto;
  * Array utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-09-01)
+ * @version 2014-09-01
  */
 class ConstantTimeUtils {
 

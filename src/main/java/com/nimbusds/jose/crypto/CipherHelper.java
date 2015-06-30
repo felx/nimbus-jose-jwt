@@ -13,7 +13,7 @@ import java.security.Provider;
  * Helper utilities for instantiating ciphers.
  *
  * @author Cedric Staub
- * @version $version$ (2014-01-22)
+ * @version 2014-01-22
  */
 @ThreadSafe
 class CipherHelper {

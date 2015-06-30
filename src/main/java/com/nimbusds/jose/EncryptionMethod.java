@@ -24,7 +24,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version 2014-05-23
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {

@@ -30,7 +30,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version 2015-04-23
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {

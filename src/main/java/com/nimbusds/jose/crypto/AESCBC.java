@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 @ThreadSafe
 class AESCBC {

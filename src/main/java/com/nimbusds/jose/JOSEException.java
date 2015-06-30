@@ -5,7 +5,7 @@ package com.nimbusds.jose;
  * Javascript Object Signing and Encryption (JOSE) exception.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-15)
+ * @version 2012-09-15
  */
 public class JOSEException extends Exception {
 

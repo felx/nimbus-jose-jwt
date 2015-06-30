@@ -19,7 +19,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version 2014-01-24
  */
 @ThreadSafe
 class RSA1_5 {

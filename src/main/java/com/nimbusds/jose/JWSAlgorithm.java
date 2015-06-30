@@ -29,7 +29,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version 2013-08-20
  */
 @Immutable
 public final class JWSAlgorithm extends Algorithm {

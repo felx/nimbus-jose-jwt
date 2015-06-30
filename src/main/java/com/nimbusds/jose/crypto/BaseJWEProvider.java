@@ -16,7 +16,7 @@ import com.nimbusds.jose.jca.JWEJCAContext;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
 

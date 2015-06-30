@@ -22,7 +22,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  *
  * @author Brian Campbell
  * @author Yavor Vassilev
- * @version $version$ (2015-04-24)
+ * @version 2015-04-24
  */
 class PBKDF2 {
 

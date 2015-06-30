@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version $version$ (2015-06-05)
+ * @version 2015-06-05
  */
 @ThreadSafe
 class AESGCM {

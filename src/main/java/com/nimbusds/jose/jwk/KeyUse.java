@@ -16,7 +16,7 @@ import java.text.ParseException;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-02)
+ * @version 2014-04-02
  */
 public enum KeyUse {
 

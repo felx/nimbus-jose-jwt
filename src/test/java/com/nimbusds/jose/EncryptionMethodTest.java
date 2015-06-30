@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests the EncryptionMethod class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-05-23)
+ * @version 2014-05-23
  */
 public class EncryptionMethodTest extends TestCase {
 

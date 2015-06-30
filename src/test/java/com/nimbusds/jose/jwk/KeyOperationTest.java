@@ -13,7 +13,7 @@ import junit.framework.TestCase;
  * Tests the key operation enumeration.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-03)
+ * @version 2014-04-03
  */
 public class KeyOperationTest extends TestCase {
 

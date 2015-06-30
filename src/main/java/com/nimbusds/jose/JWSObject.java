@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Signature (JWS) secured object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {

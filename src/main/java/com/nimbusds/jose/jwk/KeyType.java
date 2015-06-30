@@ -25,7 +25,7 @@ import com.nimbusds.jose.Requirement;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2013-05-29)
+ * @version 2013-05-29
  */
 @Immutable
 public final class KeyType implements JSONAware {

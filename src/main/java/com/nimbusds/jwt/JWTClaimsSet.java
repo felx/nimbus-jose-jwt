@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-05-08)
+ * @version 2015-05-08
  */
 public class JWTClaimsSet implements ReadOnlyJWTClaimsSet {
 

@@ -5,7 +5,7 @@ package com.nimbusds.jose;
  * JSON Web Encryption (JWE) encrypter.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-21)
+ * @version 2015-05-21
  */
 public interface JWEEncrypter extends JWEProvider {
 

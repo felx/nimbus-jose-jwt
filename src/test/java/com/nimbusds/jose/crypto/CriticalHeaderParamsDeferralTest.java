@@ -14,7 +14,7 @@ import com.nimbusds.jose.JWSHeader;
  * Tests the critical parameters checker.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version 2015-04-21
  */
 public class CriticalHeaderParamsDeferralTest extends TestCase {
 

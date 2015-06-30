@@ -17,7 +17,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 public class DirectCryptoTest extends TestCase {
 

@@ -15,7 +15,7 @@ import com.nimbusds.jose.JWEObject;
  * Tests the JWT parser. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-21)
+ * @version 2013-08-21
  */
 public class JWTParserTest extends TestCase {
 

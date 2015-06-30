@@ -29,7 +29,7 @@ import com.nimbusds.jose.Algorithm;
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 @Immutable
 public class JWKMatcher {

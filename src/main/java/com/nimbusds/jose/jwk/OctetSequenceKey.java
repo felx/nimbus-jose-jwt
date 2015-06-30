@@ -39,7 +39,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version 2015-04-23
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {

@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the JWE crypto parts class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version 2014-07-11
  */
 public class JWECryptoPartsTest extends TestCase {
 

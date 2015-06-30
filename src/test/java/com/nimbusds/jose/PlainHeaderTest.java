@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-10)
+ * @version 2014-07-10
  */
 public class PlainHeaderTest extends TestCase {
 

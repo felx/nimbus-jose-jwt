@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.DeflateUtils;
  * decrypters. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version 2014-07-08
  */
 @ThreadSafe
 class DeflateHelper {

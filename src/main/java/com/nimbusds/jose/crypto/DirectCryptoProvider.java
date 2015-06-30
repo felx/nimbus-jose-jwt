@@ -35,7 +35,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-29)
+ * @version 2015-06-29
  */
 abstract class DirectCryptoProvider extends BaseJWEProvider {
 

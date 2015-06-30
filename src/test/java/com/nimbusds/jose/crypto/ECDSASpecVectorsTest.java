@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version 2015-05-30
  */
 public class ECDSASpecVectorsTest extends TestCase {
 

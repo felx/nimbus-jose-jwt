@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests the JSON object utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-03-16)
+ * @version 2015-03-16
  */
 public class JSONObjectUtilsTest extends TestCase {
 

@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * RSA-SSA functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-31)
+ * @version 2015-05-31
  */
 class RSASSA {
 

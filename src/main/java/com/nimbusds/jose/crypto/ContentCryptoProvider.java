@@ -16,7 +16,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-29)
+ * @version 2015-06-29
  */
 class ContentCryptoProvider {
 

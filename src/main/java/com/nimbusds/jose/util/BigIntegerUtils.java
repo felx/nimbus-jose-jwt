@@ -8,7 +8,7 @@ import java.math.BigInteger;
  * Big integer utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-03-21)
+ * @version 2013-03-21
  */
 public class BigIntegerUtils {
 

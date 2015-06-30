@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * implementations.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-11)
+ * @version 2014-07-11
  */
 @Immutable
 public final class JWECryptoParts {

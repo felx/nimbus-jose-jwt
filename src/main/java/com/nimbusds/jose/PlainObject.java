@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Unsecured (plain / {@code alg=none}) JOSE object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-04-08)
+ * @version 2014-04-08
  */
 @ThreadSafe
 public class PlainObject extends JOSEObject {

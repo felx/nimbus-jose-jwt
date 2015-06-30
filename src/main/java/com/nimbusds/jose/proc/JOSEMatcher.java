@@ -26,7 +26,7 @@ import com.nimbusds.jose.*;
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-22)
+ * @version 2015-04-22
  */
 public class JOSEMatcher {
 

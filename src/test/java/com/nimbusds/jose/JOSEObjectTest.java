@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JOSE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-02-04)
+ * @version 2014-02-04
  */
 public class JOSEObjectTest extends TestCase {
 	

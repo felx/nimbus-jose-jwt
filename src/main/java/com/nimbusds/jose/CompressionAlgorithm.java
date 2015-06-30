@@ -20,7 +20,7 @@ import net.minidev.json.JSONObject;
  * constructor. 
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version 2013-01-15
  */
 @Immutable
 public final class CompressionAlgorithm implements JSONAware {

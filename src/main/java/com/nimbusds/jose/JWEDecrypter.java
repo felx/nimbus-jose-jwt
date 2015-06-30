@@ -8,7 +8,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) decrypter.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version 2015-04-21
  */
 public interface JWEDecrypter extends JWEProvider {
 

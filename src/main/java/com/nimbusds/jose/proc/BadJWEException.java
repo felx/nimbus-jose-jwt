@@ -7,7 +7,7 @@ package com.nimbusds.jose.proc;
  * compromised.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-11)
+ * @version 2015-06-11
  */
 public class BadJWEException extends BadJOSEException {
 

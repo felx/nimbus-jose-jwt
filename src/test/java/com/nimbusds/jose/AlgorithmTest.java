@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests the base Algorithm class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-26)
+ * @version 2012-09-26
  */
 public class AlgorithmTest extends TestCase {
 

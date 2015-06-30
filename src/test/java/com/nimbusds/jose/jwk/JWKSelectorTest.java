@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the JWK selector.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 public class JWKSelectorTest extends TestCase {
 

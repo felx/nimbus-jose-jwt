@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 /**
  * Tests DEFLATE compression.
  *
- * @version $version$ (2013-03-26)
+ * @version 2013-03-26
  */
 public class DeflateUtilsTest extends TestCase  {
 

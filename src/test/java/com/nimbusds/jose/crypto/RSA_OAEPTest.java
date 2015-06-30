@@ -26,7 +26,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class RSA_OAEPTest extends TestCase {
 

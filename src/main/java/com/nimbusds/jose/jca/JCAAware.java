@@ -5,6 +5,8 @@ package com.nimbusds.jose.jca;
  * Interface for a Java Cryptography Architecture (JCA) aware object, intended
  * for setting a JCA {@link java.security.Provider provider} and
  * {@link java.security.SecureRandom secure random generator}.
+ *
+ * @version 2015-06-30
  */
 public interface JCAAware<T extends JCAContext> {
 

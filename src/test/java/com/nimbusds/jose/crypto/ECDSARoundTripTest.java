@@ -29,7 +29,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Tests round-trip ES256, EC384 and EC512 JWS signing and verification.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version 2015-05-30
  */
 public class ECDSARoundTripTest extends TestCase {
 

@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  * Tests the Concatenation KDF.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-13)
+ * @version 2015-05-13
  */
 public class ConcatKDFTest extends TestCase {
 

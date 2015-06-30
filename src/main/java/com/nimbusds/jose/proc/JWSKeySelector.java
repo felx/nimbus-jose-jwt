@@ -30,7 +30,7 @@ import com.nimbusds.jose.JWSHeader;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public interface JWSKeySelector<C extends SecurityContext>  {
 

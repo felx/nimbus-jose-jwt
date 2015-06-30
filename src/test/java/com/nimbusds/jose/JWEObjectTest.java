@@ -10,7 +10,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-20)
+ * @version 2014-08-20
  */
 public class JWEObjectTest extends TestCase {
 

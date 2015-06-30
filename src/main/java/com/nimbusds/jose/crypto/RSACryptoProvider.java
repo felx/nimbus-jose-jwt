@@ -36,7 +36,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 abstract class RSACryptoProvider extends BaseJWEProvider {
 

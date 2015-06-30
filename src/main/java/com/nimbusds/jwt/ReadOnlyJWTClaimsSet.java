@@ -14,7 +14,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-01-12)
+ * @version 2015-01-12
  */
 public interface ReadOnlyJWTClaimsSet {
 

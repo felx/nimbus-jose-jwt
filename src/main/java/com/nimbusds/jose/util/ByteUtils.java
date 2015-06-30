@@ -9,7 +9,7 @@ import java.io.IOException;
  * Byte utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-12)
+ * @version 2015-05-12
  */
 public class ByteUtils {
 

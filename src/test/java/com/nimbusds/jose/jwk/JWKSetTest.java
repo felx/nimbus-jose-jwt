@@ -25,7 +25,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-12-14)
+ * @version 2014-12-14
  */
 public class JWKSetTest extends TestCase {
 

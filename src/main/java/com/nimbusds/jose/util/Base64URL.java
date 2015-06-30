@@ -16,7 +16,7 @@ import net.jcip.annotations.Immutable;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-16)
+ * @version 2013-05-16
  */
 @Immutable
 public class Base64URL extends Base64 {

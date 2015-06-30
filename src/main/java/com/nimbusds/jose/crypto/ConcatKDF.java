@@ -27,7 +27,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 @ThreadSafe
 class ConcatKDF implements JCAAware<JCAContext> {

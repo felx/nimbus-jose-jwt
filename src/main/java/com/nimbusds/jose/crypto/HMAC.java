@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version 2015-04-23
  */
 @ThreadSafe
 class HMAC {

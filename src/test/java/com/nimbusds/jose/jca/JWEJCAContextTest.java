@@ -11,7 +11,7 @@ import junit.framework.TestCase;
  * Tests the JWE JCA context.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class JWEJCAContextTest extends TestCase {
 

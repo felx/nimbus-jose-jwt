@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * JSON Web Key (JWK) metadata.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-19)
+ * @version 2015-04-19
  */
 final class JWKMetadata {
 

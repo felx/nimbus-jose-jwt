@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Tests the ECDH key agreement derivation.
  *
- * @version $version$ (2015-05-13)
+ * @version 2015-05-13
  */
 public class ECDHTest extends TestCase{
 

@@ -22,7 +22,7 @@ import com.nimbusds.jose.JWEHeader;
  * Elliptic Curve Diffie-Hellman key agreement functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 class ECDH {
 

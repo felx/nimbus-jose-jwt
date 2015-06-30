@@ -10,7 +10,7 @@ import org.junit.Assert;
  * Tests the authenticated cipher text wrapper.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-07)
+ * @version 2013-05-07
  */
 public class AuthenticatedCipherTextTest extends TestCase {
 

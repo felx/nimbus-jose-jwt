@@ -13,7 +13,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Algorithm support messages, intended for JOSE exceptions.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 class AlgorithmSupportMessage {
 

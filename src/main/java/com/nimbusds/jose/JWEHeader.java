@@ -59,7 +59,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 @Immutable
 public final class JWEHeader extends CommonSEHeader {

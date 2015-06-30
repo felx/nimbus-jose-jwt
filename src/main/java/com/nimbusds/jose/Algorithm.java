@@ -18,7 +18,7 @@ import net.minidev.json.JSONObject;
  * </ul>
  *
  * @author Vladimir Dzhuvinov 
- * @version $version$ (2013-03-27)
+ * @version 2013-03-27
  */
 @Immutable
 public class Algorithm implements JSONAware {

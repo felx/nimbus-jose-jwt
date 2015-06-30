@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWEHeader;
  * @see CriticalHeaderParamsAware
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 class CriticalHeaderParamsDeferral {
 

@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWEHeader;
  * Tests the Additional Authenticated Data (AAD) functions.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-17)
+ * @version 2015-05-17
  */
 public class AADTest extends TestCase {
 

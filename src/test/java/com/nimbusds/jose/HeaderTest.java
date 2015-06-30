@@ -9,7 +9,7 @@ import junit.framework.TestCase;
  * Tests the base JOSE header class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-08-20)
+ * @version 2013-08-20
  */
 public class HeaderTest extends TestCase {
 

@@ -14,7 +14,7 @@ import org.apache.commons.io.input.BoundedInputStream;
  * URL utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-12-14)
+ * @version 2014-12-14
  */
 public class URLUtils {
 

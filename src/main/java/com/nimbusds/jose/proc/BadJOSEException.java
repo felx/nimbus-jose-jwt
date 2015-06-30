@@ -5,7 +5,7 @@ package com.nimbusds.jose.proc;
  * Bad JSON Object Signing and Encryption (JOSE) exception.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version 2015-06-10
  */
 public class BadJOSEException extends Exception {
 

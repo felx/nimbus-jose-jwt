@@ -16,7 +16,7 @@ import com.nimbusds.jose.EncryptionMethod;
  * draft-ietf-jose-json-web-encryption-08
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-12)
+ * @version 2015-05-12
  */
 public class LegacyConcatKDFTest extends TestCase {
 

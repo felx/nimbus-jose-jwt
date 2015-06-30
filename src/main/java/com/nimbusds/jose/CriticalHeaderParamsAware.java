@@ -14,7 +14,7 @@ import java.util.Set;
  * verifier / decrypter nor deferred to the application.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-21)
+ * @version 2015-04-21
  */
 public interface CriticalHeaderParamsAware {
 

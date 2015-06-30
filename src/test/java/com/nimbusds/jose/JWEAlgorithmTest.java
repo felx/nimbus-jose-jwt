@@ -7,7 +7,7 @@ import junit.framework.TestCase;
  * Tests the JWS Algorithm class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-24)
+ * @version 2015-04-24
  */
 public class JWEAlgorithmTest extends TestCase {
 

@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-01-15)
+ * @version 2013-01-15
  */
 @ThreadSafe
 public class SignedJWT extends JWSObject implements JWT {

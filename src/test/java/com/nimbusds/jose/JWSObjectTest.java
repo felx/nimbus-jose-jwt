@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS object methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-01-15)
+ * @version 2015-01-15
  */
 public class JWSObjectTest extends TestCase {
 

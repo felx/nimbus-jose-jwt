@@ -9,7 +9,7 @@ import java.util.HashMap;
  * and getters.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-22)
+ * @version 2015-04-22
  */
 public class SimpleSecurityContext extends HashMap<String,Object> implements SecurityContext {
 

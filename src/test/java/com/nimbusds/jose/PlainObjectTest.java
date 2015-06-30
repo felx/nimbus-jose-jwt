@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * Tests plaintext JOSE object parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version 2014-07-08
  */
 public class PlainObjectTest extends TestCase {
 

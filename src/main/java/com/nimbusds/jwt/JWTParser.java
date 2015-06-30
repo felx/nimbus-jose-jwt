@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Junya Hayashi
- * @version $version$ (2015-06-14)
+ * @version 2015-06-14
  */
 public final class JWTParser {
 

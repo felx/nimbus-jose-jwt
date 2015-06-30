@@ -16,7 +16,7 @@ import net.minidev.json.parser.JSONParser;
  * JSON object helper methods for parsing and typed retrieval of member values.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 public class JSONObjectUtils {
 

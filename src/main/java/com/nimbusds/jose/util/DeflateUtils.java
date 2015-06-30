@@ -14,7 +14,7 @@ import java.util.zip.Inflater;
  * Deflate (RFC 1951) utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-04-16)
+ * @version 2013-04-16
  */
 public class DeflateUtils {
 

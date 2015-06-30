@@ -30,7 +30,7 @@ import com.nimbusds.jose.JWEHeader;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public interface JWEKeySelector <C extends SecurityContext> {
 

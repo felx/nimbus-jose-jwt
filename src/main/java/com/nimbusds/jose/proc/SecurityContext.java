@@ -16,7 +16,7 @@ package com.nimbusds.jose.proc;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version 2015-06-10
  */
 public interface SecurityContext {
 

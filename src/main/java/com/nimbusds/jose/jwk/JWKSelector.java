@@ -10,7 +10,7 @@ import net.jcip.annotations.Immutable;
  * Selects (filters) one or more JSON Web Keys (JWKs) from a JWK set.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-15)
+ * @version 2015-04-15
  */
 @Immutable
 public final class JWKSelector {

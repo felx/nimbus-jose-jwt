@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the HMAC helper class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-28)
+ * @version 2014-01-28
  */
 public class HMACTest extends TestCase {
 

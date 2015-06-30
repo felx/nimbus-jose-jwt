@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version 2015-04-23
  */
 public class OctetSequenceKeyTest extends TestCase {
 

@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests HMAC JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 public class MACTest extends TestCase {
 

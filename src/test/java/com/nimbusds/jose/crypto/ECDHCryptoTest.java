@@ -30,7 +30,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * Tests ECDH encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-30)
+ * @version 2015-05-30
  */
 public class ECDHCryptoTest extends TestCase {
 

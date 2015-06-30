@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Token (JWT) interface.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-07-08)
+ * @version 2014-07-08
  */
 public interface JWT {
 

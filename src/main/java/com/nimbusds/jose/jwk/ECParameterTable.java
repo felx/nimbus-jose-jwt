@@ -17,7 +17,7 @@ import java.security.spec.*;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 class ECParameterTable {
 

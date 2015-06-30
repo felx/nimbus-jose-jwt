@@ -20,7 +20,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-01-24)
+ * @version 2014-01-24
  */
 @ThreadSafe
 class RSA_OAEP {

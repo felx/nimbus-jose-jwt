@@ -14,7 +14,7 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
  * Tests the EC parameter table.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 public class ECParameterTableTest extends TestCase {
 

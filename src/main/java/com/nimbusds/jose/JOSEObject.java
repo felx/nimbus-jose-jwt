@@ -14,7 +14,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Signature (JWS) secured and JSON Web Encryption (JWE) secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-10)
+ * @version 2015-06-10
  */
 public abstract class JOSEObject {
 	

@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  * providers for key encryption, content encryption and MAC computation.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public final class JWEJCAContext extends JCAContext {
 

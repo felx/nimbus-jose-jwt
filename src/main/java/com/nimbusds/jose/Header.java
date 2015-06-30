@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * parameters}; these will be serialised and parsed along the registered ones.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-21)
+ * @version 2014-08-21
  */
 public abstract class Header {
 

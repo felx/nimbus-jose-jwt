@@ -23,7 +23,7 @@ import net.minidev.json.JSONObject;
  * <p>Additional types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-02-15)
+ * @version 2014-02-15
  */
 @Immutable
 public final class JOSEObjectType implements JSONAware {

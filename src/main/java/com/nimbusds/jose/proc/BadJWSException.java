@@ -6,7 +6,7 @@ package com.nimbusds.jose.proc;
  * signature or hash-based message authentication code (HMAC).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-11)
+ * @version 2015-06-11
  */
 public class BadJWSException extends BadJOSEException {
 

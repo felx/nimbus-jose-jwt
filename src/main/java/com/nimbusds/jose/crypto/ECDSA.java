@@ -16,7 +16,7 @@ import static com.nimbusds.jose.jwk.ECKey.Curve;
  * Elliptic Curve Digital Signature Algorithm (ECDSA) functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version 2015-06-07
  */
 class ECDSA {
 

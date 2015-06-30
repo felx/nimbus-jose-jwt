@@ -13,7 +13,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Tests EC JWS verification. Uses test vectors from the JOSE cookbook.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-22)
+ * @version 2015-05-22
  */
 public class ECDSACookbookTest extends TestCase {
 

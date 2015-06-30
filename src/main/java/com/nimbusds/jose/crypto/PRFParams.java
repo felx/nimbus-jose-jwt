@@ -14,7 +14,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * Based Key Derivation Function 2 (PBKDF2).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 @Immutable
 final class PRFParams {

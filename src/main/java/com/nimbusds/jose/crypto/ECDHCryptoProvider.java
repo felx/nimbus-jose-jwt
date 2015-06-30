@@ -46,7 +46,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 abstract class ECDHCryptoProvider extends BaseJWEProvider {
 

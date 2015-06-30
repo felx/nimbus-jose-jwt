@@ -63,7 +63,7 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-05-20)
+ * @version 2015-05-20
  */
 @Immutable
 public final class ECKey extends JWK {

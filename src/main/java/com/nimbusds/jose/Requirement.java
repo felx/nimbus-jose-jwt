@@ -6,7 +6,7 @@ package com.nimbusds.jose;
  * requirement levels defined in RFC 2119.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2012-09-17)
+ * @version 2012-09-17
  */
 public enum Requirement {
 

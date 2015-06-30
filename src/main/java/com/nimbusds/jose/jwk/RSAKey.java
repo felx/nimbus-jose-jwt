@@ -114,7 +114,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version $version$ (2015-04-22)
+ * @version 2015-04-22
  */
 @Immutable
 public final class RSAKey extends JWK {

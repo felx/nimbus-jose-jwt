@@ -21,7 +21,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-26)
+ * @version 2015-05-26
  */
 public class RSA1_5Test extends TestCase {
 

@@ -20,7 +20,7 @@ import com.nimbusds.jwt.SignedJWT;
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class A128KWTest extends TestCase {
 

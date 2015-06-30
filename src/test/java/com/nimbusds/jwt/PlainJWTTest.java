@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-21)
+ * @version 2014-08-21
  */
 public class PlainJWTTest extends TestCase {
 

@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-12-14)
+ * @version 2014-12-14
  */
 public class JWKSet {
 

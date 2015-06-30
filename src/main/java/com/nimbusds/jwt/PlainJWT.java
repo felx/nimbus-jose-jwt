@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Unsecured (plain) JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2014-08-21)
+ * @version 2014-08-21
  */
 @ThreadSafe
 public class PlainJWT extends PlainObject implements JWT {

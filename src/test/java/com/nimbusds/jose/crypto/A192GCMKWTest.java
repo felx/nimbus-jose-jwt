@@ -17,7 +17,7 @@ import com.nimbusds.jose.*;
  * Tests A192GCMKW JWE encryption and decryption. 
  *
  * @author Melisa Halsband 
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class A192GCMKWTest extends TestCase {
 

@@ -22,7 +22,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version $version$ (2015-02-13)
+ * @version 2015-02-13
  */
 public class JWTClaimsSetTest extends TestCase {
 

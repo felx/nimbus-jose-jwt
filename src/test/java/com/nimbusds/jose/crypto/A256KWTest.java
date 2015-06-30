@@ -16,7 +16,7 @@ import com.nimbusds.jose.*;
  * Tests A256KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version $version$ (2015-05-27)
+ * @version 2015-05-27
  */
 public class A256KWTest extends TestCase {
 

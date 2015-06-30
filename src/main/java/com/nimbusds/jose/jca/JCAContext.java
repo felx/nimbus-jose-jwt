@@ -11,7 +11,7 @@ import java.security.SecureRandom;
  * {@link java.security.SecureRandom secure random generator}.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class JCAContext {
 

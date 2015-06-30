@@ -11,7 +11,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * Tests static AES crypto provider constants and methods.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-05-27)
+ * @version 2015-05-27
  */
 public class AESCryptoTest extends TestCase {
 

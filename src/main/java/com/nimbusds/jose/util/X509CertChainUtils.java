@@ -12,7 +12,7 @@ import net.minidev.json.JSONArray;
  * X.509 certificate chain utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2013-05-29)
+ * @version 2013-05-29
  */
 public class X509CertChainUtils {
 

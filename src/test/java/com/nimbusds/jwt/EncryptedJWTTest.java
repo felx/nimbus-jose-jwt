@@ -26,7 +26,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-08)
+ * @version 2015-06-08
  */
 public class EncryptedJWTTest extends TestCase {
 

@@ -22,7 +22,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-06-07)
+ * @version 2015-06-07
  */
 @ThreadSafe
 class AESKW {

@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version $version$ (2015-04-23)
+ * @version 2015-04-23
  */
 public class RSASSATest extends TestCase {
 
