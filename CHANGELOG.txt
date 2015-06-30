@@ -369,7 +369,7 @@ version 3.9.2 (2015-03-16)
 version 3.10 (2015-03-27)
     * JWT claims set serialised according to claim insertion order (iss #121).
 
-version 4.0 (2015-05-21)
+version 4.0-RC1 (2015-06-30)
     * Refactors the JOSE AlgorithmProvider interfaces and implementations.
     * Adds support for password-based JWE algorithms PBES2-HS256+A128KW,
       PBES2-HS384+A192KW and PBES2-HS512+A256KW.
