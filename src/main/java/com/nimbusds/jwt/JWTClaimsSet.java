@@ -4,7 +4,6 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
-import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 

@@ -8,7 +8,6 @@ import java.security.spec.ECParameterSpec;
 
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.jca.JCAContext;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
