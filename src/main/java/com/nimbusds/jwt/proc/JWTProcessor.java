@@ -7,6 +7,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.jwt.SignedJWT;
 
@@ -17,7 +18,7 @@ import com.nimbusds.jwt.SignedJWT;
  * {@link com.nimbusds.jwt.EncryptedJWT encrypted} JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-30
+ * @version 2015-07-01
  */
 public interface JWTProcessor<T, C extends SecurityContext> {
 
@@ -36,12 +37,30 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 *
 	 * @throws ParseException   If the string couldn't be parsed to a valid
 	 *                          JWT.
-	 * @throws BadJOSEException If the unsecured (plain) JWT is rejected.
+	 * @throws BadJOSEException If the JWT is rejected.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
 	T process(final String jwtString, final C context)
 		throws ParseException, BadJOSEException, JOSEException;
+
+
+	/**
+	 * Processes the specified JWT (unsecured, signed or encrypted).
+	 *
+	 * @param jwt     The JWT. Must not be {@code null}.
+	 * @param context Optional context of the JOSE object, {@code null} if
+	 *                not required.
+	 *
+	 * @return An application-specific object (the JWT claims) on success,
+	 *         or {@code null} if no return value is necessary.
+	 *
+	 * @throws BadJOSEException If the JWT is rejected.
+	 * @throws JOSEException    If an internal processing exception is
+	 *                          encountered.
+	 */
+	T process(final JWT jwt, final C context)
+		throws BadJOSEException, JOSEException;
 
 
 	/**

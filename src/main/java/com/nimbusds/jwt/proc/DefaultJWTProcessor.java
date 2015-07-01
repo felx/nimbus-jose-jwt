@@ -45,7 +45,7 @@ import com.nimbusds.jwt.*;
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2015-07-01
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	extends BaseJOSEProcessor<C>
@@ -120,7 +120,13 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	public ReadOnlyJWTClaimsSet process(final String jwtString, final C context)
 		throws ParseException, BadJOSEException, JOSEException {
 
-		JWT jwt = JWTParser.parse(jwtString);
+		return process(JWTParser.parse(jwtString), context);
+	}
+
+
+	@Override
+	public ReadOnlyJWTClaimsSet process(final JWT jwt, final C context)
+		throws BadJOSEException, JOSEException {
 
 		if (jwt instanceof SignedJWT) {
 			return process((SignedJWT)jwt, context);

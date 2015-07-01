@@ -31,8 +31,6 @@ import com.nimbusds.jose.*;
  * JWE decrypter factory}; they can construct verifiers / decrypters for all
  * standard JOSE algorithms implemented by the library.
  *
- *
- *
  * <p>Note that for security reasons this processor is hardwired to reject
  * unsecured (plain) JOSE objects. Override the {@link #process(PlainObject,
  * SecurityContext)} if you need to handle plain JOSE objects as well.
@@ -41,7 +39,7 @@ import com.nimbusds.jose.*;
  * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2015-07-01
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
@@ -52,7 +50,13 @@ public class DefaultJOSEProcessor<C extends SecurityContext>
 	public Payload process(final String compactJOSE, final C context)
 		throws ParseException, BadJOSEException, JOSEException {
 
-		JOSEObject joseObject = JOSEObject.parse(compactJOSE);
+		return process(JOSEObject.parse(compactJOSE), context);
+	}
+
+
+	@Override
+	public Payload process(final JOSEObject joseObject, final C context)
+		throws BadJOSEException, JOSEException {
 
 		if (joseObject instanceof JWSObject) {
 			return process((JWSObject)joseObject, context);

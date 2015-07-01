@@ -3,10 +3,7 @@ package com.nimbusds.jose.proc;
 
 import java.text.ParseException;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEObject;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.PlainObject;
+import com.nimbusds.jose.*;
 
 
 /**
@@ -15,7 +12,7 @@ import com.nimbusds.jose.PlainObject;
  * {@link com.nimbusds.jose.JWEObject JWE} objects.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-10
+ * @version 2015-07-01
  */
 public interface JOSEProcessor<T, C extends SecurityContext> {
 
@@ -34,13 +31,30 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 *
 	 * @throws ParseException   If the string couldn't be parsed to a valid
 	 *                          JOSE object.
-	 * @throws BadJOSEException If the unsecured (plain) JOSE object is
-	 *                          rejected.
+	 * @throws BadJOSEException If the JOSE object is rejected.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
 	T process(final String compactEncodedJOSE, final C context)
 		throws ParseException, BadJOSEException, JOSEException;
+
+
+	/**
+	 * Processes the specified JOSE object (unsecured, JWS or JWE).
+	 *
+	 * @param joseObject The JOSE object. Must not be {@code null}.
+	 * @param context    Optional context of the JOSE object, {@code null}
+	 *                   if not required.
+	 *
+	 * @return An application-specific object (the payload) on success, or
+	 *         {@code null} if no return value is necessary.
+	 *
+	 * @throws BadJOSEException If the JOSE object is rejected.
+	 * @throws JOSEException    If an internal processing exception is
+	 *                          encountered.
+	 */
+	T process(final JOSEObject joseObject, final C context)
+		throws BadJOSEException, JOSEException;
 
 
 	/**
@@ -76,8 +90,8 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @return An application-specific object (the payload) on success, or
 	 *         {@code null} if no return value is necessary.
 	 *
-	 * @throws BadJOSEException If the JWS object is rejected, typically due
-	 *                          to a bad signature.
+	 * @throws BadJOSEException If the JWS object is rejected, typically
+	 *                          due to a bad signature.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
@@ -97,8 +111,8 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @return An application-specific object (the payload) on success, or
 	 *         {@code null} if no return value is necessary.
 	 *
-	 * @throws BadJOSEException If the JWE object is rejected, typically due
-	 *                          to failed decryption.
+	 * @throws BadJOSEException If the JWE object is rejected, typically
+	 *                          due to failed decryption.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
