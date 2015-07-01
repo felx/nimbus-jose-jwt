@@ -391,3 +391,7 @@ version 4.0-RC1 (2015-06-30)
       decrypting JWE objects with the AxxxGCMKW family of algorithms.
     * Updates terminology and JavaDocs.
 
+version 4.0-RC2 (2015-07-01)
+    * Extends JOSEProcessor and JWTProcessor interfaces.
+    * Cleans up code.
+
