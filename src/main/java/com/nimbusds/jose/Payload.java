@@ -15,9 +15,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Payload with JSON object, string, byte array, Base64URL, JWS object and
- * signed JWT views. Represents the original object that was signed with JWS or
- * encrypted with JWE. This class is immutable.
+ * Payload of an unsecured (plain), JSON Web Signature (JWS) or JSON Web
+ * Encryption (JWE) object. Supports JSON object, string, byte array,
+ * Base64URL, JWS object and signed JWT payload representations. This class is
+ * immutable.
  *
  * <p>UTF-8 is the character set for all conversions between strings and byte
  * arrays.
@@ -32,7 +33,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-21
+ * @version 2015-07-23
  */
 @Immutable
 public final class Payload {
@@ -96,37 +97,37 @@ public final class Payload {
 
 
 	/**
-	 * The JSON object view.
+	 * The JSON object representation.
 	 */
 	private final JSONObject jsonObject;
 
 
 	/**
-	 * The string view.
+	 * The string representation.
 	 */
 	private final String string;
 
 
 	/**
-	 * The byte array view.
+	 * The byte array representation.
 	 */
 	private final byte[] bytes;
 
 
 	/**
-	 * The Base64URL view.
+	 * The Base64URL representation.
 	 */
 	private final Base64URL base64URL;
 
 
 	/**
-	 * The JWS object view.
+	 * The JWS object representation.
 	 */
 	private final JWSObject jwsObject;
 
 
 	/**
-	 * The signed JWT view.
+	 * The signed JWT representation.
 	 */
 	private final SignedJWT signedJWT;
 
@@ -317,10 +318,10 @@ public final class Payload {
 
 
 	/**
-	 * Returns a JSON object view of this payload.
+	 * Returns a JSON object representation of this payload.
 	 *
-	 * @return The JSON object view, {@code null} if the payload couldn't
-	 *         be converted to a JSON object.
+	 * @return The JSON object representation, {@code null} if the payload
+	 *         couldn't be converted to a JSON object.
 	 */
 	public JSONObject toJSONObject() {
 
@@ -348,9 +349,9 @@ public final class Payload {
 
 
 	/**
-	 * Returns a string view of this payload.
+	 * Returns a string representation of this payload.
 	 *
-	 * @return The string view.
+	 * @return The string representation.
 	 */
 	@Override
 	public String toString() {
@@ -387,9 +388,9 @@ public final class Payload {
 
 
 	/**
-	 * Returns a byte array view of this payload.
+	 * Returns a byte array representation of this payload.
 	 *
-	 * @return The byte array view.
+	 * @return The byte array representation.
 	 */
 	public byte[] toBytes() {
 
@@ -408,9 +409,9 @@ public final class Payload {
 
 
 	/**
-	 * Returns a Base64URL view of this payload.
+	 * Returns a Base64URL representation of this payload.
 	 *
-	 * @return The Base64URL view.
+	 * @return The Base64URL representation.
 	 */
 	public Base64URL toBase64URL() {
 
@@ -424,11 +425,11 @@ public final class Payload {
 
 
 	/**
-	 * Returns a JWS object view of this payload. Intended for signed then
-	 * encrypted JOSE objects.
+	 * Returns a JWS object representation of this payload. Intended for
+	 * signed then encrypted JOSE objects.
 	 *
-	 * @return The JWS object view, {@code null} if the payload couldn't
-	 *         be converted to a JWS object.
+	 * @return The JWS object representation, {@code null} if the payload
+	 *         couldn't be converted to a JWS object.
 	 */
 	public JWSObject toJWSObject() {
 
@@ -447,11 +448,11 @@ public final class Payload {
 
 
 	/**
-	 * Returns a signed JSON Web Token (JWT) view of this payload. Intended
-	 * for signed then encrypted JWTs.
+	 * Returns a signed JSON Web Token (JWT) representation of this
+	 * payload. Intended for signed then encrypted JWTs.
 	 *
-	 * @return The signed JWT view, {@code null} if the payload couldn't be
-	 *         converted to a signed JWT.
+	 * @return The signed JWT representation, {@code null} if the payload
+	 *         couldn't be converted to a signed JWT.
 	 */
 	public SignedJWT toSignedJWT() {
 
@@ -466,5 +467,19 @@ public final class Payload {
 
 			return null;
 		}
+	}
+
+
+	/**
+	 * Returns a generic type representation of this payload.
+	 *
+	 * @param payloadTransformer
+	 * @param <T>
+	 *
+	 * @return
+	 */
+	public <T> T toType(final PayloadTransformer<T> payloadTransformer) {
+
+		return payloadTransformer.transform(this);
 	}
 }

@@ -125,4 +125,22 @@ public class PayloadTest extends TestCase {
 			assertEquals("The JWT must be signed", e.getMessage());
 		}
 	}
+
+
+	public void testTransformer() {
+
+		PayloadTransformer<Integer> transformer = new PayloadTransformer<Integer>() {
+			@Override
+			public Integer transform(final Payload payload) {
+
+				return Integer.parseInt(payload.toString());
+			}
+		};
+
+		Payload payload = new Payload("10");
+
+		Integer out = payload.toType(transformer);
+
+		assertEquals(new Integer(10), out);
+	}
 }
