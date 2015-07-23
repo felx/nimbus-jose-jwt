@@ -14,14 +14,21 @@ import com.nimbusds.jose.*;
 /**
  * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
  *
- * <p>Must be supplied with a {@link JWSKeySelector JWS key selector} to
- * determine the key candidate(s) for the signature verification. The exact key
- * selection procedure is application-specific and may involve key ID lookup, a
- * certificate check and / or other information supplied in the message
- * {@link SecurityContext context}.
+ * <p>Must be preset with the following:
  *
- * <p>Similarly, the processor must be supplied with a {@link JWEKeySelector
- * JWE key selector} if JWE messages are expected to be processed.
+ * <ol>
+ *     <li>For JWS processing: A {@link JWSKeySelector JWS key selector} to
+ *     determine the key candidate(s) for the signature verification. The key
+ *     selection procedure is application-specific and may involve key ID
+ *     lookup, a certificate check and / or other information supplied in the
+ *     message {@link SecurityContext context}.</li>
+ *
+ *     <li>For JWE processing: A {@link JWEKeySelector JWE key selector} to
+ *     determine the key candidate(s) for decryption. The key selection
+ *     procedure is application-specific and may involve key ID lookup, a
+ *     certificate check and / or other information supplied in the message
+ *     {@link SecurityContext context}.</li>
+ * </ol>
  *
  * <p>See sections 6 of RFC 7515 (JWS) and RFC 7516 (JWE) for guidelines on key
  * selection.
