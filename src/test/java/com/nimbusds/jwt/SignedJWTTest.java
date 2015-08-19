@@ -29,22 +29,24 @@ public class SignedJWTTest extends TestCase {
 		KeyPair kp = kpg.genKeyPair();
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
-		JWTClaimsSet claimsSetOne = new JWTClaimsSet();
-		claimsSetOne = claimsSetOne.withSubject("alice");
-		claimsSetOne = claimsSetOne.withIssueTime(new Date(123000l));
-		claimsSetOne = claimsSetOne.withIssuer("https://c2id.com");
-		claimsSetOne = claimsSetOne.withClaim("scope", "openid");
+		JWTClaimsSet claimsSetOne = new JWTClaimsSet.Builder()
+			.subject("alice")
+			.issueTime(new Date(123000l))
+			.issuer("https://c2id.com")
+			.claim("scope", "openid")
+			.build();
 
 		JWSSigner signer = new RSASSASigner(privateKey);
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetOne);
 		signedJWT.sign(signer);
 		String orderOne = signedJWT.serialize();
 
-		JWTClaimsSet claimsSetTwo = new JWTClaimsSet();
-		claimsSetTwo = claimsSetTwo.withSubject("alice");
-		claimsSetTwo = claimsSetTwo.withIssuer("https://c2id.com");
-		claimsSetTwo = claimsSetTwo.withIssueTime(new Date(123000l));
-		claimsSetTwo = claimsSetTwo.withClaim("scope", "openid");
+		JWTClaimsSet claimsSetTwo = new JWTClaimsSet.Builder()
+			.subject("alice")
+			.issuer("https://c2id.com")
+			.issueTime(new Date(123000l))
+			.claim("scope", "openid")
+			.build();
 
 		signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetTwo);
 		signedJWT.sign(signer);
@@ -62,11 +64,12 @@ public class SignedJWTTest extends TestCase {
 		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withSubject("alice");
-		claimsSet = claimsSet.withIssueTime(new Date(123000l));
-		claimsSet = claimsSet.withIssuer("https://c2id.com");
-		claimsSet = claimsSet.withClaim("scope", "openid");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.subject("alice")
+			.issueTime(new Date(123000l))
+			.issuer("https://c2id.com")
+			.claim("scope", "openid")
+			.build();
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").

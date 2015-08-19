@@ -3,11 +3,11 @@ package com.nimbusds.jwt;
 
 import java.util.Date;
 
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.PlainHeader;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.PlainHeader;
 import com.nimbusds.jose.util.Base64URL;
 
 
@@ -23,10 +23,11 @@ public class PlainJWTTest extends TestCase {
 	public void testClaimsSetConstructor()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withSubject("alice");
-		claimsSet = claimsSet.withIssuer("http://c2id.com");
-		claimsSet = claimsSet.withAudience("http://app.example.com");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.subject("alice")
+			.issuer("http://c2id.com")
+			.audience("http://app.example.com")
+			.build();
 
 		JWTClaimsSet readOnlyClaimsSet = claimsSet;
 
@@ -43,10 +44,11 @@ public class PlainJWTTest extends TestCase {
 
 		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000l).build();
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withSubject("alice");
-		claimsSet = claimsSet.withIssuer("http://c2id.com");
-		claimsSet = claimsSet.withAudience("http://app.example.com");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.subject("alice")
+			.issuer("http://c2id.com")
+			.audience("http://app.example.com")
+			.build();
 
 		JWTClaimsSet readOnlyClaimsSet = claimsSet;
 

@@ -573,7 +573,7 @@ public class A128KWTest extends TestCase {
 	public void testWithNestedSignedJWT()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet().withSubject("alice");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("alice").build();
 
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
 

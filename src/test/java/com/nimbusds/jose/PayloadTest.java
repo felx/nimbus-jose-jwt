@@ -119,7 +119,7 @@ public class PayloadTest extends TestCase {
 	public void testRejectUnsignedJWT() {
 
 		try {
-			new Payload(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet()));
+			new Payload(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet.Builder().build()));
 			fail();
 		} catch (IllegalArgumentException e) {
 			assertEquals("The JWT must be signed", e.getMessage());

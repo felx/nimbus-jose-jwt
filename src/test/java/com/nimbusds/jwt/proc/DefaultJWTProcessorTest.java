@@ -48,9 +48,10 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testVerifyClaimsAllow()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet()
-			.withIssuer("https://openid.c2id.com")
-			.withSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://openid.c2id.com")
+			.subject("alice")
+			.build();
 
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
@@ -85,9 +86,10 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testVerifyClaimsDeny()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet()
-			.withIssuer("https://test.c2id.com")
-			.withSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://test.c2id.com")
+			.subject("alice")
+			.build();
 
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
@@ -127,7 +129,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testProcessHmacJWTWithTwoKeyCandidates()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("alice").build();
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
 		byte[] keyBytes = new byte[32];
@@ -154,7 +156,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testProcessEncryptedJWTWithTwoKeyCandidates()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("alice").build();
 		EncryptedJWT jwt = new EncryptedJWT(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), claims);
 
 		byte[] keyBytes = new byte[16];
@@ -327,7 +329,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testRejectPlain()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("alice").build();
 
 		PlainJWT jwt = new PlainJWT(claims);
 

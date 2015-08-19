@@ -44,10 +44,11 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>Example usage:
  *
  * <pre>
- * JWTClaimsSet claimsSet = new JWTClaimsSet()
- *     .withSubject("joe")
- *     .withExpirationDate(new Date(1300819380 * 1000l)
- *     .withClaim("http://example.com/is_root", true);
+ * JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+ *     .subject("joe")
+ *     .expirationDate(new Date(1300819380 * 1000l)
+ *     .claim("http://example.com/is_root", true)
+ *     .build();
  * </pre>
  *
  * @author Vladimir Dzhuvinov
@@ -92,28 +93,213 @@ public final class JWTClaimsSet {
 
 
 	/**
+	 * Builder for constructing JSON Web Token (JWT) claims sets.
+	 *
+	 * <p>Example usage:
+	 *
+	 * <pre>
+	 * JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+	 *     .subject("joe")
+	 *     .expirationDate(new Date(1300819380 * 1000l)
+	 *     .claim("http://example.com/is_root", true)
+	 *     .build();
+	 * </pre>
+	 */
+	public static class Builder {
+
+
+		/**
+		 * The claims.
+		 */
+		private final Map<String,Object> claims = new LinkedHashMap<>();
+
+
+		/**
+		 * Creates a new builder.
+		 */
+		public Builder() {
+
+			// Nothing to do
+		}
+
+
+		/**
+		 * Creates a new builder with the claims from the specified
+		 * set.
+		 *
+		 * @param jwtClaimsSet The JWT claims set to use. Must not be
+		 *                     {@code null}.
+		 */
+		public Builder(final JWTClaimsSet jwtClaimsSet) {
+
+			claims.putAll(jwtClaimsSet.claims);
+		}
+
+
+		/**
+		 * Sets the issuer ({@code iss}) claim.
+		 *
+		 * @param iss The issuer claim, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder issuer(final String iss) {
+
+			claims.put(ISSUER_CLAIM, iss);
+			return this;
+		}
+
+
+		/**
+		 * Sets the subject ({@code sub}) claim.
+		 *
+		 * @param sub The subject claim, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder subject(final String sub) {
+
+			claims.put(SUBJECT_CLAIM, sub);
+			return this;
+		}
+
+
+		/**
+		 * Sets the audience ({@code aud}) claim.
+		 *
+		 * @param aud The audience claim, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder audience(final List<String> aud) {
+
+			claims.put(AUDIENCE_CLAIM, aud);
+			return this;
+		}
+
+
+		/**
+		 * Sets a single-valued audience ({@code aud}) claim.
+		 *
+		 * @param aud The audience claim, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder audience(final String aud) {
+
+			if (aud == null) {
+				claims.put(AUDIENCE_CLAIM, null);
+			} else {
+				claims.put(AUDIENCE_CLAIM, Arrays.asList(aud));
+			}
+			return this;
+		}
+
+
+		/**
+		 * Sets the expiration time ({@code exp}) claim.
+		 *
+		 * @param exp The expiration time, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder expirationTime(final Date exp) {
+
+			claims.put(EXPIRATION_TIME_CLAIM, exp);
+			return this;
+		}
+
+
+		/**
+		 * Sets the not-before ({@code nbf}) claim.
+		 *
+		 * @param nbf The not-before claim, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder notBeforeTime(final Date nbf) {
+
+			claims.put(NOT_BEFORE_CLAIM, nbf);
+			return this;
+		}
+
+
+		/**
+		 * Sets the issued-at ({@code iat}) claim.
+		 *
+		 * @param iat The issued-at claim, {@code null} if not
+		 *            specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder issueTime(final Date iat) {
+
+			claims.put(ISSUED_AT_CLAIM, iat);
+			return this;
+		}
+
+
+		/**
+		 * Sets the JWT ID ({@code jti}) claim.
+		 *
+		 * @param jti The JWT ID claim, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder jwtID(final String jti) {
+
+			claims.put(JWT_ID_CLAIM, jti);
+			return this;
+		}
+
+
+		/**
+		 * Sets the specified claim (registered or custom).
+		 *
+		 * @param name  The name of the claim to set. Must not be
+		 *              {@code null}.
+		 * @param value The value of the claim to set, {@code null} if
+		 *              not specified. Should map to a JSON entity.
+		 *
+		 * @return This builder.
+		 */
+		public Builder claim(final String name, final Object value) {
+
+			claims.put(name, value);
+			return this;
+		}
+
+
+		/**
+		 * Builds a new JWT claims set.
+		 *
+		 * @return The JWT claims set.
+		 */
+		public JWTClaimsSet build() {
+
+			return new JWTClaimsSet(claims);
+		}
+	}
+
+
+	/**
 	 * The claims map.
 	 */
 	private final Map<String,Object> claims = new LinkedHashMap<>();
 
 
 	/**
-	 * Creates a new empty JWT claims set.
-	 */
-	public JWTClaimsSet() {
-
-		// Nothing to do
-	}
-
-
-	/**
-	 * Creates a copy of the specified JWT claims set.
+	 * Creates a new JWT claims set.
 	 *
-	 * @param old The JWT claims set to copy. Must not be {@code null}.
+	 * @param claims The JWT claims set as a map. Must not be {@code null}.
 	 */
-	public JWTClaimsSet(final JWTClaimsSet old) {
+	private JWTClaimsSet(final Map<String,Object> claims) {
 		
-		claims.putAll(old.claims);
+		this.claims.putAll(claims);
 	}
 
 
@@ -144,21 +330,6 @@ public final class JWTClaimsSet {
 
 
 	/**
-	 * Sets the issuer ({@code iss}) claim.
-	 *
-	 * @param iss The issuer claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withIssuer(final String iss) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(ISSUER_CLAIM, iss);
-		return copy;
-	}
-
-
-	/**
 	 * Gets the subject ({@code sub}) claim.
 	 *
 	 * @return The subject claim, {@code null} if not specified.
@@ -170,21 +341,6 @@ public final class JWTClaimsSet {
 		} catch (ParseException e) {
 			return null;
 		}
-	}
-
-
-	/**
-	 * Sets the subject ({@code sub}) claim.
-	 *
-	 * @param sub The subject claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withSubject(final String sub) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(SUBJECT_CLAIM, sub);
-		return copy;
 	}
 
 
@@ -206,40 +362,6 @@ public final class JWTClaimsSet {
 
 
 	/**
-	 * Sets the audience ({@code aud}) claim.
-	 *
-	 * @param aud The audience claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withAudience(final List<String> aud) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(AUDIENCE_CLAIM, aud);
-		return copy;
-	}
-
-
-	/**
-	 * Sets a single-valued audience ({@code aud}) claim.
-	 *
-	 * @param aud The audience claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withAudience(final String aud) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		if (aud == null) {
-			copy.claims.put(AUDIENCE_CLAIM, null);
-		} else {
-			copy.claims.put(AUDIENCE_CLAIM, Arrays.asList(aud));
-		}
-		return copy;
-	}
-
-
-	/**
 	 * Gets the expiration time ({@code exp}) claim.
 	 *
 	 * @return The expiration time, {@code null} if not specified.
@@ -251,21 +373,6 @@ public final class JWTClaimsSet {
 		} catch (ParseException e) {
 			return null;
 		}
-	}
-
-
-	/**
-	 * Sets the expiration time ({@code exp}) claim.
-	 *
-	 * @param exp The expiration time, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withExpirationTime(final Date exp) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(EXPIRATION_TIME_CLAIM, exp);
-		return copy;
 	}
 
 
@@ -285,21 +392,6 @@ public final class JWTClaimsSet {
 
 
 	/**
-	 * Sets the not-before ({@code nbf}) claim.
-	 *
-	 * @param nbf The not-before claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withNotBeforeTime(final Date nbf) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(NOT_BEFORE_CLAIM, nbf);
-		return copy;
-	}
-
-
-	/**
 	 * Gets the issued-at ({@code iat}) claim.
 	 *
 	 * @return The issued-at claim, {@code null} if not specified.
@@ -315,21 +407,6 @@ public final class JWTClaimsSet {
 
 
 	/**
-	 * Sets the issued-at ({@code iat}) claim.
-	 *
-	 * @param iat The issued-at claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withIssueTime(final Date iat) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(ISSUED_AT_CLAIM, iat);
-		return copy;
-	}
-
-
-	/**
 	 * Gets the JWT ID ({@code jti}) claim.
 	 *
 	 * @return The JWT ID claim, {@code null} if not specified.
@@ -341,21 +418,6 @@ public final class JWTClaimsSet {
 		} catch (ParseException e) {
 			return null;
 		}
-	}
-
-
-	/**
-	 * Sets the JWT ID ({@code jti}) claim.
-	 *
-	 * @param jti The JWT ID claim, {@code null} if not specified.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withJWTID(final String jti) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(JWT_ID_CLAIM, jti);
-		return copy;
 	}
 
 
@@ -622,23 +684,6 @@ public final class JWTClaimsSet {
 
 
 	/**
-	 * Sets the specified claim, whether registered or custom.
-	 *
-	 * @param name  The name of the claim to set. Must not be {@code null}.
-	 * @param value The value of the claim to set, {@code null} if not 
-	 *              specified. Should map to a JSON entity.
-	 *
-	 * @return The updated JWT claims set.
-	 */
-	public JWTClaimsSet withClaim(final String name, final Object value) {
-
-		JWTClaimsSet copy = new JWTClaimsSet(this);
-		copy.claims.put(name, value);
-		return copy;
-	}
-
-
-	/**
 	 * Gets the claims (registered and custom).
 	 *
 	 * <p>Note that the registered claims Expiration-Time ({@code exp}),
@@ -710,18 +755,18 @@ public final class JWTClaimsSet {
 	public static JWTClaimsSet parse(final JSONObject json)
 		throws ParseException {
 
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 
 		// Parse registered + custom params
 		for (final String name: json.keySet()) {
 
 			if (name.equals(ISSUER_CLAIM)) {
 
-				cs = cs.withIssuer(JSONObjectUtils.getString(json, ISSUER_CLAIM));
+				builder.issuer(JSONObjectUtils.getString(json, ISSUER_CLAIM));
 
 			} else if (name.equals(SUBJECT_CLAIM)) {
 
-				cs = cs.withSubject(JSONObjectUtils.getString(json, SUBJECT_CLAIM));
+				builder.subject(JSONObjectUtils.getString(json, SUBJECT_CLAIM));
 
 			} else if (name.equals(AUDIENCE_CLAIM)) {
 
@@ -730,33 +775,33 @@ public final class JWTClaimsSet {
 				if (audValue instanceof String) {
 					List<String> singleAud = new ArrayList<>();
 					singleAud.add(JSONObjectUtils.getString(json, AUDIENCE_CLAIM));
-					cs = cs.withAudience(singleAud);
+					builder.audience(singleAud);
 				} else if (audValue instanceof List) {
-					cs = cs.withAudience(JSONObjectUtils.getStringList(json, AUDIENCE_CLAIM));
+					builder.audience(JSONObjectUtils.getStringList(json, AUDIENCE_CLAIM));
 				}
 
 			} else if (name.equals(EXPIRATION_TIME_CLAIM)) {
 
-				cs = cs.withExpirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM) * 1000));
+				builder.expirationTime(new Date(JSONObjectUtils.getLong(json, EXPIRATION_TIME_CLAIM) * 1000));
 
 			} else if (name.equals(NOT_BEFORE_CLAIM)) {
 
-				cs = cs.withNotBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM) * 1000));
+				builder.notBeforeTime(new Date(JSONObjectUtils.getLong(json, NOT_BEFORE_CLAIM) * 1000));
 
 			} else if (name.equals(ISSUED_AT_CLAIM)) {
 
-				cs = cs.withIssueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM) * 1000));
+				builder.issueTime(new Date(JSONObjectUtils.getLong(json, ISSUED_AT_CLAIM) * 1000));
 
 			} else if (name.equals(JWT_ID_CLAIM)) {
 
-				cs = cs.withJWTID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
+				builder.jwtID(JSONObjectUtils.getString(json, JWT_ID_CLAIM));
 
 			} else {
-				cs = cs.withClaim(name, json.get(name));
+				builder.claim(name, json.get(name));
 			}
 		}
 
-		return cs;
+		return builder.build();
 	}
 
 

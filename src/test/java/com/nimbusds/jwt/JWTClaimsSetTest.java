@@ -45,81 +45,81 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testRun() {
 
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 
 		// JWT time claim precision is seconds
 		final Date NOW =  new Date(new Date().getTime() / 1000 * 1000);
 
 		// iss
-		assertNull("iss init check", cs.getIssuer());
-		cs = cs.withIssuer("http://issuer.com");
-		assertEquals("iss set check", "http://issuer.com", cs.getIssuer());
+		assertNull("iss init check", builder.build().getIssuer());
+		builder.issuer("http://issuer.com");
+		assertEquals("iss set check", "http://issuer.com", builder.build().getIssuer());
 
 		// sub
-		assertNull("sub init check", cs.getSubject());
-		cs = cs.withSubject("http://subject.com");
-		assertEquals("sub set check", "http://subject.com", cs.getSubject());
+		assertNull("sub init check", builder.build().getSubject());
+		builder.subject("http://subject.com");
+		assertEquals("sub set check", "http://subject.com", builder.build().getSubject());
 
 		// aud
-		assertNull("aud init check", cs.getAudience());		
-		cs = cs.withAudience(Arrays.asList("http://audience.com"));
-		assertEquals("aud set check", "http://audience.com", cs.getAudience().get(0));
+		assertNull("aud init check", builder.build().getAudience());
+		builder.audience(Arrays.asList("http://audience.com"));
+		assertEquals("aud set check", "http://audience.com", builder.build().getAudience().get(0));
 
 		// exp
-		assertNull("exp init check", cs.getExpirationTime());
-		cs = cs.withExpirationTime(NOW);
-		assertEquals("exp set check", NOW, cs.getExpirationTime());
+		assertNull("exp init check", builder.build().getExpirationTime());
+		builder.expirationTime(NOW);
+		assertEquals("exp set check", NOW, builder.build().getExpirationTime());
 
 		// nbf
-		assertNull("nbf init check", cs.getNotBeforeTime());
-		cs = cs.withNotBeforeTime(NOW);
-		assertEquals("nbf set check", NOW, cs.getNotBeforeTime());
+		assertNull("nbf init check", builder.build().getNotBeforeTime());
+		builder.notBeforeTime(NOW);
+		assertEquals("nbf set check", NOW, builder.build().getNotBeforeTime());
 
 		// iat
-		assertNull("iat init check", cs.getIssueTime());
-		cs = cs.withIssueTime(NOW);
-		assertEquals("iat set check", NOW, cs.getIssueTime());
+		assertNull("iat init check", builder.build().getIssueTime());
+		builder.issueTime(NOW);
+		assertEquals("iat set check", NOW, builder.build().getIssueTime());
 
 		// jti
-		assertNull("jti init check", cs.getJWTID());
-		cs = cs.withJWTID("123");
-		assertEquals("jti set check", "123", cs.getJWTID());
+		assertNull("jti init check", builder.build().getJWTID());
+		builder.jwtID("123");
+		assertEquals("jti set check", "123", builder.build().getJWTID());
 
 		// no custom claims
-		assertEquals(7, cs.getClaims().size());
+		assertEquals(7, builder.build().getClaims().size());
 
 		// x-custom
-		cs = cs.withClaim("x-custom", "abc");
-		assertEquals("abc", (String)cs.getClaim("x-custom"));
+		builder.claim("x-custom", "abc");
+		assertEquals("abc", (String) builder.build().getClaim("x-custom"));
 
 
 		// serialise
-		JSONObject json = cs.toJSONObject();
+		JSONObject json = builder.build().toJSONObject();
 
 		assertEquals(8, json.size());
 
 		// parse back
-
+		JWTClaimsSet claimsSet = null;
 		try {
-			cs = JWTClaimsSet.parse(json);
+			claimsSet = JWTClaimsSet.parse(json);
 
 		} catch (java.text.ParseException e) {
 
 			fail(e.getMessage());
 		}
 
-		assertEquals("iss parse check", "http://issuer.com", cs.getIssuer());
-		assertEquals("sub parse check", "http://subject.com", cs.getSubject());
-		assertEquals("aud parse check", "http://audience.com", cs.getAudience().get(0));
-		assertEquals("exp parse check", NOW, cs.getExpirationTime());
-		assertEquals("nbf parse check", NOW, cs.getNotBeforeTime());
-		assertEquals("iat parse check", NOW, cs.getIssueTime());
-		assertEquals("jti parse check", "123", cs.getJWTID());
-		assertEquals("abc", (String)cs.getClaim("x-custom"));
-		assertEquals(8, cs.getClaims().size());
+		assertEquals("iss parse check", "http://issuer.com", claimsSet.getIssuer());
+		assertEquals("sub parse check", "http://subject.com", claimsSet.getSubject());
+		assertEquals("aud parse check", "http://audience.com", claimsSet.getAudience().get(0));
+		assertEquals("exp parse check", NOW, claimsSet.getExpirationTime());
+		assertEquals("nbf parse check", NOW, claimsSet.getNotBeforeTime());
+		assertEquals("iat parse check", NOW, claimsSet.getIssueTime());
+		assertEquals("jti parse check", "123", claimsSet.getJWTID());
+		assertEquals("abc", (String)claimsSet.getClaim("x-custom"));
+		assertEquals(8, claimsSet.getClaims().size());
 
 
-		Map<String,Object> all = cs.getClaims();
+		Map<String,Object> all = claimsSet.getClaims();
 
 		assertEquals("iss parse check map", "http://issuer.com", (String)all.get("iss"));
 		assertEquals("sub parse check map", "http://subject.com", (String)all.get("sub"));
@@ -134,13 +134,13 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testDateConversion() {
 
-		JWTClaimsSet cs = new JWTClaimsSet();
-
 		final Date ONE_MIN_AFTER_EPOCH = new Date(1000*60);
 
-		cs = cs.withIssueTime(ONE_MIN_AFTER_EPOCH);
-		cs = cs.withNotBeforeTime(ONE_MIN_AFTER_EPOCH);
-		cs = cs.withExpirationTime(ONE_MIN_AFTER_EPOCH);
+		JWTClaimsSet cs = new JWTClaimsSet.Builder()
+			.issueTime(ONE_MIN_AFTER_EPOCH)
+			.notBeforeTime(ONE_MIN_AFTER_EPOCH)
+			.expirationTime(ONE_MIN_AFTER_EPOCH)
+			.build();
 
 		JSONObject json = cs.toJSONObject();
 
@@ -150,33 +150,33 @@ public class JWTClaimsSetTest extends TestCase {
 	}
 	
 	
-	public void testSetAndResetCustomClaim() {
+	public void testCustomClaim() {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
-		
-		cs = cs.withClaim("locale", "bg-BG");
-		
+		JWTClaimsSet cs = new JWTClaimsSet.Builder().claim("locale", "bg-BG").build();
 		assertEquals(1, cs.getClaims().size());
-		
-		cs = cs.withClaim("locale", null);
 
+		cs = new JWTClaimsSet.Builder().claim("locale", null).build();
 		assertNull(cs.getClaim("locale"));
-		
+		assertEquals(1, cs.getClaims().size());
+	}
+
+
+	public void testNullCustomClaim() {
+
+		JWTClaimsSet cs = new JWTClaimsSet.Builder().claim("locale", null).build();
+		assertNull(cs.getClaim("locale"));
 		assertEquals(1, cs.getClaims().size());
 	}
 	
 	
 	public void testSetCustomClaims() {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
-		
-		cs = cs.withClaim("locale", "bg-BG");
-		assertEquals(1, cs.getClaims().size());
+		JWTClaimsSet cs = new JWTClaimsSet.Builder()
+			.claim("locale", "bg-BG")
+			.claim("locale", "es-ES")
+			.claim("ip", "127.0.0.1")
+			.build();
 
-		cs = cs.withClaim("locale", "es-ES");
-		assertEquals(1, cs.getClaims().size());
-
-		cs = cs.withClaim("ip", "127.0.0.1");
 		assertEquals(2, cs.getClaims().size());
 		
 		assertEquals("es-ES", (String)cs.getClaims().get("locale"));
@@ -186,7 +186,7 @@ public class JWTClaimsSetTest extends TestCase {
 	
 	public void testGetClaimValueNotSpecified() {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet cs = new JWTClaimsSet.Builder().build();
 		
 		assertNull(cs.getClaim("xyz"));
 	}
@@ -194,117 +194,117 @@ public class JWTClaimsSetTest extends TestCase {
 	
 	public void testSetClaimNull() {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 		
-		cs = cs.withIssuer("http://example.com");
-		assertEquals("http://example.com", cs.getIssuer());
-		cs = cs.withClaim("iss", null);
-		assertNull(cs.getIssuer());
+		builder.issuer("http://example.com");
+		assertEquals("http://example.com", builder.build().getIssuer());
+		builder = builder.claim("iss", null);
+		assertNull(builder.build().getIssuer());
 		
-		cs = cs.withSubject("alice");
-		assertEquals("alice", cs.getSubject());
-		cs = cs.withClaim("sub", null);
-		assertNull(cs.getSubject());
+		builder.subject("alice");
+		assertEquals("alice", builder.build().getSubject());
+		builder.claim("sub", null);
+		assertNull(builder.build().getSubject());
 		
 		List<String> audList = new ArrayList<>();
 		audList.add("http://client.example.com");
-		cs = cs.withAudience(audList);
-		assertEquals("http://client.example.com", cs.getAudience().get(0));
-		cs = cs.withClaim("aud", null);
-		assertNull(cs.getAudience());
+		builder.audience(audList);
+		assertEquals("http://client.example.com", builder.build().getAudience().get(0));
+		builder = builder.claim("aud", null);
+		assertNull(builder.build().getAudience());
 		
 		Date now = new Date();
-		cs = cs.withExpirationTime(now);
-		assertEquals(now, cs.getExpirationTime());
-		cs = cs.withClaim("exp", null);
-		assertNull(cs.getExpirationTime());
+		builder.expirationTime(now);
+		assertEquals(now, builder.build().getExpirationTime());
+		builder = builder.claim("exp", null);
+		assertNull(builder.build().getExpirationTime());
 		
-		cs = cs.withNotBeforeTime(now);
-		assertEquals(now, cs.getNotBeforeTime());
-		cs = cs.withClaim("nbf", null);
-		assertNull(cs.getNotBeforeTime());
+		builder.notBeforeTime(now);
+		assertEquals(now, builder.build().getNotBeforeTime());
+		builder = builder.claim("nbf", null);
+		assertNull(builder.build().getNotBeforeTime());
 		
-		cs = cs.withIssueTime(now);
-		assertEquals(now, cs.getIssueTime());
-		cs = cs.withClaim("iat", null);
-		assertNull(cs.getIssueTime());
+		builder.issueTime(now);
+		assertEquals(now, builder.build().getIssueTime());
+		builder = builder.claim("iat", null);
+		assertNull(builder.build().getIssueTime());
 		
-		cs = cs.withJWTID("123");
-		assertEquals("123", cs.getJWTID());
-		cs = cs.withClaim("jti", null);
-		assertNull(cs.getJWTID());
+		builder.jwtID("123");
+		assertEquals("123", builder.build().getJWTID());
+		builder = builder.claim("jti", null);
+		assertNull(builder.build().getJWTID());
 	}
 	
 	
 	public void testGetClaimTyped()
 		throws Exception {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 		
-		cs = cs.withClaim("string", "abc");
-		assertEquals("abc", cs.getStringClaim("string"));
+		builder.claim("string", "abc");
+		assertEquals("abc", builder.build().getStringClaim("string"));
 		
-		cs = cs.withClaim("boolean", false);
-		assertFalse(cs.getBooleanClaim("boolean"));
+		builder.claim("boolean", false);
+		assertFalse(builder.build().getBooleanClaim("boolean"));
 		
-		cs = cs.withClaim("integer", 123);
-		assertEquals(123, cs.getIntegerClaim("integer").intValue());
+		builder.claim("integer", 123);
+		assertEquals(123, builder.build().getIntegerClaim("integer").intValue());
 		
-		cs = cs.withClaim("long", 456l);
-		assertEquals(456l, cs.getLongClaim("long").longValue());
+		builder.claim("long", 456l);
+		assertEquals(456l, builder.build().getLongClaim("long").longValue());
 
 		Date date = new Date(999000l);
-		cs = cs.withClaim("date", date);
-		assertEquals(date, cs.getDateClaim("date"));
+		builder.claim("date", date);
+		assertEquals(date, builder.build().getDateClaim("date"));
 
 		// Convert Unix timestamp to Java date
-		cs = cs.withClaim("date-long", 999l);
-		assertEquals(new Date(999000l), cs.getDateClaim("date-long"));
+		builder.claim("date-long", 999l);
+		assertEquals(new Date(999000l), builder.build().getDateClaim("date-long"));
 		
-		cs = cs.withClaim("float", 3.14f);
-		assertEquals(3.14f, cs.getFloatClaim("float").floatValue());
+		builder.claim("float", 3.14f);
+		assertEquals(3.14f, builder.build().getFloatClaim("float").floatValue());
 		
-		cs = cs.withClaim("double", 3.14d);
-		assertEquals(3.14d, cs.getDoubleClaim("double").doubleValue());
+		builder.claim("double", 3.14d);
+		assertEquals(3.14d, builder.build().getDoubleClaim("double").doubleValue());
 	}
 	
 	
 	public void testGetClaimTypedNull()
 		throws Exception {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 		
-		cs = cs.withClaim("string", null);
-		assertNull(cs.getStringClaim("string"));
+		builder.claim("string", null);
+		assertNull(builder.build().getStringClaim("string"));
 		
-		cs = cs.withClaim("boolean", null);
-		assertNull(cs.getBooleanClaim("boolean"));
+		builder.claim("boolean", null);
+		assertNull(builder.build().getBooleanClaim("boolean"));
 		
-		cs = cs.withClaim("integer", null);
-		assertNull(cs.getIntegerClaim("integer"));
+		builder.claim("integer", null);
+		assertNull(builder.build().getIntegerClaim("integer"));
 		
-		cs = cs.withClaim("long", null);
-		assertNull(cs.getLongClaim("long"));
+		builder.claim("long", null);
+		assertNull(builder.build().getLongClaim("long"));
 		
-		cs = cs.withClaim("date", null);
-		assertNull(cs.getDateClaim("date"));
+		builder.claim("date", null);
+		assertNull(builder.build().getDateClaim("date"));
 		
-		cs = cs.withClaim("float", null);
-		assertNull(cs.getFloatClaim("float"));
+		builder.claim("float", null);
+		assertNull(builder.build().getFloatClaim("float"));
 		
-		cs = cs.withClaim("double", null);
-		assertNull(cs.getDoubleClaim("double"));
+		builder.claim("double", null);
+		assertNull(builder.build().getDoubleClaim("double"));
 	}
 	
 	
 	public void testGetClaimTypedParseException() {
 		
-		JWTClaimsSet cs = new JWTClaimsSet();
+		JWTClaimsSet.Builder builder = new JWTClaimsSet.Builder();
 		
-		cs = cs.withClaim("string", 3.14);
+		builder.claim("string", 3.14);
 		
 		try {
-			cs.getStringClaim("string");
+			builder.build().getStringClaim("string");
 			
 			fail("Failed to raise exception");
 			
@@ -312,10 +312,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("boolean", "123");
+		builder.claim("boolean", "123");
 		
 		try {
-			cs.getBooleanClaim("boolean");
+			builder.build().getBooleanClaim("boolean");
 			
 			fail("Failed to raise exception");
 			
@@ -323,10 +323,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("integer", true);
+		builder.claim("integer", true);
 		
 		try {
-			cs.getIntegerClaim("integer");
+			builder.build().getIntegerClaim("integer");
 			
 			fail();
 			
@@ -334,10 +334,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("long", "abc");
+		builder.claim("long", "abc");
 		
 		try {
-			cs.getLongClaim("long");
+			builder.build().getLongClaim("long");
 			
 			fail();
 			
@@ -345,10 +345,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("date", "abc");
+		builder.claim("date", "abc");
 		
 		try {
-			cs.getDateClaim("date");
+			builder.build().getDateClaim("date");
 			
 			fail();
 			
@@ -356,10 +356,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("float", true);
+		builder.claim("float", true);
 		
 		try {
-			cs.getFloatClaim("float");
+			builder.build().getFloatClaim("float");
 			
 			fail("Failed to raise exception");
 			
@@ -367,10 +367,10 @@ public class JWTClaimsSetTest extends TestCase {
 			// ok
 		}
 		
-		cs = cs.withClaim("double", "abc");
+		builder.claim("double", "abc");
 		
 		try {
-			cs.getDoubleClaim("double");
+			builder.build().getDoubleClaim("double");
 			
 			fail("Failed to raise exception");
 			
@@ -456,14 +456,14 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testSingleValuedAudienceSetter() {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().build();
 		assertNull(claimsSet.getAudience());
 
-		claimsSet = claimsSet.withAudience("123");
+		claimsSet = new JWTClaimsSet.Builder().audience("123").build();
 		assertEquals("123", claimsSet.getAudience().get(0));
 		assertEquals(1, claimsSet.getAudience().size());
 
-		claimsSet = claimsSet.withAudience((String) null);
+		claimsSet = new JWTClaimsSet.Builder().audience((String) null).build();
 		assertNull(claimsSet.getAudience());
 	}
 
@@ -471,8 +471,7 @@ public class JWTClaimsSetTest extends TestCase {
 	public void testSerializeSingleValuedAudience()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withAudience("123");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().audience("123").build();
 
 		JSONObject jsonObject = claimsSet.toJSONObject();
 
@@ -487,8 +486,7 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testGetAllClaimsEmpty() {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		assertTrue(claimsSet.getClaims().isEmpty());
+		assertTrue(new JWTClaimsSet.Builder().build().getClaims().isEmpty());
 	}
 
 
@@ -617,8 +615,7 @@ public class JWTClaimsSetTest extends TestCase {
 	public void testExtendedCyrillicChars()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withSubject("Владимир Джувинов");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("Владимир Джувинов").build();
 
 		String json = claimsSet.toJSONObject().toJSONString();
 
@@ -631,8 +628,7 @@ public class JWTClaimsSetTest extends TestCase {
 	public void testExtendedLatinChars()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet = claimsSet.withClaim("fullName", "João");
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().claim("fullName", "João").build();
 
 		String json = claimsSet.toJSONObject().toJSONString();
 
@@ -646,15 +642,16 @@ public class JWTClaimsSetTest extends TestCase {
 
 	public void testSerializeIgnoreNullValues() {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet()
-			.withIssuer(null)
-			.withSubject(null)
-			.withAudience((String)null)
-			.withExpirationTime(null)
-			.withIssueTime(null)
-			.withNotBeforeTime(null)
-			.withJWTID(null)
-			.withClaim("locale", null);
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.issuer(null)
+			.subject(null)
+			.audience((String)null)
+			.expirationTime(null)
+			.issueTime(null)
+			.notBeforeTime(null)
+			.jwtID(null)
+			.claim("locale", null)
+			.build();
 
 		assertTrue(claimsSet.toJSONObject().isEmpty());
 	}

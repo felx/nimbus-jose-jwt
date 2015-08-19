@@ -155,14 +155,15 @@ public class EncryptedJWTTest extends TestCase {
 		String jti = UUID.randomUUID().toString();
 
 
-		JWTClaimsSet jwtClaims = new JWTClaimsSet().
-			withIssuer(iss).
-			withSubject(sub).
-			withAudience(aud).
-			withExpirationTime(exp).
-			withNotBeforeTime(NOW).
-			withIssueTime(NOW).
-			withJWTID(jti);
+		JWTClaimsSet jwtClaims = new JWTClaimsSet.Builder().
+			issuer(iss).
+			subject(sub).
+			audience(aud).
+			expirationTime(exp).
+			notBeforeTime(NOW).
+			issueTime(NOW).
+			jwtID(jti).
+			build();
 
 
 		// Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM

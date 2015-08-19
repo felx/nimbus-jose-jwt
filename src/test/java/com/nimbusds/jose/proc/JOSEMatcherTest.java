@@ -175,8 +175,8 @@ public class JOSEMatcherTest extends TestCase {
 		assertFalse(matcher.matches(new PlainObject(new Payload("Hello world!"))));
 
 		// JWT
-		assertTrue(matcher.matches(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet())));
-		assertFalse(matcher.matches(new PlainJWT(new JWTClaimsSet())));
+		assertTrue(matcher.matches(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet.Builder().build())));
+		assertFalse(matcher.matches(new PlainJWT(new JWTClaimsSet.Builder().build())));
 	}
 
 
@@ -189,8 +189,8 @@ public class JOSEMatcherTest extends TestCase {
 		assertTrue(matcher.matches(new PlainObject(new Payload("Hello world!"))));
 
 		// JWT
-		assertTrue(matcher.matches(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet())));
-		assertTrue(matcher.matches(new PlainJWT(new JWTClaimsSet())));
+		assertTrue(matcher.matches(new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet.Builder().build())));
+		assertTrue(matcher.matches(new PlainJWT(new JWTClaimsSet.Builder().build())));
 	}
 
 
