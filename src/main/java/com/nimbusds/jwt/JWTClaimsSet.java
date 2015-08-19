@@ -13,7 +13,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * JSON Web Token (JWT) claims set.
+ * JSON Web Token (JWT) claims set. This class is immutable.
  *
  * <p>Supports all {@link #getRegisteredNames()}  registered claims} of the JWT
  * specification:
@@ -35,8 +35,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * <pre>
  * {
- *   "sub" : "joe",
- *   "exp" : 1300819380,
+ *   "sub"                        : "joe",
+ *   "exp"                        : 1300819380,
  *   "http://example.com/is_root" : true
  * }
  * </pre>

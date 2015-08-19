@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
- * JSON Web Signature (JWS) header.
+ * JSON Web Signature (JWS) header. This class is immutable.
  *
  * <p>Supports all {@link #getRegisteredParameterNames registered header
  * parameters} of the JWS specification:

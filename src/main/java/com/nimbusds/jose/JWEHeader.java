@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
 
 
 /**
- * JSON Web Encryption (JWE) header.
+ * JSON Web Encryption (JWE) header. This class is immutable.
  *
  * <p>Supports all {@link #getRegisteredParameterNames registered header
  * parameters} of the JWE specification:

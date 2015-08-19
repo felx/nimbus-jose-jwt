@@ -17,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
- * Unsecured ({@code alg=none}) JOSE header.
+ * Unsecured ({@code alg=none}) JOSE header. This class is immutable.
  *
  * <p>Supports all {@link #getRegisteredParameterNames registered header
  * parameters} of the unsecured JOSE object specification:
