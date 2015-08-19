@@ -31,6 +31,16 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>The set may also contain custom claims; these will be serialised and
  * parsed along the registered ones.
  *
+ * <p>Example JWT claims set:
+ *
+ * <pre>
+ * {
+ *   "sub" : "joe",
+ *   "exp" : 1300819380,
+ *   "http://example.com/is_root" : true
+ * }
+ * </pre>
+ *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @version 2015-08-19
