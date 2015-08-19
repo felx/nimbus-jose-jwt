@@ -266,7 +266,7 @@ public final class RSAKey extends JWK {
 	/**
 	 * Builder for constructing RSA JWKs.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * RSAKey key = new RSAKey.Builder(n, e).

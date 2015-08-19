@@ -86,7 +86,7 @@ public final class JWSHeader extends CommonSEHeader {
 	/**
 	 * Builder for constructing JSON Web Signature (JWS) headers.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256).

@@ -80,7 +80,7 @@ public class JWKMatcher {
 	/**
 	 * Builder for constructing JWK matchers.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * JWKMatcher matcher = new JWKMatcher().keyID("123").build();

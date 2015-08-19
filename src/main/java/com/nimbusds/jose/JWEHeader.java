@@ -105,7 +105,7 @@ public final class JWEHeader extends CommonSEHeader {
 	/**
 	 * Builder for constructing JSON Web Encryption (JWE) headers.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM).

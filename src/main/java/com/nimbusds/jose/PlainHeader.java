@@ -71,7 +71,7 @@ public final class PlainHeader extends Header {
 	/**
 	 * Builder for constructing unsecured (plain) headers.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * PlainHeader header = new PlainHeader.Builder().

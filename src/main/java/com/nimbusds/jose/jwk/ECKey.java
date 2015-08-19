@@ -273,7 +273,7 @@ public final class ECKey extends JWK {
 	/**
 	 * Builder for constructing Elliptic Curve JWKs.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * ECKey key = new ECKey.Builder(Curve.P521, x, y).

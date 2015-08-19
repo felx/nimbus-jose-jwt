@@ -64,7 +64,7 @@ public class JOSEMatcher {
 	/**
 	 * Builder for constructing JOSE matchers.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * JOSEMatcher matcher = new JOSEMatcher().keyID("123").build();

@@ -54,7 +54,7 @@ public final class OctetSequenceKey extends JWK {
 	/**
 	 * Builder for constructing octet sequence JWKs.
 	 *
-	 * <p>Example use:
+	 * <p>Example usage:
 	 *
 	 * <pre>
 	 * OctetSequenceKey key = new OctetSequenceKey.Builder(k).
