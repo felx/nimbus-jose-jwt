@@ -22,13 +22,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.nimbusds.jose.JOSEException;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
