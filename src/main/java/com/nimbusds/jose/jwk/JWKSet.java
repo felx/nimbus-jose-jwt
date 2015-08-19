@@ -10,13 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.nimbusds.jose.util.URLUtils;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
 
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.URLUtils;
 
 
 /**
