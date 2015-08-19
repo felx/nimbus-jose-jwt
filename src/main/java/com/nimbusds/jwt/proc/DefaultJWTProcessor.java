@@ -45,11 +45,11 @@ import com.nimbusds.jwt.*;
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-01
+ * @version 2015-08-19
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	extends BaseJOSEProcessor<C>
-	implements JWTProcessor<ReadOnlyJWTClaimsSet, C> {
+	implements JWTProcessor<JWTClaimsSet, C> {
 
 
 	/**
@@ -95,10 +95,10 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	 *
 	 * @throws BadJWTException If the JWT claims are invalid or rejected.
 	 */
-	private ReadOnlyJWTClaimsSet verifyAndReturnClaims(final JWT jwt)
+	private JWTClaimsSet verifyAndReturnClaims(final JWT jwt)
 		throws BadJWTException {
 
-		ReadOnlyJWTClaimsSet claimsSet;
+		JWTClaimsSet claimsSet;
 
 		try {
 			claimsSet = jwt.getJWTClaimsSet();
@@ -117,7 +117,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet process(final String jwtString, final C context)
+	public JWTClaimsSet process(final String jwtString, final C context)
 		throws ParseException, BadJOSEException, JOSEException {
 
 		return process(JWTParser.parse(jwtString), context);
@@ -125,7 +125,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet process(final JWT jwt, final C context)
+	public JWTClaimsSet process(final JWT jwt, final C context)
 		throws BadJOSEException, JOSEException {
 
 		if (jwt instanceof SignedJWT) {
@@ -146,7 +146,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet process(final PlainJWT plainJWT, final C context)
+	public JWTClaimsSet process(final PlainJWT plainJWT, final C context)
 		throws BadJOSEException, JOSEException {
 
 		verifyAndReturnClaims(plainJWT); // just check claims, no return
@@ -156,7 +156,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet process(final SignedJWT signedJWT, final C context)
+	public JWTClaimsSet process(final SignedJWT signedJWT, final C context)
 		throws BadJOSEException, JOSEException {
 
 		if (getJWSKeySelector() == null) {
@@ -201,7 +201,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet process(final EncryptedJWT encryptedJWT, final C context)
+	public JWTClaimsSet process(final EncryptedJWT encryptedJWT, final C context)
 		throws BadJOSEException, JOSEException {
 
 		if (getJWEKeySelector() == null) {

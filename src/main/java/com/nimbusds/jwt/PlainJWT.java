@@ -18,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Unsecured (plain) JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-08-21
+ * @version 2015-08-19
  */
 @ThreadSafe
 public class PlainJWT extends PlainObject implements JWT {
@@ -31,7 +31,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	 *
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final ReadOnlyJWTClaimsSet claimsSet) {
+	public PlainJWT(final JWTClaimsSet claimsSet) {
 
 		super(new Payload(claimsSet.toJSONObject()));
 	}
@@ -44,7 +44,7 @@ public class PlainJWT extends PlainObject implements JWT {
 	 * @param header    The unsecured header. Must not be {@code null}.
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public PlainJWT(final PlainHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
+	public PlainJWT(final PlainHeader header, final JWTClaimsSet claimsSet) {
 
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -69,7 +69,7 @@ public class PlainJWT extends PlainObject implements JWT {
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet getJWTClaimsSet()
+	public JWTClaimsSet getJWTClaimsSet()
 		throws ParseException {
 
 		JSONObject json = getPayload().toJSONObject();

@@ -26,7 +26,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2015-08-19
  */
 public class EncryptedJWTTest extends TestCase {
 
@@ -143,32 +143,26 @@ public class EncryptedJWTTest extends TestCase {
 		throws Exception {
 
 		// Compose the JWT claims set
-		JWTClaimsSet jwtClaims = new JWTClaimsSet();
-
 		String iss = "https://openid.net";
-		jwtClaims.setIssuer(iss);
-		
 		String sub = "alice";
-		jwtClaims.setSubject(sub);
-
 		List<String> aud = new ArrayList<>();
 		aud.add("https://app-one.com");
 		aud.add("https://app-two.com");
-		jwtClaims.setAudience(aud);
-
-		// Set expiration in 10 minutes
 		final Date NOW =  new Date(new Date().getTime() / 1000 * 1000);
 		Date exp = new Date(NOW.getTime() + 1000*60*10);
-		jwtClaims.setExpirationTime(exp);
-
 		Date nbf = NOW;
-		jwtClaims.setNotBeforeTime(NOW);
-
 		Date iat = NOW;
-		jwtClaims.setIssueTime(NOW);
-
 		String jti = UUID.randomUUID().toString();
-		jwtClaims.setJWTID(jti);
+
+
+		JWTClaimsSet jwtClaims = new JWTClaimsSet().
+			withIssuer(iss).
+			withSubject(sub).
+			withAudience(aud).
+			withExpirationTime(exp).
+			withNotBeforeTime(NOW).
+			withIssueTime(NOW).
+			withJWTID(jti);
 
 
 		// Request JWT encrypted with RSA-OAEP and 128-bit AES/GCM

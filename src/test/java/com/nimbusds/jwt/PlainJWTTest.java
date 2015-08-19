@@ -15,7 +15,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-08-21
+ * @version 2015-08-19
  */
 public class PlainJWTTest extends TestCase {
 
@@ -24,11 +24,11 @@ public class PlainJWTTest extends TestCase {
 		throws Exception {
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
-		claimsSet.setIssuer("http://c2id.com");
-		claimsSet.setAudience("http://app.example.com");
+		claimsSet = claimsSet.withSubject("alice");
+		claimsSet = claimsSet.withIssuer("http://c2id.com");
+		claimsSet = claimsSet.withAudience("http://app.example.com");
 
-		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+		JWTClaimsSet readOnlyClaimsSet = claimsSet;
 
 		PlainJWT jwt = new PlainJWT(readOnlyClaimsSet);
 
@@ -44,11 +44,11 @@ public class PlainJWTTest extends TestCase {
 		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000l).build();
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
-		claimsSet.setIssuer("http://c2id.com");
-		claimsSet.setAudience("http://app.example.com");
+		claimsSet = claimsSet.withSubject("alice");
+		claimsSet = claimsSet.withIssuer("http://c2id.com");
+		claimsSet = claimsSet.withAudience("http://app.example.com");
 
-		ReadOnlyJWTClaimsSet readOnlyClaimsSet = claimsSet;
+		JWTClaimsSet readOnlyClaimsSet = claimsSet;
 
 		PlainJWT jwt = new PlainJWT(header, readOnlyClaimsSet);
 
@@ -76,11 +76,11 @@ public class PlainJWTTest extends TestCase {
 		assertNull(jwt.getHeader().getType());
 		assertNull(jwt.getHeader().getContentType());
 
-		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
+		JWTClaimsSet cs = jwt.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
 		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
-		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
+		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 
 
@@ -99,11 +99,11 @@ public class PlainJWTTest extends TestCase {
 		assertNull(jwt.getHeader().getType());
 		assertNull(jwt.getHeader().getContentType());
 
-		ReadOnlyJWTClaimsSet cs = jwt.getJWTClaimsSet();
+		JWTClaimsSet cs = jwt.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
 		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
-		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
+		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 
 

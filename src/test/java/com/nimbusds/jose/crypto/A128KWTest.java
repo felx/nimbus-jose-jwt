@@ -20,7 +20,7 @@ import com.nimbusds.jwt.SignedJWT;
  * Tests A128KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version 2015-06-08
+ * @version 2015-08-19
  */
 public class A128KWTest extends TestCase {
 
@@ -573,8 +573,7 @@ public class A128KWTest extends TestCase {
 	public void testWithNestedSignedJWT()
 		throws Exception {
 
-		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
+		JWTClaimsSet claimsSet = new JWTClaimsSet().withSubject("alice");
 
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
 

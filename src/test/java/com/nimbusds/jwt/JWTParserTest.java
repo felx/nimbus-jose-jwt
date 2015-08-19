@@ -15,7 +15,7 @@ import com.nimbusds.jose.JWEObject;
  * Tests the JWT parser. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2013-08-21
+ * @version 2015-08-19
  */
 public class JWTParserTest extends TestCase {
 
@@ -41,11 +41,11 @@ public class JWTParserTest extends TestCase {
 		assertNull(plainJWT.getHeader().getType());
 		assertNull(plainJWT.getHeader().getContentType());
 
-		ReadOnlyJWTClaimsSet cs = plainJWT.getJWTClaimsSet();
+		JWTClaimsSet cs = plainJWT.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
 		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
-		assertTrue((Boolean)cs.getCustomClaim("http://example.com/is_root"));
+		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 	
 	

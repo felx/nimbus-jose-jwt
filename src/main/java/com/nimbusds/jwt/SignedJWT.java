@@ -4,6 +4,7 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 
 import net.jcip.annotations.ThreadSafe;
+
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JOSEObject;
@@ -17,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Signed JSON Web Token (JWT).
  *
  * @author Vladimir Dzhuvinov
- * @version 2013-01-15
+ * @version 2015-08-19
  */
 @ThreadSafe
 public class SignedJWT extends JWSObject implements JWT {
@@ -31,7 +32,7 @@ public class SignedJWT extends JWSObject implements JWT {
 	 * @param header    The JWS header. Must not be {@code null}.
 	 * @param claimsSet The JWT claims set. Must not be {@code null}.
 	 */
-	public SignedJWT(final JWSHeader header, final ReadOnlyJWTClaimsSet claimsSet) {
+	public SignedJWT(final JWSHeader header, final JWTClaimsSet claimsSet) {
 
 		super(header, new Payload(claimsSet.toJSONObject()));
 	}
@@ -59,7 +60,7 @@ public class SignedJWT extends JWSObject implements JWT {
 
 
 	@Override
-	public ReadOnlyJWTClaimsSet getJWTClaimsSet()	
+	public JWTClaimsSet getJWTClaimsSet()
 		throws ParseException {
 
 		JSONObject json = getPayload().toJSONObject();

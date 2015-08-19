@@ -11,7 +11,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Token (JWT) interface.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-07-08
+ * @version 2014-08-19
  */
 public interface JWT {
 
@@ -33,7 +33,7 @@ public interface JWT {
 	 * @throws ParseException If the payload of the JWT doesn't represent a
 	 *                        valid JSON object and a JWT claims set.
 	 */
-	ReadOnlyJWTClaimsSet getJWTClaimsSet()
+	JWTClaimsSet getJWTClaimsSet()
 		throws ParseException;
 
 

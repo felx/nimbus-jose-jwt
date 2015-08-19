@@ -25,7 +25,7 @@ import com.nimbusds.jwt.*;
 /**
  * Tests the default JWT processor.
  *
- * @version 2015-06-29
+ * @version 2015-08-19
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -48,9 +48,10 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testVerifyClaimsAllow()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet();
-		claims.setIssuer("https://openid.c2id.com");
-		claims.setSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet()
+			.withIssuer("https://openid.c2id.com")
+			.withSubject("alice");
+
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
 		byte[] keyBytes = new byte[32];
@@ -70,7 +71,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		processor.setJWTClaimsVerifier(new JWTClaimsVerifier() {
 			@Override
-			public void verify(ReadOnlyJWTClaimsSet claimsSet) throws BadJWTException {
+			public void verify(JWTClaimsSet claimsSet) throws BadJWTException {
 				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
 					throw new BadJWTException("Unexpected/missing issuer");
 			}
@@ -84,9 +85,10 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testVerifyClaimsDeny()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet();
-		claims.setIssuer("https://test.c2id.com");
-		claims.setSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet()
+			.withIssuer("https://test.c2id.com")
+			.withSubject("alice");
+
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
 		byte[] keyBytes = new byte[32];
@@ -106,7 +108,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		processor.setJWTClaimsVerifier(new JWTClaimsVerifier() {
 			@Override
-			public void verify(ReadOnlyJWTClaimsSet claimsSet) throws BadJWTException {
+			public void verify(JWTClaimsSet claimsSet) throws BadJWTException {
 				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
 					throw new BadJWTException("Unexpected/missing issuer");
 			}
@@ -125,8 +127,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testProcessHmacJWTWithTwoKeyCandidates()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet();
-		claims.setSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
 		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
 
 		byte[] keyBytes = new byte[32];
@@ -153,8 +154,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testProcessEncryptedJWTWithTwoKeyCandidates()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet();
-		claims.setSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
 		EncryptedJWT jwt = new EncryptedJWT(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), claims);
 
 		byte[] keyBytes = new byte[16];
@@ -315,20 +315,19 @@ public class DefaultJWTProcessorTest extends TestCase {
 		assertNotNull(joseProcessor.getJWSKeySelector());
 		assertNotNull(joseProcessor.getJWEKeySelector());
 
-		ReadOnlyJWTClaimsSet claims = joseProcessor.process(jwt, new SimpleSecurityContext());
+		JWTClaimsSet claims = joseProcessor.process(jwt, new SimpleSecurityContext());
 
 		assertEquals("joe", claims.getIssuer());
 		assertEquals(1300819380l * 1000l, claims.getExpirationTime().getTime());
 		assertTrue(claims.getBooleanClaim("http://example.com/is_root"));
-		assertEquals(3, claims.getAllClaims().size());
+		assertEquals(3, claims.getClaims().size());
 	}
 
 
 	public void testRejectPlain()
 		throws Exception {
 
-		JWTClaimsSet claims = new JWTClaimsSet();
-		claims.setSubject("alice");
+		JWTClaimsSet claims = new JWTClaimsSet().withSubject("alice");
 
 		PlainJWT jwt = new PlainJWT(claims);
 

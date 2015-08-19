@@ -471,12 +471,12 @@ public final class Payload {
 
 
 	/**
-	 * Returns a generic type representation of this payload.
+	 * Returns a transformation of this payload.
 	 *
-	 * @param payloadTransformer
-	 * @param <T>
+	 * @param payloadTransformer The payload transformer. Must not be
+	 *                           {@code null}.
 	 *
-	 * @return
+	 * @return The transformed payload.
 	 */
 	public <T> T toType(final PayloadTransformer<T> payloadTransformer) {
 

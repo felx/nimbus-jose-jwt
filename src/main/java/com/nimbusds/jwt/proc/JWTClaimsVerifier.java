@@ -1,7 +1,7 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
+import com.nimbusds.jwt.JWTClaimsSet;
 
 
 /**
@@ -10,7 +10,7 @@ import com.nimbusds.jwt.ReadOnlyJWTClaimsSet;
  * (after the JWT is successfully verified (for JWS) or decrypted (for JWE)).
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-30
+ * @version 2015-08-19
  */
 public interface JWTClaimsVerifier {
 
@@ -23,6 +23,6 @@ public interface JWTClaimsVerifier {
 	 *
 	 * @throws BadJWTException If the JWT claims set is rejected.
 	 */
-	void verify(final ReadOnlyJWTClaimsSet claimsSet)
+	void verify(final JWTClaimsSet claimsSet)
 		throws BadJWTException;
 }

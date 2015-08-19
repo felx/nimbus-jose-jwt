@@ -30,10 +30,10 @@ public class SignedJWTTest extends TestCase {
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
 		JWTClaimsSet claimsSetOne = new JWTClaimsSet();
-		claimsSetOne.setSubject("alice");
-		claimsSetOne.setIssueTime(new Date(123000l));
-		claimsSetOne.setIssuer("https://c2id.com");
-		claimsSetOne.setCustomClaim("scope", "openid");
+		claimsSetOne = claimsSetOne.withSubject("alice");
+		claimsSetOne = claimsSetOne.withIssueTime(new Date(123000l));
+		claimsSetOne = claimsSetOne.withIssuer("https://c2id.com");
+		claimsSetOne = claimsSetOne.withClaim("scope", "openid");
 
 		JWSSigner signer = new RSASSASigner(privateKey);
 		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetOne);
@@ -41,10 +41,10 @@ public class SignedJWTTest extends TestCase {
 		String orderOne = signedJWT.serialize();
 
 		JWTClaimsSet claimsSetTwo = new JWTClaimsSet();
-		claimsSetTwo.setSubject("alice");
-		claimsSetTwo.setIssuer("https://c2id.com");
-		claimsSetTwo.setIssueTime(new Date(123000l));
-		claimsSetTwo.setCustomClaim("scope", "openid");
+		claimsSetTwo = claimsSetTwo.withSubject("alice");
+		claimsSetTwo = claimsSetTwo.withIssuer("https://c2id.com");
+		claimsSetTwo = claimsSetTwo.withIssueTime(new Date(123000l));
+		claimsSetTwo = claimsSetTwo.withClaim("scope", "openid");
 
 		signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.RS256), claimsSetTwo);
 		signedJWT.sign(signer);
@@ -63,10 +63,10 @@ public class SignedJWTTest extends TestCase {
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet();
-		claimsSet.setSubject("alice");
-		claimsSet.setIssueTime(new Date(123000l));
-		claimsSet.setIssuer("https://c2id.com");
-		claimsSet.setCustomClaim("scope", "openid");
+		claimsSet = claimsSet.withSubject("alice");
+		claimsSet = claimsSet.withIssueTime(new Date(123000l));
+		claimsSet = claimsSet.withIssuer("https://c2id.com");
+		claimsSet = claimsSet.withClaim("scope", "openid");
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
