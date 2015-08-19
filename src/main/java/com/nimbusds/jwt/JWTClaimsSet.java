@@ -41,6 +41,15 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * }
  * </pre>
  *
+ * <p>Example usage:
+ *
+ * <pre>
+ * JWTClaimsSet claimsSet = new JWTClaimsSet()
+ *     .withSubject("joe")
+ *     .withExpirationDate(new Date(1300819380 * 1000l)
+ *     .withClaim("http://example.com/is_root", true);
+ * </pre>
+ *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @version 2015-08-19
