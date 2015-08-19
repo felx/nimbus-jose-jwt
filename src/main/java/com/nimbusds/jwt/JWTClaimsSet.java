@@ -4,6 +4,8 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
+import net.jcip.annotations.Immutable;
+
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -33,7 +35,8 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Justin Richer
  * @version 2015-08-19
  */
-public class JWTClaimsSet {
+@Immutable
+public final class JWTClaimsSet {
 
 
 	private static final String ISSUER_CLAIM = "iss";
