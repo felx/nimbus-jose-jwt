@@ -12,9 +12,9 @@ import com.nimbusds.jose.*;
  * {@link com.nimbusds.jose.JWEObject JWE} objects.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-01
+ * @version 2015-08-20
  */
-public interface JOSEProcessor<T, C extends SecurityContext> {
+public interface JOSEProcessor<C extends SecurityContext> {
 
 
 	/**
@@ -26,8 +26,7 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @param context            Optional context of the JOSE object,
 	 *                           {@code null} if not required.
 	 *
-	 * @return An application-specific object (the payload) on success, or
-	 *         {@code null} if no return value is necessary.
+	 * @return The payload on success.
 	 *
 	 * @throws ParseException   If the string couldn't be parsed to a valid
 	 *                          JOSE object.
@@ -35,7 +34,7 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final String compactEncodedJOSE, final C context)
+	Payload process(final String compactEncodedJOSE, final C context)
 		throws ParseException, BadJOSEException, JOSEException;
 
 
@@ -46,14 +45,13 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @param context    Optional context of the JOSE object, {@code null}
 	 *                   if not required.
 	 *
-	 * @return An application-specific object (the payload) on success, or
-	 *         {@code null} if no return value is necessary.
+	 * @return The payload on success.
 	 *
 	 * @throws BadJOSEException If the JOSE object is rejected.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final JOSEObject joseObject, final C context)
+	Payload process(final JOSEObject joseObject, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -66,15 +64,14 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @param context     Optional context of the unsecured JOSE object,
 	 *                    {@code null} if not required.
 	 *
-	 * @return An application-specific object (the payload) on success, or
-	 *         {@code null} if no return value is necessary.
+	 * @return The payload on success.
 	 *
 	 * @throws BadJOSEException If the unsecured (plain) JOSE object is
 	 *                          rejected.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final PlainObject plainObject, final C context)
+	Payload process(final PlainObject plainObject, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -87,15 +84,14 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @param context   Optional context of the JWS object, {@code null} if
 	 *                  not required.
 	 *
-	 * @return An application-specific object (the payload) on success, or
-	 *         {@code null} if no return value is necessary.
+	 * @return The payload on success.
 	 *
 	 * @throws BadJOSEException If the JWS object is rejected, typically
 	 *                          due to a bad signature.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final JWSObject jwsObject, final C context)
+	Payload process(final JWSObject jwsObject, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -108,15 +104,14 @@ public interface JOSEProcessor<T, C extends SecurityContext> {
 	 * @param context   Optional context of the JWE object, {@code null} if
 	 *                  not required.
 	 *
-	 * @return An application-specific object (the payload) on success, or
-	 *         {@code null} if no return value is necessary.
+	 * @return The payload on success.
 	 *
 	 * @throws BadJOSEException If the JWE object is rejected, typically
 	 *                          due to failed decryption.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final JWEObject jweObject, final C context)
+	Payload process(final JWEObject jweObject, final C context)
 		throws BadJOSEException, JOSEException;
 }
 

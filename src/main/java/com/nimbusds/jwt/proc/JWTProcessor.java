@@ -6,10 +6,7 @@ import java.text.ParseException;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.proc.BadJOSEException;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.EncryptedJWT;
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.PlainJWT;
-import com.nimbusds.jwt.SignedJWT;
+import com.nimbusds.jwt.*;
 
 
 /**
@@ -18,9 +15,9 @@ import com.nimbusds.jwt.SignedJWT;
  * {@link com.nimbusds.jwt.EncryptedJWT encrypted} JSON Web Tokens (JWTs).
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-01
+ * @version 2015-08-20
  */
-public interface JWTProcessor<T, C extends SecurityContext> {
+public interface JWTProcessor<C extends SecurityContext> {
 
 
 	/**
@@ -32,8 +29,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @param context   Optional context of the JOSE object, {@code null}
 	 *                  if not required.
 	 *
-	 * @return An application-specific object (the JWT claims) on success,
-	 *         or {@code null} if no return value is necessary.
+	 * @return The JWT claims set on success.
 	 *
 	 * @throws ParseException   If the string couldn't be parsed to a valid
 	 *                          JWT.
@@ -41,7 +37,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final String jwtString, final C context)
+	JWTClaimsSet process(final String jwtString, final C context)
 		throws ParseException, BadJOSEException, JOSEException;
 
 
@@ -52,14 +48,13 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @param context Optional context of the JOSE object, {@code null} if
 	 *                not required.
 	 *
-	 * @return An application-specific object (the JWT claims) on success,
-	 *         or {@code null} if no return value is necessary.
+	 * @return The JWT claims set on success.
 	 *
 	 * @throws BadJOSEException If the JWT is rejected.
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final JWT jwt, final C context)
+	JWTClaimsSet process(final JWT jwt, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -71,8 +66,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @param context  Optional context of the unsecured JWT, {@code null}
 	 *                 if not required.
 	 *
-	 * @return An application-specific object (the JWT claims) on success,
-	 *         or {@code null} if no return value is necessary.
+	 * @return The JWT claims set on success.
 	 *
 	 * @throws BadJOSEException If the unsecured (plain) JWT is rejected,
 	 *                          after examining the context or due to the
@@ -80,7 +74,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final PlainJWT plainJWT, final C context)
+	JWTClaimsSet process(final PlainJWT plainJWT, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -93,8 +87,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @param context   Optional context of the signed JWT, {@code null} if
 	 *                  not required.
 	 *
-	 * @return An application-specific object (the JWT claims) on success,
-	 *         or {@code null} if no return value is necessary.
+	 * @return The JWT claims set on success.
 	 *
 	 * @throws BadJOSEException If the signed JWT is rejected, typically
 	 *                          due to a bad signature or the payload not
@@ -102,7 +95,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final SignedJWT signedJWT, final C context)
+	JWTClaimsSet process(final SignedJWT signedJWT, final C context)
 		throws BadJOSEException, JOSEException;
 
 
@@ -115,8 +108,7 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @param context      Optional context of the encrypted JWT,
 	 *                     {@code null} if not required.
 	 *
-	 * @return An application-specific object (the JWT claims) on success,
-	 *         or {@code null} if no return value is necessary.
+	 * @return The JWT claims set on success.
 	 *
 	 * @throws BadJOSEException If the encrypted JWT is rejected, typically
 	 *                          due to failed decryption or the payload not
@@ -124,6 +116,6 @@ public interface JWTProcessor<T, C extends SecurityContext> {
 	 * @throws JOSEException    If an internal processing exception is
 	 *                          encountered.
 	 */
-	T process(final EncryptedJWT encryptedJWT, final C context)
+	JWTClaimsSet process(final EncryptedJWT encryptedJWT, final C context)
 		throws BadJOSEException, JOSEException;
 }

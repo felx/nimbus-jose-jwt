@@ -39,17 +39,18 @@ import com.nimbusds.jwt.*;
  *
  * <p>An optional {@link JWTClaimsVerifier JWT claims verifier} may be set to
  * perform various application-specific JWT claims checks, such as issuer
- * acceptance, after successful JWS verification / JWE decryption.
+ * acceptance and token expiration, after a successful JWS verification / JWE
+ * decryption.
  *
  * <p>To process generic JOSE objects (with arbitrary payloads) use the
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-19
+ * @version 2015-08-20
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	extends BaseJOSEProcessor<C>
-	implements JWTProcessor<JWTClaimsSet, C> {
+	implements JWTProcessor<C> {
 
 
 	/**

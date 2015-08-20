@@ -46,12 +46,12 @@ import com.nimbusds.jose.*;
  * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-01
+ * @version 2015-08-20
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext>
 	extends BaseJOSEProcessor<C>
-	implements JOSEProcessor<Payload, C>{
+	implements JOSEProcessor<C>{
 
 	@Override
 	public Payload process(final String compactJOSE, final C context)
