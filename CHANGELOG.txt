@@ -397,3 +397,6 @@ version 4.0-RC2 (2015-07-01)
 
 version 4.0-RC3 (2015-08-20)
     * Makes JWTClaimsSet immutable, introduces builder construction pattern.
+    * Simplifies and refactors JOSE / JWT processing framework.
+    * Adds JWTClaimsSetTranformer interface.
+

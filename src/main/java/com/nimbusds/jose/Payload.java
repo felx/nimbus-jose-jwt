@@ -473,13 +473,13 @@ public final class Payload {
 	/**
 	 * Returns a transformation of this payload.
 	 *
-	 * @param payloadTransformer The payload transformer. Must not be
-	 *                           {@code null}.
+	 * @param transformer The payload transformer. Must not be
+	 *                    {@code null}.
 	 *
 	 * @return The transformed payload.
 	 */
-	public <T> T toType(final PayloadTransformer<T> payloadTransformer) {
+	public <T> T toType(final PayloadTransformer<T> transformer) {
 
-		return payloadTransformer.transform(this);
+		return transformer.transform(this);
 	}
 }

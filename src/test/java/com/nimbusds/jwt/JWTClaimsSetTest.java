@@ -22,7 +22,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-08-19
+ * @version 2015-08-22
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -654,5 +654,20 @@ public class JWTClaimsSetTest extends TestCase {
 			.build();
 
 		assertTrue(claimsSet.toJSONObject().isEmpty());
+	}
+
+
+	public void testTransformer() {
+
+		JWTClaimsSetTransformer<String> transformer = new JWTClaimsSetTransformer<String>() {
+			@Override
+			public String transform(JWTClaimsSet claimsSet) {
+				return claimsSet.getSubject();
+			}
+		};
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("alice").build();
+
+		assertEquals("alice", claimsSet.toType(transformer));
 	}
 }

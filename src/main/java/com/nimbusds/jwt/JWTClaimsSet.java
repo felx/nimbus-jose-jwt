@@ -53,7 +53,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-08-19
+ * @version 2015-08-22
  */
 @Immutable
 public final class JWTClaimsSet {
@@ -741,6 +741,27 @@ public final class JWTClaimsSet {
 	}
 
 
+	@Override
+	public String toString() {
+
+		return toJSONObject().toJSONString();
+	}
+
+
+	/**
+	 * Returns a transformation of this JWT claims set.
+	 *
+	 * @param transformer The JWT claims set transformer. Must not be
+	 *                    {@code null}.
+	 *
+	 * @return The transformed JWT claims set.
+	 */
+	public <T> T toType(final JWTClaimsSetTransformer<T> transformer) {
+
+		return transformer.transform(this);
+	}
+
+
 	/**
 	 * Parses a JSON Web Token (JWT) claims set from the specified JSON
 	 * object representation.
@@ -820,11 +841,5 @@ public final class JWTClaimsSet {
 		throws ParseException {
 
 		return parse(JSONObjectUtils.parseJSONObject(s));
-	}
-
-	@Override
-	public String toString() {
-
-		return toJSONObject().toJSONString();
 	}
 }
