@@ -5,6 +5,7 @@ import java.security.Key;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.crypto.SecretKey;
@@ -25,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Tests the default JOSE processor.
  *
- * @version 2015-06-29
+ * @version 2015-08-22
  */
 public class DefaultJOSEProcessorTest extends TestCase {
 
@@ -33,7 +34,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 	public void testConstructor()
 		throws Exception {
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor processor = new DefaultJOSEProcessor();
 
 		assertNull(processor.getJWSKeySelector());
 		assertNull(processor.getJWEKeySelector());
@@ -55,12 +56,12 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
-				return Arrays.asList(key);
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -81,11 +82,11 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		jwsObject.sign(new MACSigner(key));
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				// first key candidate invalid, the second is correct
 				return Arrays.asList(new SecretKeySpec(new byte[32], "HMAC"), key);
 			}
@@ -110,12 +111,12 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		jweObject.encrypt(new DirectEncrypter(key));
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
-				return Arrays.asList(key);
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -140,11 +141,11 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		jweObject.encrypt(new DirectEncrypter(key));
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				// First key invalid, second valid
 				return Arrays.asList(new SecretKeySpec(new byte[16], "AES"), key);
 			}
@@ -183,7 +184,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJOSEProcessor<SimpleSecurityContext> joseProcessor = new DefaultJOSEProcessor<>();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> joseProcessor = new DefaultJOSEProcessor<>();
 
 		joseProcessor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
@@ -191,40 +192,40 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 				if (header.getAlgorithm().equals(JWSAlgorithm.RS256)) {
 
-					String jwk = "{\"kty\":\"RSA\","+
-						"\"n\":\"ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddx"+
-						"HmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMs"+
-						"D1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSH"+
-						"SXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdV"+
-						"MTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8"+
-						"NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ\","+
-						"\"e\":\"AQAB\","+
-						"\"d\":\"Eq5xpGnNCivDflJsRQBXHx1hdR1k6Ulwe2JZD50LpXyWPEAeP88vLNO97I"+
-						"jlA7_GQ5sLKMgvfTeXZx9SE-7YwVol2NXOoAJe46sui395IW_GO-pWJ1O0"+
-						"BkTGoVEn2bKVRUCgu-GjBVaYLU6f3l9kJfFNS3E0QbVdxzubSu3Mkqzjkn"+
-						"439X0M_V51gfpRLI9JYanrC4D4qAdGcopV_0ZHHzQlBjudU2QvXt4ehNYT"+
-						"CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh"+
-						"BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ\","+
-						"\"p\":\"4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi"+
-						"YrqBdss1l58BQ3KhooKeQTa9AB0Hw_Py5PJdTJNPY8cQn7ouZ2KKDcmnPG"+
-						"BY5t7yLc1QlQ5xHdwW1VhvKn-nXqhJTBgIPgtldC-KDV5z-y2XDwGUc\","+
-						"\"q\":\"uQPEfgmVtjL0Uyyx88GZFF1fOunH3-7cepKmtH4pxhtCoHqpWmT8YAmZxa"+
-						"ewHgHAjLYsp1ZSe7zFYHj7C6ul7TjeLQeZD_YwD66t62wDmpe_HlB-TnBA"+
-						"-njbglfIsRLtXlnDzQkv5dTltRJ11BKBBypeeF6689rjcJIDEz9RWdc\","+
-						"\"dp\":\"BwKfV3Akq5_MFZDFZCnW-wzl-CCo83WoZvnLQwCTeDv8uzluRSnm71I3Q"+
-						"CLdhrqE2e9YkxvuxdBfpT_PI7Yz-FOKnu1R6HsJeDCjn12Sk3vmAktV2zb"+
-						"34MCdy7cpdTh_YVr7tss2u6vneTwrA86rZtu5Mbr1C1XsmvkxHQAdYo0\","+
-						"\"dq\":\"h_96-mK1R_7glhsum81dZxjTnYynPbZpHziZjeeHcXYsXaaMwkOlODsWa"+
-						"7I9xXDoRwbKgB719rrmI2oKr6N3Do9U0ajaHF-NKJnwgjMd2w9cjz3_-ky"+
-						"NlxAr2v4IKhGNpmM5iIgOS1VZnOZ68m6_pbLBSp3nssTdlqvd0tIiTHU\","+
-						"\"qi\":\"IYd7DHOhrWvxkwPQsRM2tOgrjbcrfvtQJipd-DlcxyVuuM9sQLdgjVk2o"+
-						"y26F0EmpScGLq2MowX7fhd_QJQ3ydy5cY7YIBi87w93IKLEdfnbJtoOPLU"+
-						"W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U\""+
+					String jwk = "{\"kty\":\"RSA\"," +
+						"\"n\":\"ofgWCuLjybRlzo0tZWJjNiuSfb4p4fAkd_wWJcyQoTbji9k0l8W26mPddx" +
+						"HmfHQp-Vaw-4qPCJrcS2mJPMEzP1Pt0Bm4d4QlL-yRT-SFd2lZS-pCgNMs" +
+						"D1W_YpRPEwOWvG6b32690r2jZ47soMZo9wGzjb_7OMg0LOL-bSf63kpaSH" +
+						"SXndS5z5rexMdbBYUsLA9e-KXBdQOS-UTo7WTBEMa2R2CapHg665xsmtdV" +
+						"MTBQY4uDZlxvb3qCo5ZwKh9kG4LT6_I5IhlJH7aGhyxXFvUK-DWNmoudF8" +
+						"NAco9_h9iaGNj8q2ethFkMLs91kzk2PAcDTW9gb54h4FRWyuXpoQ\"," +
+						"\"e\":\"AQAB\"," +
+						"\"d\":\"Eq5xpGnNCivDflJsRQBXHx1hdR1k6Ulwe2JZD50LpXyWPEAeP88vLNO97I" +
+						"jlA7_GQ5sLKMgvfTeXZx9SE-7YwVol2NXOoAJe46sui395IW_GO-pWJ1O0" +
+						"BkTGoVEn2bKVRUCgu-GjBVaYLU6f3l9kJfFNS3E0QbVdxzubSu3Mkqzjkn" +
+						"439X0M_V51gfpRLI9JYanrC4D4qAdGcopV_0ZHHzQlBjudU2QvXt4ehNYT" +
+						"CBr6XCLQUShb1juUO1ZdiYoFaFQT5Tw8bGUl_x_jTj3ccPDVZFD9pIuhLh" +
+						"BOneufuBiB4cS98l2SR_RQyGWSeWjnczT0QU91p1DhOVRuOopznQ\"," +
+						"\"p\":\"4BzEEOtIpmVdVEZNCqS7baC4crd0pqnRH_5IB3jw3bcxGn6QLvnEtfdUdi" +
+						"YrqBdss1l58BQ3KhooKeQTa9AB0Hw_Py5PJdTJNPY8cQn7ouZ2KKDcmnPG" +
+						"BY5t7yLc1QlQ5xHdwW1VhvKn-nXqhJTBgIPgtldC-KDV5z-y2XDwGUc\"," +
+						"\"q\":\"uQPEfgmVtjL0Uyyx88GZFF1fOunH3-7cepKmtH4pxhtCoHqpWmT8YAmZxa" +
+						"ewHgHAjLYsp1ZSe7zFYHj7C6ul7TjeLQeZD_YwD66t62wDmpe_HlB-TnBA" +
+						"-njbglfIsRLtXlnDzQkv5dTltRJ11BKBBypeeF6689rjcJIDEz9RWdc\"," +
+						"\"dp\":\"BwKfV3Akq5_MFZDFZCnW-wzl-CCo83WoZvnLQwCTeDv8uzluRSnm71I3Q" +
+						"CLdhrqE2e9YkxvuxdBfpT_PI7Yz-FOKnu1R6HsJeDCjn12Sk3vmAktV2zb" +
+						"34MCdy7cpdTh_YVr7tss2u6vneTwrA86rZtu5Mbr1C1XsmvkxHQAdYo0\"," +
+						"\"dq\":\"h_96-mK1R_7glhsum81dZxjTnYynPbZpHziZjeeHcXYsXaaMwkOlODsWa" +
+						"7I9xXDoRwbKgB719rrmI2oKr6N3Do9U0ajaHF-NKJnwgjMd2w9cjz3_-ky" +
+						"NlxAr2v4IKhGNpmM5iIgOS1VZnOZ68m6_pbLBSp3nssTdlqvd0tIiTHU\"," +
+						"\"qi\":\"IYd7DHOhrWvxkwPQsRM2tOgrjbcrfvtQJipd-DlcxyVuuM9sQLdgjVk2o" +
+						"y26F0EmpScGLq2MowX7fhd_QJQ3ydy5cY7YIBi87w93IKLEdfnbJtoOPLU" +
+						"W0ITrJReOgo1cq9SbsxYawBgfp_gh6A5603k2-ZQwVK0JKSHuLFkuQ3U\"" +
 						"}";
 
 					try {
 						Key rsaPublicKey = RSAKey.parse(jwk).toRSAPublicKey();
-						return Arrays.asList(rsaPublicKey);
+						return Collections.singletonList(rsaPublicKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());
@@ -274,7 +275,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 					try {
 						Key rsaPrivateKey = RSAKey.parse(jwk).toRSAPrivateKey();
-						return Arrays.asList(rsaPrivateKey);
+						return Collections.singletonList(rsaPrivateKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());
@@ -304,13 +305,13 @@ public class DefaultJOSEProcessorTest extends TestCase {
 		PlainObject plainObject = new PlainObject(new Payload("Hello world1"));
 
 		try {
-			new DefaultJOSEProcessor().process(plainObject, null);
+			new DefaultJOSEProcessor<SimpleSecurityContext>().process(plainObject, null);
 		} catch (BadJOSEException e) {
 			assertEquals("Unsecured (plain) JOSE objects are rejected, extend class to handle", e.getMessage());
 		}
 
 		try {
-			new DefaultJOSEProcessor().process(plainObject.serialize(), null);
+			new DefaultJOSEProcessor<SimpleSecurityContext>().process(plainObject.serialize(), null);
 		} catch (BadJOSEException e) {
 			assertEquals("Unsecured (plain) JOSE objects are rejected, extend class to handle", e.getMessage());
 		}
@@ -328,11 +329,11 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				return new LinkedList<>(); // empty
 			}
 		});
@@ -369,11 +370,11 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				return new LinkedList<>(); // no candidates
 			}
 		});
@@ -397,15 +398,15 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 
 				Key key = new SecretKeySpec(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow").decode(), "HMAC");
 
-				return Arrays.asList(key);
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -428,7 +429,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor processor = new DefaultJOSEProcessor();
 
 		try {
 			processor.process(jws, null);
@@ -449,13 +450,13 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				Key key = new SecretKeySpec(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow").decode(), "HMAC");
-				return Arrays.asList(key);
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -494,7 +495,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
 		try {
 			processor.process(jwe, null);
@@ -529,11 +530,11 @@ public class DefaultJOSEProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJOSEProcessor processor = new DefaultJOSEProcessor();
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				// {"alg":"RSA1_5","enc":"A128CBC-HS256","cty":"JWT"}
 				if (header.getAlgorithm().equals(JWEAlgorithm.RSA1_5) && header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256)) {
 
@@ -570,7 +571,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 					try {
 						Key rsaPrivateKey = RSAKey.parse(jwk).toRSAPrivateKey();
-						return Arrays.asList(rsaPrivateKey);
+						return Collections.singletonList(rsaPrivateKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());

@@ -14,16 +14,25 @@ import com.nimbusds.jwt.*;
 
 
 /**
- * Default processor of received {@link com.nimbusds.jwt.JWT JSON Web Token}s.
+ * Default processor of {@link com.nimbusds.jwt.PlainJWT unsecured} (plain),
+ * {@link com.nimbusds.jwt.SignedJWT signed} and
+ * {@link com.nimbusds.jwt.EncryptedJWT encrypted} JSON Web Tokens (JWTs).
  *
- * <p>Must be supplied with a {@link JWSKeySelector JWS key selector} to
- * determine the key candidate(s) for the signature verification. The exact key
- * selection procedure is application-specific and may involve key ID lookup, a
- * certificate check and / or other information supplied in the message
- * {@link SecurityContext context}.
+ * <p>Must be configured with the following:
  *
- * <p>Similarly, the processor must be supplied with a {@link JWEKeySelector
- * JWE key selector} if JWE messages are expected to be processed.
+ * <ol>
+ *     <li>To process signed JWTs: A {@link JWSKeySelector JWS key selector}
+ *     to determine the key candidate(s) for the signature verification. The
+ *     key selection procedure is application-specific and may involve key ID
+ *     lookup, a certificate check and / or other information supplied in the
+ *     message {@link SecurityContext context}.</li>
+ *
+ *     <li>To process encrypted JWTs: A {@link JWEKeySelector JWE key selector}
+ *     to determine the key candidate(s) for decryption. The key selection
+ *     procedure is application-specific and may involve key ID lookup, a
+ *     certificate check and / or other information supplied in the message
+ *     {@link SecurityContext context}.</li>
+ * </ol>
  *
  * <p>See sections 6 of RFC 7515 (JWS) and RFC 7516 (JWE) for guidelines on key
  * selection.
@@ -38,8 +47,8 @@ import com.nimbusds.jwt.*;
  * if you need to handle plain JWTs as well.
  *
  * <p>An optional {@link JWTClaimsVerifier JWT claims verifier} may be set to
- * perform various application-specific JWT claims checks, such as issuer
- * acceptance and token expiration, after a successful JWS verification / JWE
+ * perform various application-specific JWT claims checks, such as token
+ * expiration and issuer acceptance, after a successful JWS verification / JWE
  * decryption.
  *
  * <p>To process generic JOSE objects (with arbitrary payloads) use the
@@ -49,8 +58,31 @@ import com.nimbusds.jwt.*;
  * @version 2015-08-20
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
-	extends BaseJOSEProcessor<C>
-	implements JWTProcessor<C> {
+	implements ConfigurableJWTProcessor<C> {
+
+
+	/**
+	 * The JWS key selector.
+	 */
+	private JWSKeySelector<C> jwsKeySelector;
+
+
+	/**
+	 * The JWE key selector.
+	 */
+	private JWEKeySelector<C> jweKeySelector;
+
+
+	/**
+	 * The JWS verifier factory.
+	 */
+	private JWSVerifierFactory jwsVerifierFactory = new DefaultJWSVerifierFactory();
+
+
+	/**
+	 * The JWE decrypter factory.
+	 */
+	private JWEDecrypterFactory jweDecrypterFactory = new DefaultJWEDecrypterFactory();
 
 
 	/**
@@ -59,27 +91,70 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	private JWTClaimsVerifier claimsVerifier;
 
 
-	/**
-	 * Gets the optional JWT claims verifier. Intended to perform various
-	 * application-specific JWT claims checks, such as issuer acceptance,
-	 * after successful JWS verification / JWE decryption.
-	 *
-	 * @return The JWT claims verifier, {@code null} if not specified.
-	 */
+	@Override
+	public JWSKeySelector<C> getJWSKeySelector() {
+
+		return jwsKeySelector;
+	}
+
+
+	@Override
+	public void setJWSKeySelector(final JWSKeySelector<C> jwsKeySelector) {
+
+		this.jwsKeySelector = jwsKeySelector;
+	}
+
+
+	@Override
+	public JWEKeySelector<C> getJWEKeySelector() {
+
+		return jweKeySelector;
+	}
+
+
+	@Override
+	public void setJWEKeySelector(final JWEKeySelector<C> jweKeySelector) {
+
+		this.jweKeySelector = jweKeySelector;
+	}
+
+
+	@Override
+	public JWSVerifierFactory getJWSVerifierFactory() {
+
+		return jwsVerifierFactory;
+	}
+
+
+	@Override
+	public void setJWSVerifierFactory(final JWSVerifierFactory factory) {
+
+		jwsVerifierFactory = factory;
+	}
+
+
+	@Override
+	public JWEDecrypterFactory getJWEDecrypterFactory() {
+
+		return jweDecrypterFactory;
+	}
+
+
+	@Override
+	public void setJWEDecrypterFactory(final JWEDecrypterFactory factory) {
+
+		jweDecrypterFactory = factory;
+	}
+
+
+	@Override
 	public JWTClaimsVerifier getJWTClaimsVerifier() {
 
 		return claimsVerifier;
 	}
 
 
-	/**
-	 * Sets the optional JWT claims verifier. Intended to perform various
-	 * application-specific JWT claims checks, such as issuer acceptance,
-	 * after successful JWS verification / JWE decryption.
-	 *
-	 * @param claimsVerifier The JWT claims verifier, {@code null} if not
-	 *                       specified.
-	 */
+	@Override
 	public void setJWTClaimsVerifier(final JWTClaimsVerifier claimsVerifier) {
 
 		this.claimsVerifier = claimsVerifier;
@@ -109,8 +184,8 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			throw new BadJWTException(e.getMessage(), e);
 		}
 
-		if (claimsVerifier != null) {
-			claimsVerifier.verify(claimsSet);
+		if (getJWTClaimsVerifier() != null) {
+			getJWTClaimsVerifier().verify(claimsSet);
 		}
 
 		return claimsSet;

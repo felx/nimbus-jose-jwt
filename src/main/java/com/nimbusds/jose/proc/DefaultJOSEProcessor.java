@@ -12,18 +12,20 @@ import com.nimbusds.jose.*;
 
 
 /**
- * Default processor of received {@link com.nimbusds.jose.JOSEObject}s.
+ * Default processor of {@link com.nimbusds.jose.PlainObject unsecured}
+ * (plain), {@link com.nimbusds.jose.JWSObject JWS} and
+ * {@link com.nimbusds.jose.JWEObject JWE} objects.
  *
- * <p>Must be preset with the following:
+ * <p>Must be configured with the following:
  *
  * <ol>
- *     <li>For JWS processing: A {@link JWSKeySelector JWS key selector} to
+ *     <li>To verify JWS objects: A {@link JWSKeySelector JWS key selector} to
  *     determine the key candidate(s) for the signature verification. The key
  *     selection procedure is application-specific and may involve key ID
  *     lookup, a certificate check and / or other information supplied in the
  *     message {@link SecurityContext context}.</li>
  *
- *     <li>For JWE processing: A {@link JWEKeySelector JWE key selector} to
+ *     <li>To decrypt JWE objects: A {@link JWEKeySelector JWE key selector} to
  *     determine the key candidate(s) for decryption. The key selection
  *     procedure is application-specific and may involve key ID lookup, a
  *     certificate check and / or other information supplied in the message
@@ -40,18 +42,98 @@ import com.nimbusds.jose.*;
  *
  * <p>Note that for security reasons this processor is hardwired to reject
  * unsecured (plain) JOSE objects. Override the {@link #process(PlainObject,
- * SecurityContext)} if you need to handle plain JOSE objects as well.
+ * SecurityContext)} method if you need to handle unsecured JOSE objects as
+ * well.
  *
  * <p>To process JSON Web Tokens (JWTs) use the
  * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-20
+ * @version 2015-08-22
  */
 @ThreadSafe
-public class DefaultJOSEProcessor<C extends SecurityContext>
-	extends BaseJOSEProcessor<C>
-	implements JOSEProcessor<C>{
+public class DefaultJOSEProcessor<C extends SecurityContext> implements ConfigurableJOSEProcessor<C>{
+
+
+	/**
+	 * The JWS key selector.
+	 */
+	private JWSKeySelector<C> jwsKeySelector;
+
+
+	/**
+	 * The JWE key selector.
+	 */
+	private JWEKeySelector<C> jweKeySelector;
+
+
+	/**
+	 * The JWS verifier factory.
+	 */
+	private JWSVerifierFactory jwsVerifierFactory = new DefaultJWSVerifierFactory();
+
+
+	/**
+	 * The JWE decrypter factory.
+	 */
+	private JWEDecrypterFactory jweDecrypterFactory = new DefaultJWEDecrypterFactory();
+
+
+	@Override
+	public JWSKeySelector<C> getJWSKeySelector() {
+
+		return jwsKeySelector;
+	}
+
+
+	@Override
+	public void setJWSKeySelector(final JWSKeySelector<C> jwsKeySelector) {
+
+		this.jwsKeySelector = jwsKeySelector;
+	}
+
+
+	@Override
+	public JWEKeySelector<C> getJWEKeySelector() {
+
+		return jweKeySelector;
+	}
+
+
+	@Override
+	public void setJWEKeySelector(final JWEKeySelector<C> jweKeySelector) {
+
+		this.jweKeySelector = jweKeySelector;
+	}
+
+
+	@Override
+	public JWSVerifierFactory getJWSVerifierFactory() {
+
+		return jwsVerifierFactory;
+	}
+
+
+	@Override
+	public void setJWSVerifierFactory(final JWSVerifierFactory factory) {
+
+		jwsVerifierFactory = factory;
+	}
+
+
+	@Override
+	public JWEDecrypterFactory getJWEDecrypterFactory() {
+
+		return jweDecrypterFactory;
+	}
+
+
+	@Override
+	public void setJWEDecrypterFactory(final JWEDecrypterFactory factory) {
+
+		jweDecrypterFactory = factory;
+	}
+
 
 	@Override
 	public Payload process(final String compactJOSE, final C context)

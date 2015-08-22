@@ -5,6 +5,7 @@ import java.security.Key;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import javax.crypto.SecretKey;
@@ -25,7 +26,7 @@ import com.nimbusds.jwt.*;
 /**
  * Tests the default JWT processor.
  *
- * @version 2015-08-19
+ * @version 2015-08-22
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -33,7 +34,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testConstructor()
 		throws Exception {
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor processor = new DefaultJWTProcessor();
 
 		assertNull(processor.getJWSKeySelector());
 		assertNull(processor.getJWEKeySelector());
@@ -61,12 +62,12 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		jwt.sign(new MACSigner(key));
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
-				return Arrays.asList(key);
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -99,12 +100,12 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		jwt.sign(new MACSigner(key));
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
-				return Arrays.asList(key);
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -138,11 +139,11 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		jwt.sign(new MACSigner(key));
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				// first key candidate invalid, the second is correct
 				return Arrays.asList(new SecretKeySpec(new byte[32], "HMAC"), key);
 			}
@@ -168,11 +169,11 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		jwt.encrypt(new DirectEncrypter(key));
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				// First key invalid, second valid
 				return Arrays.asList(new SecretKeySpec(new byte[16], "AES"), key);
 			}
@@ -211,7 +212,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJWTProcessor<SimpleSecurityContext> joseProcessor = new DefaultJWTProcessor<>();
+		ConfigurableJWTProcessor<SimpleSecurityContext> joseProcessor = new DefaultJWTProcessor<>();
 
 		joseProcessor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
@@ -252,7 +253,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 					try {
 						Key rsaPublicKey = RSAKey.parse(jwk).toRSAPublicKey();
-						return Arrays.asList(rsaPublicKey);
+						return Collections.singletonList(rsaPublicKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());
@@ -302,7 +303,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 					try {
 						Key rsaPrivateKey = RSAKey.parse(jwk).toRSAPrivateKey();
-						return Arrays.asList(rsaPrivateKey);
+						return Collections.singletonList(rsaPrivateKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());
@@ -358,11 +359,11 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				return new LinkedList<>(); // empty
 			}
 		});
@@ -399,11 +400,11 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				return new LinkedList<>(); // no candidates
 			}
 		});
@@ -426,7 +427,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
 		try {
 			processor.process(jws, null);
@@ -447,13 +448,13 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"."+
 			"dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWSKeySelector(new JWSKeySelector() {
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
 				Key key = new SecretKeySpec(new Base64URL("AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow").decode(), "HMAC");
-				return Arrays.asList(key);
+				return Collections.singletonList(key);
 			}
 		});
 
@@ -492,7 +493,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
 		try {
 			processor.process(jwe, null);
@@ -527,11 +528,11 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"_J9N0mg0tQ6RbpxNEMNoA9QWk5lgdPvbh9BaO195abQ."+
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
-		DefaultJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
 
-		processor.setJWEKeySelector(new JWEKeySelector() {
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override
-			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) {
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
 				// {"alg":"RSA1_5","enc":"A128CBC-HS256","cty":"JWT"}
 				if (header.getAlgorithm().equals(JWEAlgorithm.RSA1_5) && header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256)) {
 
@@ -568,7 +569,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 					try {
 						Key rsaPrivateKey = RSAKey.parse(jwk).toRSAPrivateKey();
-						return Arrays.asList(rsaPrivateKey);
+						return Collections.singletonList(rsaPrivateKey);
 
 					} catch (Exception e) {
 						fail(e.getMessage());
