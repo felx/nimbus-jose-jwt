@@ -1,6 +1,6 @@
 /**
- * Secure and robust framework for application-specific processing of JSON Web
- * Tokens (JWTs).
+ * Secure framework for application-specific processing of JSON Web Tokens
+ * (JWTs).
  *
  * <p>References:
  *
