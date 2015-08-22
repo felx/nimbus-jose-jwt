@@ -9,6 +9,8 @@ import java.util.ListIterator;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWSVerifier;
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.proc.*;
 import com.nimbusds.jwt.*;
 

@@ -1,4 +1,4 @@
-package com.nimbusds.jose.proc;
+package com.nimbusds.jose.crypto.factories;
 
 
 import java.security.Key;
@@ -16,6 +16,7 @@ import com.nimbusds.jose.KeyTypeException;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
+import com.nimbusds.jose.proc.JWSVerifierFactory;
 
 
 /**

@@ -12,6 +12,7 @@ import java.security.interfaces.RSAPrivateKey;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;

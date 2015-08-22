@@ -1,4 +1,4 @@
-package com.nimbusds.jose.proc;
+package com.nimbusds.jose.crypto.factories;
 
 
 import java.security.Key;
@@ -11,6 +11,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
+import com.nimbusds.jose.proc.JWEDecrypterFactory;
 
 
 /**

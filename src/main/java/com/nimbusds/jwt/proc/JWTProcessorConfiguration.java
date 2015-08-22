@@ -1,8 +1,8 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jose.proc.DefaultJWEDecrypterFactory;
-import com.nimbusds.jose.proc.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.proc.JOSEProcessorConfiguration;
 import com.nimbusds.jose.proc.SecurityContext;
 

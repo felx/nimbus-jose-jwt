@@ -12,6 +12,7 @@ import java.util.Arrays;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;

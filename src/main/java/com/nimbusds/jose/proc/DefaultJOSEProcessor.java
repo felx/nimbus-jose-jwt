@@ -6,6 +6,8 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
