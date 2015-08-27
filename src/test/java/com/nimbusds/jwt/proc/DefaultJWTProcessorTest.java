@@ -4,10 +4,7 @@ package com.nimbusds.jwt.proc;
 import java.security.Key;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -590,6 +587,80 @@ public class DefaultJWTProcessorTest extends TestCase {
 			fail();
 		} catch (JOSEException e) {
 			assertEquals("No JWE decrypter is configured", e.getMessage());
+		}
+	}
+
+
+	public void testJWTExpired()
+		throws Exception {
+
+		final Date now = new Date();
+		final Date yesterday = new Date(now.getTime() - 24*60*60*1000);
+
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://openid.c2id.com")
+			.subject("alice")
+			.expirationTime(yesterday)
+			.build();
+
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
+			}
+		});
+
+		try {
+			processor.process(jwt.serialize(), null);
+		} catch (BadJWTException e) {
+			assertEquals("Expired JWT", e.getMessage());
+		}
+	}
+
+
+	public void testJWTBeforeUse()
+		throws Exception {
+
+		final Date now = new Date();
+		final Date tomorrow = new Date(now.getTime() + 24*60*60*1000);
+
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://openid.c2id.com")
+			.subject("alice")
+			.notBeforeTime(tomorrow)
+			.build();
+
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
+			}
+		});
+
+		try {
+			processor.process(jwt.serialize(), null);
+		} catch (BadJWTException e) {
+			assertEquals("JWT before use time", e.getMessage());
 		}
 	}
 }
