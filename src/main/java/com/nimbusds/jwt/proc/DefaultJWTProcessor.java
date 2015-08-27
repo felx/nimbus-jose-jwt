@@ -48,16 +48,18 @@ import com.nimbusds.jwt.*;
  * unsecured (plain) JWTs. Override the {@link #process(PlainJWT, SecurityContext)}
  * if you need to handle plain JWTs as well.
  *
- * <p>An optional {@link JWTClaimsVerifier JWT claims verifier} may be set to
- * perform various application-specific JWT claims checks, such as token
- * expiration and issuer acceptance, after a successful JWS verification / JWE
- * decryption.
+ * <p>A {@link DefaultJWTClaimsVerifier default JWT claims verifier} is
+ * provided, to perform a minimal check of the claims after a successful JWS
+ * verification / JWE decryption. It checks the token expiration (exp) and
+ * not-before (nbf) timestamps if these are present. The default JWT claims
+ * verifier may be extended to perform additional checks, such as issuer and
+ * subject acceptance.
  *
  * <p>To process generic JOSE objects (with arbitrary payloads) use the
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-20
+ * @version 2015-08-27
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	implements ConfigurableJWTProcessor<C> {
@@ -88,9 +90,9 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 
 	/**
-	 * Optional claims verifier.
+	 * The claims verifier.
 	 */
-	private JWTClaimsVerifier claimsVerifier;
+	private JWTClaimsVerifier claimsVerifier = new DefaultJWTClaimsVerifier();
 
 
 	@Override

@@ -17,6 +17,8 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.proc.*;
 import com.nimbusds.jose.util.Base64URL;
@@ -26,7 +28,7 @@ import com.nimbusds.jwt.*;
 /**
  * Tests the default JWT processor.
  *
- * @version 2015-08-22
+ * @version 2015-08-27
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -39,10 +41,10 @@ public class DefaultJWTProcessorTest extends TestCase {
 		assertNull(processor.getJWSKeySelector());
 		assertNull(processor.getJWEKeySelector());
 
-		assertNotNull(processor.getJWSVerifierFactory());
-		assertNotNull(processor.getJWEDecrypterFactory());
+		assertTrue(processor.getJWSVerifierFactory() instanceof DefaultJWSVerifierFactory);
+		assertTrue(processor.getJWEDecrypterFactory() instanceof DefaultJWEDecrypterFactory);
 
-		assertNull(processor.getJWTClaimsVerifier());
+		assertTrue(processor.getJWTClaimsVerifier() instanceof DefaultJWTClaimsVerifier);
 	}
 
 
@@ -213,6 +215,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
 		ConfigurableJWTProcessor<SimpleSecurityContext> joseProcessor = new DefaultJWTProcessor<>();
+		joseProcessor.setJWTClaimsVerifier(null); // Remove claims verifier, JWT past expiration timestamp
 
 		joseProcessor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override

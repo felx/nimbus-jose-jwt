@@ -403,3 +403,6 @@ version 4.0-RC4 (2015-08-22)
     * Simplifies and refactors JOSE / JWT processing framework.
     * Adds JWTClaimsSetTranformer interface.
 
+version 4.0 (2015-08-27)
+    * Adds DefaultJWTClaimsSetVerifier.
+
