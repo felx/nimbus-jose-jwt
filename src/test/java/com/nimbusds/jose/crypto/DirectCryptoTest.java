@@ -10,6 +10,7 @@ import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 
 
@@ -17,7 +18,7 @@ import com.nimbusds.jose.jwk.OctetSequenceKey;
  * Tests direct JWE encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-26
+ * @version 2015-09-18
  */
 public class DirectCryptoTest extends TestCase {
 
@@ -304,7 +305,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key128);
+		DirectEncrypter encrypter = new DirectEncrypter(key128);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -316,7 +318,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key128);
+		DirectDecrypter decrypter = new DirectDecrypter(key128);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -338,7 +341,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key192);
+		DirectEncrypter encrypter = new DirectEncrypter(key192);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -350,7 +354,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key192);
+		DirectDecrypter decrypter = new DirectDecrypter(key192);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -372,7 +377,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new DirectEncrypter(key256);
+		DirectEncrypter encrypter = new DirectEncrypter(key256);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -384,7 +390,8 @@ public class DirectCryptoTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new DirectDecrypter(key256);
+		DirectDecrypter decrypter = new DirectDecrypter(key256);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -405,13 +412,15 @@ public class DirectCryptoTest extends TestCase {
 
 		OctetSequenceKey oct = new OctetSequenceKey.Builder(key256).build();
 
-		JWEEncrypter encrypter = new DirectEncrypter(oct);
+		DirectEncrypter encrypter = new DirectEncrypter(oct);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
 		jweObject = JWEObject.parse(jweObject.serialize());
 
-		JWEDecrypter decrypter = new DirectDecrypter(oct);
+		DirectDecrypter decrypter = new DirectDecrypter(oct);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -493,7 +502,8 @@ public class DirectCryptoTest extends TestCase {
 		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
 		assertEquals("77c7e2b8-6e13-45cf-8672-617b5b45243a", jweObject.getHeader().getKeyID());
 
-		JWEDecrypter decrypter = new DirectDecrypter(jwk.toByteArray());
+		DirectDecrypter decrypter = new DirectDecrypter(jwk.toByteArray());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 

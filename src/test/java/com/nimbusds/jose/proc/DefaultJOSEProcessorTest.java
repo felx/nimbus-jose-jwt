@@ -11,6 +11,7 @@ import java.util.List;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.crypto.DirectDecrypter;
 import junit.framework.TestCase;
 
 import net.minidev.json.JSONObject;
@@ -107,11 +108,14 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		final SecretKey key = new SecretKeySpec(keyBytes, "AES");
 
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+		DirectEncrypter encrypter = new DirectEncrypter(key);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		jweObject.encrypt(new DirectEncrypter(key));
+		jweObject.encrypt(encrypter);
 
 		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
+
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
 
 		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
 			@Override

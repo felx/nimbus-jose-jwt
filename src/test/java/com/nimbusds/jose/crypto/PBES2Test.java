@@ -7,6 +7,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 
 
 /**
@@ -135,11 +136,15 @@ public class PBES2Test extends TestCase {
 
 		JWEObject jweObject = new JWEObject(new JWEHeader.Builder(JWEAlgorithm.PBES2_HS256_A128KW, EncryptionMethod.A128GCM).build(), new Payload(plaintext));
 
-		jweObject.encrypt(new PasswordBasedEncrypter(password, 16, 8192));
+		PasswordBasedEncrypter encrypter = new PasswordBasedEncrypter(password, 16, 8192);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		jweObject = JWEObject.parse(jweObject.serialize());
 
-		jweObject.decrypt(new PasswordBasedDecrypter(password));
+		PasswordBasedDecrypter decrypter = new PasswordBasedDecrypter(password);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals(plaintext, jweObject.getPayload().toString());
 	}

@@ -6,18 +6,18 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 
 
 /**
  * Tests A192GCMKW JWE encryption and decryption. 
  *
  * @author Melisa Halsband 
- * @version 2015-06-08
+ * @version 2015-09-18
  */
 public class A192GCMKWTest extends TestCase {
 
@@ -94,7 +94,7 @@ public class A192GCMKWTest extends TestCase {
 		AESEncrypter encrypter = new AESEncrypter(key192);
 		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key192, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 

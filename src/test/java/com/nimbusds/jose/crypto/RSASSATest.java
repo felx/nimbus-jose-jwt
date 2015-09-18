@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -20,6 +19,7 @@ import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -29,7 +29,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-23
+ * @version 2015-09-18
  */
 public class RSASSATest extends TestCase {
 
@@ -353,13 +353,15 @@ public class RSASSATest extends TestCase {
 		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
-		// Need BouncyCastle for PSS
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
 
 		RSASSASigner signer = new RSASSASigner(privateKey);
+		signer.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+
 		assertNotNull("Private key check", signer.getPrivateKey());
 
 		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
+		verifier.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+
 		assertNotNull("Public key check", verifier.getPublicKey());
 
 		testSignAndVerifyCycle(JWSAlgorithm.RS256, signer, verifier);
@@ -378,13 +380,14 @@ public class RSASSATest extends TestCase {
 		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
 		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
 
-		// Need BouncyCastle for PSS
-		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
-
 		RSASSASigner signer = new RSASSASigner(privateKey);
+		signer.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+
 		assertNotNull("Private key check", signer.getPrivateKey());
 
 		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
+		verifier.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+
 		assertNotNull("Public key check", verifier.getPublicKey());
 
 		testSignAndVerifyCycle(JWSAlgorithm.PS256, signer, verifier);
@@ -647,7 +650,8 @@ public class RSASSATest extends TestCase {
 		assertEquals(JWSAlgorithm.PS384, jwsObject.getHeader().getAlgorithm());
 		assertEquals("bilbo.baggins@hobbiton.example", jwsObject.getHeader().getKeyID());
 
-		JWSVerifier verifier = new RSASSAVerifier(jwk.toRSAPublicKey());
+		RSASSAVerifier verifier = new RSASSAVerifier(jwk.toRSAPublicKey());
+		verifier.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		assertTrue(jwsObject.verify(verifier));
 

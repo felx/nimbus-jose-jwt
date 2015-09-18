@@ -6,18 +6,18 @@ import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.jwk.OctetSequenceKey;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 
 
 /**
  * Tests A128GCMKW JWE encryption and decryption. 
  *
  * @author Melisa Halsband 
- * @version 2015-05-27
+ * @version 2015-09-18
  */
 public class A128GCMKWTest extends TestCase {
 
@@ -90,9 +90,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -104,9 +105,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter) decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -127,9 +129,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -141,9 +144,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -165,9 +169,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -179,9 +184,10 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -203,9 +209,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -217,9 +225,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -241,9 +251,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -255,9 +267,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -279,9 +293,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESEncrypter)encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -293,9 +309,11 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key128, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key128, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -319,7 +337,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -331,7 +350,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -355,7 +375,8 @@ public class A128GCMKWTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -363,7 +384,8 @@ public class A128GCMKWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key128, "AES"), new HashSet<>(Arrays.asList("exp")));
+		AESDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key128, "AES"), new HashSet<>(Arrays.asList("exp")));
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -387,7 +409,8 @@ public class A128GCMKWTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -417,7 +440,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -429,7 +453,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -451,7 +476,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key128);
+		AESEncrypter encrypter = new AESEncrypter(key128);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -463,7 +489,8 @@ public class A128GCMKWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key128);
+		AESDecrypter decrypter = new AESDecrypter(key128);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 

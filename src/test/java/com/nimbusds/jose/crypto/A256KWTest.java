@@ -10,13 +10,14 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 
 
 /**
  * Tests A256KW JWE encryption and decryption.
  *
  * @author Melisa Halsband
- * @version 2015-05-27
+ * @version 2015-09-19
  */
 public class A256KWTest extends TestCase {
 
@@ -203,9 +204,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		AESEncrypter encrypter = new AESEncrypter(key256);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -217,9 +220,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		AESDecrypter decrypter = new AESDecrypter(key256);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter) decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -241,9 +246,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		AESEncrypter encrypter = new AESEncrypter(key256);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -255,9 +262,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		AESDecrypter decrypter = new AESDecrypter(key256);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter) decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -279,9 +288,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new AESEncrypter(key256);
+		AESEncrypter encrypter = new AESEncrypter(key256);
+		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESEncrypter) encrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, encrypter.getKey().getEncoded());
 
 		jweObject.encrypt(encrypter);
 
@@ -293,9 +304,11 @@ public class A256KWTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new AESDecrypter(key256);
+		AESDecrypter decrypter = new AESDecrypter(key256);
+		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter) decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 

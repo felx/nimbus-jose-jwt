@@ -18,9 +18,11 @@ import junit.framework.TestCase;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+
 import org.jose4j.jwe.JsonWebEncryption;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
@@ -30,7 +32,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * Tests ECDH encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-30
+ * @version 2015-09-18
  */
 public class ECDHCryptoTest extends TestCase {
 
@@ -62,7 +64,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_256, epk.getCurve());
@@ -78,7 +82,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -96,7 +102,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_256, epk.getCurve());
@@ -110,7 +118,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -128,7 +138,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_384, epk.getCurve());
@@ -144,7 +156,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -162,7 +176,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_384, epk.getCurve());
@@ -176,7 +192,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -194,7 +212,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_521, epk.getCurve());
@@ -210,7 +230,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -228,7 +250,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
 
-		jweObject.encrypt(new ECDHEncrypter(ecJWK.toECPublicKey()));
+		ECDHEncrypter encrypter = new ECDHEncrypter(ecJWK.toECPublicKey());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
 		assertEquals(ECKey.Curve.P_521, epk.getCurve());
@@ -242,7 +266,9 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jwe);
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -504,7 +530,7 @@ public class ECDHCryptoTest extends TestCase {
 			iv.decode(),
 			plainText.getBytes(Charset.forName("UTF-8")),
 			aad,
-			null); // Provider
+			BouncyCastleProviderSingleton.getInstance()); // Provider
 
 		final Base64URL expectedCipherText = new Base64URL(
 			"tkZuOO9h95OgHJmkkrfLBisku8rGf6nzVxhRM3sVOhXgz5NJ76oID7lpnAi_cP" +
@@ -566,7 +592,9 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals("uBo4kHPw6kbjx5l0xowrd_oYzBmaz-GKFZu4xAFFkbYiWgutEK6iuEDsQ6wNdNg3", epk.getX().toString());
 		assertEquals("sp3p5SGhZVC2faXumI-e9JU2Mo8KpoYrFDr5yPNVtW4PgEwZOyQTA-JdaY8tb7E0", epk.getY().toString());
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		jweObject.decrypt(decrypter);
 
 		System.out.println(jweObject.getPayload());
 	}

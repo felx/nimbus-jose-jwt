@@ -8,16 +8,14 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEDecrypter;
-import com.nimbusds.jose.JWEEncrypter;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
 
 
@@ -26,7 +24,7 @@ import com.nimbusds.jose.jwk.RSAKey;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2015-09-18
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -149,7 +147,8 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -159,9 +158,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(privateKey, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -184,7 +184,7 @@ public class RSA_OAEPTest extends TestCase {
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
 		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
-		encrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
 
@@ -195,7 +195,7 @@ public class RSA_OAEPTest extends TestCase {
 		jweObject = JWEObject.parse(jweString);
 
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
-		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		assertEquals(privateKey, (decrypter).getPrivateKey());
 
@@ -219,9 +219,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+		assertEquals(publicKey, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -231,9 +232,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(privateKey, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -255,9 +257,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+		assertEquals(publicKey, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -269,9 +272,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(privateKey, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -307,7 +311,8 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
@@ -429,7 +434,8 @@ public class RSA_OAEPTest extends TestCase {
 		assertEquals(EncryptionMethod.A256GCM, jweObject.getHeader().getEncryptionMethod());
 		assertEquals("samwise.gamgee@hobbiton.example", jweObject.getHeader().getKeyID());
 
-		JWEDecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
+		RSADecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
 
