@@ -1038,11 +1038,12 @@ public final class ECKey extends JWK {
 	public Base64URL computeThumbprint(final String hashAlg)
 		throws JOSEException {
 
-		Map<String,String> o = new LinkedHashMap<>();
-		o.put("crv", crv.toString());
-		o.put("kty", getKeyType().getValue());
-		o.put("x", x.toString());
-		o.put("y", y.toString());
+		// Put mandatory params in sorted order
+		Map<String,String> mandatoryParams = new LinkedHashMap<>();
+		mandatoryParams.put("crv", crv.toString());
+		mandatoryParams.put("kty", getKeyType().getValue());
+		mandatoryParams.put("x", x.toString());
+		mandatoryParams.put("y", y.toString());
 
 		MessageDigest md;
 
@@ -1052,7 +1053,7 @@ public final class ECKey extends JWK {
 			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
 		}
 
-		md.update(JSONObject.toJSONString(o).getBytes(Charset.forName("UTF-8")));
+		md.update(JSONObject.toJSONString(mandatoryParams).getBytes(Charset.forName("UTF-8")));
 
 		return Base64URL.encode(md.digest());
 	}

@@ -5,19 +5,21 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.JOSEException;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -378,9 +380,10 @@ public final class OctetSequenceKey extends JWK {
 	public Base64URL computeThumbprint(final String hashAlg)
 		throws JOSEException {
 
-		JSONObject o = new JSONObject();
-		o.put("k", k.toString());
-		o.put("kty", getKeyType().toString());
+		// Put mandatory params in sorted order
+		Map<String,String> mandatoryParams = new LinkedHashMap<>();
+		mandatoryParams.put("k", k.toString());
+		mandatoryParams.put("kty", getKeyType().toString());
 		MessageDigest md;
 
 		try {
@@ -389,7 +392,7 @@ public final class OctetSequenceKey extends JWK {
 			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
 		}
 
-		md.update(o.toJSONString().getBytes(Charset.forName("UTF-8")));
+		md.update(JSONObject.toJSONString(mandatoryParams).getBytes(Charset.forName("UTF-8")));
 
 		return Base64URL.encode(md.digest());
 	}

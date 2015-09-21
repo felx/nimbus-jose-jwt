@@ -1520,10 +1520,11 @@ public final class RSAKey extends JWK {
 	public Base64URL computeThumbprint(final String hashAlg)
 		throws JOSEException {
 
-		Map<String,String> o = new LinkedHashMap<>();
-		o.put("e", e.toString());
-		o.put("kty", getKeyType().getValue());
-		o.put("n", n.toString());
+		// Put mandatory params in sorted order
+		Map<String,String> mandatoryParams = new LinkedHashMap<>();
+		mandatoryParams.put("e", e.toString());
+		mandatoryParams.put("kty", getKeyType().getValue());
+		mandatoryParams.put("n", n.toString());
 
 		MessageDigest md;
 
@@ -1533,7 +1534,7 @@ public final class RSAKey extends JWK {
 			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
 		}
 
-		md.update(JSONObject.toJSONString(o).getBytes(Charset.forName("UTF-8")));
+		md.update(JSONObject.toJSONString(mandatoryParams).getBytes(Charset.forName("UTF-8")));
 
 		return Base64URL.encode(md.digest());
 	}

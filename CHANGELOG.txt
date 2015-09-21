@@ -412,3 +412,7 @@ version 4.0.1 (2015-09-18)
 version 4.1 (2015-09-21)
     * Supports JSON Web Key (JWK) Thumbprint (RFC 7638).
 
+version 4.1.1 (2015-09-21)
+    * Fixes ordering of mandatory JWK parameters in
+      OctetSequenceKey.computeThumbprint (iss #152).
+

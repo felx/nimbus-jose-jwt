@@ -3,7 +3,9 @@ package com.nimbusds.jose.jwk;
 
 import java.math.BigInteger;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -527,6 +529,12 @@ public class ECKeyTest extends TestCase {
 		Base64URL thumbprint = ecKey.computeThumbprint();
 
 		assertEquals(256 / 8, thumbprint.decode().length);
+
+		String orderedJSON = "{\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4\",\"y\":\"4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM\"}";
+
+		Base64URL expected = Base64URL.encode(MessageDigest.getInstance("SHA-256").digest(orderedJSON.getBytes(Charset.forName("UTF-8"))));
+
+		assertEquals(expected, thumbprint);
 	}
 
 

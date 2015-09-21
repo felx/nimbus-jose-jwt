@@ -2,6 +2,8 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -344,6 +346,12 @@ public class OctetSequenceKeyTest extends TestCase {
 		Base64URL thumbprint = jwk.computeThumbprint();
 
 		assertEquals(256 / 8, thumbprint.decode().length);
+
+		String orderedJSON = "{\"k\":\"GawgguFyGrWKav7AX4VKUg\",\"kty\":\"oct\"}";
+
+		Base64URL expected = Base64URL.encode(MessageDigest.getInstance("SHA-256").digest(orderedJSON.getBytes(Charset.forName("UTF-8"))));
+
+		assertEquals(expected, thumbprint);
 	}
 
 
