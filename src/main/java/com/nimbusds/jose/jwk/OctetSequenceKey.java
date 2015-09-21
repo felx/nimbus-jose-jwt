@@ -2,6 +2,9 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URI;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.text.ParseException;
 import java.util.Set;
@@ -9,6 +12,7 @@ import java.util.Set;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.JOSEException;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
@@ -39,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2015-04-23
+ * @version 2015-09-21
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
@@ -367,6 +371,27 @@ public final class OctetSequenceKey extends JWK {
 	public SecretKey toSecretKey(final String jcaAlg) {
 
 		return new SecretKeySpec(toByteArray(), jcaAlg);
+	}
+
+
+	@Override
+	public Base64URL computeThumbprint(final String hashAlg)
+		throws JOSEException {
+
+		JSONObject o = new JSONObject();
+		o.put("k", k.toString());
+		o.put("kty", getKeyType().toString());
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance(hashAlg);
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
+		}
+
+		md.update(o.toJSONString().getBytes(Charset.forName("UTF-8")));
+
+		return Base64URL.encode(md.digest());
 	}
 
 

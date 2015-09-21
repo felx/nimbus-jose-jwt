@@ -21,7 +21,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-20
+ * @version 2015-09-21
  */
 public class ECKeyTest extends TestCase {
 
@@ -516,5 +516,27 @@ public class ECKeyTest extends TestCase {
 		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forStdName("secp384r1"));
 
 		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forStdName("secp521r1"));
+	}
+
+
+	public void testThumbprint()
+		throws Exception {
+
+		ECKey ecKey = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).build();
+
+		Base64URL thumbprint = ecKey.computeThumbprint();
+
+		assertEquals(256 / 8, thumbprint.decode().length);
+	}
+
+
+	public void testThumbprintSHA1()
+		throws Exception {
+
+		ECKey ecKey = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).build();
+
+		Base64URL thumbprint = ecKey.computeThumbprint("SHA-1");
+
+		assertEquals(160 / 8, thumbprint.decode().length);
 	}
 }

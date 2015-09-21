@@ -3,8 +3,10 @@ package com.nimbusds.jose.jwk;
 
 import java.net.URI;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.KeyPair;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -17,10 +19,7 @@ import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import net.jcip.annotations.Immutable;
 
@@ -114,7 +113,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2015-04-22
+ * @version 2015-09-21
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -1134,10 +1133,10 @@ public final class RSAKey extends JWK {
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
-		this(Base64URL.encode(pub.getModulus()), 
-		     Base64URL.encode(pub.getPublicExponent()), 
-		     use, ops, alg, kid,
-		     x5u, x5t, x5c);
+		this(Base64URL.encode(pub.getModulus()),
+			Base64URL.encode(pub.getPublicExponent()),
+			use, ops, alg, kid,
+			x5u, x5t, x5c);
 	}
 
 
@@ -1514,6 +1513,29 @@ public final class RSAKey extends JWK {
 		throws JOSEException {
 		
 		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
+	}
+
+
+	@Override
+	public Base64URL computeThumbprint(final String hashAlg)
+		throws JOSEException {
+
+		Map<String,String> o = new LinkedHashMap<>();
+		o.put("e", e.toString());
+		o.put("kty", getKeyType().getValue());
+		o.put("n", n.toString());
+
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance(hashAlg);
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
+		}
+
+		md.update(JSONObject.toJSONString(o).getBytes(Charset.forName("UTF-8")));
+
+		return Base64URL.encode(md.digest());
 	}
 
 

@@ -3,11 +3,10 @@ package com.nimbusds.jose.jwk;
 
 import java.math.BigInteger;
 import java.net.URI;
-import java.security.Provider;
+import java.nio.charset.Charset;
+import java.security.*;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -16,6 +15,7 @@ import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.Immutable;
@@ -63,7 +63,7 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-05-20
+ * @version 2015-09-21
  */
 @Immutable
 public final class ECKey extends JWK {
@@ -1031,6 +1031,30 @@ public final class ECKey extends JWK {
 		throws JOSEException {
 
 		return new KeyPair(toECPublicKey(provider), toECPrivateKey(provider));
+	}
+
+
+	@Override
+	public Base64URL computeThumbprint(final String hashAlg)
+		throws JOSEException {
+
+		Map<String,String> o = new LinkedHashMap<>();
+		o.put("crv", crv.toString());
+		o.put("kty", getKeyType().getValue());
+		o.put("x", x.toString());
+		o.put("y", y.toString());
+
+		MessageDigest md;
+
+		try {
+			md = MessageDigest.getInstance(hashAlg);
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
+		}
+
+		md.update(JSONObject.toJSONString(o).getBytes(Charset.forName("UTF-8")));
+
+		return Base64URL.encode(md.digest());
 	}
 
 

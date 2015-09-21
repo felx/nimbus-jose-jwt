@@ -409,3 +409,6 @@ version 4.0 (2015-08-27)
 version 4.0.1 (2015-09-18)
     * Fixes BouncyCastle JCA provider setting in tests (iss #150).
 
+version 4.1 (2015-09-21)
+    * Supports JSON Web Key (JWK) Thumbprint (RFC 7638).
+

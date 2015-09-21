@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.nimbusds.jose.JOSEException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
@@ -45,7 +46,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-04-15
+ * @version 2015-09-21
  */
 public abstract class JWK implements JSONAware {
 
@@ -248,6 +249,36 @@ public abstract class JWK implements JSONAware {
 
 		return Collections.unmodifiableList(x5c);
 	}
+
+
+	/**
+	 * Computes the SHA-256 thumbprint of this JWK. See RFC 7638 for more
+	 * information.
+	 *
+	 * @return The SHA-256 thumbprint.
+	 *
+	 * @throws JOSEException If the SHA-256 hash algorithm is not
+	 *                       supported.
+	 */
+	public Base64URL computeThumbprint()
+		throws JOSEException {
+
+		return computeThumbprint("SHA-256");
+	}
+
+
+	/**
+	 * Computes the thumbprint of this JWK using the specified hash
+	 * algorithm. See RFC 7638 for more information.
+	 *
+	 * @param hashAlg The hash algorithm. Must not be {@code null}.
+	 *
+	 * @return The SHA-256 thumbprint.
+	 *
+	 * @throws JOSEException If the hash algorithm is not supported.
+	 */
+	public abstract Base64URL computeThumbprint(final String hashAlg)
+		throws JOSEException;
 
 
 	/**

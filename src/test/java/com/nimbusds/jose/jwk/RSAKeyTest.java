@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-04-21
+ * @version 2014-09-21
  */
 public class RSAKeyTest extends TestCase {
 
@@ -835,5 +835,45 @@ public class RSAKeyTest extends TestCase {
 			"1GFULimrRdndm-P8q8kvN3KHlNAtEgrQAgTTgz80S-3VD0FgWfgnb1PN"+
 			"miuPUxO8OpI9KDIfu_acc6fg14nsNaJqXe6RESvhGPH2afjHqSy_Fd2v"+
 			"pzj85bQQ", jwk.getPrivateExponent().toString());
+	}
+
+
+	// Test vector from https://tools.ietf.org/html/rfc7638#section-3.1
+	public void testComputeThumbprint()
+		throws Exception {
+
+		String json = "{\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2" +
+			"aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi" +
+			"FV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65Y" +
+			"GjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n" +
+			"91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_x" +
+			"BniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"}";
+
+		RSAKey rsaKey = RSAKey.parse(json);
+
+		Base64URL thumbprint = rsaKey.computeThumbprint();
+
+		assertEquals(thumbprint, rsaKey.computeThumbprint("SHA-256"));
+
+		assertEquals("NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs", thumbprint.toString());
+		assertEquals(256 / 8, thumbprint.decode().length);
+	}
+
+
+	public void testComputeThumbprintSHA1()
+		throws Exception {
+
+		String json = "{\"e\":\"AQAB\",\"kty\":\"RSA\",\"n\":\"0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2" +
+			"aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCi" +
+			"FV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65Y" +
+			"GjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n" +
+			"91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_x" +
+			"BniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw\"}";
+
+		RSAKey rsaKey = RSAKey.parse(json);
+
+		Base64URL thumbprint = rsaKey.computeThumbprint("SHA-1");
+
+		assertEquals(160 / 8, thumbprint.decode().length);
 	}
 }
