@@ -22,7 +22,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-21
+ * @version 2015-09-23
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -365,5 +365,18 @@ public class OctetSequenceKeyTest extends TestCase {
 		Base64URL thumbprint = jwk.computeThumbprint("SHA-1");
 
 		assertEquals(160 / 8, thumbprint.decode().length);
+	}
+
+
+	// See https://mailarchive.ietf.org/arch/msg/jose/gS-nOfqgV1n17DFUd6w_yBEf0sU
+	public void testJose4jVector()
+		throws Exception {
+
+		String json = "{\"kty\":\"oct\"," +
+			"\"k\":\"ZW8Eg8TiwoT2YamLJfC2leYpLgLmUAh_PcMHqRzBnMg\"}";
+
+		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
+
+		assertEquals("7WWD36NF4WCpPaYtK47mM4o0a5CCeOt01JXSuMayv5g", jwk.computeThumbprint().toString());
 	}
 }
