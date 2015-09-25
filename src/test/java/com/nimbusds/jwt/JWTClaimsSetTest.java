@@ -2,12 +2,7 @@ package com.nimbusds.jwt;
 
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -22,7 +17,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-08-22
+ * @version 2015-09-25
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -669,5 +664,44 @@ public class JWTClaimsSetTest extends TestCase {
 		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("alice").build();
 
 		assertEquals("alice", claimsSet.toType(transformer));
+	}
+
+
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/154/list-of-strings-as-custom-claim-will-add
+	public void testParseListOfStrings()
+		throws ParseException {
+
+		String json = "{ \"alg\":\"HS256\", \"aud\":[\"a\",\"b\"],\"test\":[\"a\",\"b\"] }";
+
+		JWTClaimsSet claimsSet = JWTClaimsSet.parse(json);
+
+		assertEquals("HS256", claimsSet.getStringClaim("alg"));
+
+		List<String> audList = claimsSet.getStringListClaim("aud");
+		assertEquals("a", audList.get(0));
+		assertEquals("b", audList.get(1));
+		assertEquals(2, audList.size());
+
+		List<String> testList = claimsSet.getStringListClaim("test");
+		assertEquals("a", testList.get(0));
+		assertEquals("b", testList.get(1));
+		assertEquals(2, testList.size());
+
+		assertEquals(3, claimsSet.getClaims().size());
+	}
+
+
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/154/list-of-strings-as-custom-claim-will-add
+	public void testListOfStrings() {
+
+		List<String> audList = new LinkedList<>();
+		audList.add("a");
+		audList.add("b");
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("aud", audList)
+			.build();
+
+		assertEquals("{\"aud\":[\"a\",\"b\"]}", claimsSet.toJSONObject().toString());
 	}
 }

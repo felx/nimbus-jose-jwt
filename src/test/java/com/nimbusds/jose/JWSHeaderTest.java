@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.net.URI;
+import java.text.ParseException;
 import java.util.*;
 
 import junit.framework.TestCase;
@@ -17,7 +18,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWS header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2015-09-25
  */
 public class JWSHeaderTest extends TestCase {
 
@@ -346,6 +347,43 @@ public class JWSHeaderTest extends TestCase {
 		} catch (UnsupportedOperationException e) {
 			// ok
 		}
+	}
+
+
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/154/list-of-strings-as-custom-claim-will-add
+	public void testParseCustomParamListOfStrings()
+		throws ParseException {
+
+		String json = "{ \"alg\":\"HS256\", \"aud\":[\"a\",\"b\"],\"test\":[\"a\",\"b\"] }";
+
+		JWSHeader header = JWSHeader.parse(json);
+
+		assertEquals(JWSAlgorithm.HS256, header.getAlgorithm());
+
+		List<?> audList = (List)header.getCustomParam("aud");
+		assertEquals("a", audList.get(0));
+		assertEquals("b", audList.get(1));
+		assertEquals(2, audList.size());
+
+		List<?> testList = (List)header.getCustomParam("test");
+		assertEquals("a", testList.get(0));
+		assertEquals("b", testList.get(1));
+		assertEquals(2, testList.size());
+	}
+
+
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/154/list-of-strings-as-custom-claim-will-add
+	public void testSetCustomParamListOfStrings() {
+
+		List<String> audList = new LinkedList<>();
+		audList.add("a");
+		audList.add("b");
+
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256)
+			.customParam("aud", audList)
+			.build();
+
+		assertTrue(header.toJSONObject().toJSONString().contains("\"aud\":[\"a\",\"b\"]"));
 	}
 }
 
