@@ -1,0 +1,73 @@
+package com.nimbusds.jose;
+
+
+import java.text.ParseException;
+
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
+import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
+
+
+/**
+ * Examples verification of draft-ietf-jose-jws-signing-input-options-02
+ */
+public class UnencodedJWSPayloadTest extends TestCase {
+
+	// From https://tools.ietf.org/html/draft-ietf-jose-jws-signing-input-options-02#section-4
+	static final String octJWKString = "{" +
+		"\"kty\":\"oct\"," +
+		"\"k\":\"AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow\"" +
+		"}";
+
+
+	static final OctetSequenceKey JWK;
+
+
+	static {
+		try {
+			JWK = OctetSequenceKey.parse(octJWKString);
+		} catch (ParseException e) {
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
+
+	public void testPayloadAsBase64URL() {
+
+		assertEquals("$.02", new Base64URL("JC4wMg").decodeToString());
+	}
+
+
+	public void testControlJWS()
+		throws Exception {
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("$.02"));
+		jwsObject.sign(new MACSigner(JWK));
+		String expected = "eyJhbGciOiJIUzI1NiJ9.JC4wMg.5mvfOroL-g7HyqJoozehmsaqmvTYGEq5jTI1gVvoEoQ";
+		assertEquals(expected, jwsObject.serialize());
+	}
+
+
+	public void testB64False()
+		throws Exception {
+
+		Base64URL headerB64 = new Base64URL("eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2V9");
+		JWSHeader header = JWSHeader.parse(headerB64);
+		assertEquals(JWSAlgorithm.HS256, header.getAlgorithm());
+		assertFalse((Boolean) header.getCustomParam("b64"));
+		assertEquals(2, header.toJSONObject().size());
+
+		JWSSigner signer = new MACSigner(JWK);
+
+		byte[] headerBytes = (header.toBase64URL().toString() + '.').getBytes("UTF-8");
+		byte[] payloadBytes = "$.02".getBytes("UTF-8");
+		byte[] signingInput = new byte[headerBytes.length + payloadBytes.length];
+		System.arraycopy(headerBytes, 0, signingInput, 0, headerBytes.length);
+		System.arraycopy(payloadBytes, 0, signingInput, headerBytes.length, payloadBytes.length);
+
+		Base64URL signature = signer.sign(header, signingInput);
+		Base64URL expectedSignature = new Base64URL("GsyM6AQJbQHY8aQKCbZSPJHzMRWo3HKIlcDuXof7nqs");
+		assertEquals(expectedSignature, signature);
+	}
+}
