@@ -2,13 +2,9 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URI;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.text.ParseException;
-import java.util.Map;
 import java.util.Set;
 
 import javax.crypto.SecretKey;
@@ -19,7 +15,6 @@ import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -45,7 +40,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2015-09-21
+ * @version 2015-09-28
  */
 @Immutable
 public final class OctetSequenceKey extends JWK {
@@ -377,24 +372,13 @@ public final class OctetSequenceKey extends JWK {
 
 
 	@Override
-	public Base64URL computeThumbprint(final String hashAlg)
-		throws JOSEException {
+	public LinkedHashMap<String,?> getRequiredParams() {
 
 		// Put mandatory params in sorted order
-		Map<String,String> mandatoryParams = new LinkedHashMap<>();
-		mandatoryParams.put("k", k.toString());
-		mandatoryParams.put("kty", getKeyType().toString());
-		MessageDigest md;
-
-		try {
-			md = MessageDigest.getInstance(hashAlg);
-		} catch (NoSuchAlgorithmException e) {
-			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
-		}
-
-		md.update(JSONObject.toJSONString(mandatoryParams).getBytes(Charset.forName("UTF-8")));
-
-		return Base64URL.encode(md.digest());
+		LinkedHashMap<String,String> requiredParams = new LinkedHashMap<>();
+		requiredParams.put("k", k.toString());
+		requiredParams.put("kty", getKeyType().toString());
+		return requiredParams;
 	}
 
 

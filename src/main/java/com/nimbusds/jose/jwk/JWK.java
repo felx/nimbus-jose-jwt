@@ -3,16 +3,13 @@ package com.nimbusds.jose.jwk;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import com.nimbusds.jose.JOSEException;
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -46,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-09-21
+ * @version 2015-09-28
  */
 public abstract class JWK implements JSONAware {
 
@@ -252,6 +249,16 @@ public abstract class JWK implements JSONAware {
 
 
 	/**
+	 * Returns the required JWK parameters. Intended as input for JWK
+	 * thumbprint computation. See RFC 7638 for more information.
+	 *
+	 * @return The required JWK parameters, sorted alphanumerically by key
+	 *         name and ready for JSON serialisation.
+	 */
+	public abstract LinkedHashMap<String,?> getRequiredParams();
+
+
+	/**
 	 * Computes the SHA-256 thumbprint of this JWK. See RFC 7638 for more
 	 * information.
 	 *
@@ -277,8 +284,11 @@ public abstract class JWK implements JSONAware {
 	 *
 	 * @throws JOSEException If the hash algorithm is not supported.
 	 */
-	public abstract Base64URL computeThumbprint(final String hashAlg)
-		throws JOSEException;
+	public Base64URL computeThumbprint(final String hashAlg)
+		throws JOSEException {
+
+		return ThumbprintUtils.compute(hashAlg, this);
+	}
 
 
 	/**

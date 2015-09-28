@@ -3,10 +3,8 @@ package com.nimbusds.jose.jwk;
 
 import java.net.URI;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.KeyPair;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -113,7 +111,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2015-09-21
+ * @version 2015-09-28
  */
 @Immutable
 public final class RSAKey extends JWK {
@@ -1517,26 +1515,14 @@ public final class RSAKey extends JWK {
 
 
 	@Override
-	public Base64URL computeThumbprint(final String hashAlg)
-		throws JOSEException {
+	public LinkedHashMap<String,?> getRequiredParams() {
 
 		// Put mandatory params in sorted order
-		Map<String,String> mandatoryParams = new LinkedHashMap<>();
-		mandatoryParams.put("e", e.toString());
-		mandatoryParams.put("kty", getKeyType().getValue());
-		mandatoryParams.put("n", n.toString());
-
-		MessageDigest md;
-
-		try {
-			md = MessageDigest.getInstance(hashAlg);
-		} catch (NoSuchAlgorithmException e) {
-			throw new JOSEException("Unsupported hash algorithm: " + e.getMessage(), e);
-		}
-
-		md.update(JSONObject.toJSONString(mandatoryParams).getBytes(Charset.forName("UTF-8")));
-
-		return Base64URL.encode(md.digest());
+		LinkedHashMap<String,String> requiredParams = new LinkedHashMap<>();
+		requiredParams.put("e", e.toString());
+		requiredParams.put("kty", getKeyType().getValue());
+		requiredParams.put("n", n.toString());
+		return requiredParams;
 	}
 
 
