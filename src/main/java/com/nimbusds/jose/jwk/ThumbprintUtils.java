@@ -55,7 +55,26 @@ public final class ThumbprintUtils {
 
 		final LinkedHashMap<String,?> orderedParams = jwk.getRequiredParams();
 
-		final String json = JSONObject.toJSONString(orderedParams);
+		return compute(hashAlg, orderedParams);
+	}
+
+
+	/**
+	 * Computes the thumbprint for the specified required JWK parameters.
+	 *
+	 * @param hashAlg The hash algorithm. Must not be {@code null}.
+	 * @param params  The required JWK parameters, alphanumerically sorted
+	 *                by parameter name and ready for JSON object
+	 *                serialisation. Must not be {@code null}.
+	 *
+	 * @return The JWK thumbprint.
+	 *
+	 * @throws JOSEException If the hash algorithm is not supported.
+	 */
+	public static Base64URL compute(final String hashAlg, final LinkedHashMap<String,?> params)
+		throws JOSEException {
+
+		final String json = JSONObject.toJSONString(params);
 
 		final MessageDigest md;
 

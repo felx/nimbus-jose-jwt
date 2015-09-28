@@ -416,3 +416,7 @@ version 4.1.1 (2015-09-21)
     * Fixes ordering of mandatory JWK parameters in
       OctetSequenceKey.computeThumbprint (iss #152).
 
+version 4.2 (2015-09-28)
+    * Adds thumbprint as key ID setter to JWK builders (iss #153).
+    * Factors out generic JWK thumbprint utility.
+

@@ -16,13 +16,14 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import net.minidev.json.JSONObject;
 
 
 /**
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-23
+ * @version 2015-09-28
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -363,6 +364,38 @@ public class OctetSequenceKeyTest extends TestCase {
 		OctetSequenceKey jwk = new OctetSequenceKey.Builder(k).build();
 
 		Base64URL thumbprint = jwk.computeThumbprint("SHA-1");
+
+		assertEquals(160 / 8, thumbprint.decode().length);
+	}
+
+
+	public void testThumbprintAsKeyID()
+		throws Exception {
+
+		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
+
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(k).keyIDFromThumbprint().build();
+
+		Base64URL thumbprint = new Base64URL(jwk.getKeyID());
+
+		assertEquals(256 / 8, thumbprint.decode().length);
+
+		String orderedJSON = JSONObject.toJSONString(jwk.getRequiredParams());
+
+		Base64URL expected = Base64URL.encode(MessageDigest.getInstance("SHA-256").digest(orderedJSON.getBytes(Charset.forName("UTF-8"))));
+
+		assertEquals(expected, thumbprint);
+	}
+
+
+	public void testThumbprintSHA1AsKeyID()
+		throws Exception {
+
+		Base64URL k = new Base64URL("GawgguFyGrWKav7AX4VKUg");
+
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(k).keyIDFromThumbprint("SHA-1").build();
+
+		Base64URL thumbprint = new Base64URL(jwk.getKeyID());
 
 		assertEquals(160 / 8, thumbprint.decode().length);
 	}

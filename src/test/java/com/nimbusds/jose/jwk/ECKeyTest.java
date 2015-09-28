@@ -17,13 +17,14 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import net.minidev.json.JSONObject;
 
 
 /**
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-23
+ * @version 2015-09-28
  */
 public class ECKeyTest extends TestCase {
 
@@ -566,6 +567,38 @@ public class ECKeyTest extends TestCase {
 		ECKey ecKey = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).build();
 
 		Base64URL thumbprint = ecKey.computeThumbprint("SHA-1");
+
+		assertEquals(160 / 8, thumbprint.decode().length);
+	}
+
+
+	public void testThumbprintAsKeyID()
+		throws Exception {
+
+		ECKey ecKey = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y)
+			.keyIDFromThumbprint()
+			.build();
+
+		Base64URL thumbprint = new Base64URL(ecKey.getKeyID());
+
+		assertEquals(256 / 8, thumbprint.decode().length);
+
+		String orderedJSON = JSONObject.toJSONString(ecKey.getRequiredParams());
+
+		Base64URL expected = Base64URL.encode(MessageDigest.getInstance("SHA-256").digest(orderedJSON.getBytes(Charset.forName("UTF-8"))));
+
+		assertEquals(expected, thumbprint);
+	}
+
+
+	public void testThumbprintSHA1AsKeyID()
+		throws Exception {
+
+		ECKey ecKey = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y)
+			.keyIDFromThumbprint("SHA-1")
+			.build();
+
+		Base64URL thumbprint = new Base64URL(ecKey.getKeyID());
 
 		assertEquals(160 / 8, thumbprint.decode().length);
 	}

@@ -503,6 +503,55 @@ public final class ECKey extends JWK {
 
 
 		/**
+		 * Sets the ID ({@code kid}) of the JWK to its SHA-256 JWK
+		 * thumbprint (RFC 7638). The key ID can be used to match a
+		 * specific key. This can be used, for instance, to choose a
+		 * key within a {@link JWKSet} during key rollover. The key ID
+		 * may also correspond to a JWS/JWE {@code kid} header
+		 * parameter value.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws JOSEException If the SHA-256 hash algorithm is not
+		 *                       supported.
+		 */
+		public Builder keyIDFromThumbprint()
+			throws JOSEException {
+
+			return keyIDFromThumbprint("SHA-256");
+		}
+
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK to its JWK thumbprint
+		 * (RFC 7638). The key ID can be used to match a specific key.
+		 * This can be used, for instance, to choose a key within a
+		 * {@link JWKSet} during key rollover. The key ID may also
+		 * correspond to a JWS/JWE {@code kid} header parameter value.
+		 *
+		 * @param hashAlg The hash algorithm for the JWK thumbprint
+		 *                computation. Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws JOSEException If the hash algorithm is not
+		 *                       supported.
+		 */
+		public Builder keyIDFromThumbprint(final String hashAlg)
+			throws JOSEException {
+
+			// Put mandatory params in sorted order
+			LinkedHashMap<String,String> requiredParams = new LinkedHashMap<>();
+			requiredParams.put("crv", crv.toString());
+			requiredParams.put("kty", KeyType.EC.getValue());
+			requiredParams.put("x", x.toString());
+			requiredParams.put("y", y.toString());
+			this.kid = ThumbprintUtils.compute(hashAlg, requiredParams).toString();
+			return this;
+		}
+
+
+		/**
 		 * Sets the X.509 certificate URL ({@code x5u}) of the JWK.
 		 *
 		 * @param x5u The X.509 certificate URL, {@code null} if not 

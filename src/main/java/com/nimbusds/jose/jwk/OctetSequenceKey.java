@@ -15,6 +15,7 @@ import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
@@ -220,6 +221,53 @@ public final class OctetSequenceKey extends JWK {
 		public Builder keyID(final String kid) {
 
 			this.kid = kid;
+			return this;
+		}
+
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK to its SHA-256 JWK
+		 * thumbprint (RFC 7638). The key ID can be used to match a
+		 * specific key. This can be used, for instance, to choose a
+		 * key within a {@link JWKSet} during key rollover. The key ID
+		 * may also correspond to a JWS/JWE {@code kid} header
+		 * parameter value.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws JOSEException If the SHA-256 hash algorithm is not
+		 *                       supported.
+		 */
+		public Builder keyIDFromThumbprint()
+			throws JOSEException {
+
+			return keyIDFromThumbprint("SHA-256");
+		}
+
+
+		/**
+		 * Sets the ID ({@code kid}) of the JWK to its JWK thumbprint
+		 * (RFC 7638). The key ID can be used to match a specific key.
+		 * This can be used, for instance, to choose a key within a
+		 * {@link JWKSet} during key rollover. The key ID may also
+		 * correspond to a JWS/JWE {@code kid} header parameter value.
+		 *
+		 * @param hashAlg The hash algorithm for the JWK thumbprint
+		 *                computation. Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 *
+		 * @throws JOSEException If the hash algorithm is not
+		 *                       supported.
+		 */
+		public Builder keyIDFromThumbprint(final String hashAlg)
+			throws JOSEException {
+
+			// Put mandatory params in sorted order
+			LinkedHashMap<String,String> requiredParams = new LinkedHashMap<>();
+			requiredParams.put("k", k.toString());
+			requiredParams.put("kty", KeyType.OCT.getValue());
+			this.kid = ThumbprintUtils.compute(hashAlg, requiredParams).toString();
 			return this;
 		}
 
