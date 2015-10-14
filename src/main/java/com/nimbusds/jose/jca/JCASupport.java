@@ -16,7 +16,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 /**
  * Java Cryptography Architecture (JCA) support helper.
  */
-public class JCASupport {
+public final class JCASupport {
 
 
 	/**
@@ -267,5 +267,13 @@ public class JCASupport {
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Prevents public instantiation.
+	 */
+	private JCASupport() {
+
 	}
 }
