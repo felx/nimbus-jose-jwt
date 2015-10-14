@@ -420,3 +420,7 @@ version 4.2 (2015-09-28)
     * Adds thumbprint as key ID setter to JWK builders (iss #153).
     * Factors out generic JWK thumbprint utility.
 
+version 4.3 (2015-10-14)
+    * Adds JCASupport class for checking JCA provider support of specified
+      JWS and JWE algorithms.
+
