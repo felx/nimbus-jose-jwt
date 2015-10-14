@@ -30,7 +30,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-23
+ * @version 2015-10-14
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {
@@ -164,6 +164,55 @@ public final class JWEAlgorithm extends Algorithm {
 	 * (RFC 3394) using 256 bit keys for the encryption scheme (optional).
 	 */
 	public static final JWEAlgorithm PBES2_HS512_A256KW = new JWEAlgorithm("PBES2-HS512+A256KW", Requirement.OPTIONAL);
+
+
+	/**
+	 * JWE algorithm family.
+	 */
+	public static final class Family extends AlgorithmFamily<JWEAlgorithm> {
+
+
+		/**
+		 * RSA key encryption.
+		 */
+		public static final Family RSA = new Family(RSA1_5, RSA_OAEP, RSA_OAEP_256);
+
+
+		/**
+		 * AES key wrap.
+		 */
+		public static final Family AES_KW = new Family(A128KW, A192KW, A256KW);
+
+
+		/**
+		 * Elliptic Curve Diffie-Hellman Ephemeral Static key
+		 * agreement.
+		 */
+		public static final Family ECDH_ES = new Family(JWEAlgorithm.ECDH_ES, ECDH_ES_A128KW, ECDH_ES_A192KW, ECDH_ES_A256KW);
+
+
+		/**
+		 * AES GCM key wrap.
+		 */
+		public static final Family AES_GCM_KW = new Family(A128GCMKW, A192GCMKW, A256GCMKW);
+
+
+		/**
+		 * Password-Based Cryptography Specification Version 2.0
+		 */
+		public static final Family PBES2 = new Family(PBES2_HS256_A128KW, PBES2_HS384_A192KW, PBES2_HS512_A256KW);
+
+
+		/***
+		 * Creates a new JWE algorithm family.
+		 *
+		 * @param algs The JWE algorithms of the family. Must not be
+		 *             {@code null}.
+		 */
+		public Family(final JWEAlgorithm ... algs) {
+			super(algs);
+		}
+	}
 
 
 	/**

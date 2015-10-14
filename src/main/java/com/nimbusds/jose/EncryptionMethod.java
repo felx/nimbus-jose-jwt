@@ -24,7 +24,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional encryption method names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-05-23
+ * @version 2015-10-14
  */
 @Immutable
 public final class EncryptionMethod extends Algorithm {
@@ -98,6 +98,36 @@ public final class EncryptionMethod extends Algorithm {
 	 */
 	public static final EncryptionMethod A256GCM = 
 		new EncryptionMethod("A256GCM", Requirement.RECOMMENDED, 256);
+
+
+	/**
+	 * Encryption method family.
+	 */
+	public static final class Family extends AlgorithmFamily<EncryptionMethod> {
+
+
+		/**
+		 * AES/CBC/HMAC with SHA-2.
+		 */
+		public static final Family AES_CBC_HMAC_SHA = new Family(A128CBC_HS256, A192CBC_HS384, A256CBC_HS512);
+
+
+		/**
+		 * AES/GCM.
+		 */
+		public static final Family AES_GCM = new Family(A128GCM, A192GCM, A256GCM);
+
+
+		/***
+		 * Creates a new encryption method family.
+		 *
+		 * @param encs The encryption methods of the family. Must not
+		 *             be {@code null}.
+		 */
+		public Family(final EncryptionMethod ... encs) {
+			super(encs);
+		}
+	}
 
 
 	/**

@@ -29,7 +29,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2013-08-20
+ * @version 2015-10-14
  */
 @Immutable
 public final class JWSAlgorithm extends Algorithm {
@@ -108,6 +108,43 @@ public final class JWSAlgorithm extends Algorithm {
 	 * function with SHA-512 (optional).
 	 */
 	public static final JWSAlgorithm PS512 = new JWSAlgorithm("PS512", Requirement.OPTIONAL);
+
+
+	/**
+	 * JWS algorithm family.
+	 */
+	public static final class Family extends AlgorithmFamily<JWSAlgorithm> {
+
+
+		/**
+		 * HMAC using a SHA-2 hash.
+		 */
+		public static final Family HMAC_SHA = new Family(HS256, HS384, HS512);
+
+
+		/**
+		 * RSA signature (RSASSA-PKCS-v1_5 or RSASSA-PSS) using a SHA-2
+		 * hash.
+		 */
+		public static final Family RSA = new Family(RS256, RS384, RS512, PS256, PS384, PS512);
+
+
+		/**
+		 * Elliptic Curve signature (ECDSA) using a SHA-2 hash.
+		 */
+		public static final Family EC = new Family(ES256, ES384, ES512);
+
+
+		/***
+		 * Creates a new JWS algorithm family.
+		 *
+		 * @param algs The JWS algorithms of the family. Must not be
+		 *             {@code null}.
+		 */
+		public Family(final JWSAlgorithm ... algs) {
+			super(algs);
+		}
+	}
 
 
 	/**

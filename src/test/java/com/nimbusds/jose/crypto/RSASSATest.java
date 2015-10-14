@@ -355,13 +355,9 @@ public class RSASSATest extends TestCase {
 
 
 		RSASSASigner signer = new RSASSASigner(privateKey);
-		signer.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
-
 		assertNotNull("Private key check", signer.getPrivateKey());
 
 		RSASSAVerifier verifier = new RSASSAVerifier(publicKey);
-		verifier.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
-
 		assertNotNull("Public key check", verifier.getPublicKey());
 
 		testSignAndVerifyCycle(JWSAlgorithm.RS256, signer, verifier);
