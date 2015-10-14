@@ -13,8 +13,11 @@ import java.util.HashSet;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.Base64;
+import com.nimbusds.jose.util.JSONObjectUtils;
 import junit.framework.TestCase;
 
+import net.minidev.json.JSONObject;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
@@ -779,5 +782,60 @@ public class ECDHCryptoTest extends TestCase {
 			// ok
 			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
 		}
+	}
+
+
+	// See https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/157/gojose-interop-issue-ecdh
+	public void testGoLangJWE()
+		throws Exception {
+
+		String jweJSON = "{\n" +
+			"\n" +
+			"   \"protected\": \"eyJhbGciOiJFQ0RILUVTIiwiZW5jIjoiQTEyOEdDTSIsImVwayI6eyJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6IjBVVzFQUHJUYks5LVVzZVdDS19XV2syMzFCWmZ6VXY5enh0ZWhib2NRN3MiLCJ5IjoiUWpVM2RlWDdkckg3RjhfUldRVWJGZ2tyWHlCbnFPWnZMNjJyX0VBc0xFOCJ9fQ\",\n" +
+			"\n" +
+			"   \"aad\": \"RklDTw\",\n" +
+			"\n" +
+			"   \"iv\": \"5TQxIXL5lHcHvhZo\",\n" +
+			"\n" +
+			"   \"ciphertext\": \"EdCnYSspNrHDXNWR9jeuVxsxtDQVNzvftqcjGCtld24k9ktdWsHVoKVYUZFjpOhe\",\n" +
+			"\n" +
+			"   \"tag\": \"dqczvs5e3yRB6lcrIS4ckA\"\n" +
+			"\n" +
+			"}";
+
+		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(jweJSON);
+
+		Base64URL header = new Base64URL(JSONObjectUtils.getString(jsonObject, "protected"));
+		Base64URL key = null;
+		Base64URL iv = new Base64URL(JSONObjectUtils.getString(jsonObject, "iv"));
+		Base64URL ciphertext = new Base64URL(JSONObjectUtils.getString(jsonObject, "ciphertext"));
+		Base64URL tag = new Base64URL(JSONObjectUtils.getString(jsonObject, "tag"));
+
+		JWEObject jweObject = new JWEObject(header, key, iv, ciphertext, tag);
+
+		assertEquals(JWEAlgorithm.ECDH_ES, jweObject.getHeader().getAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
+
+		String jwkJSON = "{\n" +
+			"\n" +
+			"   \"kty\": \"EC\",\n" +
+			"\n" +
+			"   \"crv\": \"P-256\",\n" +
+			"\n" +
+			"   \"x\": \"1oW5YPAw4Uw2TdQZZ4MJpkXAygAo_qVgqWuJVGtpYeY\",\n" +
+			"\n" +
+			"   \"y\": \"-O4w6ukCPWDOkF2QzaH8bw-GAFR0qPZIHbK3bos34F4\",\n" +
+			"\n" +
+			"   \"d\": \"xllkXSQvfD3NhtKQqTEQhUfPJvai_K8vrXtsnOF9e9A\"\n" +
+			"\n" +
+			"}";
+
+		ECKey ecKey = ECKey.parse(jwkJSON);
+		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+
+		ECDHDecrypter decrypter = new ECDHDecrypter(ecKey);
+		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+
+		jweObject.decrypt(decrypter);
 	}
 }
