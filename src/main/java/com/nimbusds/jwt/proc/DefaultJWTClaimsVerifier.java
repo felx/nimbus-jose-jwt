@@ -23,10 +23,25 @@ import com.nimbusds.jwt.JWTClaimsSet;
  * <p>This class may be extended to perform additional checks.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-27
+ * @version 2015-10-20
  */
 @ThreadSafe
 public class DefaultJWTClaimsVerifier implements JWTClaimsVerifier {
+
+
+	// Cache exceptions
+
+
+	/**
+	 * Expired JWT.
+	 */
+	private static final BadJWTException EXPIRED_JWT_EXCEPTION = new BadJWTException("Expired JWT");
+
+
+	/**
+	 * JWT before use time.
+	 */
+	private static final BadJWTException JWT_BEFORE_USE_EXCEPTION = new BadJWTException("JWT before use time");
 
 
 	@Override
@@ -40,7 +55,7 @@ public class DefaultJWTClaimsVerifier implements JWTClaimsVerifier {
 		if (exp != null) {
 
 			if (now.after(exp)) {
-				throw new BadJWTException("Expired JWT");
+				throw EXPIRED_JWT_EXCEPTION;
 			}
 		}
 
@@ -49,7 +64,7 @@ public class DefaultJWTClaimsVerifier implements JWTClaimsVerifier {
 		if (nbf != null) {
 
 			if (now.before(nbf)) {
-				throw new BadJWTException("JWT before use time");
+				throw JWT_BEFORE_USE_EXCEPTION;
 			}
 		}
 	}

@@ -426,3 +426,6 @@ version 4.3 (2015-10-14)
     * Adds JCASupport class for checking JCA provider support of specified
       JWS and JWE algorithms.
 
+version 4.3.1 (2015-10-20)
+    * Caches exceptions emitted by DefaultJWTClaimsVerifier.
+
