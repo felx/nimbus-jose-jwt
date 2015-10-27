@@ -26,10 +26,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>Conversion relations:
  *
  * <pre>
- * JSONObject <=> String <=> Base64URL
- *                       <=> byte[]
- *                       <=> JWSObject
- *                       <=> SignedJWT
+ * JSONObject &lt;=&gt; String &lt;=&gt; Base64URL
+ *                       &lt;=&gt; byte[]
+ *                       &lt;=&gt; JWSObject
+ *                       &lt;=&gt; SignedJWT
  * </pre>
  *
  * @author Vladimir Dzhuvinov
@@ -473,6 +473,7 @@ public final class Payload {
 	/**
 	 * Returns a transformation of this payload.
 	 *
+	 * @param <T> Type of the result.
 	 * @param transformer The payload transformer. Must not be
 	 *                    {@code null}.
 	 *

@@ -4,7 +4,6 @@ package com.nimbusds.jose.jwk;
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.*;
-import java.util.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -13,6 +12,9 @@ import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 

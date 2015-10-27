@@ -149,7 +149,9 @@ public class JWKSet {
 	 * 
 	 * <p>If more than one key exists in the JWK Set with the same 
 	 * identifier, this function returns only the first one in the set.
-	 * 
+	 *
+	 * @param kid They key identifier.
+	 *
 	 * @return The key identified by {@code kid} or {@code null} if no key 
 	 *         exists.
 	 */

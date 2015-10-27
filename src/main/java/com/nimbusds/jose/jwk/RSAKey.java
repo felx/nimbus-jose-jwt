@@ -1666,7 +1666,7 @@ public final class RSAKey extends JWK {
 	 * representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   @code null}.
+	 *                   {@code null}.
 	 *
 	 * @return The public / private RSA Key.
 	 *

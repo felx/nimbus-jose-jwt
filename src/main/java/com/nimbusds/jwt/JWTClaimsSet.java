@@ -751,6 +751,7 @@ public final class JWTClaimsSet {
 	/**
 	 * Returns a transformation of this JWT claims set.
 	 *
+	 * @param <T> Type of the result.
 	 * @param transformer The JWT claims set transformer. Must not be
 	 *                    {@code null}.
 	 *
