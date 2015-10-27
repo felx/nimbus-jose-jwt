@@ -1,6 +1,7 @@
 package com.nimbusds.jose.util;
 
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
 
@@ -16,7 +17,7 @@ import net.minidev.json.JSONValue;
  * @author Vladimir Dzhuvinov
  */
 @Immutable
-public class Base64 implements JSONAware {
+public class Base64 implements JSONAware, Serializable {
 
 
 	/**

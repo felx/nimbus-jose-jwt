@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
@@ -16,7 +17,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @version 2015-06-10
  */
-public abstract class JOSEObject {
+public abstract class JOSEObject implements Serializable {
 	
 	
 	/**

@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 
@@ -36,7 +37,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version 2015-07-23
  */
 @Immutable
-public final class Payload {
+public final class Payload implements Serializable {
 
 
 	/**

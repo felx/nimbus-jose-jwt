@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
@@ -56,7 +57,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version 2015-08-22
  */
 @Immutable
-public final class JWTClaimsSet {
+public final class JWTClaimsSet implements Serializable {
 
 
 	private static final String ISSUER_CLAIM = "iss";

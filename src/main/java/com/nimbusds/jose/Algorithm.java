@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
+
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -21,7 +23,7 @@ import net.minidev.json.JSONObject;
  * @version 2013-03-27
  */
 @Immutable
-public class Algorithm implements JSONAware {
+public class Algorithm implements JSONAware, Serializable {
 
 
 	/**
