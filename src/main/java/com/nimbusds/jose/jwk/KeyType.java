@@ -33,6 +33,9 @@ import com.nimbusds.jose.Requirement;
 public final class KeyType implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The key type value.
 	 */

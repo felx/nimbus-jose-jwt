@@ -26,6 +26,9 @@ import net.minidev.json.JSONObject;
 public class Algorithm implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * No algorithm (unsecured JOSE object without signature / encryption).
 	 */

@@ -47,6 +47,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public final class PlainHeader extends Header {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The registered parameter names.
 	 */

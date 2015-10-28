@@ -28,6 +28,9 @@ import net.minidev.json.JSONObject;
 public final class CompressionAlgorithm implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * DEFLATE Compressed Data Format Specification version 1.3, as 
 	 * described in RFC 1951.

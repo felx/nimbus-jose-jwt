@@ -31,6 +31,9 @@ import net.minidev.json.JSONObject;
 public final class JOSEObjectType implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Compact encoded JOSE object type.
 	 */

@@ -60,6 +60,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public final class JWTClaimsSet implements Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	private static final String ISSUER_CLAIM = "iss";
 	private static final String SUBJECT_CLAIM = "sub";
 	private static final String AUDIENCE_CLAIM = "aud";
@@ -482,7 +485,7 @@ public final class JWTClaimsSet implements Serializable {
 		List<?> list;
 
 		try {
-			list = (List)getClaim(name);
+			list = (List<?>)getClaim(name);
 
 		} catch (ClassCastException e) {
 			throw new ParseException("The \"" + name + "\" claim is not a list / JSON array", 0);

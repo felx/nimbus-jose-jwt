@@ -65,6 +65,9 @@ import com.nimbusds.jose.util.X509CertChainUtils;
 public final class JWEHeader extends CommonSEHeader {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The registered parameter names.
 	 */

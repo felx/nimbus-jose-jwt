@@ -84,6 +84,9 @@ public final class Payload implements Serializable {
 	}
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * UTF-8 is the character set for all conversions between strings and
 	 * byte arrays.
@@ -94,7 +97,7 @@ public final class Payload implements Serializable {
 	/**
 	 * The original payload data type.
 	 */
-	private Origin origin;
+	private final Origin origin;
 
 
 	/**

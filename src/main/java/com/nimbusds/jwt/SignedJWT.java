@@ -24,6 +24,9 @@ import com.nimbusds.jose.util.Base64URL;
 public class SignedJWT extends JWSObject implements JWT {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Creates a new to-be-signed JSON Web Token (JWT) with the specified
 	 * header and claims set. The initial state will be 

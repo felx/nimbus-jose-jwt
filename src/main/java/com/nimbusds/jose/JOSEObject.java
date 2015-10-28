@@ -20,6 +20,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public abstract class JOSEObject implements Serializable {
 	
 	
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The MIME type of JOSE objects serialised to a compact form:
 	 * {@code application/jose; charset=UTF-8}

@@ -50,6 +50,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public abstract class JWK implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The MIME type of JWK objects: 
 	 * {@code application/jwk+json; charset=UTF-8}

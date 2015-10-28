@@ -18,6 +18,9 @@ import com.nimbusds.jose.util.Base64URL;
 public class PlainObject extends JOSEObject {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The header.
 	 */

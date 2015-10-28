@@ -47,6 +47,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public final class OctetSequenceKey extends JWK {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The key value.
 	 */

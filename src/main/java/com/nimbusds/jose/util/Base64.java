@@ -20,6 +20,9 @@ import net.minidev.json.JSONValue;
 public class Base64 implements JSONAware, Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * UTF-8 is the required character set for all JOSE + JWT objects.
 	 */

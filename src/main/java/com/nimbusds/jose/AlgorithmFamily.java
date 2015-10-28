@@ -17,6 +17,9 @@ import net.jcip.annotations.Immutable;
 class AlgorithmFamily <T extends Algorithm> extends LinkedHashSet<T> {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Creates a new algorithm family.
 	 *

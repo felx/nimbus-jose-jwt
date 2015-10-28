@@ -24,6 +24,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public abstract class Header implements Serializable {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The algorithm ({@code alg}) parameter.
 	 */

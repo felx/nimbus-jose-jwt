@@ -36,6 +36,9 @@ import net.jcip.annotations.Immutable;
 public final class JWEAlgorithm extends Algorithm {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * RSAES-PKCS1-V1_5 (RFC 3447) (required).
 	 */
@@ -170,6 +173,9 @@ public final class JWEAlgorithm extends Algorithm {
 	 * JWE algorithm family.
 	 */
 	public static final class Family extends AlgorithmFamily<JWEAlgorithm> {
+
+
+		private static final long serialVersionUID = 1L;
 
 
 		/**
