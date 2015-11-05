@@ -19,6 +19,9 @@ import com.nimbusds.jose.util.Base64URL;
 public class JWSObject extends JOSEObject {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Enumeration of the states of a JSON Web Signature (JWS) object.
 	 */

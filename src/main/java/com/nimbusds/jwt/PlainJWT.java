@@ -24,6 +24,9 @@ import com.nimbusds.jose.util.Base64URL;
 public class PlainJWT extends PlainObject implements JWT {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Creates a new unsecured (plain) JSON Web Token (JWT) with a default
 	 * {@link com.nimbusds.jose.PlainHeader} and the specified claims 

@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
@@ -56,7 +57,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @version 2015-08-22
  */
 @Immutable
-public final class JWTClaimsSet {
+public final class JWTClaimsSet implements Serializable {
+
+
+	private static final long serialVersionUID = 1L;
 
 
 	private static final String ISSUER_CLAIM = "iss";
@@ -481,7 +485,7 @@ public final class JWTClaimsSet {
 		List<?> list;
 
 		try {
-			list = (List)getClaim(name);
+			list = (List<?>)getClaim(name);
 
 		} catch (ClassCastException e) {
 			throw new ParseException("The \"" + name + "\" claim is not a list / JSON array", 0);
@@ -751,6 +755,7 @@ public final class JWTClaimsSet {
 	/**
 	 * Returns a transformation of this JWT claims set.
 	 *
+	 * @param <T> Type of the result.
 	 * @param transformer The JWT claims set transformer. Must not be
 	 *                    {@code null}.
 	 *

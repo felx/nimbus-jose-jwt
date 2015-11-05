@@ -1,6 +1,7 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.Serializable;
 import java.net.URI;
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -117,12 +118,18 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public final class RSAKey extends JWK {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Other Primes Info, represents the private {@code oth} parameter of a
 	 * RSA JWK. This class is immutable.
 	 */
 	@Immutable
-	public static class OtherPrimesInfo {
+	public static class OtherPrimesInfo implements Serializable {
+
+
+		private static final long serialVersionUID = 1L;
 
 
 		 /**
@@ -1666,7 +1673,7 @@ public final class RSAKey extends JWK {
 	 * representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   @code null}.
+	 *                   {@code null}.
 	 *
 	 * @return The public / private RSA Key.
 	 *

@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 
@@ -26,17 +27,17 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * <p>Conversion relations:
  *
  * <pre>
- * JSONObject <=> String <=> Base64URL
- *                       <=> byte[]
- *                       <=> JWSObject
- *                       <=> SignedJWT
+ * JSONObject &lt;=&gt; String &lt;=&gt; Base64URL
+ *                       &lt;=&gt; byte[]
+ *                       &lt;=&gt; JWSObject
+ *                       &lt;=&gt; SignedJWT
  * </pre>
  *
  * @author Vladimir Dzhuvinov
  * @version 2015-07-23
  */
 @Immutable
-public final class Payload {
+public final class Payload implements Serializable {
 
 
 	/**
@@ -83,6 +84,9 @@ public final class Payload {
 	}
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * UTF-8 is the character set for all conversions between strings and
 	 * byte arrays.
@@ -93,7 +97,7 @@ public final class Payload {
 	/**
 	 * The original payload data type.
 	 */
-	private Origin origin;
+	private final Origin origin;
 
 
 	/**
@@ -473,6 +477,7 @@ public final class Payload {
 	/**
 	 * Returns a transformation of this payload.
 	 *
+	 * @param <T> Type of the result.
 	 * @param transformer The payload transformer. Must not be
 	 *                    {@code null}.
 	 *

@@ -1,6 +1,8 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.Serializable;
+
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -28,7 +30,10 @@ import com.nimbusds.jose.Requirement;
  * @version 2013-05-29
  */
 @Immutable
-public final class KeyType implements JSONAware {
+public final class KeyType implements JSONAware, Serializable {
+
+
+	private static final long serialVersionUID = 1L;
 
 
 	/**

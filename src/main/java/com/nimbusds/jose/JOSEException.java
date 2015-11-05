@@ -10,6 +10,9 @@ package com.nimbusds.jose;
 public class JOSEException extends Exception {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Creates a new JOSE exception with the specified message.
 	 *

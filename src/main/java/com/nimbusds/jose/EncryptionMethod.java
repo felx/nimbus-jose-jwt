@@ -30,6 +30,9 @@ import net.jcip.annotations.Immutable;
 public final class EncryptionMethod extends Algorithm {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The Content Encryption Key (CEK) bit length, zero if not specified.
 	 */
@@ -104,6 +107,9 @@ public final class EncryptionMethod extends Algorithm {
 	 * Encryption method family.
 	 */
 	public static final class Family extends AlgorithmFamily<EncryptionMethod> {
+
+
+		private static final long serialVersionUID = 1L;
 
 
 		/**

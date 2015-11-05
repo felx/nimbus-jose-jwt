@@ -1,6 +1,8 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
+
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -26,7 +28,10 @@ import net.minidev.json.JSONObject;
  * @version 2014-02-15
  */
 @Immutable
-public final class JOSEObjectType implements JSONAware {
+public final class JOSEObjectType implements JSONAware, Serializable {
+
+
+	private static final long serialVersionUID = 1L;
 
 
 	/**

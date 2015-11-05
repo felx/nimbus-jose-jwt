@@ -1,6 +1,7 @@
 package com.nimbusds.jose;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
@@ -20,7 +21,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @version 2014-08-21
  */
-public abstract class Header {
+public abstract class Header implements Serializable {
+
+
+	private static final long serialVersionUID = 1L;
 
 
 	/**

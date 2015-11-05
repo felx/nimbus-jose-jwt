@@ -47,6 +47,9 @@ import com.nimbusds.jose.util.JSONObjectUtils;
 public final class OctetSequenceKey extends JWK {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * The key value.
 	 */
@@ -491,7 +494,7 @@ public final class OctetSequenceKey extends JWK {
 	 * representation.
 	 *
 	 * @param jsonObject The JSON object to parse. Must not be 
-	 *                   @code null}.
+	 *                   {@code null}.
 	 *
 	 * @return The octet sequence JWK.
 	 *

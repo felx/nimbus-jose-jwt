@@ -1,6 +1,7 @@
 package com.nimbusds.jwt;
 
 
+import java.io.Serializable;
 import java.text.ParseException;
 
 import com.nimbusds.jose.Header;
@@ -13,7 +14,7 @@ import com.nimbusds.jose.util.Base64URL;
  * @author Vladimir Dzhuvinov
  * @version 2014-08-19
  */
-public interface JWT {
+public interface JWT extends Serializable {
 
 
 	/**

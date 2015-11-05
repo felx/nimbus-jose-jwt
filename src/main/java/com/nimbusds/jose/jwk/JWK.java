@@ -1,6 +1,8 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.Serializable;
+
 import java.net.URI;
 import java.text.ParseException;
 import java.util.*;
@@ -45,7 +47,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Justin Richer
  * @version 2015-09-28
  */
-public abstract class JWK implements JSONAware {
+public abstract class JWK implements JSONAware, Serializable {
+
+
+	private static final long serialVersionUID = 1L;
 
 
 	/**

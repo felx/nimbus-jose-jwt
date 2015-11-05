@@ -1,10 +1,10 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.*;
-import java.util.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -13,6 +13,9 @@ import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.text.ParseException;
+import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import net.jcip.annotations.Immutable;
 
@@ -65,6 +68,9 @@ import com.nimbusds.jose.util.*;
 public final class ECKey extends JWK {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * Cryptographic curve. This class is immutable.
 	 *
@@ -81,7 +87,10 @@ public final class ECKey extends JWK {
 	 * 2009, National Institute of Standards and Technology (NIST).
 	 */
 	@Immutable
-	public static class Curve {
+	public static class Curve implements Serializable {
+
+
+		private static final long serialVersionUID = 1L;
 
 
 		/**

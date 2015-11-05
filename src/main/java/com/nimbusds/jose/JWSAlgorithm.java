@@ -35,6 +35,9 @@ import net.jcip.annotations.Immutable;
 public final class JWSAlgorithm extends Algorithm {
 
 
+	private static final long serialVersionUID = 1L;
+
+
 	/**
 	 * HMAC using SHA-256 hash algorithm (required).
 	 */
@@ -114,6 +117,9 @@ public final class JWSAlgorithm extends Algorithm {
 	 * JWS algorithm family.
 	 */
 	public static final class Family extends AlgorithmFamily<JWSAlgorithm> {
+
+
+		private static final long serialVersionUID = 1L;
 
 
 		/**
