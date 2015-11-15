@@ -438,3 +438,7 @@ version 4.4 (2015-11-05)
 version 4.5 (2015-11-15)
     * Adds JCASupport.isUnlimitedStrength utility for checking if JCA unlimited
       cryptographic strength is supported by the JVM.
+    * Adds legacy support for AES/GCM encryption on Java 6 where
+      javax.crypto.spec.GCMParameterSpec is not available, required
+      BouncyCastle crypto API.
+

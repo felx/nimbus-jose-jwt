@@ -19,7 +19,7 @@ import com.nimbusds.jose.util.ByteUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version 2015-06-05
+ * @version 2015-11-15
  */
 @ThreadSafe
 class AESGCM {
@@ -91,6 +91,11 @@ class AESGCM {
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
 
 			throw new JOSEException("Couldn't create AES/GCM/NoPadding cipher: " + e.getMessage(), e);
+
+		} catch (NoClassDefFoundError e) {
+			// We have Java 6, GCMParameterSpec not available,
+			// switch to BouncyCastle API
+			return LegacyAESGCM.encrypt(secretKey, iv, plainText, authData);
 		}
 
 		cipher.updateAAD(authData);
@@ -151,6 +156,11 @@ class AESGCM {
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | InvalidAlgorithmParameterException e) {
 
 			throw new JOSEException("Couldn't create AES/GCM/NoPadding cipher: " + e.getMessage(), e);
+
+		} catch (NoClassDefFoundError e) {
+			// We have Java 6, GCMParameterSpec not available,
+			// switch to BouncyCastle API
+			return LegacyAESGCM.decrypt(secretKey, iv, cipherText, authData, authTag);
 		}
 
 		cipher.updateAAD(authData);
