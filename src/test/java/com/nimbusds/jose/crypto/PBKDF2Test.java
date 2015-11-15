@@ -83,7 +83,7 @@ public class PBKDF2Test extends TestCase {
 			(byte)117, (byte) 70, (byte)247, (byte)127, (byte)  8, (byte)155, (byte)137, (byte)174,
 			(byte) 42, (byte) 80, (byte)215 };
 
-		System.out.println(new String(salt, Charset.forName("UTF-8")));
+		// System.out.println(new String(salt, Charset.forName("UTF-8")));
 		final int iterationCount = 4096;
 		final int dkLen = 16;
 

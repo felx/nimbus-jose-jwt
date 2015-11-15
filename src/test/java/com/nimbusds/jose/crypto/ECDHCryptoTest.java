@@ -78,8 +78,6 @@ public class ECDHCryptoTest extends TestCase {
 
 		String jwe = jweObject.serialize();
 
-		System.out.println(jwe);
-
 		jweObject = JWEObject.parse(jwe);
 
 		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
@@ -152,8 +150,6 @@ public class ECDHCryptoTest extends TestCase {
 
 		String jwe = jweObject.serialize();
 
-		System.out.println(jwe);
-
 		jweObject = JWEObject.parse(jwe);
 
 		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
@@ -225,8 +221,6 @@ public class ECDHCryptoTest extends TestCase {
 		assertNull(jweObject.getEncryptedKey());
 
 		String jwe = jweObject.serialize();
-
-		System.out.println(jwe);
 
 		jweObject = JWEObject.parse(jwe);
 
@@ -310,8 +304,6 @@ public class ECDHCryptoTest extends TestCase {
 		jwe.setKey(ecJWK.toECPublicKey());
 		String jweString = jwe.getCompactSerialization();
 
-		System.out.println(jweString);
-
 		// Decrypt
 		JWEObject jweObject = JWEObject.parse(jweString);
 		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey()));
@@ -356,8 +348,6 @@ public class ECDHCryptoTest extends TestCase {
 		jwe.setPayload("Hello world!");
 		jwe.setKey(ecJWK.toECPublicKey());
 		String jweString = jwe.getCompactSerialization();
-
-		System.out.println(jweString);
 
 		// Decrypt
 		JWEObject jweObject = JWEObject.parse(jweString);
@@ -596,7 +586,8 @@ public class ECDHCryptoTest extends TestCase {
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 		jweObject.decrypt(decrypter);
 
-		System.out.println(jweObject.getPayload());
+		assertEquals("You can trust us to stick with you through thick and thin–to the bitter end. And you can trust us to keep any secret of yours–closer than you keep it yourself. But you cannot trust us to let you face trouble alone, and go off without a word. We are your friends, Frodo.",
+			jweObject.getPayload().toString());
 	}
 
 
