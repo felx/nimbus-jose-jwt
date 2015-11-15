@@ -18,6 +18,14 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 public class JCASupportTest extends TestCase {
 
 
+	public void testUnlimitedCrypto() {
+
+		String msg = "Unlimited JCE cryptography strength not supported, go to http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html";
+
+		assertTrue(msg, JCASupport.isUnlimitedStrength());
+	}
+
+
 	public void testJWSSupport_Default_Java_7() {
 
 		if (! System.getProperty("java.version").startsWith("1.7")) {

@@ -20,6 +20,28 @@ public final class JCASupport {
 
 
 	/**
+	 * Checks if unlimited cryptographic strength is supported. If not
+	 * download the appropriate jurisdiction policy files for your Java
+	 * edition:
+	 *
+	 * <p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html">JCE Unlimited Strength Jurisdiction Policy Files for Java 7</a>
+	 *
+	 * <p><a href="http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html">JCE Unlimited Strength Jurisdiction Policy Files for Java 8</a>
+	 *
+	 * @return {@code true} if unlimited cryptographic strength is
+	 *         supported, {@code false} if not.
+	 */
+	public static boolean isUnlimitedStrength() {
+
+		try {
+			return Cipher.getMaxAllowedKeyLength("AES") >= 256;
+		} catch (NoSuchAlgorithmException e) {
+			return false;
+		}
+	}
+
+
+	/**
 	 * Checks if the specified JWS algorithm is supported by the default
 	 * system JCA provider(s).
 	 *

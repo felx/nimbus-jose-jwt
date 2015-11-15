@@ -435,4 +435,6 @@ version 4.4 (2015-11-05)
     * JOSEObject, Payload, JWT, JWTClaimsSet, JWK and other classes implement
       Serializable.
 
-
+version 4.5 (2015-11-15)
+    * Adds JCASupport.isUnlimitedStrength utility for checking if JCA unlimited
+      cryptographic strength is supported by the JVM.
