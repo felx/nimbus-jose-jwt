@@ -447,3 +447,9 @@ version 4.6 (2015-11-16)
     * Ensures JCASupport always treats JWE algorithm 'dir' as supported.
     * Fixes parsing of RSA-OAEP-256 JWE algorithm (issue #159).
 
+version 4.7 (2015-11-17)
+    * JWSProvider extends JCAAware (issue #151).
+    * JWEProvider extends JCAAware (issue #151).
+    * JWSVerifierFactory extends JWSProvider (issue #151).
+    * JWEDecrypterFactory extends JWSProvider (issue #151).
+

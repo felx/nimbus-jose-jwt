@@ -5,6 +5,7 @@ import java.security.Key;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSProvider;
 import com.nimbusds.jose.JWSVerifier;
 
 
@@ -12,9 +13,9 @@ import com.nimbusds.jose.JWSVerifier;
  * JSON Web Signature (JWS) verifier factory.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2015-11-16
  */
-public interface JWSVerifierFactory {
+public interface JWSVerifierFactory extends JWSProvider {
 
 
 	/**
