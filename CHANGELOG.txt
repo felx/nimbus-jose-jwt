@@ -442,3 +442,6 @@ version 4.5 (2015-11-15)
       javax.crypto.spec.GCMParameterSpec is not available, required
       BouncyCastle crypto API.
 
+version 4.6 (2015-11-16)
+    * Adds X509CertUtils for parsing DER and PEM encoded X.509 certificates.
+
