@@ -113,6 +113,8 @@ public class JCASupportTest extends TestCase {
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A128GCMKW));
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A192GCMKW));
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A256GCMKW));
+
+		assertTrue(JCASupport.isSupported(JWEAlgorithm.DIR));
 	}
 
 
@@ -142,6 +144,8 @@ public class JCASupportTest extends TestCase {
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A128GCMKW, Security.getProvider("SUN")));
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A192GCMKW, Security.getProvider("SUN")));
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A256GCMKW, Security.getProvider("SUN")));
+
+		assertTrue(JCASupport.isSupported(JWEAlgorithm.DIR, Security.getProvider("SUN")));
 	}
 
 
