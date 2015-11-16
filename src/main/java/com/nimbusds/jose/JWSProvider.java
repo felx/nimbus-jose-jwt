@@ -3,6 +3,9 @@ package com.nimbusds.jose;
 
 import java.util.Set;
 
+import com.nimbusds.jose.jca.JCAAware;
+import com.nimbusds.jose.jca.JCAContext;
+
 
 /**
  * JSON Web Signature (JWS) provider
@@ -10,9 +13,9 @@ import java.util.Set;
  * <p>The JWS provider can be queried to determine its algorithm capabilities.
  *
  * @author  Vladimir Dzhuvinov
- * @version 2015-05-26
+ * @version 2015-11-16
  */
-public interface JWSProvider extends JOSEProvider {
+public interface JWSProvider extends JOSEProvider, JCAAware<JCAContext> {
 
 
 	/**

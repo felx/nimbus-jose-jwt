@@ -7,7 +7,6 @@ import java.util.Set;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEProvider;
-import com.nimbusds.jose.jca.JCAAware;
 import com.nimbusds.jose.jca.JWEJCAContext;
 
 
@@ -16,9 +15,9 @@ import com.nimbusds.jose.jca.JWEJCAContext;
  * decrypters.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2015-11-16
  */
-abstract class BaseJWEProvider implements JWEProvider, JCAAware<JWEJCAContext> {
+abstract class BaseJWEProvider implements JWEProvider {
 
 
 	/**

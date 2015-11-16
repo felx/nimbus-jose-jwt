@@ -3,6 +3,9 @@ package com.nimbusds.jose;
 
 import java.util.Set;
 
+import com.nimbusds.jose.jca.JCAAware;
+import com.nimbusds.jose.jca.JWEJCAContext;
+
 
 /**
  * JSON Web Encryption (JWE) provider.
@@ -12,7 +15,7 @@ import java.util.Set;
  * @author  Vladimir Dzhuvinov
  * @version 2015-05-26
  */
-public interface JWEProvider extends JOSEProvider {
+public interface JWEProvider extends JOSEProvider, JCAAware<JWEJCAContext> {
 
 
 	/**
