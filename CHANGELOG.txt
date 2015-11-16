@@ -451,5 +451,5 @@ version 4.7 (2015-11-17)
     * JWSProvider extends JCAAware (issue #151).
     * JWEProvider extends JCAAware (issue #151).
     * JWSVerifierFactory extends JWSProvider (issue #151).
-    * JWEDecrypterFactory extends JWSProvider (issue #151).
+    * JWEDecrypterFactory extends JWEProvider (issue #151).
 

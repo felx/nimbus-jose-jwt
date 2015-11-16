@@ -107,6 +107,7 @@ public class DefaultJWSVerifierFactory implements JWSVerifierFactory {
 			throw new JOSEException("Unsupported JWS algorithm: " + header.getAlgorithm());
 		}
 
+		// Apply JCA context
 		verifier.getJCAContext().setSecureRandom(jcaContext.getSecureRandom());
 		verifier.getJCAContext().setProvider(jcaContext.getProvider());
 

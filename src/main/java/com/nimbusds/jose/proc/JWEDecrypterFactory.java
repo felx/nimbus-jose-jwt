@@ -6,15 +6,16 @@ import java.security.Key;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEDecrypter;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEProvider;
 
 
 /**
  * JSON Web Encryption (JWE) decrypter factory.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2015-11-16
  */
-public interface JWEDecrypterFactory {
+public interface JWEDecrypterFactory extends JWEProvider {
 
 
 	/**
