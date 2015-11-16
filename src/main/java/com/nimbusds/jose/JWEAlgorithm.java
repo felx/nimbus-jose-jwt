@@ -30,7 +30,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-10-14
+ * @version 2015-11-16
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {
@@ -259,6 +259,8 @@ public final class JWEAlgorithm extends Algorithm {
 			return RSA1_5;
 		} else if (s.equals(RSA_OAEP.getName())) {
 			return RSA_OAEP;
+		} else if (s.equals(RSA_OAEP_256.getName())) {
+			return RSA_OAEP_256;
 		} else if (s.equals(A128KW.getName())) {
 			return A128KW;
 		} else if (s.equals(A192KW.getName())) {
