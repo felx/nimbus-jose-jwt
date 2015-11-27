@@ -5,12 +5,11 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
+import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jwt.util.DateUtils;
 import net.jcip.annotations.Immutable;
-
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-
-import com.nimbusds.jose.util.JSONObjectUtils;
 
 
 /**
@@ -54,7 +53,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-08-22
+ * @version 2015-11-27
  */
 @Immutable
 public final class JWTClaimsSet implements Serializable {
@@ -628,7 +627,7 @@ public final class JWTClaimsSet implements Serializable {
 		} else if (value instanceof Date) {
 			return (Date)value;
 		} else if (value instanceof Number) {
-			return new Date(((Number)value).longValue() * 1000l);
+			return DateUtils.fromSecondsSinceEpoch(((Number)value).longValue());
 		} else {
 			throw new ParseException("The \"" + name + "\" claim is not a Date", 0);
 		}
@@ -718,7 +717,7 @@ public final class JWTClaimsSet implements Serializable {
 
 				// Transform dates to Unix timestamps
 				Date dateValue = (Date) claim.getValue();
-				o.put(claim.getKey(), dateValue.getTime() / 1000);
+				o.put(claim.getKey(), DateUtils.toSecondsSinceEpoch(dateValue));
 
 			} else if (AUDIENCE_CLAIM.equals(claim.getKey())) {
 

@@ -453,3 +453,9 @@ version 4.7 (2015-11-17)
     * JWSVerifierFactory extends JWSProvider (issue #151).
     * JWEDecrypterFactory extends JWEProvider (issue #151).
 
+version 4.8 (2015-11-27)
+    * Adds DateUtils class for converting java.util.Date to Unix epoch times
+      and comparing dates while taking into account permitted clock skew.
+
+
+
