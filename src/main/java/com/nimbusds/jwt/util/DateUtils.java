@@ -40,12 +40,18 @@ public class DateUtils {
 	 * Check if the specified date is after the specified reference, given
 	 * the maximum accepted clock skew.
 	 *
+	 * <p>Formula:
+	 *
+	 * <pre>
+	 * return date +/- clock_skew > reference
+	 * </pre>
+	 *
 	 * @param date                The date to check. Must not be
 	 *                            {@code null}.
 	 * @param reference           The reference date. Must not be
 	 *                            {@code null}.
-	 * @param maxClockSkewSeconds The maximum acceptable clock skew, in
-	 *                            seconds.
+	 * @param maxClockSkewSeconds The maximum acceptable clock skew of the
+	 *                            date value to check, in seconds.
 	 *
 	 * @return {@code true} if the date is before the reference, plus or
 	 *         minus the maximum accepted clock skew, else {@code false}.
@@ -62,12 +68,18 @@ public class DateUtils {
 	 * Checks if the specified data is before the specified reference,
 	 * given the maximum accepted clock skew.
 	 *
+	 * <p>Formula:
+	 *
+	 * <pre>
+	 * return date +/- clock_skew < reference
+	 * </pre>
+	 *
 	 * @param date                The date to check. Must not be
 	 *                            {@code null}.
 	 * @param reference           The reference date. Must not be
 	 *                            {@code null}.
-	 * @param maxClockSkewSeconds The maximum acceptable clock skew, in
-	 *                            seconds.
+	 * @param maxClockSkewSeconds The maximum acceptable clock skew of the
+	 *                            date value to check, in seconds.
 	 *
 	 * @return {@code true} if the date is before the reference, plus or
 	 *         minus the maximum accepted clock skew, else {@code false}.

@@ -102,4 +102,15 @@ public class DateUtilsTest extends TestCase {
 		final long skewSeconds = 1L;
 		assertFalse(DateUtils.isBefore(date, reference, skewSeconds));
 	}
+
+
+	public void testNotBefore() {
+
+		final long skewSeconds = 1L;
+
+		assertTrue(DateUtils.isAfter(new Date(4001L), new Date(5000L), skewSeconds));
+		assertTrue(DateUtils.isAfter(new Date(5000L), new Date(5000L), skewSeconds));
+		assertTrue(DateUtils.isAfter(new Date(6000L), new Date(5000L), skewSeconds));
+		assertFalse(DateUtils.isAfter(new Date(4000L), new Date(5000L), skewSeconds));
+	}
 }
