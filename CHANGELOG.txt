@@ -457,5 +457,9 @@ version 4.8 (2015-11-27)
     * Adds DateUtils class for converting java.util.Date to Unix epoch times
       and comparing dates while taking into account permitted clock skew.
 
+version 4.9 (2015-11-30)
+    * Adds static KeyType.forAlgorithm method for inferring the key type for a
+      standard JOSE algorithm.
+
 
 

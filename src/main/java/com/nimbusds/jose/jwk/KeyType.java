@@ -2,7 +2,11 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.Serializable;
+import java.security.Key;
 
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;
@@ -27,7 +31,7 @@ import com.nimbusds.jose.Requirement;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2013-05-29
+ * @version 2015-11-30
  */
 @Immutable
 public final class KeyType implements JSONAware, Serializable {
@@ -190,6 +194,43 @@ public final class KeyType implements JSONAware, Serializable {
 		} else {
 			
 			return new KeyType(s, null);
+		}
+	}
+
+
+	/**
+	 * Infers the key type for the specified JOSE algorithm.
+	 *
+	 * @param alg The JOSE algorithm. May be {@code null}.
+	 *
+	 * @return The key type, {@code null} if it couldn't be inferred.
+	 */
+	public static KeyType forAlgorithm(final Algorithm alg) {
+
+		if (alg == null) {
+			return null;
+		}
+
+		if (JWSAlgorithm.Family.RSA.contains(alg)) {
+			return KeyType.RSA;
+		} else if (JWSAlgorithm.Family.EC.contains(alg)) {
+			return KeyType.EC;
+		} else if (JWSAlgorithm.Family.HMAC_SHA.contains(alg)) {
+			return KeyType.OCT;
+		} else if (JWEAlgorithm.Family.RSA.contains(alg)) {
+			return KeyType.RSA;
+		} else if (JWEAlgorithm.Family.ECDH_ES.contains(alg)) {
+			return KeyType.EC;
+		} else if (JWEAlgorithm.DIR.equals(alg)) {
+			return KeyType.OCT;
+		} else if (JWEAlgorithm.Family.AES_GCM_KW.contains(alg)) {
+			return KeyType.OCT;
+		} else if (JWEAlgorithm.Family.AES_KW.contains(alg)) {
+			return KeyType.OCT;
+		} else if (JWEAlgorithm.Family.PBES2.contains(alg)) {
+			return KeyType.OCT;
+		} else {
+			return null;
 		}
 	}
 }
