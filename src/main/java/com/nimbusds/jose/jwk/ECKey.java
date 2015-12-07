@@ -62,10 +62,10 @@ import com.nimbusds.jose.util.*;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-09-28
+ * @version 2015-12-08
  */
 @Immutable
-public final class ECKey extends JWK {
+public final class ECKey extends JWK implements AssymetricJWK {
 
 
 	private static final long serialVersionUID = 1L;
@@ -1045,6 +1045,22 @@ public final class ECKey extends JWK {
 			throw new JOSEException(e.getMessage(), e);
 		}
 	}
+
+
+	@Override
+	public PublicKey toPublicKey()
+		throws JOSEException {
+
+		return toECPublicKey();
+	}
+
+
+	@Override
+	public PrivateKey toPrivateKey()
+		throws JOSEException {
+
+		return toECPrivateKey();
+	}
 	
 
 	/**
@@ -1059,6 +1075,7 @@ public final class ECKey extends JWK {
 	 *                       parameters are invalid for a public and / or
 	 *                       private EC key.
 	 */
+	@Override
 	public KeyPair toKeyPair()
 		throws JOSEException {
 

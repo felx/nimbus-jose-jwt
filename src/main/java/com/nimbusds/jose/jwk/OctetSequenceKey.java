@@ -41,10 +41,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2015-09-28
+ * @version 2015-12-08
  */
 @Immutable
-public final class OctetSequenceKey extends JWK {
+public final class OctetSequenceKey extends JWK implements SecretJWK {
 
 
 	private static final long serialVersionUID = 1L;
@@ -402,6 +402,7 @@ public final class OctetSequenceKey extends JWK {
 	 * @return The secret key representation, with an algorithm set to
 	 *         {@code NONE}.
 	 */
+	@Override
 	public SecretKey toSecretKey() {
 
 		return toSecretKey("NONE");

@@ -23,7 +23,7 @@ import net.minidev.json.JSONObject;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-28
+ * @version 2015-12-08
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -40,6 +40,8 @@ public class OctetSequenceKeyTest extends TestCase {
 		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		OctetSequenceKey key = new OctetSequenceKey(k, null, ops, JWSAlgorithm.HS256, "1", x5u, x5t, x5c);
+
+		assertTrue(key instanceof SecretJWK);
 
 		assertEquals(KeyType.OCT, key.getKeyType());
 		assertNull(key.getKeyUse());

@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-09-28
+ * @version 2015-12-08
  */
 public class RSAKeyTest extends TestCase {
 
@@ -335,7 +335,7 @@ public class RSAKeyTest extends TestCase {
 	}
 
 
-	public void testPublicKeyExportAndImport()
+	public void testRSAPublicKeyExportAndImport()
 		throws Exception {
 
 
@@ -357,7 +357,7 @@ public class RSAKeyTest extends TestCase {
 	}
 
 
-	public void testPrivateKeyExportAndImport()
+	public void testRSAPrivateKeyExportAndImport()
 		throws Exception {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
@@ -450,6 +450,58 @@ public class RSAKeyTest extends TestCase {
 		assertTrue(key.getOtherPrimes().isEmpty());
 
 		assertTrue(key.isPrivate());
+	}
+
+
+	public void testPublicKeyExportAndImport()
+		throws Exception {
+
+
+		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e),
+			null, null, null, null,
+			null, null, null);
+
+		assertTrue(key instanceof AssymetricJWK);
+
+		// Public key export
+		RSAPublicKey pubKey = (RSAPublicKey) key.toPublicKey();
+		assertEquals(new Base64URL(n).decodeToBigInteger(), pubKey.getModulus());
+		assertEquals(new Base64URL(e).decodeToBigInteger(), pubKey.getPublicExponent());
+		assertEquals("RSA", pubKey.getAlgorithm());
+
+
+		// Public key import
+		key = new RSAKey(pubKey, null, null, null, null, null, null, null);
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+	}
+
+
+	public void testPrivateKeyExport()
+		throws Exception {
+
+		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
+			new Base64URL(p), new Base64URL(q),
+			new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
+			null,
+			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
+			null, null, null);
+
+		assertTrue(key instanceof AssymetricJWK);
+
+		// Private key export with CRT (2nd form)
+		RSAPrivateKey privKey = (RSAPrivateKey ) key.toPrivateKey();
+		assertEquals(new Base64URL(n).decodeToBigInteger(), privKey.getModulus());
+		assertEquals(new Base64URL(d).decodeToBigInteger(), privKey.getPrivateExponent());
+
+		assertTrue(privKey instanceof RSAPrivateCrtKey);
+		RSAPrivateCrtKey privCrtKey = (RSAPrivateCrtKey) privKey;
+		assertEquals(new Base64URL(e).decodeToBigInteger(), privCrtKey.getPublicExponent());
+		assertEquals(new Base64URL(p).decodeToBigInteger(), privCrtKey.getPrimeP());
+		assertEquals(new Base64URL(q).decodeToBigInteger(), privCrtKey.getPrimeQ());
+		assertEquals(new Base64URL(dp).decodeToBigInteger(), privCrtKey.getPrimeExponentP());
+		assertEquals(new Base64URL(dq).decodeToBigInteger(), privCrtKey.getPrimeExponentQ());
+		assertEquals(new Base64URL(qi).decodeToBigInteger(), privCrtKey.getCrtCoefficient());
 	}
 
 

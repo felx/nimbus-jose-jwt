@@ -461,5 +461,7 @@ version 4.9 (2015-11-30)
     * Adds static KeyType.forAlgorithm method for inferring the key type for a
       standard JOSE algorithm.
 
-
+version 4.10 (2015-12-08)
+    * Adds AsymmetricJWK interface and lets RSAKey and ECKey implement it.
+    * Adds SecretJWK interface and lets OctetSequenceKey implement it.
 

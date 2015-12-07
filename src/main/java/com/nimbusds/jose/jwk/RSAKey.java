@@ -4,9 +4,7 @@ package com.nimbusds.jose.jwk;
 import java.io.Serializable;
 import java.net.URI;
 import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
@@ -112,10 +110,10 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2015-09-28
+ * @version 2015-12-08
  */
 @Immutable
-public final class RSAKey extends JWK {
+public final class RSAKey extends JWK implements AssymetricJWK {
 
 
 	private static final long serialVersionUID = 1L;
@@ -1550,6 +1548,22 @@ public final class RSAKey extends JWK {
 	}
 
 
+	@Override
+	public PublicKey toPublicKey()
+		throws JOSEException {
+
+		return toRSAPublicKey();
+	}
+
+
+	@Override
+	public PrivateKey toPrivateKey()
+		throws JOSEException {
+
+		return toRSAPrivateKey();
+	}
+
+
 	/**
 	 * Returns a standard {@code java.security.KeyPair} representation of 
 	 * this RSA JWK.
@@ -1562,6 +1576,7 @@ public final class RSAKey extends JWK {
 	 *                       parameters are invalid for a public and / or
 	 *                       private RSA key.
 	 */
+	@Override
 	public KeyPair toKeyPair() 
 		throws JOSEException {
 		

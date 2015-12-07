@@ -24,7 +24,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-28
+ * @version 2015-12-08
  */
 public class ECKeyTest extends TestCase {
 
@@ -129,6 +129,8 @@ public class ECKeyTest extends TestCase {
 
 		ECKey key = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, ExampleKeyP256.D,
 			KeyUse.SIGNATURE, ops, JWSAlgorithm.ES256, "1", x5u, x5t, x5c);
+
+		assertTrue(key instanceof AssymetricJWK);
 
 		// Test getters
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
