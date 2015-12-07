@@ -657,8 +657,7 @@ public class ECDHCryptoTest extends TestCase {
 			curveParams.getG(),
 			curveParams.getN());
 
-
-		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC", BouncyCastleProviderSingleton.getInstance());
 		generator.initialize(ecParameterSpec);
 		return generator.generateKeyPair();
 	}

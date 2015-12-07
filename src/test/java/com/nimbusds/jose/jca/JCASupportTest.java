@@ -62,9 +62,13 @@ public class JCASupportTest extends TestCase {
 		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS512, Security.getProvider("SunRsaSign")));
 		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS256, Security.getProvider("SunRsaSign")));
 		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS384, Security.getProvider("SunRsaSign")));
-		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES256, Security.getProvider("SunEC")));
-		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES384, Security.getProvider("SunEC")));
-		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES512, Security.getProvider("SunEC")));
+
+		if (Security.getProvider("SunEC") != null) {
+			// Not supported on OpenJDK
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES256, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES384, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES512, Security.getProvider("SunEC")));
+		}
 	}
 
 
@@ -136,10 +140,13 @@ public class JCASupportTest extends TestCase {
 		assertTrue(JCASupport.isSupported(JWEAlgorithm.PBES2_HS384_A192KW, Security.getProvider("SunJCE")));
 		assertTrue(JCASupport.isSupported(JWEAlgorithm.PBES2_HS512_A256KW, Security.getProvider("SunJCE")));
 
-		assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES, Security.getProvider("SunEC")));
-		assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A128KW, Security.getProvider("SunEC")));
-		assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A192KW, Security.getProvider("SunEC")));
-		assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A256KW, Security.getProvider("SunEC")));
+		if (Security.getProvider("SunEC") != null) {
+			// Not supported on OpenJDK
+			assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A128KW, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A192KW, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWEAlgorithm.ECDH_ES_A256KW, Security.getProvider("SunEC")));
+		}
 
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A128GCMKW, Security.getProvider("SUN")));
 		assertFalse(JCASupport.isSupported(JWEAlgorithm.A192GCMKW, Security.getProvider("SUN")));
