@@ -113,4 +113,26 @@ public class DateUtilsTest extends TestCase {
 		assertTrue(DateUtils.isAfter(new Date(6000L), new Date(5000L), skewSeconds));
 		assertFalse(DateUtils.isAfter(new Date(4000L), new Date(5000L), skewSeconds));
 	}
+
+
+	public void testForEXPClaim() {
+
+		final Date now = new Date();
+
+		final Date exp = new Date(now.getTime() - 30*1000L); // 30 seconds behind
+
+		boolean valid = DateUtils.isAfter(exp, now, 60);
+		assertTrue(valid);
+	}
+
+
+	public void testForIATClaim() {
+
+		final Date now = new Date();
+
+		final Date iat = new Date(now.getTime() + 30*1000L); // 30 seconds ahead
+
+		boolean valid = DateUtils.isBefore(iat, now, 60);
+		assertTrue(valid);
+	}
 }

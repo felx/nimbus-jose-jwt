@@ -38,23 +38,31 @@ public class DateUtils {
 
 	/**
 	 * Check if the specified date is after the specified reference, given
-	 * the maximum accepted clock skew.
+	 * the maximum accepted negative clock skew.
 	 *
 	 * <p>Formula:
 	 *
 	 * <pre>
-	 * return date +/- clock_skew > reference
+	 * return date + clock_skew > reference
+	 * </pre>
+	 *
+	 * Example: Ensure a JWT expiration (exp) timestamp is after the
+	 * current time, with a minute of acceptable clock skew.
+	 *
+	 * <pre>
+	 * boolean valid = DateUtils.isAfter(exp, new Date(), 60);
 	 * </pre>
 	 *
 	 * @param date                The date to check. Must not be
 	 *                            {@code null}.
 	 * @param reference           The reference date. Must not be
 	 *                            {@code null}.
-	 * @param maxClockSkewSeconds The maximum acceptable clock skew of the
-	 *                            date value to check, in seconds.
+	 * @param maxClockSkewSeconds The maximum acceptable negative clock
+	 *                            skew of the date value to check, in
+	 *                            seconds.
 	 *
-	 * @return {@code true} if the date is before the reference, plus or
-	 *         minus the maximum accepted clock skew, else {@code false}.
+	 * @return {@code true} if the date is before the reference, plus the
+	 *         maximum accepted clock skew, else {@code false}.
 	 */
 	public static boolean isAfter(final Date date,
 				      final Date reference,
@@ -65,13 +73,20 @@ public class DateUtils {
 
 
 	/**
-	 * Checks if the specified data is before the specified reference,
-	 * given the maximum accepted clock skew.
+	 * Checks if the specified date is before the specified reference,
+	 * given the maximum accepted positive clock skew.
 	 *
 	 * <p>Formula:
 	 *
 	 * <pre>
-	 * return date +/- clock_skew < reference
+	 * return date - clock_skew < reference
+	 * </pre>
+	 *
+	 * Example: Ensure a JWT issued-at (iat) timestamp is before the
+	 * current time, with a minute of acceptable clock skew.
+	 *
+	 * <pre>
+	 * boolean valid = DateUtils.isBefore(iat, new Date(), 60);
 	 * </pre>
 	 *
 	 * @param date                The date to check. Must not be
@@ -81,8 +96,8 @@ public class DateUtils {
 	 * @param maxClockSkewSeconds The maximum acceptable clock skew of the
 	 *                            date value to check, in seconds.
 	 *
-	 * @return {@code true} if the date is before the reference, plus or
-	 *         minus the maximum accepted clock skew, else {@code false}.
+	 * @return {@code true} if the date is before the reference, minus the
+	 *         maximum accepted clock skew, else {@code false}.
 	 */
 	public static boolean isBefore(final Date date,
 				       final Date reference,
