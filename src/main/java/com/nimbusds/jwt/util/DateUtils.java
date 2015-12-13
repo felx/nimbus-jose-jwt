@@ -55,8 +55,8 @@ public class DateUtils {
 	 *
 	 * @param date                The date to check. Must not be
 	 *                            {@code null}.
-	 * @param reference           The reference date. Must not be
-	 *                            {@code null}.
+	 * @param reference           The reference date (e.g. the current
+	 *                            time). Must not be {@code null}.
 	 * @param maxClockSkewSeconds The maximum acceptable negative clock
 	 *                            skew of the date value to check, in
 	 *                            seconds.
@@ -91,8 +91,8 @@ public class DateUtils {
 	 *
 	 * @param date                The date to check. Must not be
 	 *                            {@code null}.
-	 * @param reference           The reference date. Must not be
-	 *                            {@code null}.
+	 * @param reference           The reference date (e.g. the current
+	 *                            time). Must not be {@code null}.
 	 * @param maxClockSkewSeconds The maximum acceptable clock skew of the
 	 *                            date value to check, in seconds.
 	 *

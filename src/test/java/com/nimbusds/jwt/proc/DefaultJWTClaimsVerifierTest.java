@@ -99,4 +99,41 @@ public class DefaultJWTClaimsVerifierTest extends TestCase {
 		JWTClaimsVerifier verifier = new DefaultJWTClaimsVerifier();
 		verifier.verify(claimsSet);
 	}
+
+
+	public void testDefaultClockSkewConstant() {
+
+		assertEquals(60, DefaultJWTClaimsVerifier.DEFAULT_MAX_CLOCK_SKEW_SECONDS);
+	}
+
+
+	public void testExpirationWithClockSkew()
+		throws BadJOSEException {
+
+		final Date now = new Date();
+
+		final Date thirtySecondsAgo = new Date(now.getTime() - 30*1000L);
+
+		new DefaultJWTClaimsVerifier().verify(new JWTClaimsSet.Builder().expirationTime(thirtySecondsAgo).build());
+	}
+
+
+	public void testNotBeforeWithClockSkew()
+		throws BadJOSEException {
+
+		final Date now = new Date();
+
+		final Date thirtySecondsAhead = new Date(now.getTime() + 30*1000L);
+
+		new DefaultJWTClaimsVerifier().verify(new JWTClaimsSet.Builder().notBeforeTime(thirtySecondsAhead).build());
+	}
+
+
+	public void testClockSkew() {
+
+		DefaultJWTClaimsVerifier verifier = new DefaultJWTClaimsVerifier();
+		assertEquals(DefaultJWTClaimsVerifier.DEFAULT_MAX_CLOCK_SKEW_SECONDS, verifier.getMaxClockSkew());
+		verifier.setMaxClockSkew(120);
+		assertEquals(120, verifier.getMaxClockSkew());
+	}
 }

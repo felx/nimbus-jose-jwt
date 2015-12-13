@@ -465,3 +465,7 @@ version 4.10 (2015-12-08)
     * Adds AsymmetricJWK interface and lets RSAKey and ECKey implement it.
     * Adds SecretJWK interface and lets OctetSequenceKey implement it.
 
+version 4.11 (2015-12-13)
+    * Adds ClockSkewAware interfaces.
+    * Makes DefaultJWTClaimsVerifier clock skew aware.
+
