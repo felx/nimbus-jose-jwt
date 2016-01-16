@@ -213,10 +213,8 @@
                             ${project.build.outputDirectory}/META-INF/MANIFEST.MF
                         </manifestFile>
                         <manifest>
-                            <addDefaultImplementationEntries>true
-                            </addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true
-                            </addDefaultSpecificationEntries>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
                     </archive>
                 </configuration>
@@ -236,8 +234,7 @@
                     <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
-                    <timestampFormat>{0,date,yyyyMMdd.HHmmss.SSS}
-                    </timestampFormat>
+                    <timestampFormat>{0,date,yyyyMMdd.HHmmss.SSS}</timestampFormat>
                 </configuration>
             </plugin>
             <plugin>
@@ -246,8 +243,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>com.nimbusds.jose.*,com.nimbusds.jwt
-                        </Export-Package>
+                        <Export-Package>com.nimbusds.jose.*,com.nimbusds.jwt</Export-Package>
                     </instructions>
                 </configuration>
                 <executions>
@@ -273,10 +269,9 @@
 			                which is a good thing (outweighing that this is a rarely used combination, 
 			                and most people use javac) This should also allow us to run maven builds 
 			                on a JRE and not a JDK. -->
-			
 			            <groupId>org.apache.maven.plugins</groupId>
 			            <artifactId>maven-compiler-plugin</artifactId>
-			            <version>3.0</version>
+			            <version>3.3</version>
 			            <configuration>
 			                <source>1.7</source>
 			                <target>1.6</target>
@@ -287,7 +282,7 @@
 			                <dependency>
 			                    <groupId>org.codehaus.plexus</groupId>
 			                    <artifactId>plexus-compiler-eclipse</artifactId>
-			                    <version>2.1</version>
+			                    <version>2.5</version>
 			                </dependency>
 			            </dependencies>
 			        </plugin>
@@ -321,7 +316,7 @@
             
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.2</version>
+                        <version>3.3</version>
                         <configuration>
                             <source>1.7</source>
                             <target>1.8</target>
