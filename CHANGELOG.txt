@@ -476,3 +476,5 @@ version 4.11.2 (2016-01-16)
     * Adds jdk16 classifier for Java 1.6.
     * Cleans up pom.xml, automated staging release.
 
+version 4.12 (2016-02-03)
+    * Adds JWTClaimsSet.getJSONObjectClaim helper method.

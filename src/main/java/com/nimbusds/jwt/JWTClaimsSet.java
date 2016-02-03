@@ -53,7 +53,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-11-27
+ * @version 2016-02-03
  */
 @Immutable
 public final class JWTClaimsSet implements Serializable {
@@ -682,6 +682,41 @@ public final class JWTClaimsSet implements Serializable {
 			return ((Number)value).doubleValue();
 		} else {
 			throw new ParseException("The \"" + name + "\" claim is not a Double", 0);
+		}
+	}
+
+
+	/**
+	 * Gets the specified claim (registered or custom) as a
+	 * {@link net.minidev.json.JSONObject}.
+	 *
+	 * @param name The name of the claim. Must not be {@code null}.
+	 *
+	 * @return The value of the claim, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the claim value is not of the required
+	 *                        type.
+	 */
+	public JSONObject getJSONObjectClaim(final String name)
+		throws ParseException {
+
+		Object value = getClaim(name);
+
+		if (value == null) {
+			return null;
+		} else if (value instanceof JSONObject) {
+			return (JSONObject)value;
+		} else if (value instanceof Map) {
+			JSONObject jsonObject = new JSONObject();
+			Map<?,?> map = (Map<?,?>)value;
+			for (Map.Entry<?,?> entry: map.entrySet()) {
+				if (entry.getKey() instanceof String) {
+					jsonObject.put((String)entry.getKey(), entry.getValue());
+				}
+			}
+			return jsonObject;
+		} else {
+			throw new ParseException("The \"" + name + "\" claim is not a JSON object or Map", 0);
 		}
 	}
 
