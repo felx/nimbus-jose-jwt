@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.InvalidKeyException;
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.RSAPrivateKey;
@@ -41,7 +42,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	/**
 	 * The private RSA key.
 	 */
-	private final RSAPrivateKey privateKey;
+	private final PrivateKey privateKey;
 
 
 	/**
@@ -49,7 +50,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 *
 	 * @param privateKey The private RSA key. Must not be {@code null}.
 	 */
-	public RSASSASigner(final RSAPrivateKey privateKey) {
+	public RSASSASigner(final PrivateKey privateKey) {
 
 		if (privateKey == null) {
 			throw new IllegalArgumentException("The private RSA key must not be null");
@@ -84,7 +85,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 *
 	 * @return The private RSA key.
 	 */
-	public RSAPrivateKey getPrivateKey() {
+	public PrivateKey getPrivateKey() {
 
 		return privateKey;
 	}
