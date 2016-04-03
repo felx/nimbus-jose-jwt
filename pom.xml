@@ -153,9 +153,9 @@
                     <version>true</version>
                     <use>true</use>
                     <linksource>true</linksource>
-                    <windowtitle>Nimbus JOSE + JWT v. ${project.version}
+                    <windowtitle>Nimbus JOSE + JWT v${project.version}
                     </windowtitle>
-                    <doctitle>Nimbus JOSE + JWT v. ${project.version}</doctitle>
+                    <doctitle>Nimbus JOSE + JWT v${project.version}</doctitle>
                     <overview>${basedir}/src/main/javadoc/overview.html
                     </overview>
                 </configuration>
