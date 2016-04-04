@@ -5,15 +5,13 @@ import java.security.InvalidKeyException;
 import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
-import java.security.interfaces.RSAPrivateKey;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 
@@ -33,14 +31,20 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-02
+ * @author Omer Levi Hevroni
+ * @version 2016-04-04
  */
 @ThreadSafe
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
 
 	/**
-	 * The private RSA key.
+	 * The private RSA key. Represented by generic private key interface to
+	 * support key stores that prevent exposure of the private key
+	 * parameters via the {@link java.security.interfaces.RSAPrivateKey}
+	 * API.
+	 *
+	 * See https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/169
 	 */
 	private final PrivateKey privateKey;
 
@@ -52,8 +56,8 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 */
 	public RSASSASigner(final PrivateKey privateKey) {
 
-		if (privateKey == null) {
-			throw new IllegalArgumentException("The private RSA key must not be null");
+		if (! privateKey.getAlgorithm().equalsIgnoreCase("RSA")) {
+			throw new IllegalArgumentException("The private key must be for the RSA algorithm");
 		}
 
 		this.privateKey = privateKey;
@@ -83,7 +87,10 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	/**
 	 * Gets the private RSA key.
 	 *
-	 * @return The private RSA key.
+	 * @return The private RSA key. Casting to
+	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
+	 *         possible if the key is backed by a key store that doesn't
+	 *         expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {
 

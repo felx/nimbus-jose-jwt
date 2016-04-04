@@ -2,26 +2,23 @@ package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
 
 
 /**
@@ -29,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-18
+ * @version 2016-04-04
  */
 public class RSASSATest extends TestCase {
 
@@ -122,7 +119,7 @@ public class RSASSATest extends TestCase {
 	private static RSAPublicKey PUBLIC_KEY;
 
 
-	private static RSAPrivateKey PRIVATE_KEY;
+	private static PrivateKey PRIVATE_KEY;
 
 
 	static {
@@ -133,7 +130,7 @@ public class RSASSATest extends TestCase {
 			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, MOD), new BigInteger(1, MOD_PRIV));
 
 			PUBLIC_KEY = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-			PRIVATE_KEY = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+			PRIVATE_KEY = keyFactory.generatePrivate(privateKeySpec);
 
 		} catch (Exception e) {
 
@@ -202,7 +199,7 @@ public class RSASSATest extends TestCase {
 
 
 		RSASSASigner signer = new RSASSASigner(PRIVATE_KEY);
-		assertNotNull("Private key check", signer.getPrivateKey());
+		assertEquals("Private key check", PRIVATE_KEY, signer.getPrivateKey());
 
 		jwsObject.sign(signer);
 
@@ -210,7 +207,7 @@ public class RSASSATest extends TestCase {
 
 
 		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
-		assertNotNull("Public key check", verifier.getPublicKey());
+		assertEquals("Public key check", PUBLIC_KEY, verifier.getPublicKey());
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -231,7 +228,7 @@ public class RSASSATest extends TestCase {
 
 		assertEquals("State check", JWSObject.State.UNSIGNED, jwsObject.getState());
 
-		RSAKey rsaJWK = new RSAKey.Builder(PUBLIC_KEY).privateKey(PRIVATE_KEY).build();
+		RSAKey rsaJWK = new RSAKey.Builder(PUBLIC_KEY).privateKey((RSAPrivateKey) PRIVATE_KEY).build();
 
 		RSASSASigner signer = new RSASSASigner(rsaJWK);
 		assertNotNull("Private key check", signer.getPrivateKey());
@@ -318,7 +315,7 @@ public class RSASSATest extends TestCase {
 	}
 
 
-	public static String transpose(String s) {
+	private static String transpose(String s) {
 		int L = s.length();
 		return (L < 2) ? s : s.substring(0, 1) + s.substring(L-1, L) + transpose(s.substring(1, L-1));
 	}
@@ -392,7 +389,7 @@ public class RSASSATest extends TestCase {
 	}
 
 
-	public void testSignAndVerifyCycle(final JWSAlgorithm alg, final JWSSigner signer, final JWSVerifier verifier)
+	private void testSignAndVerifyCycle(final JWSAlgorithm alg, final JWSSigner signer, final JWSVerifier verifier)
 		throws Exception {
 
 		JWSHeader header = new JWSHeader(alg);
@@ -663,7 +660,7 @@ public class RSASSATest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);
@@ -672,7 +669,7 @@ public class RSASSATest extends TestCase {
 
 		jwsObject.sign(signer);
 
-		Set<String> deferredCrit = new HashSet<>(Arrays.asList("exp"));
+		Set<String> deferredCrit = new HashSet<>(Collections.singletonList("exp"));
 
 		RSASSAVerifier verifier = new RSASSAVerifier(PUBLIC_KEY, deferredCrit);
 
@@ -692,7 +689,7 @@ public class RSASSATest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		JWSObject jwsObject = new JWSObject(header, PAYLOAD);

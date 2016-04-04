@@ -478,3 +478,14 @@ version 4.11.2 (2016-01-16)
 
 version 4.12 (2016-02-03)
     * Adds JWTClaimsSet.getJSONObjectClaim helper method.
+
+version 4.13 (2016-04-04)
+    * Modifies the RSASSASigner to accept private RSA keys represented by the
+      generic java.security.PrivateKey interface instead of the more specific
+      java.security.interfaces.RSAPrivateKey. The getPrivateKey is also
+      modified accordingly to return a java.security.PrivateKey instance. This
+      change is required to support key stores that prevent exposure of the
+      private key parameters via the java.security.interfaces.RSAPrivateKey
+      API, such as the built-in key store of Android M, and various HSM
+      implementations (issue #169).
+
