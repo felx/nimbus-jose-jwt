@@ -2,6 +2,7 @@ package com.nimbusds.jose;
 
 
 import java.text.ParseException;
+import java.util.Set;
 
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
@@ -14,7 +15,7 @@ import junit.framework.TestCase;
  */
 public class UnencodedJWSPayloadTest extends TestCase {
 
-	// From https://tools.ietf.org/html/draft-ietf-jose-jws-signing-input-options-02#section-4
+	// From http://tools.ietf.org/html/draft-ietf-jose-jws-signing-input-options-09#section-4
 	static final String octJWKString = "{" +
 		"\"kty\":\"oct\"," +
 		"\"k\":\"AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow\"" +
@@ -52,11 +53,14 @@ public class UnencodedJWSPayloadTest extends TestCase {
 	public void testB64False()
 		throws Exception {
 
-		Base64URL headerB64 = new Base64URL("eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2V9");
+		Base64URL headerB64 = new Base64URL("eyJhbGciOiJIUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19");
 		JWSHeader header = JWSHeader.parse(headerB64);
 		assertEquals(JWSAlgorithm.HS256, header.getAlgorithm());
 		assertFalse((Boolean) header.getCustomParam("b64"));
-		assertEquals(2, header.toJSONObject().size());
+		Set<String> crit = header.getCriticalParams();
+		assertTrue(crit.contains("b64"));
+		assertEquals(1, crit.size());
+		assertEquals(3, header.toJSONObject().size());
 
 		JWSSigner signer = new MACSigner(JWK);
 
@@ -67,7 +71,7 @@ public class UnencodedJWSPayloadTest extends TestCase {
 		System.arraycopy(payloadBytes, 0, signingInput, headerBytes.length, payloadBytes.length);
 
 		Base64URL signature = signer.sign(header, signingInput);
-		Base64URL expectedSignature = new Base64URL("GsyM6AQJbQHY8aQKCbZSPJHzMRWo3HKIlcDuXof7nqs");
+		Base64URL expectedSignature = new Base64URL("A5dxf2s96_n5FLueVuW1Z_vh161FwXZC4YLPff6dmDY");
 		assertEquals(expectedSignature, signature);
 	}
 }

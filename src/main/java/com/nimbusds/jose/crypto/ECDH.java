@@ -191,17 +191,14 @@ class ECDH {
 
 		final String algID;
 
-		switch (algMode) {
-			case DIRECT:
-				// algID = enc
-				algID = header.getEncryptionMethod().getName();
-				break;
-			case KW:
-				// algID = alg
-				algID = header.getAlgorithm().getName();
-				break;
-			default:
-				throw new JOSEException("Unsupported JWE ECDH algorithm mode: " + algMode);
+		if (algMode == AlgorithmMode.DIRECT) {
+			// algID = enc
+			algID = header.getEncryptionMethod().getName();
+		} else if (algMode == AlgorithmMode.KW) {
+			// algID = alg
+			algID = header.getAlgorithm().getName();
+		} else {
+			throw new JOSEException("Unsupported JWE ECDH algorithm mode: " + algMode);
 		}
 
 		return concatKDF.deriveKey(

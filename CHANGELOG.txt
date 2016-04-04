@@ -469,3 +469,12 @@ version 4.11 (2015-12-13)
     * Adds ClockSkewAware interfaces.
     * Makes DefaultJWTClaimsVerifier clock skew aware.
 
+version 4.11.1 (2016-01-16)
+    * Side release packaged for Java 1.6.
+
+version 4.11.2 (2016-01-16)
+    * Adds jdk16 classifier for Java 1.6.
+    * Cleans up pom.xml, automated staging release.
+
+version 4.12 (2016-02-03)
+    * Adds JWTClaimsSet.getJSONObjectClaim helper method.

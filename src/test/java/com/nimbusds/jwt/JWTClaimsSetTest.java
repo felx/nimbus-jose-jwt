@@ -4,10 +4,8 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.util.Base64URL;
-
+import junit.framework.TestCase;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -17,7 +15,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-09-25
+ * @version 2016-02-03
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -703,5 +701,67 @@ public class JWTClaimsSetTest extends TestCase {
 			.build();
 
 		assertEquals("{\"aud\":[\"a\",\"b\"]}", claimsSet.toJSONObject().toString());
+	}
+
+
+	public void testJSONObjectClaim()
+		throws Exception {
+
+		JSONObject actor = new JSONObject();
+		actor.put("sub", "claire");
+		actor.put("iss", "https://openid.c2id.com");
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("act", actor)
+			.build();
+
+		JSONObject out = claimsSet.getJSONObjectClaim("act");
+		assertEquals("claire", out.get("sub"));
+		assertEquals("https://openid.c2id.com", out.get("iss"));
+		assertEquals(2, out.size());
+	}
+
+
+	public void testJSONObjectClaim_convertFromMap()
+		throws Exception {
+
+		Map<Object,Object> actor = new HashMap<>();
+		actor.put("sub", "claire");
+		actor.put("iss", "https://openid.c2id.com");
+		actor.put(1, 1000); // must be ignored
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("act", actor)
+			.build();
+
+		JSONObject out = claimsSet.getJSONObjectClaim("act");
+		assertEquals("claire", out.get("sub"));
+		assertEquals("https://openid.c2id.com", out.get("iss"));
+		assertEquals(2, out.size());
+	}
+
+
+	public void testJSONObjectClaim_Null()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().build();
+
+		assertNull(claimsSet.getJSONObjectClaim("act"));
+	}
+
+
+	public void testJSONObjectClaim_invalidType()
+		throws Exception {
+
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("act", "claire")
+			.build();
+
+		try {
+			claimsSet.getJSONObjectClaim("act");
+			fail();
+		} catch (ParseException e) {
+			assertEquals("The \"act\" claim is not a JSON object or Map", e.getMessage());
+		}
 	}
 }
