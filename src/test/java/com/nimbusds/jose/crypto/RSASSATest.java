@@ -706,4 +706,33 @@ public class RSASSATest extends TestCase {
 
 		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
 	}
+
+
+	public void testRejectPrivateKeyWithNonRSAAlg()
+		throws Exception {
+
+		try {
+			new RSASSASigner(new PrivateKey() {
+				@Override
+				public String getAlgorithm() {
+					return "EC";
+				}
+
+
+				@Override
+				public String getFormat() {
+					return null;
+				}
+
+
+				@Override
+				public byte[] getEncoded() {
+					return new byte[0];
+				}
+			});
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("The private key algorithm must be RSA", e.getMessage());
+		}
+	}
 }
