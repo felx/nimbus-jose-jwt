@@ -246,7 +246,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>com.nimbusds.jose.*,com.nimbusds.jwt
+                        <Export-Package>com.nimbusds.jose.*,com.nimbusds.jwt.*
                         </Export-Package>
                     </instructions>
                 </configuration>
