@@ -489,3 +489,6 @@ version 4.13 (2016-04-04)
       API, such as the built-in key store of Android M, and various HSM
       implementations (issue #169).
 
+version 4.13.1 (2016-04-04)
+    * Fixes OSGi bundling in pom.xml
+
