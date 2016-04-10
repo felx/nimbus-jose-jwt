@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**
@@ -189,7 +189,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyOperation(KeyOperation.DECRYPT).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.DECRYPT))).build()));
+			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.DECRYPT))).build()));
 		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
 	}
 
@@ -209,12 +209,12 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyOperations(KeyOperation.SIGN, null).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN))).build()));
+			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build()));
 
 		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
 
 		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.ENCRYPT))).build()));
+			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build()));
 	}
 
 

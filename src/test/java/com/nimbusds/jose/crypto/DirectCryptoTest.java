@@ -2,11 +2,12 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.datatype.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
@@ -516,7 +517,7 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -531,7 +532,7 @@ public class DirectCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new DirectDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Arrays.asList("exp")));
+		JWEDecrypter decrypter = new DirectDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Collections.singletonList("exp")));
 
 		jweObject.decrypt(decrypter);
 
@@ -548,7 +549,7 @@ public class DirectCryptoTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

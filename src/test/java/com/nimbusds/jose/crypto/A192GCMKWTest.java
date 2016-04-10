@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -148,7 +149,7 @@ public class A192GCMKWTest extends TestCase {
 		AESDecrypter decrypter = new AESDecrypter(key192);
 		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -188,7 +189,7 @@ public class A192GCMKWTest extends TestCase {
 		AESDecrypter decrypter = new AESDecrypter(key192);
 		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key192, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key192, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -363,7 +364,7 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -379,7 +380,7 @@ public class A192GCMKWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		AESDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key192, "AES"), new HashSet<>(Arrays.asList("exp")));
+		AESDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key192, "AES"), new HashSet<>(Collections.singletonList("exp")));
 		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
@@ -397,7 +398,7 @@ public class A192GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A192GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

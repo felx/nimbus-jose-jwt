@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.util.IntegerUtils;
+import com.nimbusds.jose.util.datatype.IntegerUtils;
 
 
 /**

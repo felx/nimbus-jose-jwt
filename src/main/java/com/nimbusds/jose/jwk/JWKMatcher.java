@@ -2,6 +2,7 @@ package com.nimbusds.jose.jwk;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -143,7 +144,7 @@ public class JWKMatcher {
 			if (kty == null) {
 				types = null;
 			} else {
-				types = new HashSet<>(Arrays.asList(kty));
+				types = new HashSet<>(Collections.singletonList(kty));
 			}
 			
 			return this;
@@ -191,7 +192,7 @@ public class JWKMatcher {
 			if (use == null) {
 				uses = null;
 			} else {
-				uses = new HashSet<>(Arrays.asList(use));
+				uses = new HashSet<>(Collections.singletonList(use));
 			}
 			return this;
 		}
@@ -238,7 +239,7 @@ public class JWKMatcher {
 			if (op == null) {
 				ops = null;
 			} else {
-				ops = new HashSet<>(Arrays.asList(op));
+				ops = new HashSet<>(Collections.singletonList(op));
 			}
 			return this;
 		}
@@ -286,7 +287,7 @@ public class JWKMatcher {
 			if (alg == null) {
 				algs = null;
 			} else {
-				algs = new HashSet<>(Arrays.asList(alg));
+				algs = new HashSet<>(Collections.singletonList(alg));
 			}
 			return this;
 		}
@@ -333,7 +334,7 @@ public class JWKMatcher {
 			if (id == null) {
 				ids = null;
 			} else {
-				ids = new HashSet<>(Arrays.asList(id));
+				ids = new HashSet<>(Collections.singletonList(id));
 			}
 			return this;
 		}

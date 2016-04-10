@@ -14,7 +14,7 @@ public class DateUtilsTest extends TestCase {
 
 	public void testToSeconds() {
 
-		final Date date = new Date(2000l);
+		final Date date = new Date(2000L);
 
 		assertEquals(2, DateUtils.toSecondsSinceEpoch(date));
 	}
@@ -22,7 +22,7 @@ public class DateUtilsTest extends TestCase {
 
 	public void testFromSeconds() {
 
-		assertTrue(new Date(2000l).equals(DateUtils.fromSecondsSinceEpoch(2)));
+		assertTrue(new Date(2000L).equals(DateUtils.fromSecondsSinceEpoch(2)));
 	}
 
 

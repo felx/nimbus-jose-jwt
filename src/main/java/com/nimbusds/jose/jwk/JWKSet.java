@@ -15,7 +15,7 @@ import net.minidev.json.JSONObject;
 
 import org.apache.commons.io.FileUtils;
 
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.json.JSONObjectUtils;
 import com.nimbusds.jose.util.URLUtils;
 
 

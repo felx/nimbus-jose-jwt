@@ -12,7 +12,7 @@ import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jca.JCAAware;
 import com.nimbusds.jose.proc.JWSVerifierFactory;
-import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.datatype.ByteUtils;
 import junit.framework.TestCase;
 
 

@@ -11,8 +11,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.util.ByteUtils;
-import com.nimbusds.jose.util.IntegerUtils;
+import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.datatype.IntegerUtils;
 
 
 /**

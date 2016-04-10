@@ -5,7 +5,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 import junit.framework.TestCase;
 
 

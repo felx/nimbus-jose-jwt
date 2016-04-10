@@ -6,7 +6,7 @@ import java.util.Set;
 
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 import junit.framework.TestCase;
 
 

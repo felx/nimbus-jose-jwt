@@ -18,7 +18,7 @@ import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.proc.*;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 import com.nimbusds.jwt.*;
 
 
@@ -321,7 +321,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 		JWTClaimsSet claims = joseProcessor.process(jwt, new SimpleSecurityContext());
 
 		assertEquals("joe", claims.getIssuer());
-		assertEquals(1300819380l * 1000l, claims.getExpirationTime().getTime());
+		assertEquals(1300819380L * 1000L, claims.getExpirationTime().getTime());
 		assertTrue(claims.getBooleanClaim("http://example.com/is_root"));
 		assertEquals(3, claims.getClaims().size());
 	}

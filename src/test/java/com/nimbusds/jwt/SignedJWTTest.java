@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**
@@ -31,7 +31,7 @@ public class SignedJWTTest extends TestCase {
 
 		JWTClaimsSet claimsSetOne = new JWTClaimsSet.Builder()
 			.subject("alice")
-			.issueTime(new Date(123000l))
+			.issueTime(new Date(123000L))
 			.issuer("https://c2id.com")
 			.claim("scope", "openid")
 			.build();
@@ -44,7 +44,7 @@ public class SignedJWTTest extends TestCase {
 		JWTClaimsSet claimsSetTwo = new JWTClaimsSet.Builder()
 			.subject("alice")
 			.issuer("https://c2id.com")
-			.issueTime(new Date(123000l))
+			.issueTime(new Date(123000L))
 			.claim("scope", "openid")
 			.build();
 
@@ -66,7 +66,7 @@ public class SignedJWTTest extends TestCase {
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
 			.subject("alice")
-			.issueTime(new Date(123000l))
+			.issueTime(new Date(123000L))
 			.issuer("https://c2id.com")
 			.claim("scope", "openid")
 			.build();
@@ -81,7 +81,7 @@ public class SignedJWTTest extends TestCase {
 		assertEquals(JWSObject.State.UNSIGNED, signedJWT.getState());
 		assertEquals(header, signedJWT.getHeader());
 		assertEquals("alice", signedJWT.getJWTClaimsSet().getSubject());
-		assertEquals(123000l, signedJWT.getJWTClaimsSet().getIssueTime().getTime());
+		assertEquals(123000L, signedJWT.getJWTClaimsSet().getIssueTime().getTime());
 		assertEquals("https://c2id.com", signedJWT.getJWTClaimsSet().getIssuer());
 		assertEquals("openid", signedJWT.getJWTClaimsSet().getStringClaim("scope"));
 		assertNull(signedJWT.getSignature());

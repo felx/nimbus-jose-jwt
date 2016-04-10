@@ -17,13 +17,16 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import com.nimbusds.jose.util.base64.Base64;
+import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.datatype.BigIntegerUtils;
+import com.nimbusds.jose.util.json.JSONObjectUtils;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.util.*;
 
 
 /**

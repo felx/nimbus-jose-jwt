@@ -12,6 +12,7 @@ import java.security.spec.ECParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.EllipticCurve;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -272,7 +273,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);
@@ -287,7 +288,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		assertEquals(JWSObject.State.SIGNED, jwsObject.getState());
 
-		JWSVerifier verifier = new ECDSAVerifier(publicKey, new HashSet<>(Arrays.asList("exp")));
+		JWSVerifier verifier = new ECDSAVerifier(publicKey, new HashSet<>(Collections.singletonList("exp")));
 
 		boolean verified = jwsObject.verify(verifier);
 
@@ -302,7 +303,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.ES512).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		KeyPair keyPair = createECKeyPair(EC512SPEC);

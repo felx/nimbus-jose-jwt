@@ -6,7 +6,6 @@ import java.util.Set;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSProvider;
-import com.nimbusds.jose.jca.JCAAware;
 import com.nimbusds.jose.jca.JCAContext;
 
 

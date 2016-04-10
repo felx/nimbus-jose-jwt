@@ -1,10 +1,11 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.base64;
 
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.math.BigInteger;
 
+import com.nimbusds.jose.util.datatype.BigIntegerUtils;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONAware;

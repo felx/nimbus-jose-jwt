@@ -1,8 +1,9 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.base64;
 
 
 import java.math.BigInteger;
 
+import com.nimbusds.jose.util.datatype.BigIntegerUtils;
 import net.jcip.annotations.Immutable;
 
 
@@ -88,6 +89,6 @@ public class Base64URL extends Base64 {
 	 */
 	public static Base64URL encode(final String text) {
 
-		return encode(text.getBytes(Base64.CHARSET));
+		return encode(text.getBytes(CHARSET));
 	}
 }

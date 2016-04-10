@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -191,7 +192,7 @@ public class A256GCMKWTest extends TestCase {
 		AESDecrypter decrypter = new AESDecrypter(key256);
 		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -275,7 +276,7 @@ public class A256GCMKWTest extends TestCase {
 		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -317,7 +318,7 @@ public class A256GCMKWTest extends TestCase {
 		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		Assert.assertArrayEquals(key256, ((AESDecrypter)decrypter).getKey().getEncoded());
+		Assert.assertArrayEquals(key256, decrypter.getKey().getEncoded());
 
 		jweObject.decrypt(decrypter);
 
@@ -373,7 +374,7 @@ public class A256GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -389,7 +390,7 @@ public class A256GCMKWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		AESDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Arrays.asList("exp")));
+		AESDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Collections.singletonList("exp")));
 		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);
@@ -407,7 +408,7 @@ public class A256GCMKWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

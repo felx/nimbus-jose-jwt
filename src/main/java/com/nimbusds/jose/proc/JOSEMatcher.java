@@ -3,6 +3,7 @@ package com.nimbusds.jose.proc;
 
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -116,7 +117,7 @@ public class JOSEMatcher {
 			if (clazz == null) {
 				this.classes = null;
 			} else {
-				this.classes = new HashSet<Class<? extends JOSEObject>>(Arrays.asList(clazz));
+				this.classes = new HashSet<Class<? extends JOSEObject>>(Collections.singletonList(clazz));
 			}
 			return this;
 		}
@@ -164,7 +165,7 @@ public class JOSEMatcher {
 			if (alg == null) {
 				algs = null;
 			} else {
-				algs = new HashSet<>(Arrays.asList(alg));
+				algs = new HashSet<>(Collections.singletonList(alg));
 			}
 			return this;
 		}
@@ -212,7 +213,7 @@ public class JOSEMatcher {
 			if (enc == null) {
 				encs = null;
 			} else {
-				encs = new HashSet<>(Arrays.asList(enc));
+				encs = new HashSet<>(Collections.singletonList(enc));
 			}
 			return this;
 		}
@@ -259,7 +260,7 @@ public class JOSEMatcher {
 			if (jku == null) {
 				jkus = null;
 			} else {
-				jkus = new HashSet<>(Arrays.asList(jku));
+				jkus = new HashSet<>(Collections.singletonList(jku));
 			}
 			return this;
 		}
@@ -305,7 +306,7 @@ public class JOSEMatcher {
 			if (kid == null) {
 				kids = null;
 			} else {
-				kids = new HashSet<>(Arrays.asList(kid));
+				kids = new HashSet<>(Collections.singletonList(kid));
 			}
 			return this;
 		}

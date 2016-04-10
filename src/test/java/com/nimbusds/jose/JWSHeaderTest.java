@@ -10,8 +10,8 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**

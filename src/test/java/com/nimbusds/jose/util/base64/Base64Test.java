@@ -1,8 +1,9 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.base64;
 
 
 import java.math.BigInteger;
 
+import com.nimbusds.jose.util.base64.Base64;
 import junit.framework.TestCase;
 
 

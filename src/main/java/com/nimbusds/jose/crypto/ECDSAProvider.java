@@ -54,7 +54,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	protected ECDSAProvider(final JWSAlgorithm alg)
 		throws JOSEException {
 
-		super(new HashSet<>(Arrays.asList(alg)));
+		super(new HashSet<>(Collections.singletonList(alg)));
 
 		if (! SUPPORTED_ALGORITHMS.contains(alg)) {
 			throw new JOSEException("Unsupported EC DSA algorithm: " + alg);

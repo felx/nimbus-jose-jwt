@@ -8,6 +8,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.SecretKey;
@@ -24,8 +25,8 @@ import org.jose4j.jwe.JsonWebEncryption;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.datatype.ByteUtils;
 
 
 /**
@@ -733,7 +734,7 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));
@@ -741,7 +742,7 @@ public class ECDHCryptoTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweObject.serialize());
 
-		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey(), new HashSet<String>(Arrays.asList("exp"))));
+		jweObject.decrypt(new ECDHDecrypter(ecJWK.toECPrivateKey(), new HashSet<>(Collections.singletonList("exp"))));
 
 		assertEquals("Hello world!", jweObject.getPayload().toString());
 	}
@@ -754,7 +755,7 @@ public class ECDHCryptoTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		JWEObject jweObject = new JWEObject(header, new Payload("Hello world!"));

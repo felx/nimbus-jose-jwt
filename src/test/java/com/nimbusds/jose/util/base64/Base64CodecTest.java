@@ -1,8 +1,9 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.base64;
 
 
 import java.nio.charset.Charset;
 
+import com.nimbusds.jose.util.base64.Base64Codec;
 import junit.framework.TestCase;
 
 

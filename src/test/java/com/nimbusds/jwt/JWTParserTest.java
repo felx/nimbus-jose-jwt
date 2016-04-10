@@ -44,7 +44,7 @@ public class JWTParserTest extends TestCase {
 		JWTClaimsSet cs = plainJWT.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
-		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
+		assertEquals(new Date(1300819380L * 1000), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 	

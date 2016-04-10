@@ -2,7 +2,6 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.Serializable;
-import java.security.Key;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWEAlgorithm;

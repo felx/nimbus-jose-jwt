@@ -6,8 +6,8 @@ import java.text.ParseException;
 
 import net.minidev.json.JSONObject;
 
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.json.JSONObjectUtils;
 
 
 /**

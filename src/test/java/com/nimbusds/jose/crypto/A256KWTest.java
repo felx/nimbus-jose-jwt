@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -362,7 +363,7 @@ public class A256KWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256KW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -377,7 +378,7 @@ public class A256KWTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Arrays.asList("exp")));
+		JWEDecrypter decrypter = new AESDecrypter(new SecretKeySpec(key256, "AES"), new HashSet<>(Collections.singletonList("exp")));
 
 		jweObject.decrypt(decrypter);
 
@@ -394,7 +395,7 @@ public class A256KWTest extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.A256KW, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

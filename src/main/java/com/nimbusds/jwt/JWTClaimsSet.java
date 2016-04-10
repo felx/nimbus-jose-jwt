@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.json.JSONObjectUtils;
 import com.nimbusds.jwt.util.DateUtils;
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
@@ -195,7 +195,7 @@ public final class JWTClaimsSet implements Serializable {
 			if (aud == null) {
 				claims.put(AUDIENCE_CLAIM, null);
 			} else {
-				claims.put(AUDIENCE_CLAIM, Arrays.asList(aud));
+				claims.put(AUDIENCE_CLAIM, Collections.singletonList(aud));
 			}
 			return this;
 		}

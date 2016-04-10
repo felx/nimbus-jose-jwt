@@ -1,4 +1,4 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.datatype;
 
 
 import java.math.BigInteger;

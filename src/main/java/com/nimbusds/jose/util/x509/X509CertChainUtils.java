@@ -1,10 +1,11 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.x509;
 
 
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.nimbusds.jose.util.base64.Base64;
 import net.minidev.json.JSONArray;
 
 

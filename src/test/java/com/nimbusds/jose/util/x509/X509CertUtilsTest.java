@@ -1,9 +1,10 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.x509;
 
 
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
+import com.nimbusds.jose.util.x509.X509CertUtils;
 import junit.framework.TestCase;
 
 

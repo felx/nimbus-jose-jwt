@@ -11,10 +11,10 @@ import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWK;
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.JSONObjectUtils;
-import com.nimbusds.jose.util.X509CertChainUtils;
+import com.nimbusds.jose.util.base64.Base64;
+import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.json.JSONObjectUtils;
+import com.nimbusds.jose.util.x509.X509CertChainUtils;
 
 
 /**

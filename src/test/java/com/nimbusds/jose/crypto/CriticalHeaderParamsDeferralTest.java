@@ -2,6 +2,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -53,12 +54,12 @@ public class CriticalHeaderParamsDeferralTest extends TestCase {
 	public void testPassIgnoredCritParams() {
 
 		CriticalHeaderParamsDeferral checker = new CriticalHeaderParamsDeferral();
-		checker.setDeferredCriticalHeaderParams(new HashSet<>(Arrays.asList("exp")));
+		checker.setDeferredCriticalHeaderParams(new HashSet<>(Collections.singletonList("exp")));
 
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		assertTrue(checker.headerPasses(header));
@@ -72,7 +73,7 @@ public class CriticalHeaderParamsDeferralTest extends TestCase {
 		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256).
 			keyID("1").
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		assertFalse(checker.headerPasses(header));

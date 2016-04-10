@@ -20,7 +20,7 @@ import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.datatype.ByteUtils;
 
 
 /**

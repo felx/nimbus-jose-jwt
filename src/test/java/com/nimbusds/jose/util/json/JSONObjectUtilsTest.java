@@ -1,6 +1,7 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.json;
 
 
+import com.nimbusds.jose.util.json.JSONObjectUtils;
 import junit.framework.TestCase;
 
 

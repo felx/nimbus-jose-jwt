@@ -6,7 +6,7 @@ import java.util.*;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**
@@ -162,10 +162,10 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN))).build());
+			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build());
 		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
 		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
-			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.ENCRYPT))).build());
+			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 

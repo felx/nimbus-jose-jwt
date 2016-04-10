@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.text.ParseException;
 
 import com.nimbusds.jose.Header;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**

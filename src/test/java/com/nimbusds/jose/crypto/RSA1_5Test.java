@@ -8,6 +8,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -365,7 +366,7 @@ public class RSA1_5Test extends TestCase {
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, ((RSADecrypter) decrypter).getPrivateKey());
+		assertEquals(privateKey, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -647,7 +648,7 @@ public class RSA1_5Test extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
@@ -662,7 +663,7 @@ public class RSA1_5Test extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey, new HashSet<>(Arrays.asList("exp")));;
+		JWEDecrypter decrypter = new RSADecrypter(privateKey, new HashSet<>(Collections.singletonList("exp")));
 
 		jweObject.decrypt(decrypter);
 
@@ -679,7 +680,7 @@ public class RSA1_5Test extends TestCase {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Arrays.asList("exp"))).
+			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");

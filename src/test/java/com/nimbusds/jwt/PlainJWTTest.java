@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.PlainHeader;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**
@@ -42,7 +42,7 @@ public class PlainJWTTest extends TestCase {
 	public void testHeaderAndClaimsSetConstructor()
 		throws Exception {
 
-		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000l).build();
+		PlainHeader header = new PlainHeader.Builder().customParam("exp", 1000L).build();
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
 			.subject("alice")
@@ -81,7 +81,7 @@ public class PlainJWTTest extends TestCase {
 		JWTClaimsSet cs = jwt.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
-		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
+		assertEquals(new Date(1300819380L * 1000), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 
@@ -104,7 +104,7 @@ public class PlainJWTTest extends TestCase {
 		JWTClaimsSet cs = jwt.getJWTClaimsSet();
 
 		assertEquals("joe", cs.getIssuer());
-		assertEquals(new Date(1300819380l * 1000), cs.getExpirationTime());
+		assertEquals(new Date(1300819380L * 1000), cs.getExpirationTime());
 		assertTrue((Boolean)cs.getClaim("http://example.com/is_root"));
 	}
 
@@ -126,11 +126,11 @@ public class PlainJWTTest extends TestCase {
 		assertEquals(new JOSEObjectType("JWT"), plainJWT.getHeader().getType());
 
 		// Claims
-		assertEquals(new Date(377486405l * 1000), plainJWT.getJWTClaimsSet().getExpirationTime());
+		assertEquals(new Date(377486405L * 1000), plainJWT.getJWTClaimsSet().getExpirationTime());
 		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getClaim("azp"));
 		assertEquals("admin@carbon.super", plainJWT.getJWTClaimsSet().getSubject());
 		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getAudience().get(0));
 		assertEquals("https://localhost:9443/oauth2endpoints/token", plainJWT.getJWTClaimsSet().getIssuer());
-		assertEquals(new Date(373886405l * 1000), plainJWT.getJWTClaimsSet().getIssueTime());
+		assertEquals(new Date(373886405L * 1000), plainJWT.getJWTClaimsSet().getIssueTime());
 	}
 }

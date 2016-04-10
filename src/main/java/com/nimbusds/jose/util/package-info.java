@@ -1,4 +1,4 @@
 /**
- * Base64, Base64URL, compression and JSON utility classes.
+ * Utility interfaces and classes.
  */
 package com.nimbusds.jose.util;

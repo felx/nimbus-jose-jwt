@@ -4,7 +4,7 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 import junit.framework.TestCase;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -55,7 +55,7 @@ public class JWTClaimsSetTest extends TestCase {
 
 		// aud
 		assertNull("aud init check", builder.build().getAudience());
-		builder.audience(Arrays.asList("http://audience.com"));
+		builder.audience(Collections.singletonList("http://audience.com"));
 		assertEquals("aud set check", "http://audience.com", builder.build().getAudience().get(0));
 
 		// exp
@@ -137,9 +137,9 @@ public class JWTClaimsSetTest extends TestCase {
 
 		JSONObject json = cs.toJSONObject();
 
-		assertEquals(new Long(60l), json.get("iat"));
-		assertEquals(new Long(60l), json.get("nbf"));
-		assertEquals(new Long(60l), json.get("exp"));
+		assertEquals(new Long(60L), json.get("iat"));
+		assertEquals(new Long(60L), json.get("nbf"));
+		assertEquals(new Long(60L), json.get("exp"));
 	}
 	
 	
@@ -243,16 +243,16 @@ public class JWTClaimsSetTest extends TestCase {
 		builder.claim("integer", 123);
 		assertEquals(123, builder.build().getIntegerClaim("integer").intValue());
 		
-		builder.claim("long", 456l);
-		assertEquals(456l, builder.build().getLongClaim("long").longValue());
+		builder.claim("long", 456L);
+		assertEquals(456L, builder.build().getLongClaim("long").longValue());
 
-		Date date = new Date(999000l);
+		Date date = new Date(999000L);
 		builder.claim("date", date);
 		assertEquals(date, builder.build().getDateClaim("date"));
 
 		// Convert Unix timestamp to Java date
-		builder.claim("date-long", 999l);
-		assertEquals(new Date(999000l), builder.build().getDateClaim("date-long"));
+		builder.claim("date-long", 999L);
+		assertEquals(new Date(999000L), builder.build().getDateClaim("date-long"));
 		
 		builder.claim("float", 3.14f);
 		assertEquals(3.14f, builder.build().getFloatClaim("float").floatValue());
@@ -390,7 +390,7 @@ public class JWTClaimsSetTest extends TestCase {
 		throws Exception {
 
 		JSONObject o = new JSONObject();
-		o.put("aud", Arrays.asList("http://example.com"));
+		o.put("aud", Collections.singletonList("http://example.com"));
 
 		JWTClaimsSet jwtClaimsSet = JWTClaimsSet.parse(o.toJSONString());
 
@@ -420,8 +420,8 @@ public class JWTClaimsSetTest extends TestCase {
 
 		JWTClaimsSet claimsSet = JWTClaimsSet.parse(json);
 
-		assertEquals(1384798159l, claimsSet.getExpirationTime().getTime() / 1000);
-		assertEquals(1384797259l, claimsSet.getIssueTime().getTime() / 1000);
+		assertEquals(1384798159L, claimsSet.getExpirationTime().getTime() / 1000);
+		assertEquals(1384797259L, claimsSet.getIssueTime().getTime() / 1000);
 
 		assertEquals("alice", claimsSet.getSubject());
 

@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.base64.Base64URL;
 
 
 /**

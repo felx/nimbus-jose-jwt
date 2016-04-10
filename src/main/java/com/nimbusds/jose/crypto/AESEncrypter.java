@@ -8,8 +8,8 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.datatype.ByteUtils;
 
 
 /**
