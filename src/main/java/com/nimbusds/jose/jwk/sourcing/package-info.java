@@ -1,4 +1,4 @@
 /**
- * Interfaces and utilities for sourcing JSON Web Keys (JWK) by URL, etc.
+ * Interfaces and utilities for sourcing JSON Web Keys (JWKs).
  */
 package com.nimbusds.jose.jwk.sourcing;
