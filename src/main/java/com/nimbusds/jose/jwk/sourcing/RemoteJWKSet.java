@@ -70,6 +70,19 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
+	 * Creates a new remote JWK set using the
+	 * {@link DefaultResourceRetriever default HTTP resource retriever}.
+	 * Starts an asynchronous thread to fetch the JWK set from the
+	 * specified URL. The JWK set is cached if successfully retrieved.
+	 *
+	 * @param jwkSetURL The JWK set URL. Must not be {@code null}.
+	 */
+	public RemoteJWKSet(final URL jwkSetURL) {
+		this(jwkSetURL, null);
+	}
+
+
+	/**
 	 * Creates a new remote JWK set. Starts an asynchronous thread to
 	 * fetch the JWK set from the specified URL. The JWK set is cached if
 	 * successfully retrieved.

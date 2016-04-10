@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import static net.jadler.Jadler.*;
+import static org.junit.Assert.*;
 
 import com.nimbusds.jose.jwk.*;
-import junit.framework.TestCase;
+import com.nimbusds.jose.util.url.DefaultResourceRetriever;
 import net.jadler.Request;
 import net.jadler.stubbing.Responder;
 import net.jadler.stubbing.StubResponse;
@@ -22,7 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-public class RemoteJWKSetTest extends TestCase {
+public class RemoteJWKSetTest {
 
 
 
@@ -35,6 +36,63 @@ public class RemoteJWKSetTest extends TestCase {
 	@After
 	public void tearDown() {
 		closeJadler();
+	}
+
+
+	@Test
+	public void testSimplifiedConstructor()
+		throws Exception {
+
+		KeyPairGenerator pairGen = KeyPairGenerator.getInstance("RSA");
+		pairGen.initialize(1024);
+		KeyPair keyPair = pairGen.generateKeyPair();
+
+		RSAKey rsaJWK1 = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
+			.privateKey((RSAPrivateKey) keyPair.getPrivate())
+			.keyID("1")
+			.build();
+
+		keyPair = pairGen.generateKeyPair();
+
+		RSAKey rsaJWK2 = new RSAKey.Builder((RSAPublicKey) keyPair.getPublic())
+			.privateKey((RSAPrivateKey) keyPair.getPrivate())
+			.keyID("2")
+			.build();
+
+		JWKSet jwkSet = new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2));
+
+		URL jwkSetURL = new URL("http://localhost:" + port() + "/jwks.json");
+
+		onRequest()
+			.havingMethodEqualTo("GET")
+			.havingPathEqualTo("/jwks.json")
+			.respond()
+			.withStatus(200)
+			.withHeader("Content-Type", "application/json")
+			.withBody(jwkSet.toJSONObject(true).toJSONString());
+
+		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
+
+		assertTrue(jwkSetSource.getResourceRetriever() instanceof DefaultResourceRetriever);
+
+		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
+		assertNotNull(jwkSetSource.getResourceRetriever());
+
+		JWKSet out = jwkSetSource.getJWKSet();
+		assertTrue(out.getKeys().get(0) instanceof RSAKey);
+		assertTrue(out.getKeys().get(1) instanceof RSAKey);
+		assertEquals("1", out.getKeys().get(0).getKeyID());
+		assertEquals("2", out.getKeys().get(1).getKeyID());
+		assertEquals(2, out.getKeys().size());
+
+		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
+
+		RSAKey m1 = (RSAKey) matches.get(0);
+		assertEquals(rsaJWK1.getPublicExponent(), m1.getPublicExponent());
+		assertEquals(rsaJWK1.getModulus(), m1.getModulus());
+		assertEquals("1", m1.getKeyID());
+
+		assertEquals(1, matches.size());
 	}
 
 
@@ -60,7 +118,6 @@ public class RemoteJWKSetTest extends TestCase {
 
 		JWKSet jwkSet = new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2));
 
-		String id = "https://c2id.com";
 		URL jwkSetURL = new URL("http://localhost:" + port() + "/jwks.json");
 
 		onRequest()
@@ -121,7 +178,6 @@ public class RemoteJWKSetTest extends TestCase {
 			.keyID("3")
 			.build();
 
-		String id = "https://c2id.com";
 		URL jwkSetURL = new URL("http://localhost:" + port() + "/jwks.json");
 
 		onRequest()
@@ -221,7 +277,6 @@ public class RemoteJWKSetTest extends TestCase {
 
 		JWKSet jwkSet = new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2));
 
-		String id = "https://c2id.com";
 		URL jwkSetURL = new URL("http://localhost:" + port() + "/invalid-path");
 
 		onRequest()
