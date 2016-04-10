@@ -493,6 +493,12 @@ version 4.13.1 (2016-04-04)
     * Fixes OSGi bundling in pom.xml
 
 version 5.0 (2016-04-10)
+    * Adds new com.nimbusds.jose.jwk.source package with an interface and
+      utilities for sourcing JSON Web Keys (JWKs). Typical sources can be a
+      local text file containing a JWK set, a JWK set specified by URL, a Java
+      keystore, or a database.
+    * Extends the framework for processing JWS and JWE objects with concrete
+      implementations of a JWSKeySelector and a JWEKeySelector.
     * Moves base 64 codec classes into new com.nimbusds.jose.util.base64
       package.
     * Moves data type and data type conversion utilities into new
