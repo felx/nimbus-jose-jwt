@@ -53,7 +53,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-02-03
+ * @version 2016-04-10
  */
 @Immutable
 public final class JWTClaimsSet implements Serializable {
@@ -350,7 +350,7 @@ public final class JWTClaimsSet implements Serializable {
 	/**
 	 * Gets the audience ({@code aud}) clam.
 	 *
-	 * @return The audience claim, {@code null} if not specified.
+	 * @return The audience claim, empty list if not specified.
 	 */
 	public List<String> getAudience() {
 
@@ -358,9 +358,9 @@ public final class JWTClaimsSet implements Serializable {
 		try {
 			aud = getStringListClaim(AUDIENCE_CLAIM);
 		} catch (ParseException e) {
-			return null;
+			return Collections.emptyList();
 		}
-		return aud != null ? Collections.unmodifiableList(aud) : null;
+		return aud != null ? Collections.unmodifiableList(aud) : Collections.<String>emptyList();
 	}
 
 

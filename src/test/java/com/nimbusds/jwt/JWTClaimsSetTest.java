@@ -15,7 +15,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-02-03
+ * @version 2016-04-10
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -54,7 +54,7 @@ public class JWTClaimsSetTest extends TestCase {
 		assertEquals("sub set check", "http://subject.com", builder.build().getSubject());
 
 		// aud
-		assertNull("aud init check", builder.build().getAudience());
+		assertTrue("aud init check", builder.build().getAudience().isEmpty());
 		builder.audience(Collections.singletonList("http://audience.com"));
 		assertEquals("aud set check", "http://audience.com", builder.build().getAudience().get(0));
 
@@ -204,7 +204,7 @@ public class JWTClaimsSetTest extends TestCase {
 		builder.audience(audList);
 		assertEquals("http://client.example.com", builder.build().getAudience().get(0));
 		builder = builder.claim("aud", null);
-		assertNull(builder.build().getAudience());
+		assertTrue(builder.build().getAudience().isEmpty());
 		
 		Date now = new Date();
 		builder.expirationTime(now);
@@ -450,14 +450,14 @@ public class JWTClaimsSetTest extends TestCase {
 	public void testSingleValuedAudienceSetter() {
 
 		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().build();
-		assertNull(claimsSet.getAudience());
+		assertTrue(claimsSet.getAudience().isEmpty());
 
 		claimsSet = new JWTClaimsSet.Builder().audience("123").build();
 		assertEquals("123", claimsSet.getAudience().get(0));
 		assertEquals(1, claimsSet.getAudience().size());
 
 		claimsSet = new JWTClaimsSet.Builder().audience((String) null).build();
-		assertNull(claimsSet.getAudience());
+		assertTrue(claimsSet.getAudience().isEmpty());
 	}
 
 
