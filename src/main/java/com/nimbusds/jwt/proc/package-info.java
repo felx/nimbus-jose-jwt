@@ -1,7 +1,8 @@
 /**
- * Secure framework for application-specific processing of JSON Web Tokens
- * (JWTs). Provides a core {@link com.nimbusds.jwt.proc.JWTProcessor interface}
- * for processing signed, encrypted and unsecured (plain) JWTs, with a
+ * Secure framework for application-specific verification and decryption of
+ * JSON Web Tokens (JWTs). Provides a core
+ * {@link com.nimbusds.jwt.proc.JWTProcessor interface} for processing signed,
+ * encrypted and unsecured (plain) JWTs, with a
  * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor default implementation}
  * which can be configured and extended as required.
  *
