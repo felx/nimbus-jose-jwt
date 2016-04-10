@@ -182,7 +182,6 @@ public class DefaultResourceRetrieverTest {
 
 		ServerSocket serverSocket = new ServerSocket(0);
 		int port = serverSocket.getLocalPort();
-		System.out.println("Found unused port " + port);
 		serverSocket.close();
 
 		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever(50, 0);

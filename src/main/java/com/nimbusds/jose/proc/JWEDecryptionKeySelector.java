@@ -16,18 +16,14 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * Key selector for decrypting JWE objects used in OpenID Connect.
+ * Key selector for decrypting JWE objects, where the key candidates are
+ * retrieved from a {@link JWKSource JSON Web Key (JWK) source}.
  *
- * <p>Can be used to select RSA and EC key candidates for the decryption of:
- *
- * <ul>
- *     <li>Encrypted ID tokens
- *     <li>Encrypted JWT-encoded UserInfo responses
- *     <li>Encrypted OpenID request objects
- * </ul>
+ * @author Vladimir Dzhuvinov
+ * @version 2016-04-10
  */
 @ThreadSafe
-public class JWEDecryptionKeySelector extends AbstractJWKSelectorWithSource implements JWEKeySelector {
+public class JWEDecryptionKeySelector<C extends SecurityContext> extends AbstractJWKSelectorWithSource<C> implements JWEKeySelector<C> {
 
 
 	/**
@@ -58,9 +54,6 @@ public class JWEDecryptionKeySelector extends AbstractJWKSelectorWithSource impl
 	/**
 	 * Creates a new decryption key selector.
 	 *
-	 * @param id        Identifier for the JWE recipient, typically an
-	 *                  OAuth 2.0 server issuer ID, or client ID. Must not
-	 *                  be {@code null}.
 	 * @param jweAlg    The expected JWE algorithm for the objects to be
 	 *                  decrypted. Must not be {@code null}.
 	 * @param jweEnc    The expected JWE encryption method for the objects
@@ -69,11 +62,10 @@ public class JWEDecryptionKeySelector extends AbstractJWKSelectorWithSource impl
 	 * @param jwkSource The JWK source. Must include the private keys and
 	 *                  must not be {@code null}.
 	 */
-	public JWEDecryptionKeySelector(final String id,
-					final JWEAlgorithm jweAlg,
+	public JWEDecryptionKeySelector(final JWEAlgorithm jweAlg,
 					final EncryptionMethod jweEnc,
-					final JWKSource jwkSource) {
-		super(id, jwkSource);
+					final JWKSource<C> jwkSource) {
+		super(jwkSource);
 		if (jweAlg == null) {
 			throw new IllegalArgumentException("The JWE algorithm must not be null");
 		}
@@ -134,7 +126,7 @@ public class JWEDecryptionKeySelector extends AbstractJWKSelectorWithSource impl
 
 
 	@Override
-	public List<Key> selectJWEKeys(final JWEHeader jweHeader, final SecurityContext context) {
+	public List<Key> selectJWEKeys(final JWEHeader jweHeader, final C context) {
 
 		if (! jweAlg.equals(jweHeader.getAlgorithm()) || ! jweEnc.equals(jweHeader.getEncryptionMethod())) {
 			// Unexpected JWE alg or enc
@@ -142,7 +134,7 @@ public class JWEDecryptionKeySelector extends AbstractJWKSelectorWithSource impl
 		}
 
 		JWKMatcher jwkMatcher = createJWKMatcher(jweHeader);
-		List<JWK> jwkMatches = getJWKSource().get(getIdentifier(), new JWKSelector(jwkMatcher));
+		List<JWK> jwkMatches = getJWKSource().get(new JWKSelector(jwkMatcher), context);
 
 		List<Key> sanitizedKeyList = new LinkedList<>();
 

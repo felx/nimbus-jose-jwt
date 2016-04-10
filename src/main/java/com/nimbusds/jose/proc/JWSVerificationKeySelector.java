@@ -16,26 +16,14 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * Key selector for verifying JWS objects used in OpenID Connect.
+ * Key selector for verifying JWS objects, where the key candidates are
+ * retrieved from a {@link JWKSource JSON Web Key (JWK) source}.
  *
- * <p>Can be used to select RSA and EC key candidates for the verification of:
- *
- * <ul>
- *     <li>Signed ID tokens
- *     <li>Signed JWT-encoded UserInfo responses
- *     <li>Signed OpenID request objects
- * </ul>
- *
- * <p>Client secret candidates for the verification of:
- *
- * <ul>
- *     <li>HMAC ID tokens
- *     <li>HMAC JWT-encoded UserInfo responses
- *     <li>HMAC OpenID request objects
- * </ul>
+ * @author Vladimir Dzhuvinov
+ * @version 2016-04-10
  */
 @ThreadSafe
-public class JWSVerificationKeySelector extends AbstractJWKSelectorWithSource implements JWSKeySelector {
+public class JWSVerificationKeySelector<C extends SecurityContext> extends AbstractJWKSelectorWithSource<C> implements JWSKeySelector<C> {
 
 
 	/**
@@ -47,15 +35,12 @@ public class JWSVerificationKeySelector extends AbstractJWKSelectorWithSource im
 	/**
 	 * Creates a new JWS verification key selector.
 	 *
-	 * @param id        Identifier for the JWS originator, typically an
-	 *                  OAuth 2.0 server issuer ID, or client ID. Must not
-	 *                  be {@code null}.
 	 * @param jwsAlg    The expected JWS algorithm for the objects to be
 	 *                  verified. Must not be {@code null}.
 	 * @param jwkSource The JWK source. Must not be {@code null}.
 	 */
-	public JWSVerificationKeySelector(final String id, final JWSAlgorithm jwsAlg, final JWKSource jwkSource) {
-		super(id, jwkSource);
+	public JWSVerificationKeySelector(final JWSAlgorithm jwsAlg, final JWKSource<C> jwkSource) {
+		super(jwkSource);
 		if (jwsAlg == null) {
 			throw new IllegalArgumentException("The JWS algorithm must not be null");
 		}
@@ -96,7 +81,7 @@ public class JWSVerificationKeySelector extends AbstractJWKSelectorWithSource im
 					.algorithms(getExpectedJWSAlgorithm(), null)
 					.build();
 		} else if (JWSAlgorithm.Family.HMAC_SHA.contains(getExpectedJWSAlgorithm())) {
-			// Client secret matcher
+			// HMAC secret matcher
 			return new JWKMatcher.Builder()
 					.keyType(KeyType.forAlgorithm(getExpectedJWSAlgorithm()))
 					.keyID(jwsHeader.getKeyID())
@@ -110,7 +95,7 @@ public class JWSVerificationKeySelector extends AbstractJWKSelectorWithSource im
 
 
 	@Override
-	public List<Key> selectJWSKeys(final JWSHeader jwsHeader, final SecurityContext context) {
+	public List<Key> selectJWSKeys(final JWSHeader jwsHeader, final C context) {
 
 		if (! jwsAlg.equals(jwsHeader.getAlgorithm())) {
 			// Unexpected JWS alg
@@ -122,7 +107,7 @@ public class JWSVerificationKeySelector extends AbstractJWKSelectorWithSource im
 			return Collections.emptyList();
 		}
 
-		List<JWK> jwkMatches = getJWKSource().get(getIdentifier(), new JWKSelector(jwkMatcher));
+		List<JWK> jwkMatches = getJWKSource().get(new JWKSelector(jwkMatcher), context);
 
 		List<Key> sanitizedKeyList = new LinkedList<>();
 

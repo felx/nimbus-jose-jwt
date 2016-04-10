@@ -6,27 +6,27 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- *  Abstract JSON Web Key (JWK) selector with source.
+ * Abstract JSON Web Key (JWK) selector with source.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version 2016-04-10
  */
 @ThreadSafe
-abstract class AbstractJWKSelectorWithSource extends AbstractJWKSelector {
+abstract class AbstractJWKSelectorWithSource <C extends SecurityContext> {
 	
 
 	/**
 	 * The JWK source.
 	 */
-	private final JWKSource jwkSource;
+	private final JWKSource<C> jwkSource;
 
 
 	/**
 	 * Creates a new abstract JWK selector with a source.
 	 *
-	 * @param id        Identifier for the JWK selector. Must not be
-	 *                  {@code null}.
 	 * @param jwkSource The JWK source. Must not be {@code null}.
 	 */
-	public AbstractJWKSelectorWithSource(final String id, final JWKSource jwkSource) {
-		super(id);
+	public AbstractJWKSelectorWithSource(final JWKSource<C> jwkSource) {
 		if (jwkSource == null) {
 			throw new IllegalArgumentException("The JWK source must not be null");
 		}
@@ -39,7 +39,7 @@ abstract class AbstractJWKSelectorWithSource extends AbstractJWKSelector {
 	 *
 	 * @return The JWK source.
 	 */
-	public JWKSource getJWKSource() {
+	public JWKSource<C> getJWKSource() {
 		return jwkSource;
 	}
 }

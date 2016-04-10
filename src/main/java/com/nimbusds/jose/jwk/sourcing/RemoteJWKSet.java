@@ -12,6 +12,7 @@ import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.url.DefaultResourceRetriever;
 import com.nimbusds.jose.util.url.Resource;
 import com.nimbusds.jose.util.url.RestrictedResourceRetriever;
@@ -19,11 +20,14 @@ import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * Remote JSON Web Key (JWK) set. Intended for a JWK set specified by URL
- * reference. The retrieved JWK set is cached.
+ * Remote JSON Web Key (JWK) source specified by a JWK set URL. The retrieved
+ * JWK set is cached to minimise network calls.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version 2016-04-10
  */
 @ThreadSafe
-public class RemoteJWKSet extends AbstractJWKSource {
+public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
@@ -66,22 +70,18 @@ public class RemoteJWKSet extends AbstractJWKSource {
 
 
 	/**
-	 * Creates a new remote JWK set.
+	 * Creates a new remote JWK set. Starts an asynchronous thread to
+	 * fetch the JWK set from the specified URL. The JWK set is cached if
+	 * successfully retrieved.
 	 *
-	 * @param id                The JWK set owner identifier. Typically the
-	 *                          OAuth 2.0 server issuer ID, or client ID.
-	 *                          Must not be {@code null}.
 	 * @param jwkSetURL         The JWK set URL. Must not be {@code null}.
 	 * @param resourceRetriever The HTTP resource retriever to use,
 	 *                          {@code null} to use the
 	 *                          {@link DefaultResourceRetriever default
 	 *                          one}.
 	 */
-	public RemoteJWKSet(final String id,
-			    final URL jwkSetURL,
+	public RemoteJWKSet(final URL jwkSetURL,
 			    final RestrictedResourceRetriever resourceRetriever) {
-		super(id);
-
 		if (jwkSetURL == null) {
 			throw new IllegalArgumentException("The JWK set URL must not be null");
 		}
@@ -180,11 +180,11 @@ public class RemoteJWKSet extends AbstractJWKSource {
 	}
 
 
+	/**
+	 * {@inheritDoc} The security context is ignored.
+	 */
 	@Override
-	public List<JWK> get(final String id, final JWKSelector jwkSelector) {
-		if (! getOwner().equals(id)) {
-			return Collections.emptyList();
-		}
+	public List<JWK> get(final JWKSelector jwkSelector, final C context) {
 
 		// Get the JWK set, may necessitate a cache update
 		JWKSet jwkSet = getJWKSet();

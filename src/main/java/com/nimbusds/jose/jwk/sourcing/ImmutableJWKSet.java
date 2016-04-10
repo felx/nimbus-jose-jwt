@@ -1,20 +1,23 @@
 package com.nimbusds.jose.jwk.sourcing;
 
 
-import java.util.Collections;
 import java.util.List;
 
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.proc.SecurityContext;
 import net.jcip.annotations.Immutable;
 
 
 /**
- * Immutable JSON Web Key (JWK) set. Intended for a JWK set specified by value.
+ * JSON Web Key (JWK) source backed by an immutable JWK set.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version 2016-04-10
  */
 @Immutable
-public class ImmutableJWKSet extends AbstractJWKSource {
+public class ImmutableJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
@@ -24,15 +27,11 @@ public class ImmutableJWKSet extends AbstractJWKSource {
 
 
 	/**
-	 * Creates a new immutable JWK set.
+	 * Creates a new JWK source backed by an immutable JWK set.
 	 *
-	 * @param id     The JWK set owner identifier. Typically the OAuth 2.0
-	 *               server issuer ID, or client ID. Must not be
-	 *               {@code null}.
 	 * @param jwkSet The JWK set. Must not be {@code null}.
 	 */
-	public ImmutableJWKSet(final String id, final JWKSet jwkSet) {
-		super(id);
+	public ImmutableJWKSet(final JWKSet jwkSet) {
 		if (jwkSet == null) {
 			throw new IllegalArgumentException("The JWK set must not be null");
 		}
@@ -50,11 +49,12 @@ public class ImmutableJWKSet extends AbstractJWKSource {
 	}
 
 
+	/**
+	 * {@inheritDoc} The security context is ignored.
+	 */
 	@Override
-	public List<JWK> get(final String id, final JWKSelector jwkSelector) {
-		if (! getOwner().equals(id)) {
-			return Collections.emptyList();
-		}
+	public List<JWK> get(final JWKSelector jwkSelector, final C context) {
+
 		return jwkSelector.select(jwkSet);
 	}
 }

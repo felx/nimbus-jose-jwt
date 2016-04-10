@@ -22,9 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- * Remote JWK set source test.
- */
 public class RemoteJWKSetTest extends TestCase {
 
 
@@ -74,9 +71,8 @@ public class RemoteJWKSetTest extends TestCase {
 			.withHeader("Content-Type", "application/json")
 			.withBody(jwkSet.toJSONObject(true).toJSONString());
 
-		RemoteJWKSet jwkSetSource = new RemoteJWKSet(id, jwkSetURL, null);
+		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
 
-		assertEquals(id, jwkSetSource.getOwner());
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());
 
@@ -87,7 +83,7 @@ public class RemoteJWKSetTest extends TestCase {
 		assertEquals("2", out.getKeys().get(1).getKeyID());
 		assertEquals(2, out.getKeys().size());
 
-		List<JWK> matches = jwkSetSource.get(id, new JWKSelector(new JWKMatcher.Builder().keyID("1").build()));
+		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 
 		RSAKey m1 = (RSAKey) matches.get(0);
 		assertEquals(rsaJWK1.getPublicExponent(), m1.getPublicExponent());
@@ -158,13 +154,12 @@ public class RemoteJWKSetTest extends TestCase {
 				}
 			});
 
-		RemoteJWKSet jwkSetSource = new RemoteJWKSet(id, jwkSetURL, null);
+		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
 
 		Thread initialRetriever = getThreadByName("initial-jwk-set-retriever["+ jwkSetURL +"]");
 		assertNotNull(initialRetriever);
 		initialRetriever.join();
 
-		assertEquals(id, jwkSetSource.getOwner());
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());
 
@@ -175,7 +170,7 @@ public class RemoteJWKSetTest extends TestCase {
 		assertEquals("2", out.getKeys().get(1).getKeyID());
 		assertEquals(2, out.getKeys().size());
 
-		List<JWK> matches = jwkSetSource.get(id, new JWKSelector(new JWKMatcher.Builder().keyID("1").build()));
+		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 
 		RSAKey m1 = (RSAKey) matches.get(0);
 		assertEquals(rsaJWK1.getPublicExponent(), m1.getPublicExponent());
@@ -185,7 +180,7 @@ public class RemoteJWKSetTest extends TestCase {
 		assertEquals(1, matches.size());
 
 		// Select 3rd key, expect refresh of JWK set
-		matches = jwkSetSource.get(id, new JWKSelector(new JWKMatcher.Builder().keyID("3").build()));
+		matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("3").build()), null);
 
 		m1 = (RSAKey) matches.get(0);
 		assertEquals(rsaJWK3.getPublicExponent(), m1.getPublicExponent());
@@ -237,14 +232,13 @@ public class RemoteJWKSetTest extends TestCase {
 			.withHeader("Content-Type", "application/json")
 			.withBody(jwkSet.toJSONObject(true).toJSONString());
 
-		RemoteJWKSet jwkSetSource = new RemoteJWKSet(id, jwkSetURL, null);
+		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
 
-		assertEquals(id, jwkSetSource.getOwner());
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 
 		assertNull(jwkSetSource.getJWKSet());
 
-		List<JWK> matches = jwkSetSource.get(id, new JWKSelector(new JWKMatcher.Builder().keyID("1").build()));
+		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 		assertTrue(matches.isEmpty());
 	}
 }

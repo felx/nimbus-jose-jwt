@@ -18,9 +18,6 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 
 
-/**
- * Tests selector for JWE decryption keys.
- */
 public class JWEDecryptionKeySelectorTest extends TestCase {
 	
 
@@ -46,15 +43,11 @@ public class JWEDecryptionKeySelectorTest extends TestCase {
 			.keyUse(KeyUse.ENCRYPTION)
 			.build();
 
-		String id = "123";
-
 		JWEDecryptionKeySelector keySelector = new JWEDecryptionKeySelector(
-			id,
 			JWEAlgorithm.RSA_OAEP,
 			EncryptionMethod.A128CBC_HS256,
-			new ImmutableJWKSet(id, new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2))));
+			new ImmutableJWKSet(new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2))));
 
-		assertEquals(id, keySelector.getIdentifier());
 		assertEquals(JWEAlgorithm.RSA_OAEP, keySelector.getExpectedJWEAlgorithm());
 		assertEquals(EncryptionMethod.A128CBC_HS256, keySelector.getExpectedJWEEncryptionMethod());
 

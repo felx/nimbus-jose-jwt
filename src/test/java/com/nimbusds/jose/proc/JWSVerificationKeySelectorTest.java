@@ -13,15 +13,10 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.sourcing.ImmutableJWKSet;
-import com.nimbusds.jose.util.base64.Base64;
-import com.nimbusds.jose.util.base64.Base64URL;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 
-/**
- * Tests the key selector for JWS verification.
- */
 public class JWSVerificationKeySelectorTest extends TestCase {
 	
 
@@ -47,14 +42,10 @@ public class JWSVerificationKeySelectorTest extends TestCase {
 			.algorithm(JWSAlgorithm.RS256)
 			.build();
 
-		String iss = "https://c2id.com";
-
 		JWSVerificationKeySelector keySelector = new JWSVerificationKeySelector(
-			iss,
 			JWSAlgorithm.RS256,
-			new ImmutableJWKSet(iss, new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2))));
+			new ImmutableJWKSet(new JWKSet(Arrays.asList((JWK)rsaJWK1, (JWK)rsaJWK2))));
 
-		assertEquals(iss, keySelector.getIdentifier());
 		assertEquals(JWSAlgorithm.RS256, keySelector.getExpectedJWSAlgorithm());
 		assertNotNull(keySelector.getJWKSource());
 
@@ -106,14 +97,10 @@ public class JWSVerificationKeySelectorTest extends TestCase {
 		byte[] secret = new byte[32];
 		new SecureRandom().nextBytes(secret);
 
-		String iss = "https://c2id.com";
-
 		JWSVerificationKeySelector keySelector = new JWSVerificationKeySelector(
-			iss,
 			JWSAlgorithm.HS256,
-			new ImmutableJWKSet("123", new JWKSet(new OctetSequenceKey.Builder(secret).build())));
+			new ImmutableJWKSet(new JWKSet(new OctetSequenceKey.Builder(secret).build())));
 
-		assertEquals(iss, keySelector.getIdentifier());
 		assertEquals(JWSAlgorithm.HS256, keySelector.getExpectedJWSAlgorithm());
 		assertNotNull(keySelector.getJWKSource());
 
