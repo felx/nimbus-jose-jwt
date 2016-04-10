@@ -494,15 +494,15 @@ version 4.13.1 (2016-04-04)
 
 version 4.14 (2016-04-10)
     * Adds new com.nimbusds.jose.jwk.source package with an interface and
-      utilities for sourcing JSON Web Keys (JWKs). Typical sources can be a
-      local text file containing a JWK set, a JWK set specified by URL, a Java
-      keystore, or a database.
+      several implementation for sourcing JSON Web Keys (JWKs). Typical sources
+      can be a local text file containing a JWK set, a JWK set specified by
+      URL, a Java keystore, or a database.
     * Adds new ResourceRetriever and RestrictedResourceRetriever interfaces and
       a default implementation for retrieving remote JWK sets and other objects
       by URL, with optional connect, read and size limits.
     * Extends the framework for processing JWS and JWE objects with concrete
       implementations of a JWSKeySelector and a JWEKeySelector.
-    * Deprecated JSONObject.parseJSONObject in favour of JSONObject.parse.
+    * Deprecates JSONObject.parseJSONObject in favour of JSONObject.parse.
 
 
 
