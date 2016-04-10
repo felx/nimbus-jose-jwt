@@ -10,13 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.nimbusds.jose.util.json.JSONObjectUtils;
+import com.nimbusds.jose.util.url.DefaultResourceRetriever;
+import com.nimbusds.jose.util.url.Resource;
+import com.nimbusds.jose.util.url.RestrictedResourceRetriever;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-
 import org.apache.commons.io.FileUtils;
-
-import com.nimbusds.jose.util.json.JSONObjectUtils;
-import com.nimbusds.jose.util.url.URLUtils;
 
 
 /**
@@ -49,7 +49,7 @@ import com.nimbusds.jose.util.url.URLUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-12-14
+ * @version 2016-04-10
  */
 public class JWKSet {
 
@@ -365,7 +365,7 @@ public class JWKSet {
 	 *                       If zero no (infinite) timeout.
 	 * @param readTimeout    The URL read timeout, in milliseconds. If zero
 	 *                       no (infinite) timeout.
-	 * @param sizeLimit      The read size limit, in bytes. If negative no
+	 * @param sizeLimit      The read size limit, in bytes. If zero no
 	 *                       limit.
 	 *
 	 * @return The JSON Web Key (JWK) set.
@@ -380,7 +380,12 @@ public class JWKSet {
 				  final int sizeLimit)
 		throws IOException, ParseException {
 
-		return parse(URLUtils.read(url, connectTimeout, readTimeout, sizeLimit));
+		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever(
+			connectTimeout,
+			readTimeout,
+			sizeLimit);
+		Resource resource = resourceRetriever.retrieveResource(url);
+		return parse(resource.getContent());
 	}
 
 
@@ -398,6 +403,6 @@ public class JWKSet {
 	public static JWKSet load(final URL url)
 		throws IOException, ParseException {
 
-		return parse(URLUtils.read(url, 0, 0, -1));
+		return load(url, 0, 0, 0);
 	}
 }

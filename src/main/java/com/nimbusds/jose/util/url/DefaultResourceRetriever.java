@@ -1,14 +1,13 @@
 package com.nimbusds.jose.util.url;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 import net.jcip.annotations.ThreadSafe;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.BoundedInputStream;
 
 
@@ -19,12 +18,6 @@ import org.apache.commons.io.input.BoundedInputStream;
  */
 @ThreadSafe
 public class DefaultResourceRetriever extends AbstractRestrictedResourceRetriever implements RestrictedResourceRetriever {
-
-
-	/**
-	 * The system line separator.
-	 */
-	private final String lineSeparator;
 	
 	
 	/**
@@ -65,7 +58,6 @@ public class DefaultResourceRetriever extends AbstractRestrictedResourceRetrieve
 	public DefaultResourceRetriever(final int connectTimeout, final int readTimeout, final int sizeLimit) {
 	
 		super(connectTimeout, readTimeout, sizeLimit);
-		lineSeparator = System.getProperty("line.separator");
 	}
 
 
@@ -83,25 +75,13 @@ public class DefaultResourceRetriever extends AbstractRestrictedResourceRetrieve
 		con.setConnectTimeout(getConnectTimeout());
 		con.setReadTimeout(getReadTimeout());
 
-		StringBuilder sb = new StringBuilder();
-
 		InputStream inputStream = con.getInputStream();
 
 		if (getSizeLimit() > 0) {
 			inputStream = new BoundedInputStream(inputStream, getSizeLimit());
 		}
 
-		BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
-
-		String line;
-
-		while ((line = input.readLine()) != null) {
-
-			sb.append(line);
-			sb.append(lineSeparator);
-		}
-
-		input.close();
+		final String content = IOUtils.toString(inputStream);
 
 		// Check HTTP code + message
 		final int statusCode = con.getResponseCode();
@@ -112,6 +92,6 @@ public class DefaultResourceRetriever extends AbstractRestrictedResourceRetrieve
 			throw new IOException("HTTP " + statusCode + ": " + statusMessage);
 		}
 
-		return new Resource(sb.toString(), con.getContentType());
+		return new Resource(content, con.getContentType());
 	}
 }
