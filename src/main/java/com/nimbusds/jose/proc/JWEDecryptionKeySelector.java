@@ -11,7 +11,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.*;
-import com.nimbusds.jose.jwk.sourcing.JWKSource;
+import com.nimbusds.jose.jwk.source.JWKSource;
 import net.jcip.annotations.ThreadSafe;
 
 

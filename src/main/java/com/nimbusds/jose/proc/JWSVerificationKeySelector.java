@@ -11,7 +11,7 @@ import javax.crypto.SecretKey;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.*;
-import com.nimbusds.jose.jwk.sourcing.JWKSource;
+import com.nimbusds.jose.jwk.source.JWKSource;
 import net.jcip.annotations.ThreadSafe;
 
 

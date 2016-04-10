@@ -13,7 +13,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.*;
-import com.nimbusds.jose.jwk.sourcing.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import junit.framework.TestCase;
 import org.junit.Assert;
 

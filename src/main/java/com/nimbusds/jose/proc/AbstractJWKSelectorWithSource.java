@@ -1,7 +1,7 @@
 package com.nimbusds.jose.proc;
 
 
-import com.nimbusds.jose.jwk.sourcing.JWKSource;
+import com.nimbusds.jose.jwk.source.JWKSource;
 import net.jcip.annotations.ThreadSafe;
 
 

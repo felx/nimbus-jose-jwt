@@ -12,7 +12,7 @@ import java.util.List;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.jwk.*;
-import com.nimbusds.jose.jwk.sourcing.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import junit.framework.TestCase;
 import org.junit.Assert;
 

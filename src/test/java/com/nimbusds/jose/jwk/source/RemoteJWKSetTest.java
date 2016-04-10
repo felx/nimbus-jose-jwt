@@ -1,4 +1,4 @@
-package com.nimbusds.jose.jwk.sourcing;
+package com.nimbusds.jose.jwk.source;
 
 
 import java.net.URL;
