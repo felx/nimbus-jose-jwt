@@ -497,8 +497,10 @@ version 5.0 (2016-04-10)
       package.
     * Moves data type and data type conversion utilities into new
       com.nimbusds.jose.util.datatype package.
+    * Moves date / time utilities into new com.nimbusds.jose.util.date package.
     * Moves deflate (RFC 1951) utility into new
       com.nimbusds.jose.util.compression package.
     * Moves JSON utilities into new com.nimbusds.jose.util.json package.
     * Moves X.509 certificate utilities into new com.nimbusds.jose.util.x509
       package.
+

@@ -1,4 +1,4 @@
-package com.nimbusds.jwt.util;
+package com.nimbusds.jose.util.date;
 
 
 import java.util.Date;

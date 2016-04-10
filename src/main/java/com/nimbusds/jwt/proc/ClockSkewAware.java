@@ -1,10 +1,13 @@
 package com.nimbusds.jwt.proc;
 
 
+import com.nimbusds.jose.util.date.DateUtils;
+
+
 /**
  * Clock skew aware interface.
  *
- * @see com.nimbusds.jwt.util.DateUtils
+ * @see DateUtils
  */
 public interface ClockSkewAware {
 	

@@ -3,7 +3,7 @@ package com.nimbusds.jwt.proc;
 
 import java.util.Date;
 
-import com.nimbusds.jwt.util.DateUtils;
+import com.nimbusds.jose.util.date.DateUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jwt.JWTClaimsSet;
