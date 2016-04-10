@@ -1,6 +1,12 @@
 /**
  * Secure framework for application-specific processing of JOSE objects (with
- * arbitrary payloads). To process JSON Web Tokens (JWT) refer to the
+ * arbitrary payloads). Provides a core
+ * {@link com.nimbusds.jose.proc.JOSEProcessor interface} for processing JWS,
+ * JWE and unsecured (plain) objects, with a
+ * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor default implementation}
+ * which can be configured and extended as required.
+ *
+ * <p>To process JSON Web Tokens (JWT) refer to the
  * {@link com.nimbusds.jwt.proc} package.
  */
 package com.nimbusds.jose.proc;
