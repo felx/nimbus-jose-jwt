@@ -1,8 +1,6 @@
 package com.nimbusds.jose.util.url;
 
 
-import javax.mail.internet.ContentType;
-
 import net.jcip.annotations.Immutable;
 
 
@@ -22,7 +20,7 @@ public class Resource {
 	/**
 	 * The content type.
 	 */
-	private final ContentType contentType;
+	private final String contentType;
 
 
 	/**
@@ -33,7 +31,7 @@ public class Resource {
 	 * @param contentType The resource content type, {@code null} if not
 	 *                    specified.
 	 */
-	public Resource(final String content, final ContentType contentType) {
+	public Resource(final String content, final String contentType) {
 
 		if (content == null) {
 			throw new IllegalArgumentException("The resource content must not be null");
@@ -60,7 +58,7 @@ public class Resource {
 	 *
 	 * @return The content type, {@code null} if not specified.
 	 */
-	public ContentType getContentType() {
+	public String getContentType() {
 
 		return contentType;
 	}

@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
 
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.io.input.BoundedInputStream;
@@ -114,17 +112,6 @@ public class DefaultResourceRetriever extends AbstractRestrictedResourceRetrieve
 			throw new IOException("HTTP " + statusCode + ": " + statusMessage);
 		}
 
-		// Parse the Content-Type header
-		ContentType contentType = null;
-
-		if (con.getContentType() != null) {
-			try {
-				contentType = new ContentType(con.getContentType());
-			} catch (ParseException e) {
-				throw new IOException("Couldn't parse Content-Type header: " + e.getMessage(), e);
-			}
-		}
-		
-		return new Resource(sb.toString(), contentType);
+		return new Resource(sb.toString(), con.getContentType());
 	}
 }

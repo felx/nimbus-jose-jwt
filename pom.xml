@@ -76,11 +76,6 @@
             <version>[2.4,]</version>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>[1.4.7,]</version>
-        </dependency>
-        <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
             <version>0.4.1</version>

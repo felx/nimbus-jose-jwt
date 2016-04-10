@@ -101,7 +101,7 @@ public class DefaultResourceRetrieverTest {
 
 		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 		Resource resource = resourceRetriever.retrieveResource(new URL("http://localhost:" + port() + "/c2id/jwks.json"));
-		assertEquals("application/json", resource.getContentType().getBaseType());
+		assertEquals("application/json", resource.getContentType());
 		jsonObject = JSONObjectUtils.parse(resource.getContent());
 		assertEquals("B", jsonObject.get("A"));
 	}
@@ -130,28 +130,26 @@ public class DefaultResourceRetrieverTest {
 
 
 	@Test
-	public void testRetrieveOKWithInvalidContentType()
+	public void testIgnoreInvalidContentType()
 		throws Exception {
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("A", "B");
+
+		String invalidContentType = "moo/boo/foo";
 
 		onRequest()
 			.havingMethodEqualTo("GET")
 			.havingPathEqualTo("/c2id/jwks.json")
 			.respond()
 			.withStatus(200)
-			.withContentType("moo/boo/foo")
+			.withContentType(invalidContentType)
 			.withBody(jsonObject.toJSONString());
 
 		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 
-		try {
-			resourceRetriever.retrieveResource(new URL("http://localhost:" + port() + "/c2id/jwks.json"));
-			fail();
-		} catch (IOException e) {
-			assertEquals("Couldn't parse Content-Type header: Expected ';', got \"/\"", e.getMessage());
-		}
+		Resource resource = resourceRetriever.retrieveResource(new URL("http://localhost:" + port() + "/c2id/jwks.json"));
+		assertEquals(invalidContentType, resource.getContentType());
 	}
 
 
@@ -172,7 +170,7 @@ public class DefaultResourceRetrieverTest {
 
 		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever();
 		Resource resource = resourceRetriever.retrieveResource(new URL("http://localhost:" + port() + "/c2id/jwks.json"));
-		assertEquals("application/json", resource.getContentType().getBaseType());
+		assertEquals("application/json", resource.getContentType());
 		jsonObject = JSONObjectUtils.parse(resource.getContent());
 		assertEquals("B", jsonObject.get("A"));
 	}
