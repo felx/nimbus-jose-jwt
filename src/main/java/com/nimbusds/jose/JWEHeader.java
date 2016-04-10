@@ -1225,7 +1225,7 @@ public final class JWEHeader extends CommonSEHeader {
 	public static JWEHeader parse(final String jsonString)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(jsonString), null);
+		return parse(JSONObjectUtils.parse(jsonString), null);
 	}
 
 
@@ -1246,7 +1246,7 @@ public final class JWEHeader extends CommonSEHeader {
 				      final Base64URL parsedBase64URL)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(jsonString), parsedBase64URL);
+		return parse(JSONObjectUtils.parse(jsonString), parsedBase64URL);
 	}
 
 

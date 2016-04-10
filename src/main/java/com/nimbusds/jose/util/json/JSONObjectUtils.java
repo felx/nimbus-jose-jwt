@@ -45,7 +45,7 @@ public class JSONObjectUtils {
 	 * @throws ParseException If the string cannot be parsed to a valid JSON 
 	 *                        object.
 	 */
-	public static JSONObject parseJSONObject(final String s) 
+	public static JSONObject parse(final String s)
 		throws ParseException {
 
 		Object o;
@@ -63,6 +63,24 @@ public class JSONObjectUtils {
 		} else {
 			throw new ParseException("JSON entity is not an object", 0);
 		}
+	}
+
+
+	/**
+	 * Use {@link #parse(String)} instead.
+	 *
+	 * @param s The JSON object string to parse. Must not be {@code null}.
+	 *
+	 * @return The JSON object.
+	 *
+	 * @throws ParseException If the string cannot be parsed to a valid JSON
+	 *                        object.
+	 */
+	@Deprecated
+	public static JSONObject parseJSONObject(final String s)
+		throws ParseException {
+
+		return parse(s);
 	}
 
 

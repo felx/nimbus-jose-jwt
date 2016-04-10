@@ -1,7 +1,6 @@
 package com.nimbusds.jose.util.json;
 
 
-import com.nimbusds.jose.util.json.JSONObjectUtils;
 import junit.framework.TestCase;
 
 
@@ -17,8 +16,8 @@ public class JSONObjectUtilsTest extends TestCase {
 	public void testParseTrailingWhiteSpace()
 		throws Exception {
 
-		assertEquals(0, JSONObjectUtils.parseJSONObject("{} ").size());
-		assertEquals(0, JSONObjectUtils.parseJSONObject("{}\n").size());
-		assertEquals(0, JSONObjectUtils.parseJSONObject("{}\r\n").size());
+		assertEquals(0, JSONObjectUtils.parse("{} ").size());
+		assertEquals(0, JSONObjectUtils.parse("{}\n").size());
+		assertEquals(0, JSONObjectUtils.parse("{}\r\n").size());
 	}
 }

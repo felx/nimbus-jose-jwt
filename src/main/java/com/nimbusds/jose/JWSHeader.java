@@ -689,7 +689,7 @@ public final class JWSHeader extends CommonSEHeader {
 				      final Base64URL parsedBase64URL)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(jsonString), parsedBase64URL);
+		return parse(JSONObjectUtils.parse(jsonString), parsedBase64URL);
 	}
 
 

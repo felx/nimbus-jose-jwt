@@ -48,7 +48,7 @@ public final class JWTParser {
 		JSONObject jsonObject;
 
 		try {
-			jsonObject = JSONObjectUtils.parseJSONObject(header.decodeToString());
+			jsonObject = JSONObjectUtils.parse(header.decodeToString());
 
 		} catch (ParseException e) {
 

@@ -451,7 +451,7 @@ public abstract class Header implements Serializable {
 				   final Base64URL parsedBase64URL)
 		throws ParseException {
 
-		JSONObject jsonObject = JSONObjectUtils.parseJSONObject(jsonString);
+		JSONObject jsonObject = JSONObjectUtils.parse(jsonString);
 
 		return parse(jsonObject, parsedBase64URL);
 	}

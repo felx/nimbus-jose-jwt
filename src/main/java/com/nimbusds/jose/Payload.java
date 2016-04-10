@@ -343,7 +343,7 @@ public final class Payload implements Serializable {
 		}
 
 		try {
-			return JSONObjectUtils.parseJSONObject(s);
+			return JSONObjectUtils.parse(s);
 
 		} catch (ParseException e) {
 			// Payload not a JSON object

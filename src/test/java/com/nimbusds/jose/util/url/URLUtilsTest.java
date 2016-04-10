@@ -1,4 +1,4 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jose.util.url;
 
 
 import java.net.SocketTimeoutException;
@@ -6,14 +6,13 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
+import static net.jadler.Jadler.*;
+
 import junit.framework.TestCase;
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static net.jadler.Jadler.*;
-
-import org.apache.commons.lang.RandomStringUtils;
 
 
 /**

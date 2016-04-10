@@ -879,6 +879,6 @@ public final class JWTClaimsSet implements Serializable {
 	public static JWTClaimsSet parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 }

@@ -1175,7 +1175,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	public static ECKey parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 
 

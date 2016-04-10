@@ -264,7 +264,7 @@ public abstract class JOSEObject implements Serializable {
 		JSONObject jsonObject;
 
 		try {
-			jsonObject = JSONObjectUtils.parseJSONObject(parts[0].decodeToString());
+			jsonObject = JSONObjectUtils.parse(parts[0].decodeToString());
 
 		} catch (ParseException e) {
 

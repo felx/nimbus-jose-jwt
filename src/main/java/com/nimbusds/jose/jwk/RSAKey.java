@@ -1679,7 +1679,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	public static RSAKey parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 
 

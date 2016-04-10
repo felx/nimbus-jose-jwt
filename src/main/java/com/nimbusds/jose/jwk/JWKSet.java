@@ -16,7 +16,7 @@ import net.minidev.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 
 import com.nimbusds.jose.util.json.JSONObjectUtils;
-import com.nimbusds.jose.util.URLUtils;
+import com.nimbusds.jose.util.url.URLUtils;
 
 
 /**
@@ -284,7 +284,7 @@ public class JWKSet {
 	public static JWKSet parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 
 

@@ -502,3 +502,4 @@ version 5.0 (2016-04-10)
     * Moves JSON utilities into new com.nimbusds.jose.util.json package.
     * Moves X.509 certificate utilities into new com.nimbusds.jose.util.x509
       package.
+    * Adds javax.mail:mail:1.4.7 dependency to handle content type headers.

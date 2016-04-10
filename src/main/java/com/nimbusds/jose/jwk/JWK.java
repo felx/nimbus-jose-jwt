@@ -414,7 +414,7 @@ public abstract class JWK implements JSONAware, Serializable {
 	public static JWK parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 
 

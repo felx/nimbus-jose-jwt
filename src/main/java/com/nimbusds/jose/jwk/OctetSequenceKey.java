@@ -486,7 +486,7 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 	public static OctetSequenceKey parse(final String s)
 		throws ParseException {
 
-		return parse(JSONObjectUtils.parseJSONObject(s));
+		return parse(JSONObjectUtils.parse(s));
 	}
 
 	

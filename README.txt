@@ -99,7 +99,11 @@ The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
 * JCIP for concurrency annotations.
 
-* [optional] The BouncyCastle.org library, for AES/CBC and AES/GCM encryption.
+* Apache Commons IO for retrieval of local and remote JWK sets.
+
+* Javax Mail for handling content type headers of retrieved remote JWK sets.
+
+* [optional] The BouncyCastle.org library, for AES/CBC and AES/GCM encryption. TODO
 
 
 For Maven add:
