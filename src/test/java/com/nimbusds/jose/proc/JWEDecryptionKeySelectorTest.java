@@ -4,6 +4,7 @@ package com.nimbusds.jose.proc;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
@@ -14,14 +15,36 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import junit.framework.TestCase;
 import org.junit.Assert;
 
 
 public class JWEDecryptionKeySelectorTest extends TestCase {
+
+
+	public void testWithDirectEncryption()
+		throws Exception {
+
+		byte[] secret = new byte[32];
+		new SecureRandom().nextBytes(secret);
+		ImmutableSecret immutableSecret = new ImmutableSecret(secret);
+
+		JWEDecryptionKeySelector keySelector = new JWEDecryptionKeySelector(JWEAlgorithm.DIR, EncryptionMethod.A128GCM, immutableSecret);
+		assertEquals(JWEAlgorithm.DIR, keySelector.getExpectedJWEAlgorithm());
+		assertEquals(EncryptionMethod.A128GCM, keySelector.getExpectedJWEEncryptionMethod());
+
+		JWKMatcher m = keySelector.createJWKMatcher(new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128GCM).build());
+		assertTrue(m.matches(immutableSecret.getJWKSet().getKeys().get(0)));
+
+		List<Key> matches = keySelector.selectJWEKeys(new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A128GCM).build(), null);
+		assertEquals(1, matches.size());
+		Assert.assertArrayEquals(secret, matches.get(0).getEncoded());
+
+	}
 	
 
-	public void testForRSA_OAEP()
+	public void testWithRSA_OAEP()
 		throws Exception {
 
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");

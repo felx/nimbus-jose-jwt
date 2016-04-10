@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.crypto.SecretKey;
+
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
@@ -39,26 +41,12 @@ public class JWEDecryptionKeySelector<C extends SecurityContext> extends Abstrac
 
 
 	/**
-	 * Ensures the specified JWE algorithm is RSA or EC based.
-	 *
-	 * @param jweAlg The JWE algorithm to check.
-	 */
-	private static void ensureAsymmetricEncryptionAlgorithm(final JWEAlgorithm jweAlg) {
-
-		if (! JWEAlgorithm.Family.RSA.contains(jweAlg) && ! JWEAlgorithm.Family.ECDH_ES.contains(jweAlg)) {
-			throw new IllegalArgumentException("The JWE algorithm must be RSA or EC based");
-		}
-	}
-
-
-	/**
 	 * Creates a new decryption key selector.
 	 *
 	 * @param jweAlg    The expected JWE algorithm for the objects to be
 	 *                  decrypted. Must not be {@code null}.
 	 * @param jweEnc    The expected JWE encryption method for the objects
-	 *                  to be decrypted. Must be RSA or EC based. Must not
-	 *                  be {@code null}.
+	 *                  to be decrypted. Must not be {@code null}.
 	 * @param jwkSource The JWK source. Must include the private keys and
 	 *                  must not be {@code null}.
 	 */
@@ -69,7 +57,6 @@ public class JWEDecryptionKeySelector<C extends SecurityContext> extends Abstrac
 		if (jweAlg == null) {
 			throw new IllegalArgumentException("The JWE algorithm must not be null");
 		}
-		ensureAsymmetricEncryptionAlgorithm(jweAlg);
 		this.jweAlg = jweAlg;
 		if (jweEnc == null) {
 			throw new IllegalArgumentException("The JWE encryption method must not be null");
@@ -135,11 +122,10 @@ public class JWEDecryptionKeySelector<C extends SecurityContext> extends Abstrac
 
 		JWKMatcher jwkMatcher = createJWKMatcher(jweHeader);
 		List<JWK> jwkMatches = getJWKSource().get(new JWKSelector(jwkMatcher), context);
-
 		List<Key> sanitizedKeyList = new LinkedList<>();
 
 		for (Key key: KeyConverter.toJavaKeys(jwkMatches)) {
-			if (key instanceof PrivateKey) {
+			if (key instanceof PrivateKey || key instanceof SecretKey) {
 				sanitizedKeyList.add(key);
 			} // skip public keys
 		}
