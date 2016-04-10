@@ -9,7 +9,9 @@ import com.nimbusds.jose.*;
 /**
  * Interface for parsing and processing {@link com.nimbusds.jose.PlainObject
  * unsecured} (plain), {@link com.nimbusds.jose.JWSObject JWS} and
- * {@link com.nimbusds.jose.JWEObject JWE} objects.
+ * {@link com.nimbusds.jose.JWEObject JWE} objects. An optional context
+ * parameter is available to facilitate passing of additional data between the
+ * caller and the underlying JOSE processor (in both directions).
  *
  * @author Vladimir Dzhuvinov
  * @version 2015-08-20
@@ -23,8 +25,8 @@ public interface JOSEProcessor<C extends SecurityContext> {
 	 *
 	 * @param compactEncodedJOSE The JOSE object, compact-encoded to a
 	 *                           URL-safe string. Must not be {@code null}.
-	 * @param context            Optional context of the JOSE object,
-	 *                           {@code null} if not required.
+	 * @param context            Optional context, {@code null} if not
+	 *                           required.
 	 *
 	 * @return The payload on success.
 	 *
@@ -42,8 +44,7 @@ public interface JOSEProcessor<C extends SecurityContext> {
 	 * Processes the specified JOSE object (unsecured, JWS or JWE).
 	 *
 	 * @param joseObject The JOSE object. Must not be {@code null}.
-	 * @param context    Optional context of the JOSE object, {@code null}
-	 *                   if not required.
+	 * @param context    Optional context, {@code null} if not required.
 	 *
 	 * @return The payload on success.
 	 *
@@ -61,8 +62,7 @@ public interface JOSEProcessor<C extends SecurityContext> {
 	 *
 	 * @param plainObject The unsecured (plain) JOSE object. Not
 	 *                    {@code null}.
-	 * @param context     Optional context of the unsecured JOSE object,
-	 *                    {@code null} if not required.
+	 * @param context     Optional context, {@code null} if not required.
 	 *
 	 * @return The payload on success.
 	 *
@@ -81,8 +81,7 @@ public interface JOSEProcessor<C extends SecurityContext> {
 	 * the message context.
 	 *
 	 * @param jwsObject The JWS object. Not {@code null}.
-	 * @param context   Optional context of the JWS object, {@code null} if
-	 *                  not required.
+	 * @param context   Optional context, {@code null} if not required.
 	 *
 	 * @return The payload on success.
 	 *

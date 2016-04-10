@@ -36,6 +36,10 @@ import com.nimbusds.jwt.*;
  *     {@link SecurityContext context}.</li>
  * </ol>
  *
+ * <p>An optional context parameter is available to facilitate passing of
+ * additional data between the caller and the underlying selector of key
+ * candidates (in both directions).
+ *
  * <p>See sections 6 of RFC 7515 (JWS) and RFC 7516 (JWE) for guidelines on key
  * selection.
  *

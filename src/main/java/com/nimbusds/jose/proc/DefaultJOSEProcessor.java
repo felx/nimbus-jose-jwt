@@ -6,11 +6,10 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import net.jcip.annotations.ThreadSafe;
-
-import com.nimbusds.jose.*;
 
 
 /**
@@ -33,6 +32,10 @@ import com.nimbusds.jose.*;
  *     certificate check and / or other information supplied in the message
  *     {@link SecurityContext context}.</li>
  * </ol>
+ *
+ * <p>An optional context parameter is available to facilitate passing of
+ * additional data between the caller and the underlying selector of key
+ * candidates (in both directions).
  *
  * <p>See sections 6 of RFC 7515 (JWS) and RFC 7516 (JWE) for guidelines on key
  * selection.

@@ -13,6 +13,9 @@ import com.nimbusds.jwt.*;
  * Interface for parsing and processing {@link com.nimbusds.jwt.PlainJWT
  * unsecured} (plain), {@link com.nimbusds.jwt.SignedJWT signed} and
  * {@link com.nimbusds.jwt.EncryptedJWT encrypted} JSON Web Tokens (JWTs).
+ * An optional context parameter is available to facilitate passing of
+ * additional data between the caller and the underlying JOSE processor (in
+ * both directions).
  *
  * @author Vladimir Dzhuvinov
  * @version 2015-08-20
@@ -26,8 +29,7 @@ public interface JWTProcessor<C extends SecurityContext> {
 	 *
 	 * @param jwtString The JWT, compact-encoded to a URL-safe string. Must
 	 *                  not be {@code null}.
-	 * @param context   Optional context of the JOSE object, {@code null}
-	 *                  if not required.
+	 * @param context   Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set on success.
 	 *
@@ -45,8 +47,7 @@ public interface JWTProcessor<C extends SecurityContext> {
 	 * Processes the specified JWT (unsecured, signed or encrypted).
 	 *
 	 * @param jwt     The JWT. Must not be {@code null}.
-	 * @param context Optional context of the JOSE object, {@code null} if
-	 *                not required.
+	 * @param context Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set on success.
 	 *
@@ -63,8 +64,7 @@ public interface JWTProcessor<C extends SecurityContext> {
 	 * its context.
 	 *
 	 * @param plainJWT The unsecured (plain) JWT. Not {@code null}.
-	 * @param context  Optional context of the unsecured JWT, {@code null}
-	 *                 if not required.
+	 * @param context  Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set on success.
 	 *
@@ -84,8 +84,7 @@ public interface JWTProcessor<C extends SecurityContext> {
 	 * the message context.
 	 *
 	 * @param signedJWT The signed JWT. Not {@code null}.
-	 * @param context   Optional context of the signed JWT, {@code null} if
-	 *                  not required.
+	 * @param context   Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set on success.
 	 *
@@ -105,8 +104,7 @@ public interface JWTProcessor<C extends SecurityContext> {
 	 * message context.
 	 *
 	 * @param encryptedJWT The encrypted JWT. Not {@code null}.
-	 * @param context      Optional context of the encrypted JWT,
-	 *                     {@code null} if not required.
+	 * @param context      Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set on success.
 	 *
