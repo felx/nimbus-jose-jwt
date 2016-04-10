@@ -9,7 +9,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.KeyLengthException;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

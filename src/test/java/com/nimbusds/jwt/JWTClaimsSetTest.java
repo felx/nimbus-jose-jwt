@@ -4,7 +4,7 @@ package com.nimbusds.jwt;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;

@@ -14,7 +14,7 @@ import static net.jadler.Jadler.*;
 import static org.junit.Assert.*;
 
 import com.nimbusds.jose.jwk.*;
-import com.nimbusds.jose.util.url.DefaultResourceRetriever;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
 import net.jadler.Request;
 import net.jadler.stubbing.Responder;
 import net.jadler.stubbing.StubResponse;

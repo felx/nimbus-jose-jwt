@@ -7,7 +7,6 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -25,8 +24,8 @@ import org.jose4j.jwe.JsonWebEncryption;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.util.base64.Base64URL;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

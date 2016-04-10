@@ -9,7 +9,7 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

@@ -1,13 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;

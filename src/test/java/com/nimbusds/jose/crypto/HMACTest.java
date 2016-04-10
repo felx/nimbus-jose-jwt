@@ -7,7 +7,7 @@ import javax.crypto.Mac;
 import org.junit.Assert;
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

@@ -10,10 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.nimbusds.jose.util.json.JSONObjectUtils;
-import com.nimbusds.jose.util.url.DefaultResourceRetriever;
-import com.nimbusds.jose.util.url.Resource;
-import com.nimbusds.jose.util.url.RestrictedResourceRetriever;
+import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.Resource;
+import com.nimbusds.jose.util.RestrictedResourceRetriever;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.apache.commons.io.FileUtils;

@@ -13,9 +13,9 @@ import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jose.util.url.DefaultResourceRetriever;
-import com.nimbusds.jose.util.url.Resource;
-import com.nimbusds.jose.util.url.RestrictedResourceRetriever;
+import com.nimbusds.jose.util.DefaultResourceRetriever;
+import com.nimbusds.jose.util.Resource;
+import com.nimbusds.jose.util.RestrictedResourceRetriever;
 import net.jcip.annotations.ThreadSafe;
 
 

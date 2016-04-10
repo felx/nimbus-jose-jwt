@@ -18,7 +18,7 @@ import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.proc.*;
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.*;
 
 

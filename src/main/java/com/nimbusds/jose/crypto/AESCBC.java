@@ -15,8 +15,8 @@ import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.util.base64.Base64URL;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

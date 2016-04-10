@@ -8,7 +8,7 @@ import javax.crypto.SecretKey;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

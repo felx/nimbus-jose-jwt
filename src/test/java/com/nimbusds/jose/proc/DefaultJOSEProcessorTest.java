@@ -20,7 +20,7 @@ import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

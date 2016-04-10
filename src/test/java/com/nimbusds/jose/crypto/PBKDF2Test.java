@@ -10,8 +10,8 @@ import javax.crypto.SecretKey;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.util.base64.Base64URL;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

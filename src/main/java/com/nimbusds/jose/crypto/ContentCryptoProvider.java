@@ -8,8 +8,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jca.JWEJCAContext;
-import com.nimbusds.jose.util.base64.Base64URL;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

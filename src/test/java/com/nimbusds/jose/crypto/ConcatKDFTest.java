@@ -8,9 +8,9 @@ import javax.crypto.spec.SecretKeySpec;
 
 import junit.framework.TestCase;
 
-import com.nimbusds.jose.util.base64.Base64URL;
-import com.nimbusds.jose.util.datatype.ByteUtils;
-import com.nimbusds.jose.util.datatype.IntegerUtils;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.IntegerUtils;
 
 
 /**

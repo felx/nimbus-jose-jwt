@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jose.jwk.ECKey;
-import com.nimbusds.jose.util.datatype.ByteUtils;
+import com.nimbusds.jose.util.ByteUtils;
 
 
 /**

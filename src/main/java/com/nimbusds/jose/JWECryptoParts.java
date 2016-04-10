@@ -3,7 +3,7 @@ package com.nimbusds.jose;
 
 import net.jcip.annotations.Immutable;
 
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**

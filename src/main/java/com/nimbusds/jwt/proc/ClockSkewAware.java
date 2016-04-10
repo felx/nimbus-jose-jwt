@@ -1,7 +1,7 @@
 package com.nimbusds.jwt.proc;
 
 
-import com.nimbusds.jose.util.date.DateUtils;
+import com.nimbusds.jose.util.DateUtils;
 
 
 /**

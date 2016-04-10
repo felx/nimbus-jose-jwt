@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.json.JSONObjectUtils;
-import com.nimbusds.jose.util.date.DateUtils;
+import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.DateUtils;
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;

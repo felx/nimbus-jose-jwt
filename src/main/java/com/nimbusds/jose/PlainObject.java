@@ -5,7 +5,7 @@ import java.text.ParseException;
 
 import net.jcip.annotations.ThreadSafe;
 
-import com.nimbusds.jose.util.base64.Base64URL;
+import com.nimbusds.jose.util.Base64URL;
 
 
 /**
