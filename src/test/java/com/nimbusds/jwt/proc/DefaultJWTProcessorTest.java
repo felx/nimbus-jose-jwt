@@ -9,10 +9,6 @@ import java.util.*;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.jwk.source.RemoteJWKSet;
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -20,9 +16,16 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.jwk.source.RemoteJWKSet;
 import com.nimbusds.jose.proc.*;
 import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jwt.*;
+import com.nimbusds.jwt.EncryptedJWT;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.PlainJWT;
+import com.nimbusds.jwt.SignedJWT;
+import junit.framework.TestCase;
 
 
 /**
@@ -706,5 +709,45 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		// Print out the token claims set
 		System.out.println(claimsSet.toJSONObject());
+	}
+
+
+	// Wiki example
+	public void testWithEncryption()
+		throws Exception {
+
+		byte[] secret = new byte[32];
+
+		// The AES key, obtained from a Java keystore, etc.
+		SecretKey secretKey = new SecretKeySpec(secret, "AES");
+
+		// The expected JWE algorithm and method
+		JWEAlgorithm expectedJWEAlg = JWEAlgorithm.DIR;
+		EncryptionMethod expectedJWEEnc = EncryptionMethod.A128GCM;
+
+		// The JWE key source
+		JWKSource jweKeySource = new ImmutableSecret(secretKey);
+
+		// Configure a key selector to handle the decryption phase
+		JWEKeySelector jweKeySelector = new JWEDecryptionKeySelector(expectedJWEAlg, expectedJWEEnc, jweKeySource);
+
+		ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
+		jwtProcessor.setJWEKeySelector(jweKeySelector);
+
+		jwtProcessor.setJWTClaimsVerifier(new DefaultJWTClaimsVerifier() {
+
+			@Override
+			public void verify(JWTClaimsSet claimsSet)
+				throws BadJWTException {
+
+				super.verify(claimsSet);
+
+				String issuer = claimsSet.getIssuer();
+
+				if (issuer == null || ! issuer.equals("https://demo.c2id.com/c2id")) {
+					throw new BadJWTException("Invalid token issuer");
+				}
+			}
+		});
 	}
 }
