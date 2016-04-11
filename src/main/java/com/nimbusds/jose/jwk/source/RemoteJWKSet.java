@@ -21,7 +21,8 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Remote JSON Web Key (JWK) source specified by a JWK set URL. The retrieved
- * JWK set is cached to minimise network calls.
+ * JWK set is cached to minimise network calls. The cache is updated whenever
+ * the key selector tries to get a key with an unknown ID.
  *
  * @author Vladimir Dzhuvinov
  * @version 2016-04-10
