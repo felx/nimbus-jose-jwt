@@ -511,6 +511,9 @@ version 4.15 (2016-04-10)
 version 4.15.1 (2016-04-11)
     * Fixes Maven dependency ranges.
 
+version 4.16 (2016-04-12)
+    * The RemoteJWKSet class switches from the RestrictedResourceRetriever to
+      the parent ResourceRetriever interface for retrieving a JWK set by URL.
 
 
 

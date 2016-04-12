@@ -15,7 +15,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jose.util.DefaultResourceRetriever;
 import com.nimbusds.jose.util.Resource;
-import com.nimbusds.jose.util.RestrictedResourceRetriever;
+import com.nimbusds.jose.util.ResourceRetriever;
 import net.jcip.annotations.ThreadSafe;
 
 
@@ -67,7 +67,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	/**
 	 * The JWK set retriever.
 	 */
-	private final RestrictedResourceRetriever jwkSetRetriever;
+	private final ResourceRetriever jwkSetRetriever;
 
 
 	/**
@@ -95,7 +95,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	 *                          one}.
 	 */
 	public RemoteJWKSet(final URL jwkSetURL,
-			    final RestrictedResourceRetriever resourceRetriever) {
+			    final ResourceRetriever resourceRetriever) {
 		if (jwkSetURL == null) {
 			throw new IllegalArgumentException("The JWK set URL must not be null");
 		}
@@ -150,7 +150,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	 *
 	 * @return The HTTP resource retriever.
 	 */
-	public RestrictedResourceRetriever getResourceRetriever() {
+	public ResourceRetriever getResourceRetriever() {
 
 		return jwkSetRetriever;
 	}
