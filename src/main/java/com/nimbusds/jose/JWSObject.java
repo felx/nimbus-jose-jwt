@@ -271,7 +271,7 @@ public class JWSObject extends JOSEObject {
 		if (! signer.supportedJWSAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-			                        "\" algorithm is not allowed or supported by the JWS signer");
+			                        "\" algorithm is not allowed or supported by the JWS signer: " + signer.supportedJWSAlgorithms());
 		}
 	}
 
