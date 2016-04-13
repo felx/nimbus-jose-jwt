@@ -515,5 +515,6 @@ version 4.16 (2016-04-12)
     * The RemoteJWKSet class switches from the RestrictedResourceRetriever to
       the parent ResourceRetriever interface for retrieving a JWK set by URL.
 
-
+version 4.16.1 (2016-04-13)
+    * Improves error reporting on unsupported JWS / JWE algorithm (iss #167).
 
