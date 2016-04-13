@@ -420,7 +420,7 @@ public class MACTest extends TestCase {
 			jwsObject.sign(signer);
 			fail();
 		} catch (JOSEException e) {
-			assertEquals("The \"HS384\" algorithm is not allowed or supported by the JWS signer", e.getMessage());
+			assertEquals("The \"HS384\" algorithm is not allowed or supported by the JWS signer: [HS256]", e.getMessage());
 		}
 	}
 
