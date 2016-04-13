@@ -1,9 +1,12 @@
 package com.nimbusds.jose;
 
 
-import junit.framework.TestCase;
+import java.util.Collections;
+import java.util.Set;
 
+import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
 
 
 /**
@@ -40,5 +43,67 @@ public class JWEObjectTest extends TestCase {
 		assertEquals(firstPart.toString() + ".abc.def.ghi.jkl", jwe.getParsedString());
 
 		assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
+	}
+
+
+	public void testRejectUnsupportedJWEAlgorithmOnEncrypt()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+		JWEObject jwe = new JWEObject(header, new Payload("Hello world"));
+
+		try {
+			jwe.encrypt(new JWEEncrypter() {
+				@Override
+				public JWECryptoParts encrypt(JWEHeader header, byte[] clearText) throws JOSEException {
+					return null;
+				}
+				@Override
+				public Set<JWEAlgorithm> supportedJWEAlgorithms() {
+					return Collections.singleton(new JWEAlgorithm("xyz"));
+				}
+				@Override
+				public Set<EncryptionMethod> supportedEncryptionMethods() {
+					return null;
+				}
+				@Override
+				public JWEJCAContext getJCAContext() {
+					return null;
+				}
+			});
+		} catch (JOSEException e) {
+			assertEquals("The \"RSA1_5\" algorithm is not supported by the JWE encrypter: Supported algorithms: [xyz]", e.getMessage());
+		}
+	}
+
+
+	public void testRejectUnsupportedJWEMethodOnEncrypt()
+		throws Exception {
+
+		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
+		JWEObject jwe = new JWEObject(header, new Payload("Hello world"));
+
+		try {
+			jwe.encrypt(new JWEEncrypter() {
+				@Override
+				public JWECryptoParts encrypt(JWEHeader header, byte[] clearText) throws JOSEException {
+					return null;
+				}
+				@Override
+				public Set<JWEAlgorithm> supportedJWEAlgorithms() {
+					return Collections.singleton(JWEAlgorithm.RSA1_5);
+				}
+				@Override
+				public Set<EncryptionMethod> supportedEncryptionMethods() {
+					return Collections.singleton(new EncryptionMethod("xyz"));
+				}
+				@Override
+				public JWEJCAContext getJCAContext() {
+					return null;
+				}
+			});
+		} catch (JOSEException e) {
+			assertEquals("The \"A128CBC-HS256\" encryption method is not supported by the JWE encrypter: Supported methods: [xyz]", e.getMessage());
+		}
 	}
 }

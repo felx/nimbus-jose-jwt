@@ -12,7 +12,7 @@ import com.nimbusds.jose.util.Base64URL;
  * JSON Web Encryption (JWE) secured object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-21
+ * @version 2016-04-13
  */
 @ThreadSafe
 public class JWEObject extends JOSEObject {
@@ -317,13 +317,13 @@ public class JWEObject extends JOSEObject {
 		if (! encrypter.supportedJWEAlgorithms().contains(getHeader().getAlgorithm())) {
 
 			throw new JOSEException("The \"" + getHeader().getAlgorithm() + 
-					        "\" algorithm is not supported by the JWE encrypter");
+					        "\" algorithm is not supported by the JWE encrypter: Supported algorithms: " + encrypter.supportedJWEAlgorithms());
 		}
 
 		if (! encrypter.supportedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
 
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
-					        "\" encryption method is not supported by the JWE encrypter");
+					        "\" encryption method is not supported by the JWE encrypter: Supported methods: " + encrypter.supportedEncryptionMethods());
 		}
 	}
 
