@@ -516,5 +516,8 @@ version 4.16 (2016-04-12)
       the parent ResourceRetriever interface for retrieving a JWK set by URL.
 
 version 4.16.1 (2016-04-13)
-    * Improves error reporting on unsupported JWS / JWE algorithm (iss #167).
+    * Improves error reporting on unsupported JWS / JWE algorithm (issue #167).
+
+version 4.16.2 (2016-04-18)
+    * Restores com.nimbusds.jwt.util.DateUtils class (issue #177).
 

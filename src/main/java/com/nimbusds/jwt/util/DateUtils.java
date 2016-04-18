@@ -1,13 +1,12 @@
-package com.nimbusds.jose.util;
+package com.nimbusds.jwt.util;
 
 
 import java.util.Date;
 
 
 /**
- * Date utilities. Use {@link com.nimbusds.jwt.util.DateUtils} instead.
+ * Date utilities.
  */
-@Deprecated
 public class DateUtils {
 
 
