@@ -132,6 +132,39 @@ public class DefaultJWTProcessorTest extends TestCase {
 	}
 
 
+	public void testProcessInvalidHmac()
+		throws Exception {
+
+		JWTClaimsSet claims = new JWTClaimsSet.Builder().subject("alice").build();
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey invalidKey = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(invalidKey));
+
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				byte[] keyBytes = new byte[32];
+				new SecureRandom().nextBytes(keyBytes);
+				final SecretKey validKey = new SecretKeySpec(keyBytes, "HMAC");
+				return Arrays.asList(new SecretKeySpec(new byte[32], "HMAC"), validKey);
+			}
+		});
+
+		try {
+			processor.process(jwt, null);
+			fail();
+		} catch (BadJWSException e) {
+			assertEquals("Signed JWT rejected: Invalid signature", e.getMessage());
+		}
+	}
+
+
 	public void testProcessHmacJWTWithTwoKeyCandidates()
 		throws Exception {
 
