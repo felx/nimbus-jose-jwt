@@ -26,7 +26,7 @@ import junit.framework.TestCase;
  * from the JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-04-04
+ * @version 2016-05-13
  */
 public class RSASSATest extends TestCase {
 
@@ -300,6 +300,25 @@ public class RSASSATest extends TestCase {
 		throws Exception {
 
 		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + B64_SIG.toString().substring(0, 100);
+
+		JWSObject jwsObject = JWSObject.parse(s);
+
+		assertEquals(s, jwsObject.getParsedString());
+
+		assertEquals("State check", JWSObject.State.SIGNED, jwsObject.getState());
+
+		JWSVerifier verifier = new RSASSAVerifier(PUBLIC_KEY);
+
+		boolean verified = jwsObject.verify(verifier);
+
+		assertFalse("Signature check", verified);
+	}
+
+
+	public void testVerifyAppendedSignature()
+		throws Exception {
+
+		String s = B64_HEADER.toString() + "." + PAYLOAD.toBase64URL().toString() + "." + B64_SIG + "abc";
 
 		JWSObject jwsObject = JWSObject.parse(s);
 

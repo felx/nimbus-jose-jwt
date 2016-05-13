@@ -26,7 +26,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Tests the default JOSE processor.
  *
- * @version 2015-08-22
+ * @version 2016-05-13
  */
 public class DefaultJOSEProcessorTest extends TestCase {
 
@@ -67,6 +67,38 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		assertEquals("Hello world!", processor.process(jwsObject, null).toString());
 		assertEquals("Hello world!", processor.process(jwsObject.serialize(), null).toString());
+	}
+
+
+	public void testProcessInvalidJWS()
+		throws Exception {
+
+		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.HS256), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey invalidKey = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwsObject.sign(new MACSigner(invalidKey));
+
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				byte[] keyBytes = new byte[32];
+				new SecureRandom().nextBytes(keyBytes);
+				final SecretKey validKey = new SecretKeySpec(keyBytes, "HMAC");
+				return Collections.singletonList(validKey);
+			}
+		});
+
+		try {
+			processor.process(jwsObject.serialize(), null);
+			fail();
+		} catch (BadJWSException e) {
+			assertEquals("JWS object rejected: Invalid signature", e.getMessage());
+		}
 	}
 
 
@@ -125,6 +157,45 @@ public class DefaultJOSEProcessorTest extends TestCase {
 
 		assertEquals("Hello world!", processor.process(jweObject, null).toString());
 		assertEquals("Hello world!", processor.process(jweObject.serialize(), null).toString());
+
+		Security.removeProvider(BouncyCastleProviderSingleton.getInstance().getName());
+	}
+
+
+	public void testProcessInvalidJWE()
+		throws Exception {
+
+		JWEObject jweObject = new JWEObject(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), new Payload("Hello world!"));
+
+		byte[] keyBytes = new byte[16];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey invalidKey = new SecretKeySpec(keyBytes, "AES");
+
+		DirectEncrypter encrypter = new DirectEncrypter(invalidKey);
+		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+
+		jweObject.encrypt(encrypter);
+
+		ConfigurableJOSEProcessor<SimpleSecurityContext> processor = new DefaultJOSEProcessor<>();
+
+		Security.addProvider(BouncyCastleProviderSingleton.getInstance());
+
+		processor.setJWEKeySelector(new JWEKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SimpleSecurityContext context) {
+				byte[] keyBytes = new byte[16];
+				new SecureRandom().nextBytes(keyBytes);
+				final SecretKey validKey = new SecretKeySpec(keyBytes, "AES");
+				return Collections.singletonList(validKey);
+			}
+		});
+
+		try {
+			processor.process(jweObject.serialize(), null);
+			fail();
+		} catch (BadJWEException e) {
+			assertEquals("JWE object rejected: AES/GCM/NoPadding decryption failed: Tag mismatch!", e.getMessage());
+		}
 
 		Security.removeProvider(BouncyCastleProviderSingleton.getInstance().getName());
 	}
