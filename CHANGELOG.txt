@@ -521,3 +521,9 @@ version 4.16.1 (2016-04-13)
 version 4.16.2 (2016-04-18)
     * Restores com.nimbusds.jwt.util.DateUtils class (issue #177).
 
+version 4.17 (2016-05-25)
+    * Switches to an alternative JCIP annotation dependency under the Apache
+      License, version 2.0. The original JCIP annotation package has a Creative
+      Commons which is not recommended for licensing software, see
+      https://creativecommons.org/faq/ (issue #180).
+
