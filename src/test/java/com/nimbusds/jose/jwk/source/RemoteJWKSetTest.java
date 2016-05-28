@@ -40,6 +40,14 @@ public class RemoteJWKSetTest {
 
 
 	@Test
+	public void testConstants() {
+		assertEquals(1000, RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT);
+		assertEquals(1000, RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT);
+		assertEquals(50 * 1024, RemoteJWKSet.DEFAULT_HTTP_SIZE_LIMIT);
+	}
+
+
+	@Test
 	public void testSimplifiedConstructor()
 		throws Exception {
 
@@ -211,10 +219,6 @@ public class RemoteJWKSetTest {
 			});
 
 		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
-
-		Thread initialRetriever = getThreadByName("initial-jwk-set-retriever["+ jwkSetURL +"]");
-		assertNotNull(initialRetriever);
-		initialRetriever.join();
 
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());

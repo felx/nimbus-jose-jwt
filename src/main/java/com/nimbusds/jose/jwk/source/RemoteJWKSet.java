@@ -25,7 +25,7 @@ import net.jcip.annotations.ThreadSafe;
  * the key selector tries to get a key with an unknown ID.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-04-10
+ * @version 2016-05-28
  */
 @ThreadSafe
 public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
@@ -33,16 +33,16 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 	/**
 	 * The default HTTP connect timeout for JWK set retrieval, in
-	 * milliseconds. Set to 250 milliseconds.
+	 * milliseconds. Set to 1000 milliseconds.
 	 */
-	public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 250;
+	public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 1000;
 
 
 	/**
 	 * The default HTTP read timeout for JWK set retrieval, in
-	 * milliseconds. Set to 250 milliseconds.
+	 * milliseconds. Set to 1000 milliseconds.
 	 */
-	public static final int DEFAULT_HTTP_READ_TIMEOUT = 250;
+	public static final int DEFAULT_HTTP_READ_TIMEOUT = 1000;
 
 
 	/**
@@ -65,6 +65,13 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
+	 * The last encountered JWK set retrieval exception (network or parse
+	 * related).
+	 */
+	private final AtomicReference<Exception> lastRetrievalException = new AtomicReference<>();
+
+
+	/**
 	 * The JWK set retriever.
 	 */
 	private final ResourceRetriever jwkSetRetriever;
@@ -72,9 +79,9 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 	/**
 	 * Creates a new remote JWK set using the
-	 * {@link DefaultResourceRetriever default HTTP resource retriever}.
-	 * Starts an asynchronous thread to fetch the JWK set from the
-	 * specified URL. The JWK set is cached if successfully retrieved.
+	 * {@link DefaultResourceRetriever default HTTP resource retriever},
+	 * with a HTTP connect timeout set to 1000 ms, HTTP read timeout set to
+	 * 1000 ms and a 50 KByte size limit.
 	 *
 	 * @param jwkSetURL The JWK set URL. Must not be {@code null}.
 	 */
@@ -84,9 +91,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
-	 * Creates a new remote JWK set. Starts an asynchronous thread to
-	 * fetch the JWK set from the specified URL. The JWK set is cached if
-	 * successfully retrieved.
+	 * Creates a new remote JWK set.
 	 *
 	 * @param jwkSetURL         The JWK set URL. Must not be {@code null}.
 	 * @param resourceRetriever The HTTP resource retriever to use,
@@ -106,14 +111,6 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 		} else {
 			jwkSetRetriever = new DefaultResourceRetriever(DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT, DEFAULT_HTTP_SIZE_LIMIT);
 		}
-
-		Thread t = new Thread() {
-			public void run() {
-				updateJWKSetFromURL();
-			}
-		};
-		t.setName("initial-jwk-set-retriever["+ jwkSetURL +"]");
-		t.start();
 	}
 
 
@@ -128,6 +125,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 			Resource res = jwkSetRetriever.retrieveResource(jwkSetURL);
 			jwkSet = JWKSet.parse(res.getContent());
 		} catch (IOException | java.text.ParseException e) {
+			lastRetrievalException.set(e);
 			return null;
 		}
 		cachedJWKSet.set(jwkSet);
@@ -191,6 +189,19 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 			}
 		}
 		return null; // No kid in matcher
+	}
+
+
+	/**
+	 * Returns the last encountered JWK set retrieval exception (network or
+	 * parse related), if any. Intended for logging and debugging purposes.
+	 *
+	 * @return The last encountered retrieval exception, {@code null} if
+	 *         none.
+	 */
+	public Exception getLastRetrievalException() {
+
+		return lastRetrievalException.get();
 	}
 
 
