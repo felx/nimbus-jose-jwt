@@ -1,6 +1,9 @@
 package com.nimbusds.jose.jwk.source;
 
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
@@ -9,6 +12,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static net.jadler.Jadler.*;
 import static org.junit.Assert.*;
@@ -41,8 +45,8 @@ public class RemoteJWKSetTest {
 
 	@Test
 	public void testConstants() {
-		assertEquals(1000, RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT);
-		assertEquals(1000, RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT);
+		assertEquals(250, RemoteJWKSet.DEFAULT_HTTP_CONNECT_TIMEOUT);
+		assertEquals(250, RemoteJWKSet.DEFAULT_HTTP_READ_TIMEOUT);
 		assertEquals(50 * 1024, RemoteJWKSet.DEFAULT_HTTP_SIZE_LIMIT);
 	}
 
@@ -85,13 +89,7 @@ public class RemoteJWKSetTest {
 
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());
-
-		JWKSet out = jwkSetSource.getJWKSet();
-		assertTrue(out.getKeys().get(0) instanceof RSAKey);
-		assertTrue(out.getKeys().get(1) instanceof RSAKey);
-		assertEquals("1", out.getKeys().get(0).getKeyID());
-		assertEquals("2", out.getKeys().get(1).getKeyID());
-		assertEquals(2, out.getKeys().size());
+		assertNull(jwkSetSource.getCachedJWKSet());
 
 		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 
@@ -101,6 +99,13 @@ public class RemoteJWKSetTest {
 		assertEquals("1", m1.getKeyID());
 
 		assertEquals(1, matches.size());
+
+		JWKSet out = jwkSetSource.getCachedJWKSet();
+		assertTrue(out.getKeys().get(0) instanceof RSAKey);
+		assertTrue(out.getKeys().get(1) instanceof RSAKey);
+		assertEquals("1", out.getKeys().get(0).getKeyID());
+		assertEquals("2", out.getKeys().get(1).getKeyID());
+		assertEquals(2, out.getKeys().size());
 	}
 
 
@@ -140,13 +145,7 @@ public class RemoteJWKSetTest {
 
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());
-
-		JWKSet out = jwkSetSource.getJWKSet();
-		assertTrue(out.getKeys().get(0) instanceof RSAKey);
-		assertTrue(out.getKeys().get(1) instanceof RSAKey);
-		assertEquals("1", out.getKeys().get(0).getKeyID());
-		assertEquals("2", out.getKeys().get(1).getKeyID());
-		assertEquals(2, out.getKeys().size());
+		assertNull(jwkSetSource.getCachedJWKSet());
 
 		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 
@@ -222,13 +221,7 @@ public class RemoteJWKSetTest {
 
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 		assertNotNull(jwkSetSource.getResourceRetriever());
-
-		JWKSet out = jwkSetSource.getJWKSet();
-		assertTrue(out.getKeys().get(0) instanceof RSAKey);
-		assertTrue(out.getKeys().get(1) instanceof RSAKey);
-		assertEquals("1", out.getKeys().get(0).getKeyID());
-		assertEquals("2", out.getKeys().get(1).getKeyID());
-		assertEquals(2, out.getKeys().size());
+		assertNull(jwkSetSource.getCachedJWKSet());
 
 		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
 
@@ -238,6 +231,14 @@ public class RemoteJWKSetTest {
 		assertEquals("1", m1.getKeyID());
 
 		assertEquals(1, matches.size());
+
+		// Check cache
+		JWKSet out = jwkSetSource.getCachedJWKSet();
+		assertTrue(out.getKeys().get(0) instanceof RSAKey);
+		assertTrue(out.getKeys().get(1) instanceof RSAKey);
+		assertEquals("1", out.getKeys().get(0).getKeyID());
+		assertEquals("2", out.getKeys().get(1).getKeyID());
+		assertEquals(2, out.getKeys().size());
 
 		// Select 3rd key, expect refresh of JWK set
 		matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("3").build()), null);
@@ -295,9 +296,33 @@ public class RemoteJWKSetTest {
 
 		assertEquals(jwkSetURL, jwkSetSource.getJWKSetURL());
 
-		assertNull(jwkSetSource.getJWKSet());
+		assertNull(jwkSetSource.getCachedJWKSet());
 
-		List<JWK> matches = jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
-		assertTrue(matches.isEmpty());
+		try {
+			jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
+		} catch (IOException e) {
+			assertTrue(e instanceof FileNotFoundException);
+			assertEquals(jwkSetURL.toString(), e.getMessage());
+		}
+	}
+
+
+	@Test
+	public void testTimeout()
+		throws Exception {
+
+		URL jwkSetURL = new URL("http://localhost:" + port() + "/jwks.json");
+
+		onRequest().respond().withDelay(300, TimeUnit.MILLISECONDS);
+
+		RemoteJWKSet jwkSetSource = new RemoteJWKSet(jwkSetURL, null);
+
+		try {
+			jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().build()), null);
+			fail();
+		} catch (IOException e) {
+			assertTrue(e instanceof SocketTimeoutException);
+			assertEquals("Read timed out", e.getMessage());
+		}
 	}
 }

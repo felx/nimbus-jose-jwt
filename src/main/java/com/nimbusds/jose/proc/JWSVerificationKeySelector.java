@@ -1,6 +1,7 @@
 package com.nimbusds.jose.proc;
 
 
+import java.io.IOException;
 import java.security.Key;
 import java.security.PublicKey;
 import java.util.Collections;
@@ -95,7 +96,8 @@ public class JWSVerificationKeySelector<C extends SecurityContext> extends Abstr
 
 
 	@Override
-	public List<Key> selectJWSKeys(final JWSHeader jwsHeader, final C context) {
+	public List<Key> selectJWSKeys(final JWSHeader jwsHeader, final C context)
+		throws IOException {
 
 		if (! jwsAlg.equals(jwsHeader.getAlgorithm())) {
 			// Unexpected JWS alg

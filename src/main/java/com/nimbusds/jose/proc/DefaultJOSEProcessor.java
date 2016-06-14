@@ -1,6 +1,7 @@
 package com.nimbusds.jose.proc;
 
 
+import java.io.IOException;
 import java.security.Key;
 import java.text.ParseException;
 import java.util.List;
@@ -54,7 +55,7 @@ import net.jcip.annotations.ThreadSafe;
  * {@link com.nimbusds.jwt.proc.DefaultJWTProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-10-20
+ * @version 2016-06-15
  */
 @ThreadSafe
 public class DefaultJOSEProcessor<C extends SecurityContext> implements ConfigurableJOSEProcessor<C>{
@@ -212,7 +213,13 @@ public class DefaultJOSEProcessor<C extends SecurityContext> implements Configur
 			throw NO_JWS_VERIFIER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
+		List<? extends Key> keyCandidates;
+
+		try {
+			keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
+		} catch (IOException e) {
+			throw new JOSEException(e.getMessage(), e);
+		}
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWS_KEY_CANDIDATES_EXCEPTION;
@@ -257,7 +264,13 @@ public class DefaultJOSEProcessor<C extends SecurityContext> implements Configur
 			throw NO_JWE_DECRYPTER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
+		List<? extends Key> keyCandidates;
+
+		try {
+			keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
+		} catch (IOException e) {
+			throw new JOSEException(e.getMessage(), e);
+		}
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWE_KEY_CANDIDATES_EXCEPTION;

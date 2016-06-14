@@ -534,3 +534,9 @@ version 4.18 (2016-05-28)
     * Adds a RemoteJWKSet getter for the last encountered retrieval exception.
       Intended for logging and debugging purposes.
 
+version 4.19 (2016-06-15)
+    * Changes JWKSource.get interface to throw an IOException if retrieval of
+      the underlying JWKs failed, e.g. due to a network exception. Required to
+      communicate retrieval exceptions in the JOSE / JWT processing framework
+      (issue 182).
+

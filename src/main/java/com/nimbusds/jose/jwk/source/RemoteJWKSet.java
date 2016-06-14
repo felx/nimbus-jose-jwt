@@ -33,16 +33,16 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 	/**
 	 * The default HTTP connect timeout for JWK set retrieval, in
-	 * milliseconds. Set to 1000 milliseconds.
+	 * milliseconds. Set to 250 milliseconds.
 	 */
-	public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 1000;
+	public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 250;
 
 
 	/**
 	 * The default HTTP read timeout for JWK set retrieval, in
-	 * milliseconds. Set to 1000 milliseconds.
+	 * milliseconds. Set to 250 milliseconds.
 	 */
-	public static final int DEFAULT_HTTP_READ_TIMEOUT = 1000;
+	public static final int DEFAULT_HTTP_READ_TIMEOUT = 250;
 
 
 	/**
@@ -65,13 +65,6 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
-	 * The last encountered JWK set retrieval exception (network or parse
-	 * related).
-	 */
-	private final AtomicReference<Exception> lastRetrievalException = new AtomicReference<>();
-
-
-	/**
 	 * The JWK set retriever.
 	 */
 	private final ResourceRetriever jwkSetRetriever;
@@ -80,8 +73,8 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	/**
 	 * Creates a new remote JWK set using the
 	 * {@link DefaultResourceRetriever default HTTP resource retriever},
-	 * with a HTTP connect timeout set to 1000 ms, HTTP read timeout set to
-	 * 1000 ms and a 50 KByte size limit.
+	 * with a HTTP connect timeout set to 250 ms, HTTP read timeout set to
+	 * 250 ms and a 50 KByte size limit.
 	 *
 	 * @param jwkSetURL The JWK set URL. Must not be {@code null}.
 	 */
@@ -117,16 +110,18 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	/**
 	 * Updates the cached JWK set from the configured URL.
 	 *
-	 * @return The updated JWK set, {@code null} if retrieval failed.
+	 * @return The updated JWK set.
+	 *
+	 * @throws IOException If retrieval failed.
 	 */
-	private JWKSet updateJWKSetFromURL() {
+	private JWKSet updateJWKSetFromURL()
+		throws IOException {
 		JWKSet jwkSet;
 		try {
 			Resource res = jwkSetRetriever.retrieveResource(jwkSetURL);
 			jwkSet = JWKSet.parse(res.getContent());
-		} catch (IOException | java.text.ParseException e) {
-			lastRetrievalException.set(e);
-			return null;
+		} catch (java.text.ParseException e) {
+			throw new IOException(e.getMessage(), e);
 		}
 		cachedJWKSet.set(jwkSet);
 		return jwkSet;
@@ -159,12 +154,8 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	 *
 	 * @return The cached JWK set, {@code null} if none.
 	 */
-	public JWKSet getJWKSet() {
-		JWKSet jwkSet = cachedJWKSet.get();
-		if (jwkSet != null) {
-			return jwkSet;
-		}
-		return updateJWKSetFromURL();
+	public JWKSet getCachedJWKSet() {
+		return cachedJWKSet.get();
 	}
 
 
@@ -193,30 +184,19 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 
 
 	/**
-	 * Returns the last encountered JWK set retrieval exception (network or
-	 * parse related), if any. Intended for logging and debugging purposes.
-	 *
-	 * @return The last encountered retrieval exception, {@code null} if
-	 *         none.
-	 */
-	public Exception getLastRetrievalException() {
-
-		return lastRetrievalException.get();
-	}
-
-
-	/**
 	 * {@inheritDoc} The security context is ignored.
 	 */
 	@Override
-	public List<JWK> get(final JWKSelector jwkSelector, final C context) {
+	public List<JWK> get(final JWKSelector jwkSelector, final C context)
+		throws IOException {
 
 		// Get the JWK set, may necessitate a cache update
-		JWKSet jwkSet = getJWKSet();
+		JWKSet jwkSet = cachedJWKSet.get();
 		if (jwkSet == null) {
-			// Retrieval has failed
-			return Collections.emptyList();
+			jwkSet = updateJWKSetFromURL();
 		}
+
+		// Run the selector on the JWK set
 		List<JWK> matches = jwkSelector.select(jwkSet);
 
 		if (! matches.isEmpty()) {
@@ -225,22 +205,27 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 		}
 
 		// Refresh the JWK set if the sought key ID is not in the cached JWK set
+
+		// Looking for JWK with specific ID?
 		String soughtKeyID = getFirstSpecifiedKeyID(jwkSelector.getMatcher());
 		if (soughtKeyID == null) {
 			// No key ID specified, return no matches
-			return matches;
+			return Collections.emptyList();
 		}
+
 		if (jwkSet.getKeyByKeyId(soughtKeyID) != null) {
 			// The key ID exists in the cached JWK set, matching
 			// failed for some other reason, return no matches
-			return matches;
+			return Collections.emptyList();
 		}
+
 		// Make new HTTP GET to the JWK set URL
 		jwkSet = updateJWKSetFromURL();
 		if (jwkSet == null) {
 			// Retrieval has failed
-			return null;
+			return Collections.emptyList();
 		}
+
 		// Repeat select, return final result (success or no matches)
 		return jwkSelector.select(jwkSet);
 	}
