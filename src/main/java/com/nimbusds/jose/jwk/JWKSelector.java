@@ -22,7 +22,12 @@ public final class JWKSelector {
 	private final JWKMatcher matcher;
 
 
-
+	/**
+	 * Creates a new JWK selector.
+	 *
+	 * @param matcher Specifies the JWK matching criteria. Must not be
+	 *                {@code null}.
+	 */
 	public JWKSelector(final JWKMatcher matcher) {
 
 		if (matcher == null) {
