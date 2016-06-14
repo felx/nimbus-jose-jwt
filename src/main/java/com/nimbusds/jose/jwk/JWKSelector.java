@@ -23,7 +23,7 @@ public final class JWKSelector {
 
 
 	/**
-	 * Creates a new JWK selector.
+	 * Creates a new JWK selector (filter).
 	 *
 	 * @param matcher Specifies the JWK matching criteria. Must not be
 	 *                {@code null}.
