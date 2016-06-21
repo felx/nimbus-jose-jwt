@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.nimbusds.jose.RemoteKeySourceException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
@@ -112,16 +113,21 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	 *
 	 * @return The updated JWK set.
 	 *
-	 * @throws IOException If retrieval failed.
+	 * @throws RemoteKeySourceException If JWK retrieval failed.
 	 */
 	private JWKSet updateJWKSetFromURL()
-		throws IOException {
+		throws RemoteKeySourceException {
+		Resource res;
+		try {
+			res = jwkSetRetriever.retrieveResource(jwkSetURL);
+		} catch (IOException e) {
+			throw new RemoteKeySourceException("Couldn't retrieve remote JWK set: " + e.getMessage(), e);
+		}
 		JWKSet jwkSet;
 		try {
-			Resource res = jwkSetRetriever.retrieveResource(jwkSetURL);
 			jwkSet = JWKSet.parse(res.getContent());
 		} catch (java.text.ParseException e) {
-			throw new IOException(e.getMessage(), e);
+			throw new RemoteKeySourceException("Couldn't parse remote JWK set: " + e.getMessage(), e);
 		}
 		cachedJWKSet.set(jwkSet);
 		return jwkSet;
@@ -188,7 +194,7 @@ public class RemoteJWKSet<C extends SecurityContext> implements JWKSource<C> {
 	 */
 	@Override
 	public List<JWK> get(final JWKSelector jwkSelector, final C context)
-		throws IOException {
+		throws RemoteKeySourceException {
 
 		// Get the JWK set, may necessitate a cache update
 		JWKSet jwkSet = cachedJWKSet.get();

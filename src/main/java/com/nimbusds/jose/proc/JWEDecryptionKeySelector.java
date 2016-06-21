@@ -1,18 +1,17 @@
 package com.nimbusds.jose.proc;
 
 
-import java.io.IOException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.KeySourceException;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import net.jcip.annotations.ThreadSafe;
@@ -23,7 +22,7 @@ import net.jcip.annotations.ThreadSafe;
  * retrieved from a {@link JWKSource JSON Web Key (JWK) source}.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-15
+ * @version 2016-06-21
  */
 @ThreadSafe
 public class JWEDecryptionKeySelector<C extends SecurityContext> extends AbstractJWKSelectorWithSource<C> implements JWEKeySelector<C> {
@@ -115,7 +114,7 @@ public class JWEDecryptionKeySelector<C extends SecurityContext> extends Abstrac
 
 	@Override
 	public List<Key> selectJWEKeys(final JWEHeader jweHeader, final C context)
-		throws IOException {
+		throws KeySourceException {
 
 		if (! jweAlg.equals(jweHeader.getAlgorithm()) || ! jweEnc.equals(jweHeader.getEncryptionMethod())) {
 			// Unexpected JWE alg or enc

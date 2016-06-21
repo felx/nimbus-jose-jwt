@@ -6,6 +6,7 @@ import java.security.Key;
 import java.util.List;
 
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.KeySourceException;
 
 
 /**
@@ -31,7 +32,7 @@ import com.nimbusds.jose.JWEHeader;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-15
+ * @version 2016-06-21
  */
 public interface JWEKeySelector <C extends SecurityContext> {
 
@@ -46,9 +47,9 @@ public interface JWEKeySelector <C extends SecurityContext> {
 	 *
 	 * @return The key candidates in trial order, empty list if none.
 	 *
-	 * @throws IOException If an I/0 exception is encountered, e.g. on JWK
-	 *                     retrieval.
+	 * @throws IOException If a key source exception is encountered, e.g.
+	 *                     on remote JWK retrieval.
 	 */
 	List<? extends Key> selectJWEKeys(final JWEHeader header, final C context)
-		throws IOException;
+		throws KeySourceException;
 }

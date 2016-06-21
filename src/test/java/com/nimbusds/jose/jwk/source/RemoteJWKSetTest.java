@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import static net.jadler.Jadler.*;
 import static org.junit.Assert.*;
 
+import com.nimbusds.jose.RemoteKeySourceException;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.util.DefaultResourceRetriever;
 import net.jadler.Request;
@@ -300,9 +301,10 @@ public class RemoteJWKSetTest {
 
 		try {
 			jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().keyID("1").build()), null);
-		} catch (IOException e) {
-			assertTrue(e instanceof FileNotFoundException);
-			assertEquals(jwkSetURL.toString(), e.getMessage());
+		} catch (RemoteKeySourceException e) {
+			assertEquals("Couldn't retrieve remote JWK set: " + jwkSetURL, e.getMessage());
+			assertTrue(e.getCause() instanceof FileNotFoundException);
+			assertEquals(jwkSetURL.toString(), e.getCause().getMessage());
 		}
 	}
 
@@ -320,9 +322,10 @@ public class RemoteJWKSetTest {
 		try {
 			jwkSetSource.get(new JWKSelector(new JWKMatcher.Builder().build()), null);
 			fail();
-		} catch (IOException e) {
-			assertTrue(e instanceof SocketTimeoutException);
-			assertEquals("Read timed out", e.getMessage());
+		} catch (RemoteKeySourceException e) {
+			assertEquals("Couldn't retrieve remote JWK set: Read timed out", e.getMessage());
+			assertTrue(e.getCause() instanceof SocketTimeoutException);
+			assertEquals("Read timed out", e.getCause().getMessage());
 		}
 	}
 }

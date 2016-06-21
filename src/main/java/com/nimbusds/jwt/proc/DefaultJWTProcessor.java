@@ -64,7 +64,7 @@ import com.nimbusds.jwt.*;
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-15
+ * @version 2016-06-21
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	implements ConfigurableJWTProcessor<C> {
@@ -276,13 +276,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			throw NO_JWS_VERIFIER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates;
-
-		try {
-			keyCandidates = getJWSKeySelector().selectJWSKeys(signedJWT.getHeader(), context);
-		} catch (IOException e) {
-			throw new JOSEException(e.getMessage(), e);
-		}
+		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(signedJWT.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWS_KEY_CANDIDATES_EXCEPTION;
@@ -327,13 +321,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			throw NO_JWE_DECRYPTER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates;
-
-		try {
-			keyCandidates = getJWEKeySelector().selectJWEKeys(encryptedJWT.getHeader(), context);
-		} catch (IOException e) {
-			throw new JOSEException(e.getMessage(), e);
-		}
+		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(encryptedJWT.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWE_KEY_CANDIDATES_EXCEPTION;

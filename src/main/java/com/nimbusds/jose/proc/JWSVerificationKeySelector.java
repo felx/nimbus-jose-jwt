@@ -1,7 +1,6 @@
 package com.nimbusds.jose.proc;
 
 
-import java.io.IOException;
 import java.security.Key;
 import java.security.PublicKey;
 import java.util.Collections;
@@ -11,6 +10,7 @@ import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.KeySourceException;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import net.jcip.annotations.ThreadSafe;
@@ -21,7 +21,7 @@ import net.jcip.annotations.ThreadSafe;
  * retrieved from a {@link JWKSource JSON Web Key (JWK) source}.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-04-10
+ * @version 2016-06-21
  */
 @ThreadSafe
 public class JWSVerificationKeySelector<C extends SecurityContext> extends AbstractJWKSelectorWithSource<C> implements JWSKeySelector<C> {
@@ -97,7 +97,7 @@ public class JWSVerificationKeySelector<C extends SecurityContext> extends Abstr
 
 	@Override
 	public List<Key> selectJWSKeys(final JWSHeader jwsHeader, final C context)
-		throws IOException {
+		throws KeySourceException {
 
 		if (! jwsAlg.equals(jwsHeader.getAlgorithm())) {
 			// Unexpected JWS alg

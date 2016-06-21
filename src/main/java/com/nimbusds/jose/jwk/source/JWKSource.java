@@ -1,9 +1,9 @@
 package com.nimbusds.jose.jwk.source;
 
 
-import java.io.IOException;
 import java.util.List;
 
+import com.nimbusds.jose.KeySourceException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.proc.SecurityContext;
@@ -16,7 +16,7 @@ import com.nimbusds.jose.proc.SecurityContext;
  * (in both directions). Implementations must be thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-14
+ * @version 2016-06-21
  */
 public interface JWKSource <C extends SecurityContext> {
 	
@@ -29,8 +29,8 @@ public interface JWKSource <C extends SecurityContext> {
 	 *
 	 * @return The matching JWKs, empty list if no matches were found.
 	 *
-	 * @throws IOException If retrieval failed.
+	 * @throws KeySourceException If key sourcing failed.
 	 */
 	List<JWK> get(final JWKSelector jwkSelector, final C context)
-		throws IOException;
+		throws KeySourceException;
 }

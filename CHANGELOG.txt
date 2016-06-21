@@ -540,3 +540,9 @@ version 4.19 (2016-06-15)
       communicate retrieval exceptions in the JOSE / JWT processing framework
       (issue 182).
 
+version 4.20 (2016-06-21)
+    * Adds new KeySource and RemoteKeySource exception classes, extending the
+      base checked JOSEException class.
+    * Updates the JWKSource, JWSKeySelector and JWEKeySelector classes to throw
+      a KeySource instead of an IOException.
+

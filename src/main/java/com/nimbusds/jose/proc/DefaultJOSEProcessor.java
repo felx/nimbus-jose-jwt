@@ -213,13 +213,7 @@ public class DefaultJOSEProcessor<C extends SecurityContext> implements Configur
 			throw NO_JWS_VERIFIER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates;
-
-		try {
-			keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
-		} catch (IOException e) {
-			throw new JOSEException(e.getMessage(), e);
-		}
+		List<? extends Key> keyCandidates = getJWSKeySelector().selectJWSKeys(jwsObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWS_KEY_CANDIDATES_EXCEPTION;
@@ -264,13 +258,7 @@ public class DefaultJOSEProcessor<C extends SecurityContext> implements Configur
 			throw NO_JWE_DECRYPTER_FACTORY_EXCEPTION;
 		}
 
-		List<? extends Key> keyCandidates;
-
-		try {
-			keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
-		} catch (IOException e) {
-			throw new JOSEException(e.getMessage(), e);
-		}
+		List<? extends Key> keyCandidates = getJWEKeySelector().selectJWEKeys(jweObject.getHeader(), context);
 
 		if (keyCandidates == null || keyCandidates.isEmpty()) {
 			throw NO_JWE_KEY_CANDIDATES_EXCEPTION;
