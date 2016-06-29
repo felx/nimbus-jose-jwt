@@ -1,9 +1,9 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.SecureRandom;
-import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.Cipher;
@@ -71,7 +71,7 @@ class RSA_OAEP {
 	 *
 	 * @throws JOSEException If decryption failed.
 	 */
-	public static SecretKey decryptCEK(final RSAPrivateKey priv, 
+	public static SecretKey decryptCEK(final PrivateKey priv,
 		                           final byte[] encryptedCEK, final Provider provider)
 		throws JOSEException {
 
