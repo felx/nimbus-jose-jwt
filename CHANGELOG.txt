@@ -546,3 +546,12 @@ version 4.20 (2016-06-21)
     * Updates the JWKSource, JWSKeySelector and JWEKeySelector classes to throw
       a KeySource instead of an IOException.
 
+version 4.21 (2016-06-29)
+    * Modifies the RSADecrypter to accept private RSA keys represented by the
+      generic java.security.PrivateKey interface instead of the more specific
+      java.security.interfaces.RSAPrivateKey. The getPrivateKey method is also
+      modified accordingly to return a java.security.PrivateKey instance. This
+      change is required to support key stores that prevent exposure of the
+      private key parameters via the java.security.interfaces.RSAPrivateKey
+      API, such as the built-in key store of Android M, and various HSM
+      implementations (issue #184).

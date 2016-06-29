@@ -52,7 +52,8 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	/**
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
 	 *
-	 * @param privateKey The private RSA key. Must not be {@code null}.
+	 * @param privateKey The private RSA key. Its algorithm must be "RSA".
+	 *                   Must not be {@code null}.
 	 */
 	public RSASSASigner(final PrivateKey privateKey) {
 

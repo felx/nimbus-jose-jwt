@@ -5,11 +5,10 @@ import java.security.PrivateKey;
 import java.util.Set;
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -39,7 +38,8 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @author Dimitar A. Stoikov
+ * @version 2016-06-29
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -91,7 +91,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	/**
 	 * Creates a new RSA decrypter.
 	 *
-	 * @param privateKey     The private RSA key. Must not be {@code null}.
+	 * @param privateKey     The private RSA key. Its algorithm must be
+	 *                       "RSA". Must not be {@code null}.
 	 * @param defCritHeaders The names of the critical header parameters
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
@@ -116,7 +117,10 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	/**
 	 * Gets the private RSA key.
 	 *
-	 * @return The private RSA key.
+	 * @return The private RSA key. Casting to
+	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
+	 *         possible if the key is backed by a key store that doesn't
+	 *         expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {
 
