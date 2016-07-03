@@ -4,7 +4,6 @@ package com.nimbusds.jose.jwk;
 import java.security.spec.ECParameterSpec;
 
 import junit.framework.TestCase;
-
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;

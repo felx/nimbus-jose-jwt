@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
@@ -41,7 +42,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2015-12-08
+ * @version 2017-07-03
  */
 @Immutable
 public final class OctetSequenceKey extends JWK implements SecretJWK {
@@ -458,7 +459,14 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 
 		return null;
 	}
-	
+
+
+	@Override
+	public int size() {
+
+		return ByteUtils.bitLength(k.decode());
+	}
+
 
 	@Override
 	public JSONObject toJSONObject() {

@@ -2,19 +2,17 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.Serializable;
-
 import java.net.URI;
 import java.text.ParseException;
 import java.util.*;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -45,7 +43,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-09-28
+ * @version 2016-07-03
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -314,6 +312,14 @@ public abstract class JWK implements JSONAware, Serializable {
 	 *         created.
 	 */
 	public abstract JWK toPublicJWK();
+
+
+	/**
+	 * Returns the size of this JWK.
+	 *
+	 * @return The JWK size, in bits.
+	 */
+	public abstract int size();
 
 
 	/**

@@ -17,10 +17,7 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.BigIntegerUtils;
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.*;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONObject;
@@ -65,7 +62,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-12-08
+ * @version 2016-07-03
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -1125,6 +1122,19 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	public boolean isPrivate() {
 
 		return d != null;
+	}
+
+
+	@Override
+	public int size() {
+
+		ECParameterSpec ecParameterSpec = crv.toECParameterSpec();
+
+		if (ecParameterSpec == null) {
+			throw new UnsupportedOperationException("Couldn't determine field size for curve " + crv.getName());
+		}
+
+		return ecParameterSpec.getCurve().getField().getFieldSize();
 	}
 
 	

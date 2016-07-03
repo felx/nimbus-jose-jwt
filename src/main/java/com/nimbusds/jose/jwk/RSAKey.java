@@ -18,6 +18,7 @@ import java.security.spec.RSAPublicKeySpec;
 import java.text.ParseException;
 import java.util.*;
 
+import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.Immutable;
 
 import net.minidev.json.JSONArray;
@@ -110,7 +111,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2015-12-08
+ * @version 2016-07-03
  */
 @Immutable
 public final class RSAKey extends JWK implements AssymetricJWK {
@@ -1601,6 +1602,13 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 
 		// Check if 1st or 2nd form params are specified
 		return d != null || p != null;
+	}
+
+
+	@Override
+	public int size() {
+
+		return ByteUtils.bitLength(n.decode());
 	}
 
 

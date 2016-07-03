@@ -555,3 +555,7 @@ version 4.21 (2016-06-29)
       private key parameters via the java.security.interfaces.RSAPrivateKey
       API, such as the built-in key store of Android M, and various HSM
       implementations (issue #184).
+
+version 4.22 (2016-07-03)
+    * Adds new JWK.size method that returns the key's bit length.
+

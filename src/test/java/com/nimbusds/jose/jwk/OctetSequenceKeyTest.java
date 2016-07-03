@@ -23,7 +23,7 @@ import net.minidev.json.JSONObject;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-12-08
+ * @version 2017-07-03
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -413,5 +413,13 @@ public class OctetSequenceKeyTest extends TestCase {
 		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
 
 		assertEquals("7WWD36NF4WCpPaYtK47mM4o0a5CCeOt01JXSuMayv5g", jwk.computeThumbprint().toString());
+	}
+
+
+	public void testSize() {
+
+		byte[] keyMaterial = new byte[24];
+		new SecureRandom().nextBytes(keyMaterial);
+		assertEquals(24 * 8, new OctetSequenceKey.Builder(keyMaterial).build().size());
 	}
 }

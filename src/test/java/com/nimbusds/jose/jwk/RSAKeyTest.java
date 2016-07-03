@@ -20,7 +20,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-12-08
+ * @version 2016-07-03
  */
 public class RSAKeyTest extends TestCase {
 
@@ -969,5 +969,11 @@ public class RSAKeyTest extends TestCase {
 			.build();
 
 		assertEquals(160 / 8, new Base64URL(rsaKey.getKeyID()).decode().length);
+	}
+
+
+	public void testSize() {
+
+		assertEquals(2048, new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).build().size());
 	}
 }
