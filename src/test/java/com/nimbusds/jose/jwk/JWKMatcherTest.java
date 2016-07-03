@@ -1,8 +1,10 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.security.SecureRandom;
 import java.util.*;
 
+import com.nimbusds.jose.util.ByteUtils;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.Algorithm;
@@ -14,14 +16,14 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the JWK matcher.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2016-07-03
  */
 public class JWKMatcherTest extends TestCase {
 
 
 	public void testMinimalConstructor() {
 
-		JWKMatcher matcher = new JWKMatcher(null, null, null, null, null, false, false);
+		JWKMatcher matcher = new JWKMatcher(null, null, null, null, null, false, false, 0, 0);
 
 		assertNull(matcher.getKeyTypes());
 		assertNull(matcher.getKeyUses());
@@ -30,10 +32,12 @@ public class JWKMatcherTest extends TestCase {
 		assertNull(matcher.getKeyIDs());
 		assertFalse(matcher.isPrivateOnly());
 		assertFalse(matcher.isPublicOnly());
+		assertEquals(0, matcher.getMinSize());
+		assertEquals(0, matcher.getMaxSize());
 	}
 	
 	
-	public void testAllSetConstructor() {
+	public void testAllSetDeprecatedConstructor() {
 
 		Set<KeyType> types = new HashSet<>();
 		types.add(KeyType.RSA);
@@ -60,6 +64,40 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ids, matcher.getKeyIDs());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
+		assertEquals(0, matcher.getMinSize());
+		assertEquals(0, matcher.getMaxSize());
+	}
+
+
+	public void testAllSetConstructor() {
+
+		Set<KeyType> types = new HashSet<>();
+		types.add(KeyType.RSA);
+
+		Set<KeyUse> uses = new HashSet<>();
+		uses.add(KeyUse.SIGNATURE);
+
+		Set<KeyOperation> ops = new HashSet<>();
+		ops.add(KeyOperation.SIGN);
+		ops.add(KeyOperation.VERIFY);
+
+		Set<Algorithm> algs = new HashSet<>();
+		algs.add(JWSAlgorithm.PS256);
+
+		Set<String> ids = new HashSet<>();
+		ids.add("1");
+
+		JWKMatcher matcher = new JWKMatcher(types, uses, ops, algs, ids, true, true, 128, 256);
+
+		assertEquals(types, matcher.getKeyTypes());
+		assertEquals(uses, matcher.getKeyUses());
+		assertEquals(ops, matcher.getKeyOperations());
+		assertEquals(algs, matcher.getAlgorithms());
+		assertEquals(ids, matcher.getKeyIDs());
+		assertTrue(matcher.isPrivateOnly());
+		assertTrue(matcher.isPublicOnly());
+		assertEquals(128, matcher.getMinSize());
+		assertEquals(256, matcher.getMaxSize());
 	}
 	
 	
@@ -98,6 +136,8 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ids, matcher.getKeyIDs());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
+		assertEquals(0, matcher.getMinSize());
+		assertEquals(0, matcher.getMaxSize());
 	}
 	
 	
@@ -135,6 +175,9 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
+
+		assertEquals(0, matcher.getMinSize());
+		assertEquals(0, matcher.getMaxSize());
 	}
 
 
@@ -275,5 +318,50 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).algorithm(JWSAlgorithm.RS256).build()));
 		assertFalse(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("2").algorithm(JWSAlgorithm.RS256).build()));
+	}
+
+
+	public void testKeyTooShort() {
+
+		byte[] keyMaterial = new byte[ByteUtils.byteLength(128 - 8)];
+		new SecureRandom().nextBytes(keyMaterial);
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(keyMaterial).build();
+		assertFalse(new JWKMatcher.Builder().minKeySize(128).build().matches(jwk));
+	}
+
+
+	public void testMinSizeOk() {
+
+		byte[] keyMaterial = new byte[ByteUtils.byteLength(128)];
+		new SecureRandom().nextBytes(keyMaterial);
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(keyMaterial).build();
+		assertTrue(new JWKMatcher.Builder().minKeySize(128).build().matches(jwk));
+	}
+
+
+	public void testKeyTooLong() {
+
+		byte[] keyMaterial = new byte[ByteUtils.byteLength(256)];
+		new SecureRandom().nextBytes(keyMaterial);
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(keyMaterial).build();
+		assertFalse(new JWKMatcher.Builder().maxKeySize(128).build().matches(jwk));
+	}
+
+
+	public void testMaxSizeOk() {
+
+		byte[] keyMaterial = new byte[ByteUtils.byteLength(256)];
+		new SecureRandom().nextBytes(keyMaterial);
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(keyMaterial).build();
+		assertTrue(new JWKMatcher.Builder().maxKeySize(256).build().matches(jwk));
+	}
+
+
+	public void testKeySizeMatchesAcceptableRange() {
+
+		byte[] keyMaterial = new byte[ByteUtils.byteLength(256)];
+		new SecureRandom().nextBytes(keyMaterial);
+		OctetSequenceKey jwk = new OctetSequenceKey.Builder(keyMaterial).build();
+		assertTrue(new JWKMatcher.Builder().minKeySize(128).maxKeySize(512).build().matches(jwk));
 	}
 }

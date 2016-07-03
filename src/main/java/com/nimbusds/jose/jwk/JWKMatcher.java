@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.jcip.annotations.Immutable;
-
 import com.nimbusds.jose.Algorithm;
+import net.jcip.annotations.Immutable;
 
 
 /**
@@ -30,7 +29,7 @@ import com.nimbusds.jose.Algorithm;
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2016-07-03
  */
 @Immutable
 public class JWKMatcher {
@@ -76,6 +75,18 @@ public class JWKMatcher {
 	 * If {@code true} only public keys are matched.
 	 */
 	private final boolean publicOnly;
+
+
+	/**
+	 * The minimum key size in bits, zero implies no minimum size limit.
+	 */
+	private final int minSizeBits;
+
+
+	/**
+	 * The maximum key size in bits, zero implies no maximum size limit.
+	 */
+	private final int maxSizeBits;
 
 
 	/**
@@ -130,6 +141,20 @@ public class JWKMatcher {
 		 * If {@code true} only public keys are matched.
 		 */
 		private boolean publicOnly = false;
+
+
+		/**
+		 * The minimum key size in bits, zero implies no minimum size
+		 * limit.
+		 */
+		private int minSizeBits = 0;
+
+
+		/**
+		 * The maximum key size in bits, zero implies no maximum size
+		 * limit.
+		 */
+		private int maxSizeBits = 0;
 
 
 		/**
@@ -399,13 +424,43 @@ public class JWKMatcher {
 
 
 		/**
+		 * Sets the minimal key size.
+		 *
+		 * @param minSizeBits The minimum key size in bits, zero
+		 *                    implies no minimum key size limit.
+		 *
+		 * @return This builder.
+		 */
+		public Builder minKeySize(final int minSizeBits) {
+
+			this.minSizeBits = minSizeBits;
+			return this;
+		}
+
+
+		/**
+		 * Sets the maximum key size.
+		 *
+		 * @param maxSizeBits The maximum key size in bits, zero
+		 *                    implies no maximum key size limit.
+		 *
+		 * @return This builder.
+		 */
+		public Builder maxKeySize(final int maxSizeBits) {
+
+			this.maxSizeBits = maxSizeBits;
+			return this;
+		}
+
+
+		/**
 		 * Builds a new JWK matcher.
 		 *
 		 * @return The JWK matcher.
 		 */
 		public JWKMatcher build() {
 
-			return new JWKMatcher(types, uses, ops, algs, ids, privateOnly, publicOnly);
+			return new JWKMatcher(types, uses, ops, algs, ids, privateOnly, publicOnly, minSizeBits, maxSizeBits);
 		}
 	}
 
@@ -428,6 +483,7 @@ public class JWKMatcher {
 	 * @param publicOnly  If {@code true} only public keys are
 	 *                    matched.
 	 */
+	@Deprecated
 	public JWKMatcher(final Set<KeyType> types,
 			  final Set<KeyUse> uses,
 			  final Set<KeyOperation> ops,
@@ -435,6 +491,43 @@ public class JWKMatcher {
 			  final Set<String> ids,
 			  final boolean privateOnly,
 			  final boolean publicOnly) {
+
+		this(types, uses, ops, algs, ids, privateOnly, publicOnly, 0, 0);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param privateOnly If {@code true} only private keys are
+	 *                    matched.
+	 * @param publicOnly  If {@code true} only public keys are
+	 *                    matched.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 */
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits) {
+
 		this.types = types;
 		this.uses = uses;
 		this.ops = ops;
@@ -442,6 +535,8 @@ public class JWKMatcher {
 		this.ids = ids;
 		this.privateOnly = privateOnly;
 		this.publicOnly = publicOnly;
+		this.minSizeBits = minSizeBits;
+		this.maxSizeBits = maxSizeBits;
 	}
 
 
@@ -525,6 +620,30 @@ public class JWKMatcher {
 
 
 	/**
+	 * Returns the minimum key size.
+	 *
+	 * @return The minimum key size in bits, zero implies no minimum size
+	 *         limit.
+	 */
+	public int getMinSize() {
+
+		return minSizeBits;
+	}
+
+
+	/**
+	 * Returns the maximum key size.
+	 *
+	 * @return The maximum key size in bits, zero implies no maximum size
+	 *         limit.
+	 */
+	public int getMaxSize() {
+
+		return maxSizeBits;
+	}
+
+
+	/**
 	 * Returns {@code true} if the specified JWK matches.
 	 *
 	 * @param key The JSON Web Key (JWK). Must not  be {@code null}.
@@ -561,6 +680,18 @@ public class JWKMatcher {
 
 		if (ids != null && ! ids.contains(key.getKeyID()))
 			return false;
+
+		if (minSizeBits > 0) {
+
+			if (key.size() < minSizeBits)
+				return false;
+		}
+
+		if (maxSizeBits > 0) {
+
+			if (key.size() > maxSizeBits)
+				return false;
+		}
 
 		return true;
 	}

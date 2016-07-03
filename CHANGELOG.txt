@@ -558,4 +558,6 @@ version 4.21 (2016-06-29)
 
 version 4.22 (2016-07-03)
     * Adds new JWK.size method that returns the key's bit length.
+    * Adds JWKMatcher support for specifying minimum and maximum key size (in
+      bits) (issue #186).
 
