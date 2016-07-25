@@ -5,13 +5,9 @@ import com.nimbusds.jwt.JWTClaimsSet;
 
 
 /**
- * JWT claims verifier. Intended to enable performance of various claim checks,
- * such as issuer acceptance, during {@link JWTProcessor JWT processing}
- * (after the JWT is successfully verified (for JWS) or decrypted (for JWE)).
- *
- * @author Vladimir Dzhuvinov
- * @version 2015-08-19
+ * @see JWTClaimsSetVerifier
  */
+@Deprecated
 public interface JWTClaimsVerifier {
 
 
@@ -23,6 +19,7 @@ public interface JWTClaimsVerifier {
 	 *
 	 * @throws BadJWTException If the JWT claims set is rejected.
 	 */
+	@Deprecated
 	void verify(final JWTClaimsSet claimsSet)
 		throws BadJWTException;
 }

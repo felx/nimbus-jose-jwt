@@ -3,10 +3,10 @@ package com.nimbusds.jwt.proc;
 
 import java.util.Date;
 
-import com.nimbusds.jose.util.DateUtils;
-import net.jcip.annotations.ThreadSafe;
-
+import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.util.DateUtils;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -24,10 +24,10 @@ import com.nimbusds.jwt.JWTClaimsSet;
  * <p>This class may be extended to perform additional checks.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-12-13
+ * @version 2016-07-25
  */
 @ThreadSafe
-public class DefaultJWTClaimsVerifier implements JWTClaimsVerifier, ClockSkewAware {
+public class DefaultJWTClaimsVerifier <C extends SecurityContext> implements JWTClaimsSetVerifier<C>, JWTClaimsVerifier, ClockSkewAware {
 
 
 	/**
@@ -73,21 +73,29 @@ public class DefaultJWTClaimsVerifier implements JWTClaimsVerifier, ClockSkewAwa
 	public void verify(final JWTClaimsSet claimsSet)
 		throws BadJWTException {
 
+		verify(claimsSet, null);
+	}
+	
+	
+	@Override
+	public void verify(final JWTClaimsSet claimsSet, final C context)
+		throws BadJWTException {
+		
 		final Date now = new Date();
-
+		
 		final Date exp = claimsSet.getExpirationTime();
-
+		
 		if (exp != null) {
-
+			
 			if (! DateUtils.isAfter(exp, now, maxClockSkew)) {
 				throw EXPIRED_JWT_EXCEPTION;
 			}
 		}
-
+		
 		final Date nbf = claimsSet.getNotBeforeTime();
-
+		
 		if (nbf != null) {
-
+			
 			if (! DateUtils.isBefore(nbf, now, maxClockSkew)) {
 				throw JWT_BEFORE_USE_EXCEPTION;
 			}

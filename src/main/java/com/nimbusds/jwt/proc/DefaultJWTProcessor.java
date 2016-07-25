@@ -1,7 +1,6 @@
 package com.nimbusds.jwt.proc;
 
 
-import java.io.IOException;
 import java.security.Key;
 import java.text.ParseException;
 import java.util.List;
@@ -64,7 +63,7 @@ import com.nimbusds.jwt.*;
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-21
+ * @version 2016-07-25
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	implements ConfigurableJWTProcessor<C> {
@@ -120,7 +119,13 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	/**
 	 * The claims verifier.
 	 */
-	private JWTClaimsVerifier claimsVerifier = new DefaultJWTClaimsVerifier();
+	private JWTClaimsSetVerifier<C> claimsVerifier = new DefaultJWTClaimsVerifier<>();
+	
+	
+	/**
+	 * The deprecated claims verifier.
+	 */
+	private JWTClaimsVerifier deprecatedClaimsVerifier = null;
 
 
 	@Override
@@ -177,33 +182,52 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 
 		jweDecrypterFactory = factory;
 	}
-
-
+	
+	
 	@Override
+	public JWTClaimsSetVerifier<C> getJWTClaimsSetVerifier() {
+		
+		return claimsVerifier;
+	}
+	
+	
+	@Override
+	public void setJWTClaimsSetVerifier(final JWTClaimsSetVerifier<C> claimsVerifier) {
+		
+		this.claimsVerifier = claimsVerifier;
+		this.deprecatedClaimsVerifier = null; // clear other verifier
+	}
+	
+	
+	@Override
+	@Deprecated
 	public JWTClaimsVerifier getJWTClaimsVerifier() {
 
-		return claimsVerifier;
+		return deprecatedClaimsVerifier;
 	}
 
 
 	@Override
+	@Deprecated
 	public void setJWTClaimsVerifier(final JWTClaimsVerifier claimsVerifier) {
 
-		this.claimsVerifier = claimsVerifier;
+		this.claimsVerifier = null; // clear official verifier
+		this.deprecatedClaimsVerifier = claimsVerifier;
 	}
 
 
 	/**
 	 * Verifies the claims of the specified JWT.
 	 *
-	 * @param jwt The JWT. Must be in a state which allows the claims to
-	 *            be extracted.
+	 * @param jwt     The JWT. Must be in a state which allows the claims
+	 *                to be extracted.
+	 * @param context Optional context, {@code null} if not required.
 	 *
 	 * @return The JWT claims set.
 	 *
 	 * @throws BadJWTException If the JWT claims are invalid or rejected.
 	 */
-	private JWTClaimsSet verifyAndReturnClaims(final JWT jwt)
+	private JWTClaimsSet verifyAndReturnClaims(final JWT jwt, final C context)
 		throws BadJWTException {
 
 		JWTClaimsSet claimsSet;
@@ -216,7 +240,10 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			throw new BadJWTException(e.getMessage(), e);
 		}
 
-		if (getJWTClaimsVerifier() != null) {
+		if (getJWTClaimsSetVerifier() != null) {
+			getJWTClaimsSetVerifier().verify(claimsSet, context);
+		} else if (getJWTClaimsVerifier() != null) {
+			// Fall back to deprecated claims verifier
 			getJWTClaimsVerifier().verify(claimsSet);
 		}
 
@@ -257,7 +284,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	public JWTClaimsSet process(final PlainJWT plainJWT, final C context)
 		throws BadJOSEException, JOSEException {
 
-		verifyAndReturnClaims(plainJWT); // just check claims, no return
+		verifyAndReturnClaims(plainJWT, context); // just check claims, no return
 
 		throw PLAIN_JWT_REJECTED_EXCEPTION;
 	}
@@ -295,7 +322,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			final boolean validSignature = signedJWT.verify(verifier);
 
 			if (validSignature) {
-				return verifyAndReturnClaims(signedJWT);
+				return verifyAndReturnClaims(signedJWT, context);
 			}
 
 			if (! it.hasNext()) {
@@ -364,7 +391,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 				return process(nestedJWT, context);
 			}
 
-			return verifyAndReturnClaims(encryptedJWT);
+			return verifyAndReturnClaims(encryptedJWT, context);
 		}
 
 		throw NO_MATCHING_DECRYPTERS_EXCEPTION;

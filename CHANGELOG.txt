@@ -561,3 +561,9 @@ version 4.22 (2016-07-03)
     * Adds JWKMatcher support for specifying minimum and maximum key size (in
       bits) (issue #186).
 
+version 4.23 (2016-07-25)
+    * Deprecates JWTClaimsVerifier in favour of a new JWTClaimsSetVerifier that
+      supports an optional SecurityContext parameter. Modifies the
+      JWTProcessorConfiguration interface and the DefaultJWTProcessor class
+      accordingly (issue #188).
+
