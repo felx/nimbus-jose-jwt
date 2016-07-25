@@ -1,7 +1,6 @@
 package com.nimbusds.jose.proc;
 
 
-import java.io.IOException;
 import java.security.Key;
 import java.text.ParseException;
 import java.util.List;

@@ -2,7 +2,6 @@ package com.nimbusds.jose.jwk.source;
 
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.Charset;
