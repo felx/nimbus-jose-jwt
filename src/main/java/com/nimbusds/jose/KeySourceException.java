@@ -1,9 +1,6 @@
 package com.nimbusds.jose;
 
 
-import com.nimbusds.jose.JOSEException;
-
-
 /**
  * Key source exception.
  *
