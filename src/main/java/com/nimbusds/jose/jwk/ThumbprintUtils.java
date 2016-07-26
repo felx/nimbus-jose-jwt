@@ -1,15 +1,14 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 
-import net.minidev.json.JSONObject;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -18,7 +17,7 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>See RFC 7638.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-28
+ * @version 2016-07-26
  */
 public final class ThumbprintUtils {
 
@@ -86,7 +85,7 @@ public final class ThumbprintUtils {
 			throw new JOSEException("Couldn't compute JWK thumbprint: Unsupported hash algorithm: " + e.getMessage(), e);
 		}
 
-		md.update(json.getBytes(Charset.forName("UTF-8")));
+		md.update(json.getBytes(StandardCharset.UTF_8));
 
 		return Base64URL.encode(md.digest());
 	}

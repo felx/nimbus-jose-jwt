@@ -1,15 +1,13 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -38,7 +36,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-07
+ * @version 2016-07-26
  */
 @ThreadSafe
 public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -70,7 +68,7 @@ public class PasswordBasedDecrypter extends PasswordBasedCryptoProvider implemen
 	 */
 	public PasswordBasedDecrypter(final String password) {
 
-		super(password.getBytes(Charset.forName("UTF-8")));
+		super(password.getBytes(StandardCharset.UTF_8));
 	}
 
 

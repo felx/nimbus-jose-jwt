@@ -1,14 +1,12 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
-
 import javax.crypto.SecretKey;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -37,7 +35,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2016-07-26
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -111,7 +109,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 				      final int saltLength,
 				      final int iterationCount) {
 
-		this(password.getBytes(Charset.forName("UTF-8")), saltLength, iterationCount);
+		this(password.getBytes(StandardCharset.UTF_8), saltLength, iterationCount);
 	}
 
 

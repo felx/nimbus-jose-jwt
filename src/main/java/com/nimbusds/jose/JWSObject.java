@@ -1,19 +1,18 @@
 package com.nimbusds.jose;
 
 
-import java.nio.charset.Charset;
 import java.text.ParseException;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
  * JSON Web Signature (JWS) secured object. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-04-13
+ * @version 2016-07-26
  */
 @ThreadSafe
 public class JWSObject extends JOSEObject {
@@ -202,7 +201,7 @@ public class JWSObject extends JOSEObject {
 	 */
 	public byte[] getSigningInput() {
 
-		return signingInputString.getBytes(Charset.forName("UTF-8"));
+		return signingInputString.getBytes(StandardCharset.UTF_8);
 	}
 
 

@@ -3,8 +3,6 @@ package com.nimbusds.jose.crypto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -13,6 +11,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.IntegerUtils;
+import com.nimbusds.jose.util.StandardCharset;
 
 
 /**
@@ -22,7 +21,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  *
  * @author Brian Campbell
  * @author Yavor Vassilev
- * @version 2015-04-24
+ * @version 2016-07-26
  */
 class PBKDF2 {
 
@@ -48,7 +47,7 @@ class PBKDF2 {
 	public static byte[] formatSalt(final JWEAlgorithm alg, final byte[] salt)
 		throws JOSEException {
 
-		byte[] algBytes = alg.toString().getBytes(Charset.forName("UTF-8"));
+		byte[] algBytes = alg.toString().getBytes(StandardCharset.UTF_8);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 

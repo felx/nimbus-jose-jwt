@@ -1,13 +1,13 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.util.StandardCharset;
 
 
 /**
@@ -36,7 +36,7 @@ import com.nimbusds.jose.JWEAlgorithm;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-26
+ * @version 2016-07-26
  */
 abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 
@@ -106,6 +106,6 @@ abstract class PasswordBasedCryptoProvider extends BaseJWEProvider {
 	 */
 	public String getPasswordString() {
 
-		return new String(password, Charset.forName("UTF-8"));
+		return new String(password, StandardCharset.UTF_8);
 	}
 }

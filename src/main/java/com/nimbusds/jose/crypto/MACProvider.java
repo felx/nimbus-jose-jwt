@@ -1,17 +1,16 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.KeyLengthException;
+import com.nimbusds.jose.util.StandardCharset;
 
 
 /**
@@ -27,7 +26,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2016-07-27
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -135,6 +134,6 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	public String getSecretString() {
 
-		return new String(secret, Charset.forName("UTF-8"));
+		return new String(secret, StandardCharset.UTF_8);
 	}
 }

@@ -3,15 +3,11 @@ package com.nimbusds.jose.crypto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.jca.JCAAware;
@@ -19,6 +15,8 @@ import com.nimbusds.jose.jca.JCAContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.IntegerUtils;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -27,7 +25,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2016-07-26
  */
 @ThreadSafe
 class ConcatKDF implements JCAAware<JCAContext> {
@@ -259,7 +257,7 @@ class ConcatKDF implements JCAAware<JCAContext> {
 	 */
 	public static byte[] encodeStringData(final String data) {
 
-		byte[] bytes = data != null ? data.getBytes(Charset.forName("UTF-8")) : null;
+		byte[] bytes = data != null ? data.getBytes(StandardCharset.UTF_8) : null;
 		return encodeDataWithLength(bytes);
 	}
 

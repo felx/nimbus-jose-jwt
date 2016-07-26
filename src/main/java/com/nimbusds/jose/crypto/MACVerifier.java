@@ -1,16 +1,17 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.ThreadSafe;
-
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.CriticalHeaderParamsAware;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -26,7 +27,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-02
+ * @version 2016-06-26
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -66,7 +67,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	public MACVerifier(final String secretString)
 		throws JOSEException {
 
-		this(secretString.getBytes(Charset.forName("UTF-8")));
+		this(secretString.getBytes(StandardCharset.UTF_8));
 	}
 
 

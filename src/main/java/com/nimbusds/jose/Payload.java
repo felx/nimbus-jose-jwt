@@ -2,17 +2,14 @@ package com.nimbusds.jose;
 
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.text.ParseException;
-
-import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONObject;
-
-import com.nimbusds.jwt.SignedJWT;
 
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.StandardCharset;
+import com.nimbusds.jwt.SignedJWT;
+import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -34,7 +31,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-23
+ * @version 2016-07-26
  */
 @Immutable
 public final class Payload implements Serializable {
@@ -88,13 +85,6 @@ public final class Payload implements Serializable {
 
 
 	/**
-	 * UTF-8 is the character set for all conversions between strings and
-	 * byte arrays.
-	 */
-	private static final Charset CHARSET = Charset.forName("UTF-8");
-
-
-	/**
 	 * The original payload data type.
 	 */
 	private final Origin origin;
@@ -137,7 +127,7 @@ public final class Payload implements Serializable {
 
 
 	/**
-	 * Converts a byte array to a string using {@link #CHARSET}.
+	 * Converts a byte array to a string using {@code UTF-8}.
 	 *
 	 * @param bytes The byte array to convert. May be {@code null}.
 	 *
@@ -145,12 +135,12 @@ public final class Payload implements Serializable {
 	 */
 	private static String byteArrayToString(final byte[] bytes) {
 
-		return bytes != null ? new String(bytes, CHARSET) : null;
+		return bytes != null ? new String(bytes, StandardCharset.UTF_8) : null;
 	}
 
 
 	/**
-	 * Converts a string to a byte array using {@link #CHARSET}.
+	 * Converts a string to a byte array using {@code UTF-8}.
 	 *
 	 * @param string The string to convert. May be {@code null}.
 	 *
@@ -158,7 +148,7 @@ public final class Payload implements Serializable {
 	 */
 	private static byte[] stringToByteArray(final String string) {
 
-		return string != null ? string.getBytes(CHARSET) : null;
+		return string != null ? string.getBytes(StandardCharset.UTF_8) : null;
 	}
 
 

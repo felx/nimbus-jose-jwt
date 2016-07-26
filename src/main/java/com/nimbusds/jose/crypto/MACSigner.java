@@ -1,19 +1,17 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 
@@ -30,7 +28,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2016-07-27
  */
 @ThreadSafe
 public class MACSigner extends MACProvider implements JWSSigner {
@@ -119,7 +117,7 @@ public class MACSigner extends MACProvider implements JWSSigner {
 	public MACSigner(final String secretString)
 		throws KeyLengthException {
 
-		this(secretString.getBytes(Charset.forName("UTF-8")));
+		this(secretString.getBytes(StandardCharset.UTF_8));
 	}
 
 
