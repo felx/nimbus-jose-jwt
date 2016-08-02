@@ -17,7 +17,14 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * Elliptic Curve Diffie-Hellman encrypter of
- * {@link com.nimbusds.jose.JWEObject JWE objects}. This class is thread-safe.
+ * {@link com.nimbusds.jose.JWEObject JWE objects}. Expects a public EC key
+ * (with a P-256, P-384 or P-521 curve).
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.6">section 4.6</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *

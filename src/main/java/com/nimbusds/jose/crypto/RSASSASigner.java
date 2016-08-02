@@ -17,7 +17,14 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * RSA Signature-Scheme-with-Appendix (RSASSA) signer of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. Expects a private RSA key.
+ *
+ * <p>See RFC 7518, sections
+ * <a href="https://tools.ietf.org/html/rfc7518#section-3.3">3.3</a> and
+ * <a href="https://tools.ietf.org/html/rfc7518#section-3.5">3.5</a> for more
+ * information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following algorithms:
  *

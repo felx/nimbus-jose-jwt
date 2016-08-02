@@ -16,7 +16,14 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * Elliptic Curve Digital Signature Algorithm (ECDSA) verifier of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. Expects a private EC key
+ * (with a P-256, P-384 or P-521 curve).
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-3.4">section 3.4</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following algorithms:
  *

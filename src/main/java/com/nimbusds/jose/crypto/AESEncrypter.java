@@ -14,7 +14,17 @@ import com.nimbusds.jose.util.ByteUtils;
 
 /**
  * AES and AES GCM key wrap encrypter of {@link com.nimbusds.jose.JWEObject JWE
- * objects}. This class is thread-safe.
+ * objects}. Expects an AES key.
+ *
+ * <p>Encrypts the plain text with a generated AES key (the Content Encryption
+ * Key) according to the specified JOSE encryption method, then wraps the CEK
+ * with the specified AES key and returns it alongside the IV, cipher text and
+ * authentication tag. See RFC 7518, sections
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.4">4.4</a> and
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.7">4.7</a> for more
+ * information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *

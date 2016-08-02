@@ -14,7 +14,13 @@ import com.nimbusds.jose.util.ByteUtils;
 
 /**
  * Direct encrypter of {@link com.nimbusds.jose.JWEObject JWE objects} with a
- * shared symmetric key. This class is thread-safe.
+ * shared symmetric key.
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.5">section 4.5</a>
+ * for more information.</p>
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *

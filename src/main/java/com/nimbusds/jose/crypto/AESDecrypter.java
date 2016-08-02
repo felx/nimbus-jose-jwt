@@ -15,7 +15,16 @@ import com.nimbusds.jose.util.Base64URL;
 
 /**
  * AES and AES GCM key wrap decrypter of {@link com.nimbusds.jose.JWEObject JWE
- * objects}. This class is thread-safe.
+ * objects}. Expects an AES key.
+ *
+ * <p>Unwraps the encrypted Content Encryption Key (CEK) with the specified AES
+ * key, and then uses the CEK along with the IV and authentication tag to
+ * decrypt the cipher text. See RFC 7518, sections
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.4">4.4</a> and
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.7">4.7</a> for more
+ * information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *

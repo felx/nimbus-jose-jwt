@@ -17,7 +17,13 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Message Authentication Code (MAC) signer of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. Expects a secret key.
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-3.2">section 3.2</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following algorithms:
  *

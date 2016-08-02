@@ -12,7 +12,13 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * Password-based decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}.
- * This class is thread-safe.
+ * Expects a password.
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.8">section 4.8</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *
