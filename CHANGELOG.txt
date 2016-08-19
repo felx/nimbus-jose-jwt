@@ -570,5 +570,5 @@ version 4.23 (2016-07-25)
 version 4.24 (2016-07-26)
     * Introduces StandardCharset.UTF_8 constant to speed up UTF-8 charset
       lookup and conversions. Use of java.nio.charset.StandardCharsets.UTF_8 is
-      deliberately avoided because it's missing up to Android API level 19.
+      deliberately avoided because it's missing in Android up to API level 19.
 
