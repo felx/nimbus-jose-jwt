@@ -573,3 +573,9 @@ version 4.24 (2016-08-19)
       lookup and conversions. Use of java.nio.charset.StandardCharsets.UTF_8 is
       deliberately avoided because it's missing in Android up to API level 19.
 
+version 4.25 (2016-08-23)
+    * Adds JWKMatcher support for specifying multiple key lengths.
+    * Adds meaningful JWKMatcher.toString method.
+    * Deprecates JWKMatcher.getMinSize in favour of JWKMatcher.getMinKeySize.
+    * Deprecates JWKMatcher.getMaxSize in favour of JWKMatcher.getMaxKeySize.
+
