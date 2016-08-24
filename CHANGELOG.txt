@@ -586,5 +586,6 @@ version 4.26 (2016-08-24)
       key based JWE algorithms.
     * Adds JWEAlgorithm.Family.SYMMETRIC super family for all shared key based
       JWE algorithms.
+    * Adds JWKMatcher support for key use and key ID presence.
     * Adds ArrayUtils.
 
