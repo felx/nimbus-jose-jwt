@@ -7,7 +7,7 @@ import junit.framework.TestCase;
  * Tests the JWS Algorithm class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-11-16
+ * @version 2016-08-24
  */
 public class JWEAlgorithmTest extends TestCase {
 
@@ -83,5 +83,31 @@ public class JWEAlgorithmTest extends TestCase {
 		assertTrue(JWEAlgorithm.Family.ECDH_ES.contains(JWEAlgorithm.ECDH_ES_A192KW));
 		assertTrue(JWEAlgorithm.Family.ECDH_ES.contains(JWEAlgorithm.ECDH_ES_A256KW));
 		assertEquals(4, JWEAlgorithm.Family.ECDH_ES.size());
+	}
+	
+	
+	public void testAsymmetricSuperFamily() {
+		
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.RSA1_5));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.RSA_OAEP));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.RSA_OAEP_256));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.ECDH_ES));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.ECDH_ES_A128KW));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.ECDH_ES_A192KW));
+		assertTrue(JWEAlgorithm.Family.ASYMMETRIC.contains(JWEAlgorithm.ECDH_ES_A256KW));
+		assertEquals(7, JWEAlgorithm.Family.ASYMMETRIC.size());
+	}
+	
+	
+	public void testSymmetricSuperFamily() {
+		
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A128KW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A192KW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A256KW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A256GCMKW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A256GCMKW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.A256GCMKW));
+		assertTrue(JWEAlgorithm.Family.SYMMETRIC.contains(JWEAlgorithm.DIR));
+		assertEquals(7, JWEAlgorithm.Family.ASYMMETRIC.size());
 	}
 }

@@ -579,3 +579,12 @@ version 4.25 (2016-08-23)
     * Deprecates JWKMatcher.getMinSize in favour of JWKMatcher.getMinKeySize.
     * Deprecates JWKMatcher.getMaxSize in favour of JWKMatcher.getMaxKeySize.
 
+version 4.26 (2016-08-24)
+    * Adds JWSAlgorithm.Family.SIGNATURE super family for all digital signature
+      based JWS algorithms.
+    * Adds JWEAlgorithm.Family.ASYMMETRIC super family for all public / private
+      key based JWE algorithms.
+    * Adds JWEAlgorithm.Family.SYMMETRIC super family for all shared key based
+      JWE algorithms.
+    * Adds ArrayUtils.
+
