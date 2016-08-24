@@ -16,7 +16,7 @@ import junit.framework.TestCase;
  * Tests the JWK matcher.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-08-23
+ * @version 2016-08-24
  */
 public class JWKMatcherTest extends TestCase {
 
@@ -30,6 +30,8 @@ public class JWKMatcherTest extends TestCase {
 		assertNull(matcher.getKeyOperations());
 		assertNull(matcher.getAlgorithms());
 		assertNull(matcher.getKeyIDs());
+		assertFalse(matcher.hasKeyUse());
+		assertFalse(matcher.hasKeyID());
 		assertFalse(matcher.isPrivateOnly());
 		assertFalse(matcher.isPublicOnly());
 		assertEquals(0, matcher.getMinKeySize());
@@ -66,6 +68,8 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ops, matcher.getKeyOperations());
 		assertEquals(algs, matcher.getAlgorithms());
 		assertEquals(ids, matcher.getKeyIDs());
+		assertFalse(matcher.hasKeyUse());
+		assertFalse(matcher.hasKeyID());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
 		assertEquals(0, matcher.getMinKeySize());
@@ -102,6 +106,8 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ops, matcher.getKeyOperations());
 		assertEquals(algs, matcher.getAlgorithms());
 		assertEquals(ids, matcher.getKeyIDs());
+		assertFalse(matcher.hasKeyUse());
+		assertFalse(matcher.hasKeyID());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
 		assertEquals(0, matcher.getMinKeySize());
@@ -142,6 +148,8 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ops, matcher.getKeyOperations());
 		assertEquals(algs, matcher.getAlgorithms());
 		assertEquals(ids, matcher.getKeyIDs());
+		assertFalse(matcher.hasKeyUse());
+		assertFalse(matcher.hasKeyID());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
 		assertEquals(128, matcher.getMinKeySize());
@@ -153,7 +161,7 @@ public class JWKMatcherTest extends TestCase {
 	}
 
 
-	public void testAllSetConstructor() {
+	public void testAllSet4thDeprecatedConstructor() {
 
 		Set<KeyType> types = new HashSet<>();
 		types.add(KeyType.RSA);
@@ -184,6 +192,54 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ops, matcher.getKeyOperations());
 		assertEquals(algs, matcher.getAlgorithms());
 		assertEquals(ids, matcher.getKeyIDs());
+		assertFalse(matcher.hasKeyUse());
+		assertFalse(matcher.hasKeyID());
+		assertTrue(matcher.isPrivateOnly());
+		assertTrue(matcher.isPublicOnly());
+		assertEquals(128, matcher.getMinKeySize());
+		assertEquals(128, matcher.getMinSize());
+		assertEquals(256, matcher.getMaxKeySize());
+		assertEquals(256, matcher.getMaxSize());
+		assertTrue(matcher.getKeySizes().contains(128));
+		assertTrue(matcher.getKeySizes().contains(256));
+		assertEquals(2, matcher.getKeySizes().size());
+		assertEquals(curves, matcher.getCurves());
+	}
+
+
+	public void testAllSetConstructor() {
+
+		Set<KeyType> types = new HashSet<>();
+		types.add(KeyType.RSA);
+
+		Set<KeyUse> uses = new HashSet<>();
+		uses.add(KeyUse.SIGNATURE);
+
+		Set<KeyOperation> ops = new HashSet<>();
+		ops.add(KeyOperation.SIGN);
+		ops.add(KeyOperation.VERIFY);
+
+		Set<Algorithm> algs = new HashSet<>();
+		algs.add(JWSAlgorithm.PS256);
+
+		Set<String> ids = new HashSet<>();
+		ids.add("1");
+		
+		Set<Integer> sizes = new HashSet<>(Arrays.asList(128, 256));
+		
+		Set<ECKey.Curve> curves = new HashSet<>();
+		curves.add(ECKey.Curve.P_256);
+		curves.add(ECKey.Curve.P_384);
+
+		JWKMatcher matcher = new JWKMatcher(types, uses, ops, algs, ids, true, true, true, true, 128, 256, sizes, curves);
+
+		assertEquals(types, matcher.getKeyTypes());
+		assertEquals(uses, matcher.getKeyUses());
+		assertEquals(ops, matcher.getKeyOperations());
+		assertEquals(algs, matcher.getAlgorithms());
+		assertEquals(ids, matcher.getKeyIDs());
+		assertTrue(matcher.hasKeyUse());
+		assertTrue(matcher.hasKeyID());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
 		assertEquals(128, matcher.getMinKeySize());
@@ -227,6 +283,8 @@ public class JWKMatcherTest extends TestCase {
 			.keyOperations(ops)
 			.algorithms(algs)
 			.keyIDs(ids)
+			.hasKeyUse(true)
+			.hasKeyID(true)
 			.privateOnly(true)
 			.publicOnly(true)
 			.keySizes(sizes)
@@ -238,6 +296,8 @@ public class JWKMatcherTest extends TestCase {
 		assertEquals(ops, matcher.getKeyOperations());
 		assertEquals(algs, matcher.getAlgorithms());
 		assertEquals(ids, matcher.getKeyIDs());
+		assertTrue(matcher.hasKeyUse());
+		assertTrue(matcher.hasKeyID());
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
 		assertEquals(0, matcher.getMinKeySize());
@@ -280,6 +340,9 @@ public class JWKMatcherTest extends TestCase {
 		Set<String> ids = matcher.getKeyIDs();
 		assertTrue(ids.containsAll(Arrays.asList("1", "2", "3", null)));
 		assertEquals(4, ids.size());
+		
+		assertFalse(matcher.hasKeyUse()); // skipped
+		assertFalse(matcher.hasKeyID()); // skipped
 
 		assertTrue(matcher.isPrivateOnly());
 		assertTrue(matcher.isPublicOnly());
@@ -632,5 +695,93 @@ public class JWKMatcherTest extends TestCase {
 		assertTrue(matcher.matches(jwk3));
 		
 		assertEquals("size=[128, 256]", matcher.toString());
+	}
+	
+	
+	public void testMatchHasKeyUse()
+		throws Exception {
+		
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+		keyGen.init(128);
+		JWK jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).build();
+		
+		JWKMatcher matcher = new JWKMatcher.Builder().hasKeyUse(false).build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		matcher = new JWKMatcher.Builder().hasKeyUse(true).build();
+		
+		assertFalse(matcher.matches(jwk));
+		
+		jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyUse(KeyUse.ENCRYPTION).build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		assertEquals("has_use=true", matcher.toString());
+	}
+	
+	
+	public void testMatchHasKeyID()
+		throws Exception {
+		
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+		keyGen.init(128);
+		JWK jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).build();
+		
+		JWKMatcher matcher = new JWKMatcher.Builder().hasKeyID(false).build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		matcher = new JWKMatcher.Builder().hasKeyID(true).build();
+		
+		assertFalse(matcher.matches(jwk));
+		
+		jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("1").build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		assertEquals("has_id=true", matcher.toString());
+	}
+	
+	
+	public void testMatchHasKeyID_empty()
+		throws Exception {
+		
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+		keyGen.init(128);
+		JWK jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("").build();
+		
+		JWKMatcher matcher = new JWKMatcher.Builder().hasKeyID(false).build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		matcher = new JWKMatcher.Builder().hasKeyID(true).build();
+		
+		assertFalse(matcher.matches(jwk));
+		
+		jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("1").build();
+		
+		assertTrue(matcher.matches(jwk));
+	}
+	
+	
+	public void testMatchHasKeyID_blank()
+		throws Exception {
+		
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+		keyGen.init(128);
+		JWK jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("   ").build();
+		
+		JWKMatcher matcher = new JWKMatcher.Builder().hasKeyID(false).build();
+		
+		assertTrue(matcher.matches(jwk));
+		
+		matcher = new JWKMatcher.Builder().hasKeyID(true).build();
+		
+		assertFalse(matcher.matches(jwk));
+		
+		jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("1").build();
+		
+		assertTrue(matcher.matches(jwk));
 	}
 }

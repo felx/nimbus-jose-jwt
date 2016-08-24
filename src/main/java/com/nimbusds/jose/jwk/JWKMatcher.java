@@ -21,16 +21,14 @@ import net.jcip.annotations.Immutable;
  *     <li>Any, unspecified, one or more key identifiers (kid).
  *     <li>Private only key.
  *     <li>Public only key.
- *     <li>Minimum key size.
- *     <li>Maximum key size.
- *     <li>Matching key sizes.
+ *     <li>Minimum, maximum or exact key sizes.
  *     <li>Any, unspecified, one or more curves for EC keys (crv).
  * </ul>
  *
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-08-23
+ * @version 2016-08-24
  */
 @Immutable
 public class JWKMatcher {
@@ -64,16 +62,28 @@ public class JWKMatcher {
 	 * The key IDs to match.
 	 */
 	private final Set<String> ids;
+	
+	
+	/**
+	 * {@code true} to match a key with a set use.
+	 */
+	private final boolean hasUse;
+	
+	
+	/**
+	 * {@code true} to match a key with a set ID.
+	 */
+	private final boolean hasID;
 
 
 	/**
-	 * If {@code true} only private keys are matched.
+	 * {@code true} to match a private key.
 	 */
 	private final boolean privateOnly;
 
 
 	/**
-	 * If {@code true} only public keys are matched.
+	 * {@code true} to match a public only key.
 	 */
 	private final boolean publicOnly;
 
@@ -142,16 +152,28 @@ public class JWKMatcher {
 		 * The key IDs to match.
 		 */
 		private Set<String> ids;
+		
+		
+		/**
+		 * {@code true} to match a key with a set use.
+		 */
+		private boolean hasUse = false;
+		
+		
+		/**
+		 * {@code true} to match a key with a set ID.
+		 */
+		private boolean hasID = false;
 
 
 		/**
-		 * If {@code true} only private keys are matched.
+		 * {@code true} to match a private key.
 		 */
 		private boolean privateOnly = false;
 
 
 		/**
-		 * If {@code true} only public keys are matched.
+		 * {@code true} to match a public only key.
 		 */
 		private boolean publicOnly = false;
 
@@ -416,13 +438,40 @@ public class JWKMatcher {
 			this.ids = ids;
 			return this;
 		}
+		
+		
+		/**
+		 * Sets key use presence matching.
+		 *
+		 * @param hasUse {@code true} to match a key with a set use.
+		 *
+		 * @return This builder.
+		 */
+		public Builder hasKeyUse(final boolean hasUse) {
+			
+			this.hasUse = hasUse;
+			return this;
+		}
+		
+		
+		/**
+		 * Sets key ID presence matching.
+		 *
+		 * @param hasID {@code true} to match a key with a set ID.
+		 *
+		 * @return This builder.
+		 */
+		public Builder hasKeyID(final boolean hasID) {
+			
+			this.hasID = hasID;
+			return this;
+		}
 
 
 		/**
 		 * Sets the private key matching policy.
 		 *
-		 * @param privateOnly If {@code true} only private keys are
-		 *                    matched.
+		 * @param privateOnly {@code true} to match a private key.
 		 *
 		 * @return This builder.
 		 */
@@ -436,8 +485,7 @@ public class JWKMatcher {
 		/**
 		 * Sets the public key matching policy.
 		 *
-		 * @param publicOnly  If {@code true} only public keys are
-		 *                    matched.
+		 * @param publicOnly {@code true} to match a public only key.
 		 *
 		 * @return This builder.
 		 */
@@ -580,7 +628,7 @@ public class JWKMatcher {
 		 */
 		public JWKMatcher build() {
 
-			return new JWKMatcher(types, uses, ops, algs, ids, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
+			return new JWKMatcher(types, uses, ops, algs, ids, hasUse, hasID, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
 		}
 	}
 
@@ -598,10 +646,8 @@ public class JWKMatcher {
 	 *                    specified.
 	 * @param ids         The key IDs to match, {@code null} if not
 	 *                    specified.
-	 * @param privateOnly If {@code true} only private keys are
-	 *                    matched.
-	 * @param publicOnly  If {@code true} only public keys are
-	 *                    matched.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
 	 */
 	@Deprecated
 	public JWKMatcher(final Set<KeyType> types,
@@ -629,10 +675,8 @@ public class JWKMatcher {
 	 *                    specified.
 	 * @param ids         The key IDs to match, {@code null} if not
 	 *                    specified.
-	 * @param privateOnly If {@code true} only private keys are
-	 *                    matched.
-	 * @param publicOnly  If {@code true} only public keys are
-	 *                    matched.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
 	 * @param minSizeBits The minimum key size in bits, zero implies no
 	 *                    minimum size limit.
 	 * @param maxSizeBits The maximum key size in bits, zero implies no
@@ -666,10 +710,8 @@ public class JWKMatcher {
 	 *                    specified.
 	 * @param ids         The key IDs to match, {@code null} if not
 	 *                    specified.
-	 * @param privateOnly If {@code true} only private keys are
-	 *                    matched.
-	 * @param publicOnly  If {@code true} only public keys are
-	 *                    matched.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
 	 * @param minSizeBits The minimum key size in bits, zero implies no
 	 *                    minimum size limit.
 	 * @param maxSizeBits The maximum key size in bits, zero implies no
@@ -706,10 +748,51 @@ public class JWKMatcher {
 	 *                    specified.
 	 * @param ids         The key IDs to match, {@code null} if not
 	 *                    specified.
-	 * @param privateOnly If {@code true} only private keys are
-	 *                    matched.
-	 * @param publicOnly  If {@code true} only public keys are
-	 *                    matched.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 * @param sizesBits   The key sizes in bits, {@code null} if not
+	 *                    specified.
+	 * @param curves      The curves to match (for EC keys), {@code null}
+	 *                    if not specified.
+	 */
+	@Deprecated
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits,
+			  final Set<Integer> sizesBits,
+			  final Set<ECKey.Curve> curves) {
+		
+		this(types, uses, ops, algs, ids, false, false, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param hasUse      {@code true} to match a key with a set use.
+	 * @param hasID       {@code true} to match a key with a set ID.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
 	 * @param minSizeBits The minimum key size in bits, zero implies no
 	 *                    minimum size limit.
 	 * @param maxSizeBits The maximum key size in bits, zero implies no
@@ -724,6 +807,8 @@ public class JWKMatcher {
 			  final Set<KeyOperation> ops,
 			  final Set<Algorithm> algs,
 			  final Set<String> ids,
+			  final boolean hasUse,
+			  final boolean hasID,
 			  final boolean privateOnly,
 			  final boolean publicOnly,
 			  final int minSizeBits,
@@ -736,6 +821,8 @@ public class JWKMatcher {
 		this.ops = ops;
 		this.algs = algs;
 		this.ids = ids;
+		this.hasUse = hasUse;
+		this.hasID = hasID;
 		this.privateOnly = privateOnly;
 		this.publicOnly = publicOnly;
 		this.minSizeBits = minSizeBits;
@@ -797,6 +884,30 @@ public class JWKMatcher {
 	public Set<String> getKeyIDs() {
 
 		return ids;
+	}
+	
+	
+	/**
+	 * Returns {@code true} if keys with a set use are matched.
+	 *
+	 * @return {@code true} if keys with a set use are matched, else
+	 *         {@code false}.
+	 */
+	public boolean hasKeyUse() {
+		
+		return hasUse;
+	}
+	
+	
+	/**
+	 * Returns {@code true} if keys with a set use are matched.
+	 *
+	 * @return {@code true} if keys with a set ID are matched, else
+	 *         {@code false}.
+	 */
+	public boolean hasKeyID() {
+		
+		return hasID;
 	}
 
 
@@ -904,6 +1015,12 @@ public class JWKMatcher {
 	 * @return {@code true} if the JWK matches, else {@code false}.
 	 */
 	public boolean matches(final JWK key) {
+		
+		if (hasUse && key.getKeyUse() == null)
+			return false;
+		
+		if (hasID && (key.getKeyID() == null || key.getKeyID().trim().isEmpty()))
+			return false;
 
 		if (privateOnly && ! key.isPrivate())
 			return false;
@@ -975,6 +1092,14 @@ public class JWKMatcher {
 		append(sb, "key_ops", ops);
 		append(sb, "alg", algs);
 		append(sb, "kid", ids);
+		
+		if (hasUse) {
+			sb.append("has_use=true ");
+		}
+		
+		if (hasID) {
+			sb.append("has_id=true ");
+		}
 		
 		if (privateOnly) {
 			sb.append("private_only=true ");
