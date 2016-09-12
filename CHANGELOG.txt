@@ -589,3 +589,6 @@ version 4.26 (2016-08-24)
     * Adds JWKMatcher support for key use and key ID presence.
     * Adds ArrayUtils.
 
+version 4.26.1 (2016-09-12)
+    * Adds copyright and licence note to source files.
+
