@@ -1,22 +1,34 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
-import java.security.interfaces.RSAPrivateKey;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWEHeader;
-import com.nimbusds.jose.JWEObject;
-import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
+import junit.framework.TestCase;
 
 
 /**
@@ -24,12 +36,12 @@ import com.nimbusds.jose.jwk.RSAKey;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-18
+ * @version 2016-06-29
  */
 public class RSA_OAEPTest extends TestCase {
 
 
-	private final static byte[] mod = { 
+	private final static byte[] MOD = {
 		(byte)161, (byte)168, (byte) 84, (byte) 34, (byte)133, (byte)176, (byte)208, (byte)173, 
 		(byte) 46, (byte)176, (byte)163, (byte)110, (byte) 57, (byte) 30, (byte)135, (byte)227, 
 		(byte)  9, (byte) 31, (byte)226, (byte)128, (byte) 84, (byte) 92, (byte)116, (byte)241, 
@@ -70,10 +82,10 @@ public class RSA_OAEPTest extends TestCase {
 		(byte) 35, (byte)204, (byte)108, (byte)190, (byte)253, (byte)186, (byte)186, (byte)27  };
 
 
-	private static final byte[] exp= { 1, 0, 1 };
+	private static final byte[] EXP = { 1, 0, 1 };
 
 
-	private static final byte[] modPriv = { 
+	private static final byte[] MOD_PRIV = {
 		(byte)144, (byte)183, (byte)109, (byte) 34, (byte) 62, (byte)134, (byte)108, (byte) 57, 
 		(byte) 44, (byte)252, (byte) 10, (byte) 66, (byte) 73, (byte) 54, (byte) 16, (byte)181, 
 		(byte)233, (byte) 92, (byte) 54, (byte)219, (byte)101, (byte) 42, (byte) 35, (byte)178, 
@@ -114,21 +126,21 @@ public class RSA_OAEPTest extends TestCase {
 		(byte)132, (byte)220, (byte) 60, (byte)224, (byte)173, (byte) 56, (byte)224, (byte)201  };
 
 
-	private static RSAPublicKey publicKey;
+	private static RSAPublicKey PUBLIC_KEY;
 
 
-	private static RSAPrivateKey privateKey;
+	private static PrivateKey PRIVATE_KEY;
 
 
 	static {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, mod), new BigInteger(1, exp));
-			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, mod), new BigInteger(1, modPriv));
+			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, MOD), new BigInteger(1, EXP));
+			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, MOD), new BigInteger(1, MOD_PRIV));
 
-			publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+			PUBLIC_KEY = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+			PRIVATE_KEY = keyFactory.generatePrivate(privateKeySpec);
 
 		} catch (Exception e) {
 
@@ -147,7 +159,7 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
@@ -158,10 +170,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -183,7 +195,7 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.encrypt(encrypter);
@@ -194,10 +206,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, (decrypter).getPrivateKey());
+		assertEquals(PRIVATE_KEY, (decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -219,10 +231,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -232,10 +244,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -257,10 +269,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -272,10 +284,10 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -311,7 +323,7 @@ public class RSA_OAEPTest extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
 		jweObject.decrypt(decrypter);

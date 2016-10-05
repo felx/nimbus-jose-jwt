@@ -1,3 +1,20 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
@@ -5,16 +22,24 @@ import java.security.PrivateKey;
 import java.util.Set;
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
- * RSA decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. This class
- * is thread-safe.
+ * RSA decrypter of {@link com.nimbusds.jose.JWEObject JWE objects}. Expects a
+ * private RSA key.
+ *
+ * <p>Decrypts the encrypted Content Encryption Key (CEK) with the private RSA
+ * key, and then uses the CEK along with the IV and authentication tag to
+ * decrypt the cipher text. See RFC 7518, sections
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.2">4.2</a> and
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.3">4.3</a> for more
+ * information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *
@@ -39,7 +64,8 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @author Dimitar A. Stoikov
+ * @version 2016-06-29
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -91,7 +117,8 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	/**
 	 * Creates a new RSA decrypter.
 	 *
-	 * @param privateKey     The private RSA key. Must not be {@code null}.
+	 * @param privateKey     The private RSA key. Its algorithm must be
+	 *                       "RSA". Must not be {@code null}.
 	 * @param defCritHeaders The names of the critical header parameters
 	 *                       that are deferred to the application for
 	 *                       processing, empty set or {@code null} if none.
@@ -116,7 +143,10 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	/**
 	 * Gets the private RSA key.
 	 *
-	 * @return The private RSA key.
+	 * @return The private RSA key. Casting to
+	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
+	 *         possible if the key is backed by a key store that doesn't
+	 *         expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {
 

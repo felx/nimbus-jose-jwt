@@ -1,10 +1,25 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -13,6 +28,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.IntegerUtils;
+import com.nimbusds.jose.util.StandardCharset;
 
 
 /**
@@ -22,7 +38,7 @@ import com.nimbusds.jose.util.IntegerUtils;
  *
  * @author Brian Campbell
  * @author Yavor Vassilev
- * @version 2015-04-24
+ * @version 2016-07-26
  */
 class PBKDF2 {
 
@@ -48,7 +64,7 @@ class PBKDF2 {
 	public static byte[] formatSalt(final JWEAlgorithm alg, final byte[] salt)
 		throws JOSEException {
 
-		byte[] algBytes = alg.toString().getBytes(Charset.forName("UTF-8"));
+		byte[] algBytes = alg.toString().getBytes(StandardCharset.UTF_8);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 

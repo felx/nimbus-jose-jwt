@@ -1,18 +1,32 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose;
 
 
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.text.ParseException;
-
-import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONObject;
-
-import com.nimbusds.jwt.SignedJWT;
 
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.StandardCharset;
+import com.nimbusds.jwt.SignedJWT;
+import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -34,7 +48,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-07-23
+ * @version 2016-07-26
  */
 @Immutable
 public final class Payload implements Serializable {
@@ -88,13 +102,6 @@ public final class Payload implements Serializable {
 
 
 	/**
-	 * UTF-8 is the character set for all conversions between strings and
-	 * byte arrays.
-	 */
-	private static final Charset CHARSET = Charset.forName("UTF-8");
-
-
-	/**
 	 * The original payload data type.
 	 */
 	private final Origin origin;
@@ -137,7 +144,7 @@ public final class Payload implements Serializable {
 
 
 	/**
-	 * Converts a byte array to a string using {@link #CHARSET}.
+	 * Converts a byte array to a string using {@code UTF-8}.
 	 *
 	 * @param bytes The byte array to convert. May be {@code null}.
 	 *
@@ -145,12 +152,12 @@ public final class Payload implements Serializable {
 	 */
 	private static String byteArrayToString(final byte[] bytes) {
 
-		return bytes != null ? new String(bytes, CHARSET) : null;
+		return bytes != null ? new String(bytes, StandardCharset.UTF_8) : null;
 	}
 
 
 	/**
-	 * Converts a string to a byte array using {@link #CHARSET}.
+	 * Converts a string to a byte array using {@code UTF-8}.
 	 *
 	 * @param string The string to convert. May be {@code null}.
 	 *
@@ -158,7 +165,7 @@ public final class Payload implements Serializable {
 	 */
 	private static byte[] stringToByteArray(final String string) {
 
-		return string != null ? string.getBytes(CHARSET) : null;
+		return string != null ? string.getBytes(StandardCharset.UTF_8) : null;
 	}
 
 

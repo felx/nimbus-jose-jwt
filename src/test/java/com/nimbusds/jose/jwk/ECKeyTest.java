@@ -1,3 +1,20 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.jwk;
 
 
@@ -11,12 +28,11 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.*;
 
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 
 
@@ -24,7 +40,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-12-08
+ * @version 2016-17-03
  */
 public class ECKeyTest extends TestCase {
 
@@ -85,6 +101,26 @@ public class ECKeyTest extends TestCase {
 
 
 		public static final Base64URL Y = new Base64URL("AHgOZhhJb2ZiozkquiEa0Z9SfERJbWaaE7qEnCuk9VVZaWruKWKNzZadoIRPt8h305r14KRoxu8AfV20X-d_2Ups");
+	}
+
+
+	public void testKeySizes() {
+
+		assertEquals(256, new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).build().size());
+		assertEquals(256, new ECKey.Builder(ExampleKeyP256Alt.CRV, ExampleKeyP256Alt.X, ExampleKeyP256Alt.Y).build().size());
+		assertEquals(384, new ECKey.Builder(ExampleKeyP384Alt.CRV, ExampleKeyP384Alt.X, ExampleKeyP384Alt.Y).build().size());
+		assertEquals(521, new ECKey.Builder(ExampleKeyP521Alt.CRV, ExampleKeyP521Alt.X, ExampleKeyP521Alt.Y).build().size());
+	}
+
+
+	public void testKeySizeForUnknownCurve() {
+
+		try {
+			new ECKey.Builder(new ECKey.Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build().size();
+			fail();
+		} catch (UnsupportedOperationException e) {
+			assertEquals("Couldn't determine field size for curve unknown", e.getMessage());
+		}
 	}
 
 

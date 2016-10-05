@@ -1,14 +1,27 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.jwk;
 
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-import net.jcip.annotations.Immutable;
+import java.util.*;
 
 import com.nimbusds.jose.Algorithm;
+import net.jcip.annotations.Immutable;
 
 
 /**
@@ -25,12 +38,14 @@ import com.nimbusds.jose.Algorithm;
  *     <li>Any, unspecified, one or more key identifiers (kid).
  *     <li>Private only key.
  *     <li>Public only key.
+ *     <li>Minimum, maximum or exact key sizes.
+ *     <li>Any, unspecified, one or more curves for EC keys (crv).
  * </ul>
  *
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2016-08-24
  */
 @Immutable
 public class JWKMatcher {
@@ -64,18 +79,54 @@ public class JWKMatcher {
 	 * The key IDs to match.
 	 */
 	private final Set<String> ids;
+	
+	
+	/**
+	 * {@code true} to match a key with a set use.
+	 */
+	private final boolean hasUse;
+	
+	
+	/**
+	 * {@code true} to match a key with a set ID.
+	 */
+	private final boolean hasID;
 
 
 	/**
-	 * If {@code true} only private keys are matched.
+	 * {@code true} to match a private key.
 	 */
 	private final boolean privateOnly;
 
 
 	/**
-	 * If {@code true} only public keys are matched.
+	 * {@code true} to match a public only key.
 	 */
 	private final boolean publicOnly;
+
+
+	/**
+	 * The minimum key size in bits, zero implies no minimum size limit.
+	 */
+	private final int minSizeBits;
+
+
+	/**
+	 * The maximum key size in bits, zero implies no maximum size limit.
+	 */
+	private final int maxSizeBits;
+	
+	
+	/**
+	 * The key sizes in bits.
+	 */
+	private final Set<Integer> sizesBits;
+	
+	
+	/**
+	 * The curves to match (for EC keys).
+	 */
+	private final Set<ECKey.Curve> curves;
 
 
 	/**
@@ -118,18 +169,56 @@ public class JWKMatcher {
 		 * The key IDs to match.
 		 */
 		private Set<String> ids;
+		
+		
+		/**
+		 * {@code true} to match a key with a set use.
+		 */
+		private boolean hasUse = false;
+		
+		
+		/**
+		 * {@code true} to match a key with a set ID.
+		 */
+		private boolean hasID = false;
 
 
 		/**
-		 * If {@code true} only private keys are matched.
+		 * {@code true} to match a private key.
 		 */
 		private boolean privateOnly = false;
 
 
 		/**
-		 * If {@code true} only public keys are matched.
+		 * {@code true} to match a public only key.
 		 */
 		private boolean publicOnly = false;
+
+
+		/**
+		 * The minimum key size in bits, zero implies no minimum size
+		 * limit.
+		 */
+		private int minSizeBits = 0;
+
+
+		/**
+		 * The maximum key size in bits, zero implies no maximum size
+		 * limit.
+		 */
+		private int maxSizeBits = 0;
+		
+		
+		/**
+		 * The key sizes in bits.
+		 */
+		private Set<Integer> sizesBits;
+		
+		
+		/**
+		 * The curves to match (for EC keys).
+		 */
+		private Set<ECKey.Curve> curves;
 
 
 		/**
@@ -160,7 +249,7 @@ public class JWKMatcher {
 		 */
 		public Builder keyTypes(final KeyType ... types) {
 
-			keyTypes(new HashSet<>(Arrays.asList(types)));
+			keyTypes(new LinkedHashSet<>(Arrays.asList(types)));
 			return this;
 		}
 
@@ -207,7 +296,7 @@ public class JWKMatcher {
 		 */
 		public Builder keyUses(final KeyUse... uses) {
 
-			keyUses(new HashSet<>(Arrays.asList(uses)));
+			keyUses(new LinkedHashSet<>(Arrays.asList(uses)));
 			return this;
 		}
 
@@ -254,7 +343,7 @@ public class JWKMatcher {
 		 */
 		public Builder keyOperations(final KeyOperation... ops) {
 
-			keyOperations(new HashSet<>(Arrays.asList(ops)));
+			keyOperations(new LinkedHashSet<>(Arrays.asList(ops)));
 			return this;
 		}
 
@@ -302,7 +391,7 @@ public class JWKMatcher {
 		 */
 		public Builder algorithms(final Algorithm ... algs) {
 
-			algorithms(new HashSet<>(Arrays.asList(algs)));
+			algorithms(new LinkedHashSet<>(Arrays.asList(algs)));
 			return this;
 		}
 
@@ -349,7 +438,7 @@ public class JWKMatcher {
 		 */
 		public Builder keyIDs(final String ... ids) {
 
-			keyIDs(new HashSet<>(Arrays.asList(ids)));
+			keyIDs(new LinkedHashSet<>(Arrays.asList(ids)));
 			return this;
 		}
 
@@ -366,13 +455,40 @@ public class JWKMatcher {
 			this.ids = ids;
 			return this;
 		}
+		
+		
+		/**
+		 * Sets key use presence matching.
+		 *
+		 * @param hasUse {@code true} to match a key with a set use.
+		 *
+		 * @return This builder.
+		 */
+		public Builder hasKeyUse(final boolean hasUse) {
+			
+			this.hasUse = hasUse;
+			return this;
+		}
+		
+		
+		/**
+		 * Sets key ID presence matching.
+		 *
+		 * @param hasID {@code true} to match a key with a set ID.
+		 *
+		 * @return This builder.
+		 */
+		public Builder hasKeyID(final boolean hasID) {
+			
+			this.hasID = hasID;
+			return this;
+		}
 
 
 		/**
 		 * Sets the private key matching policy.
 		 *
-		 * @param privateOnly If {@code true} only private keys are
-		 *                    matched.
+		 * @param privateOnly {@code true} to match a private key.
 		 *
 		 * @return This builder.
 		 */
@@ -386,8 +502,7 @@ public class JWKMatcher {
 		/**
 		 * Sets the public key matching policy.
 		 *
-		 * @param publicOnly  If {@code true} only public keys are
-		 *                    matched.
+		 * @param publicOnly {@code true} to match a public only key.
 		 *
 		 * @return This builder.
 		 */
@@ -399,13 +514,138 @@ public class JWKMatcher {
 
 
 		/**
+		 * Sets the minimal key size.
+		 *
+		 * @param minSizeBits The minimum key size in bits, zero
+		 *                    implies no minimum key size limit.
+		 *
+		 * @return This builder.
+		 */
+		public Builder minKeySize(final int minSizeBits) {
+
+			this.minSizeBits = minSizeBits;
+			return this;
+		}
+
+
+		/**
+		 * Sets the maximum key size.
+		 *
+		 * @param maxSizeBits The maximum key size in bits, zero
+		 *                    implies no maximum key size limit.
+		 *
+		 * @return This builder.
+		 */
+		public Builder maxKeySize(final int maxSizeBits) {
+
+			this.maxSizeBits = maxSizeBits;
+			return this;
+		}
+		
+		
+		/**
+		 * Sets the key size.
+		 *
+		 * @param keySizeBits The key size in bits, zero if not
+		 *                    specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keySize(final int keySizeBits) {
+			if (keySizeBits <= 0) {
+				sizesBits = null;
+			} else {
+				sizesBits = Collections.singleton(keySizeBits);
+			}
+			return this;
+		}
+		
+		
+		/**
+		 * Sets the key sizes.
+		 *
+		 * @param keySizesBits The key sizes in bits.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keySizes(final int... keySizesBits) {
+			Set<Integer> sizesSet = new LinkedHashSet<>();
+			for (int keySize: keySizesBits) {
+				sizesSet.add(keySize);
+			}
+			keySizes(sizesSet);
+			return this;
+		}
+		
+		
+		/**
+		 * Sets the key sizes.
+		 *
+		 * @param keySizesBits The key sizes in bits.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keySizes(final Set<Integer> keySizesBits) {
+			
+			this.sizesBits = keySizesBits;
+			return this;
+		}
+		
+		
+		/**
+		 * Sets a single curve to match (for EC keys).
+		 *
+		 * @param curve The curve, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder curve(final ECKey.Curve curve) {
+			
+			if (curve == null) {
+				curves = null;
+			} else {
+				curves = new HashSet<>(Collections.singletonList(curve));
+			}
+			return this;
+		}
+		
+		
+		/**
+		 * Sets multiple curves to match (for EC keys).
+		 *
+		 * @param curves The curves.
+		 *
+		 * @return This builder.
+		 */
+		public Builder curves(final ECKey.Curve... curves) {
+			
+			curves(new LinkedHashSet<>(Arrays.asList(curves)));
+			return this;
+		}
+		
+		
+		/**
+		 * Sets multiple curves to match (for EC keys).
+		 *
+		 * @param curves The curves, {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder curves(final Set<ECKey.Curve> curves) {
+			
+			this.curves = curves;
+			return this;
+		}
+
+
+		/**
 		 * Builds a new JWK matcher.
 		 *
 		 * @return The JWK matcher.
 		 */
 		public JWKMatcher build() {
 
-			return new JWKMatcher(types, uses, ops, algs, ids, privateOnly, publicOnly);
+			return new JWKMatcher(types, uses, ops, algs, ids, hasUse, hasID, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
 		}
 	}
 
@@ -423,11 +663,10 @@ public class JWKMatcher {
 	 *                    specified.
 	 * @param ids         The key IDs to match, {@code null} if not
 	 *                    specified.
-	 * @param privateOnly If {@code true} only private keys are
-	 *                    matched.
-	 * @param publicOnly  If {@code true} only public keys are
-	 *                    matched.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
 	 */
+	@Deprecated
 	public JWKMatcher(final Set<KeyType> types,
 			  final Set<KeyUse> uses,
 			  final Set<KeyOperation> ops,
@@ -435,13 +674,178 @@ public class JWKMatcher {
 			  final Set<String> ids,
 			  final boolean privateOnly,
 			  final boolean publicOnly) {
+
+		this(types, uses, ops, algs, ids, privateOnly, publicOnly, 0, 0);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 */
+	@Deprecated
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits) {
+		
+		this(types, uses, ops, algs, ids, privateOnly, publicOnly, minSizeBits, maxSizeBits, null);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 * @param curves      The curves to match (for EC keys), {@code null}
+	 *                    if not specified.
+	 */
+	@Deprecated
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits,
+			  final Set<ECKey.Curve> curves) {
+		
+		this(types, uses, ops, algs, ids, privateOnly, publicOnly, minSizeBits, maxSizeBits, null, curves);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 * @param sizesBits   The key sizes in bits, {@code null} if not
+	 *                    specified.
+	 * @param curves      The curves to match (for EC keys), {@code null}
+	 *                    if not specified.
+	 */
+	@Deprecated
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits,
+			  final Set<Integer> sizesBits,
+			  final Set<ECKey.Curve> curves) {
+		
+		this(types, uses, ops, algs, ids, false, false, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
+	}
+
+
+	/**
+	 * Creates a new JSON Web Key (JWK) matcher.
+	 *
+	 * @param types       The key types to match, {@code null} if not
+	 *                    specified.
+	 * @param uses        The public key uses to match, {@code null} if not
+	 *                    specified.
+	 * @param ops         The key operations to match, {@code null} if not
+	 *                    specified.
+	 * @param algs        The JOSE algorithms to match, {@code null} if not
+	 *                    specified.
+	 * @param ids         The key IDs to match, {@code null} if not
+	 *                    specified.
+	 * @param hasUse      {@code true} to match a key with a set use.
+	 * @param hasID       {@code true} to match a key with a set ID.
+	 * @param privateOnly {@code true} to match a private key.
+	 * @param publicOnly  {@code true} to match a public only key.
+	 * @param minSizeBits The minimum key size in bits, zero implies no
+	 *                    minimum size limit.
+	 * @param maxSizeBits The maximum key size in bits, zero implies no
+	 *                    maximum size limit.
+	 * @param sizesBits   The key sizes in bits, {@code null} if not
+	 *                    specified.
+	 * @param curves      The curves to match (for EC keys), {@code null}
+	 *                    if not specified.
+	 */
+	public JWKMatcher(final Set<KeyType> types,
+			  final Set<KeyUse> uses,
+			  final Set<KeyOperation> ops,
+			  final Set<Algorithm> algs,
+			  final Set<String> ids,
+			  final boolean hasUse,
+			  final boolean hasID,
+			  final boolean privateOnly,
+			  final boolean publicOnly,
+			  final int minSizeBits,
+			  final int maxSizeBits,
+			  final Set<Integer> sizesBits,
+			  final Set<ECKey.Curve> curves) {
+
 		this.types = types;
 		this.uses = uses;
 		this.ops = ops;
 		this.algs = algs;
 		this.ids = ids;
+		this.hasUse = hasUse;
+		this.hasID = hasID;
 		this.privateOnly = privateOnly;
 		this.publicOnly = publicOnly;
+		this.minSizeBits = minSizeBits;
+		this.maxSizeBits = maxSizeBits;
+		this.sizesBits = sizesBits;
+		this.curves = curves;
 	}
 
 
@@ -498,6 +902,30 @@ public class JWKMatcher {
 
 		return ids;
 	}
+	
+	
+	/**
+	 * Returns {@code true} if keys with a set use are matched.
+	 *
+	 * @return {@code true} if keys with a set use are matched, else
+	 *         {@code false}.
+	 */
+	public boolean hasKeyUse() {
+		
+		return hasUse;
+	}
+	
+	
+	/**
+	 * Returns {@code true} if keys with a set use are matched.
+	 *
+	 * @return {@code true} if keys with a set ID are matched, else
+	 *         {@code false}.
+	 */
+	public boolean hasKeyID() {
+		
+		return hasID;
+	}
 
 
 	/**
@@ -525,6 +953,78 @@ public class JWKMatcher {
 
 
 	/**
+	 * Returns the minimum key size. Use {@link #getMinKeySize()} instead.
+	 *
+	 * @return The minimum key size in bits, zero implies no minimum size
+	 *         limit.
+	 */
+	@Deprecated
+	public int getMinSize() {
+
+		return getMinKeySize();
+	}
+
+
+	/**
+	 * Returns the minimum key size.
+	 *
+	 * @return The minimum key size in bits, zero implies no minimum size
+	 *         limit.
+	 */
+	public int getMinKeySize() {
+
+		return minSizeBits;
+	}
+
+
+	/**
+	 * Returns the maximum key size. Use {@link #getMaxKeySize()} instead.
+	 *
+	 * @return The maximum key size in bits, zero implies no maximum size
+	 *         limit.
+	 */
+	@Deprecated
+	public int getMaxSize() {
+
+		return getMaxKeySize();
+	}
+
+
+	/**
+	 * Returns the maximum key size.
+	 *
+	 * @return The maximum key size in bits, zero implies no maximum size
+	 *         limit.
+	 */
+	public int getMaxKeySize() {
+
+		return maxSizeBits;
+	}
+	
+	
+	/**
+	 * Returns the key sizes.
+	 *
+	 * @return The key sizes in bits, {@code null} if not specified.
+	 */
+	public Set<Integer> getKeySizes() {
+		
+		return sizesBits;
+	}
+	
+	
+	/**
+	 * Returns the curves to match (for EC keys).
+	 *
+	 * @return The curves, {@code null} if not specified.
+	 */
+	public Set<ECKey.Curve> getCurves() {
+		
+		return curves;
+	}
+
+
+	/**
 	 * Returns {@code true} if the specified JWK matches.
 	 *
 	 * @param key The JSON Web Key (JWK). Must not  be {@code null}.
@@ -532,6 +1032,12 @@ public class JWKMatcher {
 	 * @return {@code true} if the JWK matches, else {@code false}.
 	 */
 	public boolean matches(final JWK key) {
+		
+		if (hasUse && key.getKeyUse() == null)
+			return false;
+		
+		if (hasID && (key.getKeyID() == null || key.getKeyID().trim().isEmpty()))
+			return false;
 
 		if (privateOnly && ! key.isPrivate())
 			return false;
@@ -562,6 +1068,104 @@ public class JWKMatcher {
 		if (ids != null && ! ids.contains(key.getKeyID()))
 			return false;
 
+		if (minSizeBits > 0) {
+
+			if (key.size() < minSizeBits)
+				return false;
+		}
+
+		if (maxSizeBits > 0) {
+
+			if (key.size() > maxSizeBits)
+				return false;
+		}
+		
+		if (sizesBits != null) {
+			if (! sizesBits.contains(key.size()))
+				return false;
+		}
+		
+		if (curves != null) {
+			
+			if (! (key instanceof ECKey))
+				return false;
+			
+			ECKey ecKey = (ECKey)key;
+			
+			if (! curves.contains(ecKey.getCurve()))
+				return false;
+		}
+
 		return true;
+	}
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		
+		append(sb, "kty", types);
+		append(sb, "use", uses);
+		append(sb, "key_ops", ops);
+		append(sb, "alg", algs);
+		append(sb, "kid", ids);
+		
+		if (hasUse) {
+			sb.append("has_use=true ");
+		}
+		
+		if (hasID) {
+			sb.append("has_id=true ");
+		}
+		
+		if (privateOnly) {
+			sb.append("private_only=true ");
+		}
+		
+		if (publicOnly) {
+			sb.append("public_only=true ");
+		}
+		
+		if (minSizeBits > 0) {
+			sb.append("min_size=" + minSizeBits + " ");
+		}
+		
+		if (maxSizeBits > 0) {
+			sb.append("max_size=" + maxSizeBits + " ");
+		}
+		
+		append(sb, "size", sizesBits);
+		append(sb, "crv", curves);
+			
+		return sb.toString().trim();
+	}
+	
+	
+	/**
+	 * Appends the specified JWK matcher parameter to a string builder.
+	 *
+	 * @param sb     The string builder. Must not be {@code null}.
+	 * @param key    The parameter key. Must not be {@code null}.
+	 * @param values The parameter value, {@code null} if not specified.
+	 */
+	private static void append(final StringBuilder sb, final String key, final Set<?> values) {
+		
+		if (values != null) {
+			
+			sb.append(key);
+			sb.append('=');
+			if (values.size() == 1) {
+				Object value = values.iterator().next();
+				if (value == null) {
+					sb.append("ANY");
+				} else {
+					sb.append(value.toString().trim());
+				}
+			} else {
+				sb.append(values.toString().trim());
+			}
+			
+			sb.append(' ');
+		}
 	}
 }

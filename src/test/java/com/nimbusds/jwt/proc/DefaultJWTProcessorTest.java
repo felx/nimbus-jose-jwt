@@ -1,3 +1,20 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jwt.proc;
 
 
@@ -31,7 +48,7 @@ import junit.framework.TestCase;
 /**
  * Tests the default JWT processor.
  *
- * @version 2016-04-11
+ * @version 2016-07-25
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -39,7 +56,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 	public void testConstructor()
 		throws Exception {
 
-		ConfigurableJWTProcessor processor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SecurityContext> processor = new DefaultJWTProcessor<>();
 
 		assertNull(processor.getJWSKeySelector());
 		assertNull(processor.getJWEKeySelector());
@@ -47,11 +64,55 @@ public class DefaultJWTProcessorTest extends TestCase {
 		assertTrue(processor.getJWSVerifierFactory() instanceof DefaultJWSVerifierFactory);
 		assertTrue(processor.getJWEDecrypterFactory() instanceof DefaultJWEDecrypterFactory);
 
-		assertTrue(processor.getJWTClaimsVerifier() instanceof DefaultJWTClaimsVerifier);
+		assertTrue(processor.getJWTClaimsSetVerifier() instanceof DefaultJWTClaimsVerifier);
+		assertNull(processor.getJWTClaimsVerifier());
 	}
 
 
 	public void testVerifyClaimsAllow()
+		throws Exception {
+
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://openid.c2id.com")
+			.subject("alice")
+			.build();
+
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
+			}
+		});
+
+		processor.setJWTClaimsSetVerifier(new JWTClaimsSetVerifier<SimpleSecurityContext>() {
+			@Override
+			public void verify(JWTClaimsSet claimsSet, SimpleSecurityContext context)
+				throws BadJWTException {
+				
+				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
+					throw new BadJWTException("Unexpected/missing issuer");
+			}
+		});
+		
+		assertNotNull(processor.getJWTClaimsSetVerifier());
+		assertNull(processor.getJWTClaimsVerifier());
+
+		assertEquals("alice", processor.process(jwt.serialize(), null).getSubject());
+		assertEquals("https://openid.c2id.com", processor.process(jwt.serialize(), null).getIssuer());
+	}
+
+
+	public void testVerifyClaimsAllow_deprecated()
 		throws Exception {
 
 		JWTClaimsSet claims = new JWTClaimsSet.Builder()
@@ -83,6 +144,9 @@ public class DefaultJWTProcessorTest extends TestCase {
 					throw new BadJWTException("Unexpected/missing issuer");
 			}
 		});
+		
+		assertNull(processor.getJWTClaimsSetVerifier());
+		assertNotNull(processor.getJWTClaimsVerifier());
 
 		assertEquals("alice", processor.process(jwt.serialize(), null).getSubject());
 		assertEquals("https://openid.c2id.com", processor.process(jwt.serialize(), null).getIssuer());
@@ -114,6 +178,54 @@ public class DefaultJWTProcessorTest extends TestCase {
 			}
 		});
 
+		processor.setJWTClaimsSetVerifier(new JWTClaimsSetVerifier<SimpleSecurityContext>() {
+			@Override
+			public void verify(JWTClaimsSet claimsSet, SimpleSecurityContext context)
+				throws BadJWTException {
+				
+				if (claimsSet.getIssuer() == null || !claimsSet.getIssuer().equals("https://openid.c2id.com"))
+					throw new BadJWTException("Unexpected/missing issuer");
+			}
+		});
+		
+		assertNotNull(processor.getJWTClaimsSetVerifier());
+		assertNull(processor.getJWTClaimsVerifier());
+
+		try {
+			processor.process(jwt.serialize(), null);
+			fail();
+		} catch (BadJWTException e) {
+
+			assertEquals("Unexpected/missing issuer", e.getMessage());
+		}
+	}
+
+
+	public void testVerifyClaimsDeny_deprecated()
+		throws Exception {
+
+		JWTClaimsSet claims = new JWTClaimsSet.Builder()
+			.issuer("https://test.c2id.com")
+			.subject("alice")
+			.build();
+
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+
+		byte[] keyBytes = new byte[32];
+		new SecureRandom().nextBytes(keyBytes);
+		final SecretKey key = new SecretKeySpec(keyBytes, "HMAC");
+
+		jwt.sign(new MACSigner(key));
+
+		ConfigurableJWTProcessor<SimpleSecurityContext> processor = new DefaultJWTProcessor<>();
+
+		processor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SimpleSecurityContext context) {
+				return Collections.singletonList(key);
+			}
+		});
+
 		processor.setJWTClaimsVerifier(new JWTClaimsVerifier() {
 			@Override
 			public void verify(JWTClaimsSet claimsSet) throws BadJWTException {
@@ -121,6 +233,9 @@ public class DefaultJWTProcessorTest extends TestCase {
 					throw new BadJWTException("Unexpected/missing issuer");
 			}
 		});
+		
+		assertNull(processor.getJWTClaimsSetVerifier());
+		assertNotNull(processor.getJWTClaimsVerifier());
 
 		try {
 			processor.process(jwt.serialize(), null);
@@ -251,7 +366,8 @@ public class DefaultJWTProcessorTest extends TestCase {
 			"AVO9iT5AV4CzvDJCdhSFlQ";
 
 		ConfigurableJWTProcessor<SimpleSecurityContext> joseProcessor = new DefaultJWTProcessor<>();
-		joseProcessor.setJWTClaimsVerifier(null); // Remove claims verifier, JWT past expiration timestamp
+		joseProcessor.setJWTClaimsSetVerifier(null); // Remove claims verifier, JWT past expiration timestamp
+		joseProcessor.setJWTClaimsVerifier(null); // repeat with deprecated
 
 		joseProcessor.setJWSKeySelector(new JWSKeySelector<SimpleSecurityContext>() {
 			@Override
@@ -720,20 +836,20 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		// Set up a JWT processor to parse the tokens and then check their signature
 		// and validity time window (bounded by the "iat", "nbf" and "exp" claims)
-		ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
 
 		// The public RSA keys to validate the signatures will be sourced from the
 		// OAuth 2.0 server's JWK set, published at a well-known URL. The RemoteJWKSet
 		// object caches the retrieved keys to speed up subsequent look-ups and can
 		// also gracefully handle key-rollover
-		JWKSource keySource = new RemoteJWKSet(new URL("https://demo.c2id.com/c2id/jwks.json"));
+		JWKSource<SecurityContext> keySource = new RemoteJWKSet<>(new URL("https://demo.c2id.com/c2id/jwks.json"));
 
 		// The expected JWS algorithm of the access tokens (agreed out-of-band)
 		JWSAlgorithm expectedJWSAlg = JWSAlgorithm.RS256;
 
 		// Configure the JWT processor with a key selector to feed matching public
 		// RSA keys sourced from the JWK set URL
-		JWSKeySelector keySelector = new JWSVerificationKeySelector(expectedJWSAlg, keySource);
+		JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(expectedJWSAlg, keySource);
 		jwtProcessor.setJWSKeySelector(keySelector);
 
 		// Process the token
@@ -759,12 +875,12 @@ public class DefaultJWTProcessorTest extends TestCase {
 		EncryptionMethod expectedJWEEnc = EncryptionMethod.A128GCM;
 
 		// The JWE key source
-		JWKSource jweKeySource = new ImmutableSecret(secretKey);
+		JWKSource<SecurityContext> jweKeySource = new ImmutableSecret<>(secretKey);
 
 		// Configure a key selector to handle the decryption phase
-		JWEKeySelector jweKeySelector = new JWEDecryptionKeySelector(expectedJWEAlg, expectedJWEEnc, jweKeySource);
+		JWEKeySelector<SecurityContext> jweKeySelector = new JWEDecryptionKeySelector<>(expectedJWEAlg, expectedJWEEnc, jweKeySource);
 
-		ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
 		jwtProcessor.setJWEKeySelector(jweKeySelector);
 
 		jwtProcessor.setJWTClaimsVerifier(new DefaultJWTClaimsVerifier() {
@@ -795,20 +911,20 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		// Set up a JWT processor to parse the tokens and then check their signature
 		// and validity time window (bounded by the "iat", "nbf" and "exp" claims)
-		ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
+		ConfigurableJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
 
 		// The public RSA keys to validate the signatures will be sourced from the
 		// OAuth 2.0 server's JWK set, published at a well-known URL. The RemoteJWKSet
 		// object caches the retrieved keys to speed up subsequent look-ups and can
 		// also gracefully handle key-rollover
-		JWKSource keySource = new RemoteJWKSet(new URL(jwkUri));
+		JWKSource<SecurityContext> keySource = new RemoteJWKSet<>(new URL(jwkUri));
 
 		// The expected JWS algorithm of the access tokens (agreed out-of-band)
 		JWSAlgorithm expectedJWSAlg = JWSAlgorithm.RS256;
 
 		// Configure the JWT processor with a key selector to feed matching public
 		// RSA keys sourced from the JWK set URL
-		JWSKeySelector keySelector = new JWSVerificationKeySelector(expectedJWSAlg, keySource);
+		JWSKeySelector<SecurityContext> keySelector = new JWSVerificationKeySelector<>(expectedJWSAlg, keySource);
 		jwtProcessor.setJWSKeySelector(keySelector);
 
 		// Process the token

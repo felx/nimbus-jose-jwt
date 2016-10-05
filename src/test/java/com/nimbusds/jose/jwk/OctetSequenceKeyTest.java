@@ -1,3 +1,20 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.jwk;
 
 
@@ -23,7 +40,7 @@ import net.minidev.json.JSONObject;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-12-08
+ * @version 2017-07-03
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -413,5 +430,13 @@ public class OctetSequenceKeyTest extends TestCase {
 		OctetSequenceKey jwk = OctetSequenceKey.parse(json);
 
 		assertEquals("7WWD36NF4WCpPaYtK47mM4o0a5CCeOt01JXSuMayv5g", jwk.computeThumbprint().toString());
+	}
+
+
+	public void testSize() {
+
+		byte[] keyMaterial = new byte[24];
+		new SecureRandom().nextBytes(keyMaterial);
+		assertEquals(24 * 8, new OctetSequenceKey.Builder(keyMaterial).build().size());
 	}
 }

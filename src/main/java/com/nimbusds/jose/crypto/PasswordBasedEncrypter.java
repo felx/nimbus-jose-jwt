@@ -1,19 +1,40 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
-
 import javax.crypto.SecretKey;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
  * Password-based encrypter of {@link com.nimbusds.jose.JWEObject JWE objects}.
- * This class is thread-safe.
+ * Expects a password.
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-4.8">section 4.8</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following key management algorithms:
  *
@@ -37,7 +58,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2016-07-26
  */
 @ThreadSafe
 public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implements JWEEncrypter {
@@ -111,7 +132,7 @@ public class PasswordBasedEncrypter extends PasswordBasedCryptoProvider implemen
 				      final int saltLength,
 				      final int iterationCount) {
 
-		this(password.getBytes(Charset.forName("UTF-8")), saltLength, iterationCount);
+		this(password.getBytes(StandardCharset.UTF_8), saltLength, iterationCount);
 	}
 
 

@@ -1,21 +1,45 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.ThreadSafe;
-
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.CriticalHeaderParamsAware;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.StandardCharset;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
  * Message Authentication Code (MAC) verifier of 
- * {@link com.nimbusds.jose.JWSObject JWS objects}. This class is thread-safe.
+ * {@link com.nimbusds.jose.JWSObject JWS objects}. Expects a secret key.
+ *
+ * <p>See RFC 7518
+ * <a href="https://tools.ietf.org/html/rfc7518#section-3.2">section 3.2</a>
+ * for more information.
+ *
+ * <p>This class is thread-safe.
  *
  * <p>Supports the following algorithms:
  *
@@ -26,7 +50,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-02
+ * @version 2016-06-26
  */
 @ThreadSafe
 public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -66,7 +90,7 @@ public class MACVerifier extends MACProvider implements JWSVerifier, CriticalHea
 	public MACVerifier(final String secretString)
 		throws JOSEException {
 
-		this(secretString.getBytes(Charset.forName("UTF-8")));
+		this(secretString.getBytes(StandardCharset.UTF_8));
 	}
 
 

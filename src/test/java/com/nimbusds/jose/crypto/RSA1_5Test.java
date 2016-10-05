@@ -1,8 +1,26 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
@@ -10,11 +28,10 @@ import java.security.spec.RSAPublicKeySpec;
 import java.util.Collections;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.RSAKey;
+import junit.framework.TestCase;
 
 
 /**
@@ -22,12 +39,12 @@ import com.nimbusds.jose.jwk.RSAKey;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-18
+ * @version 2016-06-29
  */
 public class RSA1_5Test extends TestCase {
 
 
-	private final static byte[] mod = { 
+	private final static byte[] MOD = {
 		(byte)177, (byte)119, (byte) 33, (byte) 13, (byte)164, (byte) 30, (byte)108, (byte)121, 
 		(byte)207, (byte)136, (byte)107, (byte)242, (byte) 12, (byte)224, (byte) 19, (byte)226, 
 		(byte)198, (byte)134, (byte) 17, (byte) 71, (byte)173, (byte) 75, (byte) 42, (byte) 61, 
@@ -68,10 +85,10 @@ public class RSA1_5Test extends TestCase {
 		(byte) 75, (byte) 55, (byte)230, (byte)132, (byte)  3, (byte) 13, (byte)239, (byte) 71  };
 
 
-	private static final byte[] exp = { 1, 0, 1 };
+	private static final byte[] EXP = { 1, 0, 1 };
 
 
-	private static final byte[] modPriv = { 
+	private static final byte[] MOD_PRIV = {
 		(byte) 84, (byte) 80, (byte)150, (byte) 58, (byte)165, (byte)235, (byte)242, (byte)123, 
 		(byte)217, (byte) 55, (byte) 38, (byte)154, (byte) 36, (byte)181, (byte)221, (byte)156, 
 		(byte)211, (byte)215, (byte)100, (byte)164, (byte) 90, (byte) 88, (byte) 40, (byte)228, 
@@ -112,24 +129,23 @@ public class RSA1_5Test extends TestCase {
 		(byte) 93, (byte)139, (byte) 50, (byte)182, (byte)204, (byte) 93, (byte)130, (byte)89   };
 
 
-	private static RSAPublicKey publicKey;
+	private static RSAPublicKey PUBLIC_KEY;
 
 
-	private static RSAPrivateKey privateKey;
+	private static PrivateKey PRIVATE_KEY;
 
 
 	static {
 		try {
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 
-			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, mod), new BigInteger(1, exp));
-			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, mod), new BigInteger(1, modPriv));
+			RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(new BigInteger(1, MOD), new BigInteger(1, EXP));
+			RSAPrivateKeySpec privateKeySpec = new RSAPrivateKeySpec(new BigInteger(1, MOD), new BigInteger(1, MOD_PRIV));
 
-			publicKey = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
-			privateKey = (RSAPrivateKey) keyFactory.generatePrivate(privateKeySpec);
+			PUBLIC_KEY = (RSAPublicKey) keyFactory.generatePublic(publicKeySpec);
+			PRIVATE_KEY = keyFactory.generatePrivate(privateKeySpec);
 
 		} catch (Exception e) {
-
 			fail(e.getMessage());
 		}
 	}
@@ -178,14 +194,14 @@ public class RSA1_5Test extends TestCase {
 	public void testInstanceAlgorithmSupport()
 		throws Exception {
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		assertEquals(3, encrypter.supportedJWEAlgorithms().size());
 		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA1_5));
 		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP));
 		assertTrue(encrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA_OAEP_256));
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		assertEquals(3, decrypter.supportedJWEAlgorithms().size());
 		assertTrue(decrypter.supportedJWEAlgorithms().contains(JWEAlgorithm.RSA1_5));
@@ -197,7 +213,7 @@ public class RSA1_5Test extends TestCase {
 	public void testInstanceEncryptionMethodSupport()
 		throws Exception {
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		assertEquals(8, encrypter.supportedEncryptionMethods().size());
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
@@ -209,7 +225,7 @@ public class RSA1_5Test extends TestCase {
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256_DEPRECATED));
 		assertTrue(encrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256CBC_HS512_DEPRECATED));
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		assertEquals(8, decrypter.supportedEncryptionMethods().size());
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A128CBC_HS256));
@@ -233,9 +249,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
-		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -247,9 +263,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
-		assertEquals(privateKey, ((RSADecrypter) decrypter).getPrivateKey());
+		assertEquals(PRIVATE_KEY, ((RSADecrypter) decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -271,9 +287,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
-		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -285,9 +301,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(PRIVATE_KEY, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -309,9 +325,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
-		assertEquals(publicKey, ((RSAEncrypter)encrypter).getPublicKey());
+		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -323,9 +339,9 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
-		assertEquals(privateKey, ((RSADecrypter)decrypter).getPrivateKey());
+		assertEquals(PRIVATE_KEY, ((RSADecrypter)decrypter).getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -347,10 +363,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -362,10 +378,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -387,10 +403,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -402,10 +418,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -427,10 +443,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -442,10 +458,10 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -464,12 +480,12 @@ public class RSA1_5Test extends TestCase {
 
 		JWEObject jweObject = new JWEObject(header, new Payload("I think therefore I am."));
 
-		RSAKey rsaJWK = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+		RSAKey rsaJWK = new RSAKey.Builder(PUBLIC_KEY).privateKey((RSAPrivateKey) PRIVATE_KEY).build();
 
 		RSAEncrypter encrypter = new RSAEncrypter(rsaJWK);
 		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(publicKey, encrypter.getPublicKey());
+		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
 
 		jweObject.encrypt(encrypter);
 
@@ -480,7 +496,7 @@ public class RSA1_5Test extends TestCase {
 		RSADecrypter decrypter = new RSADecrypter(rsaJWK);
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
 
-		assertEquals(privateKey, decrypter.getPrivateKey());
+		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
 
 		jweObject.decrypt(decrypter);
 
@@ -508,7 +524,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		jweObject.decrypt(decrypter);
 
@@ -533,7 +549,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		jweObject.encrypt(encrypter);
 
@@ -545,7 +561,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		jweObject.decrypt(decrypter);
 
@@ -646,15 +662,15 @@ public class RSA1_5Test extends TestCase {
 		throws Exception {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
-			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
+			customParam("EXP", "2014-04-24").
+			criticalParams(new HashSet<>(Collections.singletonList("EXP"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		jweObject.encrypt(encrypter);
 
@@ -662,7 +678,7 @@ public class RSA1_5Test extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey, new HashSet<>(Collections.singletonList("exp")));
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY, new HashSet<>(Collections.singletonList("EXP")));
 
 		jweObject.decrypt(decrypter);
 
@@ -678,15 +694,15 @@ public class RSA1_5Test extends TestCase {
 		throws Exception {
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256).
-			customParam("exp", "2014-04-24").
-			criticalParams(new HashSet<>(Collections.singletonList("exp"))).
+			customParam("EXP", "2014-04-24").
+			criticalParams(new HashSet<>(Collections.singletonList("EXP"))).
 			build();
 
 		Payload payload = new Payload("Hello world!");
 
 		JWEObject jweObject = new JWEObject(header, payload);
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		jweObject.encrypt(encrypter);
 
@@ -694,7 +710,7 @@ public class RSA1_5Test extends TestCase {
 
 		jweObject = JWEObject.parse(jweString);
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		try {
 			jweObject.decrypt(decrypter);
@@ -716,7 +732,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		jweObject.encrypt(encrypter);
 
@@ -728,7 +744,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		jweObject.decrypt(decrypter);
 
@@ -750,7 +766,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
 
-		JWEEncrypter encrypter = new RSAEncrypter(publicKey);
+		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
 
 		jweObject.encrypt(encrypter);
 
@@ -762,7 +778,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		jweObject.decrypt(decrypter);
 
@@ -795,7 +811,7 @@ public class RSA1_5Test extends TestCase {
 
 		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
 
-		JWEDecrypter decrypter = new RSADecrypter(privateKey);
+		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
 
 		jweObject.decrypt(decrypter);
 
@@ -804,5 +820,32 @@ public class RSA1_5Test extends TestCase {
 		Payload payload = jweObject.getPayload();
 
 		assertEquals("No matter where you go, there you are.", payload.toString());
+	}
+
+
+	public void testRejectPrivateKeyWithNonRSAAlg() {
+
+		try {
+			new RSADecrypter(new PrivateKey() {
+				@Override
+				public String getAlgorithm() {
+					return "some-alg";
+				}
+
+
+				@Override
+				public String getFormat() {
+					return null;
+				}
+
+
+				@Override
+				public byte[] getEncoded() {
+					return new byte[0];
+				}
+			});
+		} catch (IllegalArgumentException e) {
+			assertEquals("The private key algorithm must be RSA", e.getMessage());
+		}
 	}
 }

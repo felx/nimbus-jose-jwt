@@ -1,6 +1,24 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose;
 
 
+import com.nimbusds.jose.util.ArrayUtils;
 import net.jcip.annotations.Immutable;
 
 
@@ -30,7 +48,7 @@ import net.jcip.annotations.Immutable;
  * <p>Additional JWE algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-11-16
+ * @version 2016-08-24
  */
 @Immutable
 public final class JWEAlgorithm extends Algorithm {
@@ -207,6 +225,25 @@ public final class JWEAlgorithm extends Algorithm {
 		 * Password-Based Cryptography Specification Version 2.0
 		 */
 		public static final Family PBES2 = new Family(PBES2_HS256_A128KW, PBES2_HS384_A192KW, PBES2_HS512_A256KW);
+		
+		
+		/**
+		 * Super family of all asymmetric (public / private key based)
+		 * JWE algorithms.
+		 */
+		public static final Family ASYMMETRIC = new Family(ArrayUtils.concat(
+			RSA.toArray(new JWEAlgorithm[]{}),
+			ECDH_ES.toArray(new JWEAlgorithm[]{})));
+		
+		
+		/**
+		 * Super family of all symmetric (shared key based) JWE
+		 * algorithms.
+		 */
+		public static final Family SYMMETRIC = new Family(ArrayUtils.concat(
+			AES_KW.toArray(new JWEAlgorithm[]{}),
+			AES_GCM_KW.toArray(new JWEAlgorithm[]{}),
+			new JWEAlgorithm[]{JWEAlgorithm.DIR}));
 
 
 		/***

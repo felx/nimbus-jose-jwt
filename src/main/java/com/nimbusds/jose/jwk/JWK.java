@@ -1,20 +1,35 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.jwk;
 
 
 import java.io.Serializable;
-
 import java.net.URI;
 import java.text.ParseException;
 import java.util.*;
-
-import net.minidev.json.JSONAware;
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import net.minidev.json.JSONAware;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -45,7 +60,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-09-28
+ * @version 2016-07-03
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -314,6 +329,14 @@ public abstract class JWK implements JSONAware, Serializable {
 	 *         created.
 	 */
 	public abstract JWK toPublicJWK();
+
+
+	/**
+	 * Returns the size of this JWK.
+	 *
+	 * @return The JWK size, in bits.
+	 */
+	public abstract int size();
 
 
 	/**

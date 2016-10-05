@@ -1,17 +1,33 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jose.crypto;
 
 
-import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.KeyLengthException;
+import com.nimbusds.jose.util.StandardCharset;
 
 
 /**
@@ -27,7 +43,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * </ul>
  * 
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2016-07-27
  */
 abstract class MACProvider extends BaseJWSProvider {
 
@@ -135,6 +151,6 @@ abstract class MACProvider extends BaseJWSProvider {
 	 */
 	public String getSecretString() {
 
-		return new String(secret, Charset.forName("UTF-8"));
+		return new String(secret, StandardCharset.UTF_8);
 	}
 }

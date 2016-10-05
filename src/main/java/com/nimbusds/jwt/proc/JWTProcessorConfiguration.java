@@ -1,3 +1,20 @@
+/*
+ * nimbus-jose-jwt
+ *
+ * Copyright 2012-2016, Connect2id Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+ * this file except in compliance with the License. You may obtain a copy of the
+ * License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ */
+
 package com.nimbusds.jwt.proc;
 
 
@@ -33,36 +50,45 @@ import com.nimbusds.jose.proc.SecurityContext;
  *                 {@link DefaultJWEDecrypterFactory default factory}
  *                 implementation is provided.
  *         </ul>
- *      <li>Optional JWT claims verifier. Intended to perform various
- *          application-specific JWT claims checks, such as token expiration
- *          and issuer acceptance, after successful JWS verification / JWE
- *          decryption.
+ *      <li>Optional JWT claims set verifier. Ensures that the claims set of a
+ *          JWT complies with an application's requirements.
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-22
+ * @version 2016-07-25
  */
 public interface JWTProcessorConfiguration<C extends SecurityContext> extends JOSEProcessorConfiguration<C> {
 
 
 	/**
-	 * Gets the optional JWT claims verifier. Intended to perform various
-	 * application-specific JWT claims checks, such as token expiration and
-	 * issuer acceptance, after successful JWS verification / JWE decryption.
+	 * Gets the optional JWT claims set verifier. Ensures that the claims
+	 * set of a JWT complies with an application's requirements.
 	 *
-	 * @return The JWT claims verifier, {@code null} if not specified.
+	 * @return The JWT claims set verifier, {@code null} if not specified.
 	 */
+	JWTClaimsSetVerifier<C> getJWTClaimsSetVerifier();
+
+
+	/**
+	 * Sets the optional JWT claims set verifier. Ensures that the claims
+	 * set of a JWT complies with an application's requirements.
+	 *
+	 * @param claimsVerifier The JWT claims set verifier, {@code null} if
+	 *                       not specified.
+	 */
+	void setJWTClaimsSetVerifier(final JWTClaimsSetVerifier<C> claimsVerifier);
+
+
+	/**
+	 * Use {@link #getJWTClaimsVerifier()} instead.
+	 */
+	@Deprecated
 	JWTClaimsVerifier getJWTClaimsVerifier();
 
 
 	/**
-	 * Sets the optional JWT claims verifier. Intended to perform various
-	 * application-specific JWT claims checks, such as token expiration and
-	 * issuer acceptance, after successful JWS verification / JWE
-	 * decryption.
-	 *
-	 * @param claimsVerifier The JWT claims verifier, {@code null} if not
-	 *                       specified.
+	 * Use {@link #setJWTClaimsSetVerifier} instead.
 	 */
+	@Deprecated
 	void setJWTClaimsVerifier(final JWTClaimsVerifier claimsVerifier);
 }
