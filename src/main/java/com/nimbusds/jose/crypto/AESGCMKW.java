@@ -27,6 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.KeyLengthException;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.Container;
 
 
 /**
@@ -49,7 +50,7 @@ class AESGCMKW {
 	 * @param cek	   The Content Encryption Key (CEK) to encrypt. Must
 	 *		   not be {@code null}.
 	 * @param iv	   The initialisation vector (IV). Must not be
-	 *		   {@code null}.
+	 *		   {@code null}. The contained IV must not be {@code null} too.
 	 * @param kek	   The AES Key Encryption Key (KEK). Must not be
 	 *		   {@code null}.
 	 * @param provider The specific JCA provider to use, {@code null}
@@ -60,7 +61,7 @@ class AESGCMKW {
 	 * @throws JOSEException If encryption failed.
 	 */
 	public static AuthenticatedCipherText encryptCEK(final SecretKey cek,
-							 final byte[] iv,
+							 final Container<byte[]> iv,
 							 final SecretKey kek,
 							 Provider provider)
 		throws JOSEException {
