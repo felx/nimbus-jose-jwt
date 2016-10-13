@@ -592,3 +592,7 @@ version 4.26 (2016-08-24)
 version 4.26.1 (2016-09-12)
     * Adds copyright and licence note to source files.
 
+version 4.27 (2016-10-13)
+    * Adds support for AES encryption ciphers to utilise internally generated
+      IVs. Supported on Java 7 and later. See issue #193.
+

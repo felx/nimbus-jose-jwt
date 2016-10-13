@@ -1,7 +1,7 @@
 /*
  * nimbus-jose-jwt
  *
- * Copyright 2012-2016, Connect2id Ltd.
+ * Copyright 2012-2016, Connect2id Ltd and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.Container;
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2016-10-13
  */
 class ContentCryptoProvider {
 
@@ -158,14 +158,14 @@ class ContentCryptoProvider {
 		checkCEKLength(cek, header.getEncryptionMethod());
 
 		// Apply compression if instructed
-		byte[] plainText = DeflateHelper.applyCompression(header, clearText);
+		final byte[] plainText = DeflateHelper.applyCompression(header, clearText);
 
 		// Compose the AAD
-		byte[] aad = AAD.compute(header);
+		final byte[] aad = AAD.compute(header);
 
 		// Encrypt the plain text according to the JWE enc
-		byte[] iv;
-		AuthenticatedCipherText authCipherText;
+		final byte[] iv;
+		final AuthenticatedCipherText authCipherText;
 
 		if (    header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256) ||
 			header.getEncryptionMethod().equals(EncryptionMethod.A192CBC_HS384) ||

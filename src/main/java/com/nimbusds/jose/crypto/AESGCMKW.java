@@ -1,7 +1,7 @@
 /*
  * nimbus-jose-jwt
  *
- * Copyright 2012-2016, Connect2id Ltd.
+ * Copyright 2012-2016, Connect2id Ltd and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -38,7 +38,7 @@ import com.nimbusds.jose.util.Container;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version 2015-06-29
+ * @version 2016-10-13
  */
 @ThreadSafe
 class AESGCMKW {
@@ -50,7 +50,8 @@ class AESGCMKW {
 	 * @param cek	   The Content Encryption Key (CEK) to encrypt. Must
 	 *		   not be {@code null}.
 	 * @param iv	   The initialisation vector (IV). Must not be
-	 *		   {@code null}. The contained IV must not be {@code null} too.
+	 *		   {@code null}. The contained IV must not be
+	 *		   {@code null} either.
 	 * @param kek	   The AES Key Encryption Key (KEK). Must not be
 	 *		   {@code null}.
 	 * @param provider The specific JCA provider to use, {@code null}

@@ -1,7 +1,7 @@
 /*
  * nimbus-jose-jwt
  *
- * Copyright 2012-2016, Connect2id Ltd.
+ * Copyright 2012-2016, Connect2id Ltd and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -32,14 +32,15 @@ import com.nimbusds.jose.util.Container;
 
 
 /**
- * AES/GSM/NoPadding encryption and decryption methods. Uses the 
- * BouncyCastle.org provider. This class is thread-safe.
+ * AES/GSM/NoPadding encryption and decryption methods. Falls back to the
+ * BouncyCastle.org provider on Java 6. This class is thread-safe.
  *
  * <p>See RFC 7518 (JWA), section 5.1 and appendix 3.
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version 2015-11-15
+ * @author Dimitar A. Stoikov
+ * @version 2016-10-13
  */
 @ThreadSafe
 class AESGCM {
@@ -81,11 +82,15 @@ class AESGCM {
 	 *
 	 * @param secretKey   The AES key. Must not be {@code null}.
 	 * @param plainText   The plain text. Must not be {@code null}.
-	 * @param ivContainer The initialisation vector (IV). Must not be {@code null}.
-	 *                    This is both input and output parameter. On input, it carries externally-generated IV;
-	 *                    on output, it carries the IV the cipher actually used. JCA/JCE providers may
-	 *                    prefer to use internally-generated IV, e.g. as described
-	 *                    <a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf">by NIST</a>.
+	 * @param ivContainer The initialisation vector (IV). Must not be
+	 *                    {@code null}. This is both input and output
+	 *                    parameter. On input, it carries externally
+	 *                    generated IV; on output, it carries the IV the
+	 *                    cipher actually used. JCA/JCE providers may
+	 *                    prefer to use an internally generated IV, e.g. as
+	 *                    described in
+	 *                    <a href="http://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication800-38d.pdf">NIST
+	 *                    Special Publication 800-38D </a>.
 	 * @param authData    The authenticated data. Must not be {@code null}.
 	 *
 	 * @return The authenticated cipher text.
@@ -141,24 +146,30 @@ class AESGCM {
 		byte[] authTag = ByteUtils.subArray(cipherOutput, tagPos, ByteUtils.byteLength(AUTH_TAG_BIT_LENGTH));
 
 		// retrieve the actual IV used by the cipher -- it may be internally-generated.
-		ivContainer.set(actualIvOf(cipher));
+		ivContainer.set(actualIVOf(cipher));
 
 		return new AuthenticatedCipherText(cipherText, authTag);
 	}
 
+	
 	/**
-	 * Assembles together the retrieval of the actual algorithm parameters, and their validation.
+	 * Retrieves the actual algorithm parameters and validates them.
 	 *
-	 * @param cipher to interrogate for the parameters it actually used.
+	 * @param cipher The cipher to interrogate for the parameters it
+	 *               actually used.
 	 *
-	 * @return the IV used by the specified cipher.
+	 * @return The IV used by the specified cipher.
 	 *
-	 * @throws JOSEException if unable to ascertain the actual IV is usable.
+	 * @throws JOSEException If retrieval of the algorithm parameters from
+	 *                       the cipher failed, or the parameters are
+	 *                       deemed unusable.
 	 *
 	 * @see {@link #actualParamsOf(Cipher)}
 	 * @see #validate(byte[], int)
 	 */
-	private static byte[] actualIvOf(Cipher cipher) throws JOSEException {
+	private static byte[] actualIVOf(final Cipher cipher)
+		throws JOSEException {
+		
 		GCMParameterSpec actualParams = actualParamsOf(cipher);
 
 		byte[] iv = actualParams.getIV();
@@ -169,52 +180,68 @@ class AESGCM {
 		return iv;
 	}
 
+	
 	/**
-	 * Enforces JWA requirements on AES GCM algorithm parameters.
-	 * See e.g. <a href="https://tools.ietf.org/html/rfc7518#section-5.3">JWA RFC</a>.
+	 * Validates the specified IV and authentication tag according to the
+	 * AES GCM requirements in
+	 * <a href="https://tools.ietf.org/html/rfc7518#section-5.3">JWA RFC</a>.
 	 *
-	 * @param iv to check for compliance.
-	 * @param tLen to check for compliance.
+	 * @param iv            The IV to check for compliance.
+	 * @param authTagLength The authentication tag length to check for
+	 *                      compliance.
 	 *
-	 * @throws JOSEException if the parameters do not match standard requirements.
+	 * @throws JOSEException If the parameters don't match the JWA
+	 *                       requirements.
 	 *
 	 * @see #IV_BIT_LENGTH
 	 * @see #AUTH_TAG_BIT_LENGTH
 	 */
-	private static void validate(byte[] iv, int tLen) throws JOSEException {
+	private static void validate(final byte[] iv, final int authTagLength)
+		throws JOSEException {
+		
 		if (ByteUtils.bitLength(iv) != IV_BIT_LENGTH) {
 			throw new JOSEException(String.format("IV length of %d bits is required, got %d", IV_BIT_LENGTH, ByteUtils.bitLength(iv)));
 		}
 
-		if (tLen != AUTH_TAG_BIT_LENGTH) {
-			throw new JOSEException(String.format("Authentication tag length of %d bits is required, got %d.", AUTH_TAG_BIT_LENGTH, tLen));
+		if (authTagLength != AUTH_TAG_BIT_LENGTH) {
+			throw new JOSEException(String.format("Authentication tag length of %d bits is required, got %d", AUTH_TAG_BIT_LENGTH, authTagLength));
 		}
 	}
 
+	
 	/**
-	 * Retrieves the actual AES GCM parameters used by the specified cipher.
+	 * Retrieves the actual AES GCM parameters used by the specified
+	 * cipher.
 	 *
-	 * @param cipher to interrogate; non-{@code null}.
+	 * @param cipher The cipher to interrogate. Non-{@code null}.
 	 *
-	 * @return non-{@code null}.
+	 * @return The AES GCM parameters. Non-{@code null}.
 	 *
-	 * @throws JOSEException if the parameters cannot be retrieved, or are uninitialized or not in the correct form.
-	 * We want to have the actual parameters used by the cipher and not rely on the assumption that they were the same as those we supplied it with.
-	 * If at runtime the assumption was incorrect, the ciphertext would not be decryptable.
+	 * @throws JOSEException If the parameters cannot be retrieved, are
+	 * uninitialized, or are not in the correct form. We want to have the
+	 * actual parameters used by the cipher and not rely on the assumption
+	 * that they were the same as those we supplied it with. If at runtime
+	 * the assumption is incorrect, the ciphertext would not be
+	 * decryptable.
 	 */
-	private static GCMParameterSpec actualParamsOf(Cipher cipher) throws JOSEException {
+	private static GCMParameterSpec actualParamsOf(final Cipher cipher)
+		throws JOSEException {
+		
 		AlgorithmParameters algorithmParameters = cipher.getParameters();
+		
 		if (algorithmParameters == null) {
 			throw new JOSEException("AES GCM ciphers are expected to make use of algorithm parameters");
 		}
 
 		try {
+			// Note: GCMParameterSpec appears in Java 7
 			return algorithmParameters.getParameterSpec(GCMParameterSpec.class);
 		} catch (InvalidParameterSpecException shouldNotHappen) {
 			throw new JOSEException(shouldNotHappen.getMessage(), shouldNotHappen);
 		}
 	}
 
+	
 	/**
 	 * Decrypts the specified cipher text using AES/GCM/NoPadding.
 	 *
