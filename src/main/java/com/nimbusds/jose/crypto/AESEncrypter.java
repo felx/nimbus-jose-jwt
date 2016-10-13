@@ -27,6 +27,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.Container;
 
 
 /**
@@ -203,13 +204,13 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		} else if(AlgFamily.AESGCMKW.equals(algFamily)) {
 
-			final byte[] keyIV = AESGCM.generateIV(getJCAContext().getSecureRandom());
+			final Container<byte[]> keyIV = new Container<>(AESGCM.generateIV(getJCAContext().getSecureRandom()));
 			final AuthenticatedCipherText authCiphCEK = AESGCMKW.encryptCEK(cek, keyIV, getKey(), getJCAContext().getKeyEncryptionProvider());
 			encryptedKey = Base64URL.encode(authCiphCEK.getCipherText());
 
 			// Add iv and tag to the header
 			updatedHeader = new JWEHeader.Builder(header).
-				iv(Base64URL.encode(keyIV)).
+				iv(Base64URL.encode(keyIV.get())).
 				authTag(Base64URL.encode(authCiphCEK.getAuthenticationTag())).
 				build();
 		} else {

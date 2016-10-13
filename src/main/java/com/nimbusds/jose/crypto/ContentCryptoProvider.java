@@ -27,6 +27,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.Container;
 
 
 /**
@@ -181,11 +182,13 @@ class ContentCryptoProvider {
 			   header.getEncryptionMethod().equals(EncryptionMethod.A192GCM) ||
 			   header.getEncryptionMethod().equals(EncryptionMethod.A256GCM)    ) {
 
-			iv = AESGCM.generateIV(jcaProvider.getSecureRandom());
+			Container<byte[]> ivContainer = new Container<>(AESGCM.generateIV(jcaProvider.getSecureRandom()));
 
 			authCipherText = AESGCM.encrypt(
-				cek, iv, plainText, aad,
+				cek, ivContainer, plainText, aad,
 				jcaProvider.getContentEncryptionProvider());
+
+			iv = ivContainer.get();
 
 		} else if (header.getEncryptionMethod().equals(EncryptionMethod.A128CBC_HS256_DEPRECATED) ||
 			   header.getEncryptionMethod().equals(EncryptionMethod.A256CBC_HS512_DEPRECATED)    ) {

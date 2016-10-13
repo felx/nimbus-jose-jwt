@@ -43,6 +43,7 @@ import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.Container;
 
 
 /**
@@ -534,7 +535,7 @@ public class ECDHCryptoTest extends TestCase {
 
 		final AuthenticatedCipherText authCipherText = AESGCM.encrypt(
 			cek,
-			iv.decode(),
+			new Container<>(iv.decode()),
 			plainText.getBytes(Charset.forName("UTF-8")),
 			aad,
 			BouncyCastleProviderSingleton.getInstance()); // Provider
