@@ -27,10 +27,13 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Enumeration;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -118,19 +121,18 @@ public class HSMTest {
 	
 	
 	@Test
-	public void testLoadHSMKeyStore()
+	public void testRSASign()
 		throws Exception {
 		
 		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
 		
 		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
 		
-		System.out.println("Key store type: " + hsmKeyStore.getType());
+		assertEquals("PKCS11", hsmKeyStore.getType());
 		
-		System.out.println("Number of keys in HSM: " + hsmKeyStore.size());
+		int numKeys = hsmKeyStore.size();
 		
 		System.out.println("HSM key aliases: ");
-		
 		Enumeration<String> keyAliases = hsmKeyStore.aliases();
 		while(keyAliases.hasMoreElements()) {
 			System.out.println("\tKey alias: " + keyAliases.nextElement());
@@ -145,8 +147,15 @@ public class HSMTest {
 			
 		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload("Hello, world!"));
 		jwsObject.sign(signer);
-		System.out.println(jwsObject.serialize());
+		String jws = jwsObject.serialize();
+		
+		System.out.println(jws);
+		
+		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
+		assertTrue(JWSObject.parse(jws).verify(new RSASSAVerifier(publicKey)));
 		
 		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
 	}
 }
