@@ -210,7 +210,7 @@ public class DefaultResourceRetrieverTest {
 			resourceRetriever.retrieveResource(new URL("http://localhost:" + port + "/c2id/jwks.json"));
 			fail();
 		} catch (IOException e) {
-			assertEquals("Connection refused", e.getMessage());
+			assertTrue(e.getMessage().startsWith("Connection refused"));
 		}
 	}
 
