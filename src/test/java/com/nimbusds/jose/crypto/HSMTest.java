@@ -35,10 +35,11 @@ import static org.junit.Assert.*;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.X509CertUtils;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -82,7 +83,7 @@ public class HSMTest {
 	}
 	
 	
-	private static String generateRSAKey(final KeyStore hsmKeyStore)
+	private static String generateRSAKeyWithSelfSignedCert(final KeyStore hsmKeyStore)
 		throws NoSuchAlgorithmException, IOException, OperatorCreationException, KeyStoreException {
 		
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", hsmKeyStore.getProvider());
@@ -136,21 +137,25 @@ public class HSMTest {
 			System.out.println("\tKey alias: " + keyAliases.nextElement());
 		}
 		
-		String keyID = generateRSAKey(hsmKeyStore);
+		String keyID = generateRSAKeyWithSelfSignedCert(hsmKeyStore);
 		
 		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
 			
 		RSASSASigner signer = new RSASSASigner(privateKey);
 		signer.getJCAContext().setProvider(hsmProvider);
-			
-		JWSObject jwsObject = new JWSObject(new JWSHeader(JWSAlgorithm.RS256), new Payload("Hello, world!"));
-		jwsObject.sign(signer);
-		String jws = jwsObject.serialize();
 		
-		System.out.println(jws);
+		SignedJWT jwt = new SignedJWT(
+			new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(keyID).build(),
+			new JWTClaimsSet.Builder().subject("alice").build());
+		
+		jwt.sign(signer);
+		String jwtString = jwt.serialize();
+		
+		System.out.println(jwtString);
 		
 		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
-		assertTrue(JWSObject.parse(jws).verify(new RSASSAVerifier(publicKey)));
+		assertTrue(SignedJWT.parse(jwtString).verify(new RSASSAVerifier(publicKey)));
+		new RSAKey.Builder(publicKey).keyID(keyID).build();
 		
 		hsmKeyStore.deleteEntry(keyID);
 		
