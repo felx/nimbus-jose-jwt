@@ -596,3 +596,6 @@ version 4.27 (2016-10-13)
     * Adds support for AES encryption ciphers to utilise internally generated
       IVs. Supported on Java 7 and later. See issue #193.
 
+version 4.27.1 (2016-11-24)
+    * Fixes JavaDocs (issue #194).
+
