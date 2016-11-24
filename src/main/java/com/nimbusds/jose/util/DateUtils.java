@@ -61,7 +61,7 @@ public class DateUtils {
 	 * <p>Formula:
 	 *
 	 * <pre>
-	 * return date + clock_skew > reference
+	 * return date + clock_skew &gt; reference
 	 * </pre>
 	 *
 	 * Example: Ensure a JWT expiration (exp) timestamp is after the
@@ -97,7 +97,7 @@ public class DateUtils {
 	 * <p>Formula:
 	 *
 	 * <pre>
-	 * return date - clock_skew < reference
+	 * return date - clock_skew &lt; reference
 	 * </pre>
 	 *
 	 * Example: Ensure a JWT issued-at (iat) timestamp is before the

@@ -27,7 +27,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 /**
  * JWT processor configuration.
  *
- * <p></P>Specifies the required components to process JWTs:
+ * <p>Specifies the required components to process JWTs:
  *
  * <ul>
  *     <li>To verify signed JWTs:
@@ -81,6 +81,8 @@ public interface JWTProcessorConfiguration<C extends SecurityContext> extends JO
 
 	/**
 	 * Use {@link #getJWTClaimsVerifier()} instead.
+	 *
+	 * @return The JWT claims set verifier, {@code null} if not specified.
 	 */
 	@Deprecated
 	JWTClaimsVerifier getJWTClaimsVerifier();
@@ -88,6 +90,9 @@ public interface JWTProcessorConfiguration<C extends SecurityContext> extends JO
 
 	/**
 	 * Use {@link #setJWTClaimsSetVerifier} instead.
+	 *
+	 * @param claimsVerifier The JWT claims set verifier, {@code null} if
+	 *                       not specified.
 	 */
 	@Deprecated
 	void setJWTClaimsVerifier(final JWTClaimsVerifier claimsVerifier);

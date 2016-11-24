@@ -64,8 +64,8 @@ public interface JWEKeySelector <C extends SecurityContext> {
 	 *
 	 * @return The key candidates in trial order, empty list if none.
 	 *
-	 * @throws IOException If a key source exception is encountered, e.g.
-	 *                     on remote JWK retrieval.
+	 * @throws KeySourceException If a key source exception is encountered,
+	 *                            e.g. on remote JWK retrieval.
 	 */
 	List<? extends Key> selectJWEKeys(final JWEHeader header, final C context)
 		throws KeySourceException;
