@@ -119,7 +119,7 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testRSASign()
 		throws Exception {
 		
@@ -152,7 +152,7 @@ public class HSMTest {
 		String jwtString = jwt.serialize();
 		
 		System.out.println(jwtString);
-		
+			
 		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
 		assertTrue(SignedJWT.parse(jwtString).verify(new RSASSAVerifier(publicKey)));
 		new RSAKey.Builder(publicKey).keyID(keyID).build();
@@ -160,5 +160,26 @@ public class HSMTest {
 		hsmKeyStore.deleteEntry(keyID);
 		
 		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+//	@Test
+	public void testAvailableAlgs() {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		System.out.println("Properties:");
+		
+		for (String propName: hsmProvider.stringPropertyNames()) {
+			
+			System.out.println(propName + " = " + hsmProvider.getProperty(propName));
+		}
+		
+		
+		System.out.println("Services:");
+		
+		for (Provider.Service service: hsmProvider.getServices()) {
+			System.out.println(service.getType() + " : " + service.getAlgorithm());
+		}
 	}
 }
