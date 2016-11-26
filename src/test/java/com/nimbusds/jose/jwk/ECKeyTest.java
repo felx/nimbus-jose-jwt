@@ -40,7 +40,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-17-03
+ * @version 2016-11-26
  */
 public class ECKeyTest extends TestCase {
 
@@ -684,5 +684,31 @@ public class ECKeyTest extends TestCase {
 		ECKey ecKey = ECKey.parse(json);
 
 		assertEquals("rz4Ohmpxg-UOWIWqWKHlOe0bHSjNUFlHW5vwG_M7qYg", ecKey.computeThumbprint().toString());
+	}
+	
+	
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/197/jwsalgorithm-should-have-knowledge-of-its
+	public void testCurveForJWSAlgorithm() {
+		
+		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES256));
+		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES384));
+		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES512));
+		
+		// Not EC based
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS256));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS384));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS512));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS256));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS384));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS512));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS256));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS384));
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS512));
+		
+		// Unsupported
+		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.parse("unsupported-jws-alg")));
+		
+		// null
+		assertNull(ECKey.Curve.forJWSAlgoritm(null));
 	}
 }

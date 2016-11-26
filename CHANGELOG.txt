@@ -599,3 +599,7 @@ version 4.27 (2016-10-13)
 version 4.27.1 (2016-11-24)
     * Fixes JavaDocs (issue #194).
 
+version 4.28 (2016-11-26)
+    * Adds new static ECKey.Curve.forJWSAlgorithm method that looks up the
+      EC curve for an EC-based JWS algorithm (issue #197).
+

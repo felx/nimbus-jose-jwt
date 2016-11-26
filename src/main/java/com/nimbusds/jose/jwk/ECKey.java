@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
+import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.*;
 import net.jcip.annotations.Immutable;
 
@@ -79,7 +80,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-07-03
+ * @version 2016-11-26
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -270,6 +271,29 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			} else if( "secp384r1".equals(stdName) ) {
 				return P_384;
 			} else if( "secp521r1".equals(stdName) ) {
+				return P_521;
+			} else {
+				return null;
+			}
+		}
+		
+		
+		/**
+		 * Gets the cryptographic curve for the specified JWS
+		 * algorithm.
+		 *
+		 * @param alg The JWS algorithm. May be {@code null}.
+		 *
+		 * @return The curve, {@code null} if the JWS algorithm is not
+		 *         curve based, or the JWS algorithm is not supported.
+		 */
+		public static Curve forJWSAlgoritm(final JWSAlgorithm alg) {
+			
+			if (JWSAlgorithm.ES256.equals(alg)) {
+				return P_256;
+			} else if (JWSAlgorithm.ES384.equals(alg)) {
+				return P_384;
+			} else if (JWSAlgorithm.ES512.equals(alg)) {
 				return P_521;
 			} else {
 				return null;
