@@ -25,7 +25,6 @@ import java.net.URL;
 
 import net.jcip.annotations.ThreadSafe;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.BoundedInputStream;
 
 
 /**
