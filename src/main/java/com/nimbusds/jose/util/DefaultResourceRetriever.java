@@ -22,15 +22,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import net.jcip.annotations.ThreadSafe;
-import org.apache.commons.io.IOUtils;
 
 
 /**
  * The default retriever of resources specified by URL. Provides setting of
  * HTTP connect and read timeouts as well as a size limit of the retrieved
  * entity. Caching header directives are not honoured.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version 2016-11-28
  */
 @ThreadSafe
 public class DefaultResourceRetriever extends AbstractRestrictedResourceRetriever implements RestrictedResourceRetriever {
@@ -96,8 +99,13 @@ public class DefaultResourceRetriever extends AbstractRestrictedResourceRetrieve
 		if (getSizeLimit() > 0) {
 			inputStream = new BoundedInputStream(inputStream, getSizeLimit());
 		}
-
-		final String content = IOUtils.toString(inputStream);
+		
+		final String content;
+		try {
+			content = IOUtils.readInputStreamToString(inputStream, Charset.forName("UTF-8"));
+		} finally {
+			inputStream.close();
+		}
 
 		// Check HTTP code + message
 		final int statusCode = con.getResponseCode();

@@ -603,12 +603,13 @@ version 4.28 (2016-11-26)
     * Adds new static ECKey.Curve.forJWSAlgorithm method that looks up the
       EC curve for an EC-based JWS algorithm (issue #197).
 
-version 4.28.1 (2016-11-28)
+version 4.29 (2016-11-28)
+    * Removes Apache Commons dependency (issue #192).
     * Hints at key length / enc mismatch on direct encryption / decryption with
       inappropriate symmetric key length (issue #195).
     * Fixes JWKSet.load(java.io.File) to read file in UTF-8 format (issue
       #198).
-    * Throws descriptive IOException on exceeding the byte limit of reading a
-      BoundedInputStream, e.g. in
+    * Throws descriptive IOException on exceeding the input byte limit when
+      reading a BoundedInputStream, e.g. in
       DefaultResourceRetriever.retrieveResource(java.net.URL).
 

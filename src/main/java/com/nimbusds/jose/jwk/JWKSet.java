@@ -28,13 +28,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.nimbusds.jose.util.JSONObjectUtils;
-import com.nimbusds.jose.util.DefaultResourceRetriever;
-import com.nimbusds.jose.util.Resource;
-import com.nimbusds.jose.util.RestrictedResourceRetriever;
+import com.nimbusds.jose.util.*;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -67,7 +63,7 @@ import org.apache.commons.io.FileUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-04-10
+ * @version 2016-11-28
  */
 public class JWKSet {
 
@@ -371,7 +367,7 @@ public class JWKSet {
 	public static JWKSet load(final File file)
 		throws IOException, ParseException {
 
-		return parse(FileUtils.readFileToString(file, Charset.forName("UTF-8")));
+		return parse(IOUtils.readFileToString(file, Charset.forName("UTF-8")));
 	}
 
 

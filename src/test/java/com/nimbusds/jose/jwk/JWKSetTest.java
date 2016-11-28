@@ -19,6 +19,7 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -654,6 +655,18 @@ public class JWKSetTest extends TestCase {
 		assertFalse(key.isPrivate());
 
 		Files.delete(file.toPath());
+	}
+	
+	
+	public void testLoadFromNonExistingFile()
+		throws ParseException {
+		
+		try {
+			JWKSet.load(new File("no-such-file"));
+			fail();
+		} catch (IOException e) {
+			assertEquals("no-such-file (No such file or directory)", e.getMessage());
+		}
 	}
 
 
