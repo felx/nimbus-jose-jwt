@@ -99,8 +99,6 @@ The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
 * JCIP for concurrency annotations.
 
-* Apache Commons IO for reading local and remote JWK sets.
-
 * [optional] BouncyCastle as an alternative JCA provider.
 
 
