@@ -603,3 +603,6 @@ version 4.28 (2016-11-26)
     * Adds new static ECKey.Curve.forJWSAlgorithm method that looks up the
       EC curve for an EC-based JWS algorithm (issue #197).
 
+version 4.28.1 (2016-11-28)
+    * Hints at key length / enc mismatch on direct encryption / decryption with
+      inappropriate symmetric key length (iss #195).

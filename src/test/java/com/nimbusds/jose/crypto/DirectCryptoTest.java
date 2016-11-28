@@ -21,6 +21,8 @@ package com.nimbusds.jose.crypto;
 import java.util.Collections;
 import java.util.HashSet;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.util.ByteUtils;
@@ -588,6 +590,27 @@ public class DirectCryptoTest extends TestCase {
 		} catch (JOSEException e) {
 			// ok
 			assertEquals("Unsupported critical header parameter(s)", e.getMessage());
+		}
+	}
+	
+	
+	public void testKeyLengthMismatch()
+		throws Exception {
+		
+		JWEHeader header = new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128CBC_HS256);
+		JWEObject jweObject = new JWEObject(header, new Payload("Hello, world!"));
+		
+		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+		int keyBitLength = EncryptionMethod.A128CBC_HS256.cekBitLength() / 2; // too short
+		keyGen.init(keyBitLength);
+		SecretKey key = keyGen.generateKey();
+
+		try {
+			jweObject.encrypt(new DirectEncrypter(key));
+			fail();
+		} catch (JOSEException e) {
+			
+			assertEquals("The \"A128CBC-HS256\" encryption method or key size is not supported by the JWE encrypter: Supported methods: [A128GCM]", e.getMessage());
 		}
 	}
 }

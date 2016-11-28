@@ -340,7 +340,7 @@ public class JWEObject extends JOSEObject {
 		if (! encrypter.supportedEncryptionMethods().contains(getHeader().getEncryptionMethod())) {
 
 			throw new JOSEException("The \"" + getHeader().getEncryptionMethod() + 
-					        "\" encryption method is not supported by the JWE encrypter: Supported methods: " + encrypter.supportedEncryptionMethods());
+					        "\" encryption method or key size is not supported by the JWE encrypter: Supported methods: " + encrypter.supportedEncryptionMethods());
 		}
 	}
 

@@ -120,7 +120,7 @@ public class JWEObjectTest extends TestCase {
 				}
 			});
 		} catch (JOSEException e) {
-			assertEquals("The \"A128CBC-HS256\" encryption method is not supported by the JWE encrypter: Supported methods: [xyz]", e.getMessage());
+			assertEquals("The \"A128CBC-HS256\" encryption method or key size is not supported by the JWE encrypter: Supported methods: [xyz]", e.getMessage());
 		}
 	}
 }
