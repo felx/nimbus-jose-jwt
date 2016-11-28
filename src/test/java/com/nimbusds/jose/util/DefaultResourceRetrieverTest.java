@@ -253,25 +253,25 @@ public class DefaultResourceRetrieverTest {
 		}
 
 		onRequest()
-				.havingMethodEqualTo("GET")
-				.havingPathEqualTo("/c2id/jwks.json")
-				.respond()
-				.withStatus(200)
-				.withHeader("Content-Type", "text/plain")
-				.withBody(sb.toString());
+			.havingMethodEqualTo("GET")
+			.havingPathEqualTo("/c2id/jwks.json")
+			.respond()
+			.withStatus(200)
+			.withHeader("Content-Type", "text/plain")
+			.withBody(sb.toString());
 
 		int sizeLimit = 50000;
 		assertTrue(sizeLimit < size);
 		RestrictedResourceRetriever resourceRetriever = new DefaultResourceRetriever(0, 0, sizeLimit);
 
-		URL url = new URL("http://localhost:" + port());
+		URL url = new URL("http://localhost:" + port() + "/c2id/jwks.json");
 
 		try {
 			resourceRetriever.retrieveResource(url);
 			fail();
-		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
 			// Size overrun exception poses as file not found
-			assertEquals(url.toString(), e.getMessage());
+			assertEquals("Exceeded configured input limit of 50000 bytes", e.getMessage());
 		}
 	}
 }

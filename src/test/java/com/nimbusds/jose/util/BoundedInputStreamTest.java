@@ -19,36 +19,141 @@ package com.nimbusds.jose.util;
 
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 import junit.framework.TestCase;
 
 
 public class BoundedInputStreamTest extends TestCase {
 	
+	
+	private static byte[] createDataArray() {
+		
+		final int size = 100;
+		byte[] data = new byte[size];
+		for (int i=0; i<size; i++) {
+			data[i] = 1;
+		}
+		assertEquals(100, data.length);
+		return data;
+	}
+	
+	
+	public void testUnboundedConstructor() {
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
+		BoundedInputStream bis = new BoundedInputStream(stream);
+		assertEquals(-1L, bis.getLimitBytes());
+	}
+	
 
-	public void testBounded()
+	public void testBounded_readIntoArray_exceed()
 		throws Exception {
 		
-		String s = "";
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
 		
-		for (int i=0; i<100; i++) {
-			s += "a";
+		final int limit = 50;
+		
+		BoundedInputStream bis = new BoundedInputStream(stream, limit);
+		
+		assertEquals(limit, bis.getLimitBytes());
+		
+		byte[] readData = new byte[data.length];
+		
+		try {
+			bis.read(readData);
+			fail();
+		} catch (IOException e) {
+			assertEquals("Exceeded configured input limit of 50 bytes", e.getMessage());
 		}
 		
-		assertEquals(100, s.length());
+		assertEquals(0, bis.available());
+	}
+	
+
+	public void testBounded_readIntoArray_notExceeded()
+		throws Exception {
 		
-		InputStream stream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
 		
-		BoundedInputStream bis = new BoundedInputStream(stream, 50);
+		final int limit = data.length + 1;
 		
-		byte[] data = new byte[100];
+		BoundedInputStream bis = new BoundedInputStream(stream, limit);
 		
-		int readBytes = bis.read(data);
+		assertEquals(limit, bis.getLimitBytes());
 		
-		assertEquals(50, readBytes);
+		byte[] readData = new byte[data.length];
 		
-		bis.close();
+		assertEquals(data.length, bis.read(readData));
+		
+		assertEquals(0, bis.available());
+	}
+	
+
+	public void testBounded_readByInt_exceed()
+		throws Exception {
+		
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
+		
+		final int limit = 50;
+		
+		BoundedInputStream bis = new BoundedInputStream(stream, limit);
+		
+		assertEquals(limit, bis.getLimitBytes());
+		
+		for (int i=0; i<limit; i++) {
+			assertTrue(bis.read() == 1);
+		}
+		
+		try {
+			bis.read();
+			fail();
+		} catch (IOException e) {
+			assertEquals("Exceeded configured input limit of 50 bytes", e.getMessage());
+		}
+		
+		assertEquals(0, bis.available());
+	}
+	
+
+	public void testBounded_readByInt_notExceeded()
+		throws Exception {
+		
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
+		
+		final int limit = data.length + 1;
+		
+		BoundedInputStream bis = new BoundedInputStream(stream, limit);
+		
+		assertEquals(limit, bis.getLimitBytes());
+		
+		for (int i=0; i< limit -1 ; i++) {
+			assertTrue(bis.read() == 1);
+		}
+		assertEquals(-1L, bis.read());
+		assertEquals(0, bis.available());
+	}
+	
+
+	public void testUnbounded_readByInt()
+		throws Exception {
+		
+		byte[] data = createDataArray();
+		InputStream stream = new ByteArrayInputStream(data);
+		
+		BoundedInputStream bis = new BoundedInputStream(stream, -1L);
+		
+		assertEquals(-1L, bis.getLimitBytes());
+		
+		for (int i=0; i< data.length ; i++) {
+			assertTrue(bis.read() == 1);
+		}
+		assertEquals(-1L, bis.read());
+		assertEquals(0, bis.available());
 	}
 }

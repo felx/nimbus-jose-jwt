@@ -23,16 +23,42 @@ import java.io.InputStream;
 
 
 /**
- * Size-bounded input stream. Copied from Apache Commons IO.
+ * Size-bounded input stream. Adapted from Apache Commons IO. Throws an
+ * {@link IOException} if the input size limit is exceeded.
  *
  * @version 2016-11-28
  */
 public class BoundedInputStream extends InputStream {
 	
+	
+	/**
+	 * The wrapped input stream.
+	 */
 	private final InputStream in;
+	
+	
+	/**
+	 * The limit, -1 if none.
+	 */
 	private final long max;
+	
+	
+	/**
+	 * The current input stream position.
+	 */
 	private long pos;
+	
+	
+	/**
+	 * Marks the input stream.
+	 */
 	private long mark;
+	
+	
+	/**
+	 * If {@link #close()} is to be propagated to the underlying input
+	 * stream.
+	 */
 	private boolean propagateClose;
 	
 	
@@ -61,14 +87,24 @@ public class BoundedInputStream extends InputStream {
 	}
 	
 	
+	/**
+	 * Returns the maximum number of bytes to return.
+	 *
+	 * @return The maximum number of bytes to return, -1 if no limit.
+	 */
+	public long getLimitBytes() {
+		return max;
+	}
+	
+	
 	@Override
 	public int read() throws IOException {
-		if(this.max >= 0L && this.pos >= this.max) {
-			return -1;
+		if (this.max >= 0L && this.pos >= this.max) {
+			throw new IOException("Exceeded configured input limit of " + this.max + " bytes");
 		} else {
 			int result = this.in.read();
 			++this.pos;
-			return result;
+			return result; // data or -1 on EOF
 		}
 	}
 	
@@ -82,14 +118,18 @@ public class BoundedInputStream extends InputStream {
 	@Override
 	public int read(byte[] b, int off, int len) throws IOException {
 		if(this.max >= 0L && this.pos >= this.max) {
-			return -1;
+			throw new IOException("Exceeded configured input limit of " + this.max + " bytes");
 		} else {
-			long maxRead = this.max >= 0L?Math.min((long)len, this.max - this.pos):(long)len;
-			int bytesRead = this.in.read(b, off, (int)maxRead);
+			int bytesRead = this.in.read(b, off, len);
+			
 			if(bytesRead == -1) {
 				return -1;
 			} else {
 				this.pos += (long)bytesRead;
+				
+				if (this.max >= 0L && this.pos >= this.max)
+					throw new IOException("Exceeded configured input limit of " + this.max + " bytes");
+				
 				return bytesRead;
 			}
 		}
@@ -122,7 +162,6 @@ public class BoundedInputStream extends InputStream {
 		if(this.propagateClose) {
 			this.in.close();
 		}
-		
 	}
 	
 	
