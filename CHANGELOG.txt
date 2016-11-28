@@ -605,4 +605,6 @@ version 4.28 (2016-11-26)
 
 version 4.28.1 (2016-11-28)
     * Hints at key length / enc mismatch on direct encryption / decryption with
-      inappropriate symmetric key length (iss #195).
+      inappropriate symmetric key length (issue #195).
+    * Fixes JWKSet.load(java.io.File) to read file in UTF-8 format (issue
+      #198).

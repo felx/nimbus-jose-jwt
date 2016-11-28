@@ -21,6 +21,7 @@ package com.nimbusds.jose.jwk;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -370,7 +371,7 @@ public class JWKSet {
 	public static JWKSet load(final File file)
 		throws IOException, ParseException {
 
-		return parse(FileUtils.readFileToString(file));
+		return parse(FileUtils.readFileToString(file, Charset.forName("UTF-8")));
 	}
 
 
