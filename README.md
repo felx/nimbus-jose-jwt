@@ -1,4 +1,4 @@
-Nimbus JOSE + JWT
+# Nimbus JOSE + JWT
 
 * The most popular Java library for signed and encrypted JSON Web Tokens (JWT)
 
@@ -15,7 +15,7 @@ Javascript Object Signing and Encryption (JOSE) standard suite and the closely
 related JSON Web Token (JWT) standard.
 
 
-Supported JOSE and JWT objects
+## Supported JOSE and JWT objects
 
 The library can create, examine, serialise and parse the following JOSE and JWT
 objects (in compact format):
@@ -31,6 +31,7 @@ objects (in compact format):
 * Plain (unsecured), signed and encrypted JSON Web Tokens (JWTs).
 
 
+## Supported JOSE algorithms
 
 The library currently ships a ready implementation of the following standard
 algorithms:
@@ -72,7 +73,7 @@ AES Key Wrap and ECDH-ES encryption is on the roadmap, you're welcome to
 contribute in their development.
 
 
-Related IETF standards:
+## Supported IETF standards
 
 * RFC 7515 - JSON Web Signature (JWS)
 
@@ -91,7 +92,7 @@ Related IETF standards:
   (JOSE)
 
 
-System requirements and dependencies
+## System requirements and dependencies
 
 The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
@@ -104,23 +105,22 @@ The Nimbus JOSE+JWT library requires Java 7+ and has minimal dependencies.
 
 For Maven add:
 
+```
 <dependency>
     <groupId>com.nimbusds</groupId>
     <artifactId>nimbus-jose-jwt</artifactId>
     <version>[ version ]</version>
 </dependency>
+```
 
-where [ version ] is the latest stable version.
+where `[ version ]` is the latest stable version.
 
 To post bug reports and suggestions:
 
-https://bitbucket.org/connect2id/nimbus-jose-jwt/issues
+<https://bitbucket.org/connect2id/nimbus-jose-jwt/issues>
 
 
 Follow updates and new releases on Twitter:
 
-https://twitter.com/connect2id
+<https://twitter.com/connect2id>
 
-
-
-[EOF]
