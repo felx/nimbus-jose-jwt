@@ -84,7 +84,9 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 
 	/**
-	 * Creates a new RSA decrypter.
+	 * Creates a new RSA decrypter. This constructor can also accept a
+	 * private RSA key located in a key store that doesn't expose the
+	 * private key parameters (such as a smart card or HSM).
 	 *
 	 * @param privateKey The private RSA key. Must not be {@code null}.
 	 */
@@ -115,7 +117,9 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 
 	/**
-	 * Creates a new RSA decrypter.
+	 * Creates a new RSA decrypter. This constructor can also accept a
+	 * private RSA key located in a key store that doesn't expose the
+	 * private key parameters (such as a smart card or HSM).
 	 *
 	 * @param privateKey     The private RSA key. Its algorithm must be
 	 *                       "RSA". Must not be {@code null}.
@@ -145,7 +149,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	 *
 	 * @return The private RSA key. Casting to
 	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
-	 *         possible if the key is backed by a key store that doesn't
+	 *         possible if the key is located in a key store that doesn't
 	 *         expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {

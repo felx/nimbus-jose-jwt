@@ -46,7 +46,7 @@ import com.nimbusds.jose.jwk.ECKey;
  * Tests round-trip ES256, EC384 and EC512 JWS signing and verification.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-30
+ * @version 2016-11-30
  */
 public class ECDSARoundTripTest extends TestCase {
 
@@ -267,7 +267,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Initialise signer
 		ECDSASigner signer = new ECDSASigner(ecJWK);
-		assertEquals(ecJWK.getD().decodeToBigInteger(), signer.getPrivateKey().getS());
+		assertEquals(ecJWK.getD().decodeToBigInteger(), ((ECPrivateKey)signer.getPrivateKey()).getS());
 
 		jwsObject.sign(signer);
 

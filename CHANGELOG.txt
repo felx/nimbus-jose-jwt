@@ -613,3 +613,7 @@ version 4.29 (2016-11-28)
       reading a BoundedInputStream, e.g. in
       DefaultResourceRetriever.retrieveResource(java.net.URL).
 
+version 4.30 (2016-11-30)
+    * Adds ECDSASigner support for private EC keys stored on a secure device
+      (such as smart cards and HSMs).
+

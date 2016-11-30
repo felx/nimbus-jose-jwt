@@ -24,9 +24,10 @@ import java.security.Signature;
 import java.security.interfaces.ECKey;
 import java.security.spec.ECParameterSpec;
 
+import static com.nimbusds.jose.jwk.ECKey.Curve;
+
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import static com.nimbusds.jose.jwk.ECKey.Curve;
 
 
 /**

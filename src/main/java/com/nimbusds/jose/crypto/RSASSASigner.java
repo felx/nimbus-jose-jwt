@@ -56,7 +56,7 @@ import net.jcip.annotations.ThreadSafe;
  * 
  * @author Vladimir Dzhuvinov
  * @author Omer Levi Hevroni
- * @version 2016-04-04
+ * @version 2016-11-30
  */
 @ThreadSafe
 public class RSASSASigner extends RSASSAProvider implements JWSSigner {
@@ -75,13 +75,16 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
 	/**
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
+	 * This constructor can also accept a private RSA key located in a key
+	 * store that doesn't expose the private key parameters (such as a
+	 * smart card or HSM).
 	 *
 	 * @param privateKey The private RSA key. Its algorithm must be "RSA".
 	 *                   Must not be {@code null}.
 	 */
 	public RSASSASigner(final PrivateKey privateKey) {
 
-		if (! privateKey.getAlgorithm().equalsIgnoreCase("RSA")) {
+		if (! "RSA".equalsIgnoreCase(privateKey.getAlgorithm())) {
 			throw new IllegalArgumentException("The private key algorithm must be RSA");
 		}
 
@@ -114,7 +117,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 *
 	 * @return The private RSA key. Casting to
 	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
-	 *         possible if the key is backed by a key store that doesn't
+	 *         possible if the key is located in a key store that doesn't
 	 *         expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {

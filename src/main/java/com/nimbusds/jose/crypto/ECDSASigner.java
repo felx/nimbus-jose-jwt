@@ -19,6 +19,7 @@ package com.nimbusds.jose.crypto;
 
 
 import java.security.InvalidKeyException;
+import java.security.PrivateKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
@@ -54,16 +55,21 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version 2015-06-07
+ * @version 2016-11-30
  */
 @ThreadSafe
 public class ECDSASigner extends ECDSAProvider implements JWSSigner {
-
-
+	
+	
 	/**
-	 * The private EC key.
+	 * The private EC key. Represented by generic private key interface to
+	 * support key stores that prevent exposure of the private key
+	 * parameters via the {@link java.security.interfaces.RSAPrivateKey}
+	 * API.
+	 *
+	 * See https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/169
 	 */
-	private final ECPrivateKey privateKey;
+	private final PrivateKey privateKey;
 
 
 	/**
@@ -78,6 +84,32 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 		throws JOSEException {
 
 		super(ECDSA.resolveAlgorithm(privateKey));
+
+		this.privateKey = privateKey;
+	}
+
+
+	/**
+	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
+	 * signer. This constructor is intended for a private EC key located
+	 * in a key store that doesn't expose the private key parameters (such
+	 * as a smart card or HSM).
+	 *
+	 * @param privateKey The private EC key. Its algorithm must be "EC".
+	 *                   Must not be {@code null}.
+	 * @param curve      The elliptic curve for the key. Must not be
+	 *                   {@code null}.
+	 *
+	 * @throws JOSEException If the elliptic curve of key is not supported.
+	 */
+	public ECDSASigner(final PrivateKey privateKey, final ECKey.Curve curve)
+		throws JOSEException {
+
+		super(ECDSA.resolveAlgorithm(curve));
+		
+		if (! "EC".equalsIgnoreCase(privateKey.getAlgorithm())) {
+			throw new IllegalArgumentException("The private key algorithm must be EC");
+		}
 
 		this.privateKey = privateKey;
 	}
@@ -105,15 +137,18 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 
 		privateKey = ecJWK.toECPrivateKey();
 	}
-
-
+	
+	
 	/**
-	 * Returns the private EC key.
+	 * Gets the private EC key.
 	 *
-	 * @return The private EC key.
+	 * @return The private EC key. Casting to
+	 *         {@link java.security.interfaces.ECPrivateKey} may not be
+	 *         possible if the key is located in a key store that doesn't
+	 *         expose the private key parameters.
 	 */
-	public ECPrivateKey getPrivateKey() {
-
+	public PrivateKey getPrivateKey() {
+		
 		return privateKey;
 	}
 

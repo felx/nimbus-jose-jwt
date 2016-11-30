@@ -27,6 +27,7 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 import java.util.Enumeration;
@@ -35,6 +36,7 @@ import static org.junit.Assert.*;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.X509CertUtils;
@@ -48,6 +50,12 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.junit.Test;
 
 
+/**
+ * HSM test with Nitrokey.
+ *
+ * @author Vladimir Dzhuvinov
+ * @version 2016-11-30
+ */
 public class HSMTest {
 	
 	
@@ -119,6 +127,42 @@ public class HSMTest {
 	}
 	
 	
+	private static String generateECKeyWithSelfSignedCert(final KeyStore hsmKeyStore)
+		throws NoSuchAlgorithmException, IOException, OperatorCreationException, KeyStoreException, InvalidAlgorithmParameterException {
+		
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", hsmKeyStore.getProvider());
+		keyPairGenerator.initialize(ECKey.Curve.P_256.toECParameterSpec());
+		KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			keyPair.getPublic()
+		);
+		
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
+		signerBuilder.setProvider(hsmKeyStore.getProvider());
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(keyPair.getPrivate()));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		assertNotNull(cert);
+		
+		String keyID = generateRandomKeyID();
+
+		hsmKeyStore.setKeyEntry(keyID, keyPair.getPrivate(), "".toCharArray(), new Certificate[]{cert});
+		
+		return keyID;
+	}
+	
+	
 //	@Test
 	public void testRSASign()
 		throws Exception {
@@ -156,6 +200,51 @@ public class HSMTest {
 		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
 		assertTrue(SignedJWT.parse(jwtString).verify(new RSASSAVerifier(publicKey)));
 		new RSAKey.Builder(publicKey).keyID(keyID).build();
+		
+		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+//	@Test
+	public void testECSign()
+		throws Exception {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
+		
+		assertEquals("PKCS11", hsmKeyStore.getType());
+		
+		int numKeys = hsmKeyStore.size();
+		
+		System.out.println("HSM key aliases: ");
+		Enumeration<String> keyAliases = hsmKeyStore.aliases();
+		while(keyAliases.hasMoreElements()) {
+			System.out.println("\tKey alias: " + keyAliases.nextElement());
+		}
+		
+		String keyID = generateECKeyWithSelfSignedCert(hsmKeyStore);
+		
+		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+			
+		ECDSASigner signer = new ECDSASigner(privateKey, ECKey.Curve.P_256);
+		signer.getJCAContext().setProvider(hsmProvider);
+		
+		SignedJWT jwt = new SignedJWT(
+				new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(keyID).build(),
+				new JWTClaimsSet.Builder().subject("alice").build());
+			
+		jwt.sign(signer);
+		String jwtString = jwt.serialize();
+		
+		
+		System.out.println(jwtString);
+		
+		ECPublicKey publicKey = (ECPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
+		assertTrue(SignedJWT.parse(jwtString).verify(new ECDSAVerifier(publicKey)));
+		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
 		
 		hsmKeyStore.deleteEntry(keyID);
 		
