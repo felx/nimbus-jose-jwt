@@ -81,6 +81,13 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 	 * The private RSA key.
 	 */
 	private final PrivateKey privateKey;
+	
+	
+	/**
+	 * Stores a CEK decryption exception is one was encountered during the
+	 * last {@link #decrypt} run.
+	 */
+	private Exception cekDecryptionException;
 
 
 	/**
@@ -220,8 +227,11 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 			} catch (Exception e) {
 				// continue
+				cekDecryptionException = e;
 				cek = randomCEK;
 			}
+			
+			cekDecryptionException = null;
 		
 		} else if (alg.equals(JWEAlgorithm.RSA_OAEP)) {
 
@@ -237,6 +247,19 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 		}
 
 		return ContentCryptoProvider.decrypt(header, encryptedKey, iv, cipherText, authTag, cek, getJCAContext());
+	}
+	
+	
+	/**
+	 * Returns the Content Encryption Key (CEK) decryption exception if one
+	 * was encountered during the last {@link #decrypt} run. Intended for
+	 * logging and debugging purposes.
+	 *
+	 * @return The recorded exception, {@code null} if none.
+	 */
+	public Exception getCEKDecryptionException() {
+		
+		return cekDecryptionException;
 	}
 }
 

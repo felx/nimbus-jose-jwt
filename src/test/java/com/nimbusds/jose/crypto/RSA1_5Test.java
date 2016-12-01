@@ -20,6 +20,8 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -39,7 +41,7 @@ import junit.framework.TestCase;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-29
+ * @version 2016-12-01
  */
 public class RSA1_5Test extends TestCase {
 
@@ -846,6 +848,78 @@ public class RSA1_5Test extends TestCase {
 			});
 		} catch (IllegalArgumentException e) {
 			assertEquals("The private key algorithm must be RSA", e.getMessage());
+		}
+	}
+	
+	
+	public void testNoCEKExceptionReportingOnBadPublicKey()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(1024);
+		KeyPair kp = gen.generateKeyPair();
+		
+		// Good pair
+		RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic();
+		PrivateKey privateKey = kp.getPrivate();
+		
+		// Bad public key
+		RSAPublicKey badPublicKey = (RSAPublicKey) gen.generateKeyPair().getPublic();
+		
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM),
+			new Payload("Hello, world!"));
+		
+		jweObject.encrypt(new RSAEncrypter(badPublicKey));
+		
+		String jwe = jweObject.serialize();
+		
+		jweObject = JWEObject.parse(jwe);
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		
+		try {
+			jweObject.decrypt(decrypter);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("AES/GCM/NoPadding decryption failed: Tag mismatch!", e.getMessage());
+			assertNull(decrypter.getCEKDecryptionException());
+		}
+	}
+	
+	
+	public void testNoCEKExceptionReportingOnBadPrivateKey()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(1024);
+		KeyPair kp = gen.generateKeyPair();
+		
+		// Good pair
+		RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic();
+		PrivateKey privateKey = kp.getPrivate();
+		
+		// Bad private key
+		PrivateKey badPrivateKey = gen.generateKeyPair().getPrivate();
+		
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM),
+			new Payload("Hello, world!"));
+		
+		jweObject.encrypt(new RSAEncrypter(publicKey));
+		
+		String jwe = jweObject.serialize();
+		
+		jweObject = JWEObject.parse(jwe);
+		
+		RSADecrypter decrypter = new RSADecrypter(badPrivateKey);
+		
+		try {
+			jweObject.decrypt(decrypter);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("AES/GCM/NoPadding decryption failed: Tag mismatch!", e.getMessage());
+			assertNull(decrypter.getCEKDecryptionException());
 		}
 	}
 }

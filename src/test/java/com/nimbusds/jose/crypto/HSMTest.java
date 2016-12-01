@@ -62,7 +62,13 @@ public class HSMTest {
 	private static String HSM_CONFIG =
 		"name = NitroKeyHSM\n" +
 		"library = /usr/lib/x86_64-linux-gnu/opensc-pkcs11.so\n" +
-		"slotListIndex = 1\n";
+		"slotListIndex = 1\n" +
+		"attributes(*,CKO_PRIVATE_KEY,CKK_RSA) = {\n" +
+		"  CKA_SIGN = true\n" +
+		"}\n" +
+		"attributes(*,CKO_PRIVATE_KEY,CKK_RSA) = {\n" +
+		"  CKA_DECRYPT = true\n" +
+		"}\n";
 	
 	
 	private static String HSM_PIN = "836019";
@@ -244,7 +250,6 @@ public class HSMTest {
 	
 	
 //	@Test
-	// Fails https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/201/rsa1_5-decryption-with-hsm-key-fails
 	public void testRSADecryptWithHSM()
 		throws Exception {
 		
@@ -276,7 +281,13 @@ public class HSMTest {
 		
 		RSADecrypter decrypter = new RSADecrypter(privateKey);
 		decrypter.getJCAContext().setKeyEncryptionProvider(hsmProvider);
-		jweObject.decrypt(decrypter);
+		
+		try {
+			jweObject.decrypt(decrypter);
+		} catch (JOSEException e) {
+			System.out.println("CEK exception: " + decrypter.getCEKDecryptionException());
+			fail(e.getMessage());
+		}
 		
 		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
 		assertEquals("Hello world!", jweObject.getPayload().toString());

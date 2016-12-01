@@ -618,3 +618,8 @@ version 4.30 (2016-12-01)
       smart card or HSM.
     * Adds ECDSASigner support for private EC keys stored in a PKCS#11 store.
 
+version 4.31 (2016-12-01)
+    * Adds new RSADecrypter.getCEKDecryptionException method to inspect an
+      encountered Content Encryption Key (CEK) decryption exception during the
+      last decrypt run. Intended for logging and debugging purposes.
+
