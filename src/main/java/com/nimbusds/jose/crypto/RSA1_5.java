@@ -26,6 +26,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
@@ -36,7 +37,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-01-24
+ * @version 2016-12-01
  */
 @ThreadSafe
 class RSA1_5 {
@@ -98,7 +99,7 @@ class RSA1_5 {
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			byte[] secretKeyBytes = cipher.doFinal(encryptedCEK);
 
-			if (8 * secretKeyBytes.length != keyLength) {
+			if (ByteUtils.bitLength(secretKeyBytes) != keyLength) {
 				// CEK key length mismatch
 				return null;
 			}
