@@ -35,8 +35,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
@@ -164,7 +163,7 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testRSASign()
 		throws Exception {
 		
@@ -201,7 +200,7 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testRSASignWithJWK()
 		throws Exception {
 		
@@ -244,7 +243,51 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
+	// Fails https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/201/rsa1_5-decryption-with-hsm-key-fails
+	public void testRSADecryptWithHSM()
+		throws Exception {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
+		
+		assertEquals("PKCS11", hsmKeyStore.getType());
+		
+		int numKeys = hsmKeyStore.size();
+		
+		String keyID = generateRSAKeyWithSelfSignedCert(hsmKeyStore);
+		
+		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
+		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+		assertFalse(privateKey instanceof RSAPrivateKey);
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader.Builder(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM).keyID(keyID).build(),
+			new Payload("Hello world!"));
+		
+		jweObject.encrypt(encrypter);
+		
+		String jwe = jweObject.serialize();
+		
+		jweObject = JWEObject.parse(jwe);
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setKeyEncryptionProvider(hsmProvider);
+		jweObject.decrypt(decrypter);
+		
+		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
+		assertEquals("Hello world!", jweObject.getPayload().toString());
+		
+		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+//	@Test
 	public void testECSign()
 		throws Exception {
 		
@@ -287,7 +330,7 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testECSignWithJWK()
 		throws Exception {
 		
@@ -324,7 +367,7 @@ public class HSMTest {
 	}
 	
 	
-	@Test
+//	@Test
 	public void testAvailableAlgs() {
 		
 		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);

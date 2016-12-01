@@ -65,7 +65,7 @@ import net.jcip.annotations.ThreadSafe;
  * @author David Ortiz
  * @author Vladimir Dzhuvinov
  * @author Dimitar A. Stoikov
- * @version 2016-06-29
+ * @version 2016-12-01
  */
 @ThreadSafe
 public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
@@ -112,7 +112,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 			throw new JOSEException("The RSA JWK doesn't contain a private part");
 		}
 
-		privateKey = rsaJWK.toRSAPrivateKey();
+		privateKey = rsaJWK.toPrivateKey();
 	}
 
 
