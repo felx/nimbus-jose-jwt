@@ -227,7 +227,6 @@ public final class JWSHeader extends CommonSEHeader {
 			typ = jwsHeader.getType();
 			cty = jwsHeader.getContentType();
 			crit = jwsHeader.getCriticalParams();
-			customParams = jwsHeader.getCustomParams();
 
 			jku = jwsHeader.getJWKURL();
 			jwk = jwsHeader.getJWK();
