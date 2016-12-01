@@ -56,13 +56,14 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * interfaces and classes:
  *
  * <ul>
- *     <li>{@code java.security.interfaces.RSAPublicKey}
- *     <li>{@code java.security.interfaces.RSAPrivateKey}
+ *     <li>{@link java.security.interfaces.RSAPublicKey}
+ *     <li>{@link java.security.interfaces.RSAPrivateKey}
  *         <ul>
- *             <li>{@code java.security.interfaces.RSAPrivateCrtKey}
- *             <li>{@code java.security.interfaces.RSAMultiPrimePrivateCrtKey}
+ *             <li>{@link java.security.interfaces.RSAPrivateCrtKey}
+ *             <li>{@link java.security.interfaces.RSAMultiPrimePrivateCrtKey}
  *         </ul>
- *     <li>{@code java.security.KeyPair}
+ *     <li>{@link java.security.PrivateKey} for an RSA key in a PKCS#11 store
+ *     <li>{@link java.security.KeyPair}
  * </ul>
  *
  * <p>Example JSON object representation of a public RSA JWK:
@@ -128,7 +129,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2016-07-03
+ * @version 2016-12-01
  */
 @Immutable
 public final class RSAKey extends JWK implements AssymetricJWK {
@@ -364,6 +365,14 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 		 * the number of primes used minus two.
 		 */
 		private List<OtherPrimesInfo> oth;
+		
+		
+		// Private RSA key, as PKCS#11 handle
+		
+		/**
+		 * The private RSA key, as PKCS#11 handle.
+		 */
+		private PrivateKey priv;
 
 
 		/**
@@ -488,6 +497,27 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 				this.d = Base64URL.encode(priv.getPrivateExponent());
 				return this;
 			}
+		}
+		
+		
+		/**
+		 * Sets the private RSA key, typically for a key located in a
+		 * PKCS#11 store that doesn't expose the private key parameters
+		 * (such as a smart card or HSM).
+		 *
+		 * @param priv The private RSA key reference. Its algorithm
+		 *             must be "RSA". Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 */
+		public Builder privateKey(final PrivateKey priv) {
+			
+			if (! "RSA".equalsIgnoreCase(priv.getAlgorithm())) {
+				throw new IllegalArgumentException("The private key algorithm must be RSA");
+			}
+			
+			this.priv = priv;
+			return this;
 		}
 
 
@@ -827,6 +857,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 			try {
 				// The full constructor
 				return new RSAKey(n, e, d, p, q, dp, dq, qi, oth,
+					          priv,
 					          use, ops, alg, kid, x5u, x5t, x5c);
 
 			} catch (IllegalArgumentException e) {
@@ -902,6 +933,14 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	 * two.
 	 */
 	private final List<OtherPrimesInfo> oth;
+	
+	
+	// Private RSA PKCS#11 key handle
+	
+	/**
+	 * Private PKCS#11 key handle.
+	 */
+	private final PrivateKey privateKey;
 
 
 	/**
@@ -931,7 +970,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 
 		// Call the full constructor, all private key parameters are null
-		this(n, e, null, null, null, null, null, null, null, use, ops, alg, kid,
+		this(n, e, null, null, null, null, null, null, null, null, use, ops, alg, kid,
 		     x5u, x5t, x5c);
 	}
 
@@ -968,7 +1007,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	    
 		// Call the full constructor, the second private representation 
 		// parameters are all null
-		this(n, e, d, null, null, null, null, null, null, use, ops, alg, kid,
+		this(n, e, d, null, null, null, null, null, null, null, use, ops, alg, kid,
 		     x5u, x5t, x5c);
 
 		if (d == null) {
@@ -1026,7 +1065,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	    
 		// Call the full constructor, the first private representation 
 		// d param is null
-		this(n, e, null, p, q, dp, dq, qi, oth, use, ops, alg, kid,
+		this(n, e, null, p, q, dp, dq, qi, oth, null, use, ops, alg, kid,
 		     x5u, x5t, x5c);
 
 		if (p == null) {
@@ -1102,11 +1141,79 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
 	 */
+	@Deprecated
 	public RSAKey(final Base64URL n, final Base64URL e,
 		      final Base64URL d, 
 		      final Base64URL p, final Base64URL q, 
 		      final Base64URL dp, final Base64URL dq, final Base64URL qi, 
 		      final List<OtherPrimesInfo> oth,
+		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+	    
+		this(n, e, d, p, q, dp, dq, qi, oth, null, use, ops, alg, kid, x5u, x5t, x5c);
+	}
+
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the
+	 * specified parameters. The private RSA key can be specified by its
+	 * first representation, its second representations (see RFC 3447,
+	 * section 3.2), or by a PKCS#11 handle as {@link PrivateKey}.
+	 *
+	 * <p>A valid first private RSA key representation must specify the
+	 * {@code d} parameter.
+	 *
+	 * <p>A valid second private RSA key representation must specify all
+	 * required Chinese Remained Theorem (CRT) parameters - {@code p},
+	 * {@code q}, {@code dp}, {@code dq} and {@code qi}, else an
+	 * {@link java.lang.IllegalArgumentException} will be thrown.
+	 *
+	 * @param n   The the modulus value for the public RSA key. It is
+	 *            represented as the Base64URL encoding of value's big
+	 *            endian representation. Must not be {@code null}.
+	 * @param e   The exponent value for the public RSA key. It is
+	 *            represented as the Base64URL encoding of value's big
+	 *            endian representation. Must not be {@code null}.
+	 * @param d   The private exponent. It is represented as the Base64URL
+	 *            encoding of the value's big endian representation. May
+	 *            be {@code null}.
+	 * @param p   The first prime factor. It is represented as the
+	 *            Base64URL encoding of the value's big endian
+	 *            representation. May be {@code null}.
+	 * @param q   The second prime factor. It is represented as the
+	 *            Base64URL encoding of the value's big endian
+	 *            representation. May be {@code null}.
+	 * @param dp  The first factor Chinese Remainder Theorem exponent. It
+	 *            is represented as the Base64URL encoding of the value's
+	 *            big endian representation. May be {@code null}.
+	 * @param dq  The second factor Chinese Remainder Theorem exponent. It
+	 *            is represented as the Base64URL encoding of the value's
+	 *            big endian representation. May be {@code null}.
+	 * @param qi  The first Chinese Remainder Theorem coefficient. It is
+	 *            represented as the Base64URL encoding of the value's big
+	 *            endian representation. May be {@code null}.
+	 * @param oth The other primes information, should they exist,
+	 *            {@code null} or an empty list if not specified.
+	 * @param prv The private key as a PKCS#11 handle, {@code null} if not
+	 *            specified.
+	 * @param use The key use, {@code null} if not specified or if the key
+	 *            is intended for signing as well as encryption.
+	 * @param ops The key operations, {@code null} if not specified.
+	 * @param alg The intended JOSE algorithm for the key, {@code null} if
+	 *            not specified.
+	 * @param kid The key ID. {@code null} if not specified.
+	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
+	 *            specified.
+	 * @param x5c The X.509 certificate chain, {@code null} if not
+	 *            specified.
+	 */
+	public RSAKey(final Base64URL n, final Base64URL e,
+		      final Base64URL d,
+		      final Base64URL p, final Base64URL q,
+		      final Base64URL dp, final Base64URL dq, final Base64URL qi,
+		      final List<OtherPrimesInfo> oth,
+		      final PrivateKey prv,
 		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
 		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
 	    
@@ -1177,6 +1284,8 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first CRT coefficient must not be null");
 			}
 		}
+		
+		this.privateKey = prv; // PKCS#11 handle
 	}
 
 
@@ -1278,6 +1387,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 		     Base64URL.encode(priv.getPrimeExponentQ()),
 		     Base64URL.encode(priv.getCrtCoefficient()),
 		     null,
+		     null,
 		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
 	}
@@ -1319,8 +1429,50 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 		     Base64URL.encode(priv.getPrimeExponentQ()),
 		     Base64URL.encode(priv.getCrtCoefficient()),
 		     OtherPrimesInfo.toList(priv.getOtherPrimeInfo()),
+		     null,
 		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
+	}
+
+
+	/**
+	 * Creates a new public / private RSA JSON Web Key (JWK) with the
+	 * specified parameters. The private RSA key is specified by a PKCS#11
+	 * handle.
+	 *
+	 * @param pub  The public RSA key to represent. Must not be
+	 *             {@code null}.
+	 * @param priv The private RSA key as PKCS#11 handle, {@code null} if
+	 *             not specified.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
+	 * @param ops  The key operations, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID. {@code null} if not specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not
+	 *             specified.
+	 */
+	public RSAKey(final RSAPublicKey pub, final PrivateKey priv,
+		      final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
+		      final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		
+		this(Base64URL.encode(pub.getModulus()),
+			Base64URL.encode(pub.getPublicExponent()),
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			priv,
+			use, ops, alg, kid,
+			x5u, x5t, x5c);
 	}
 
 
@@ -1577,8 +1729,16 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	@Override
 	public PrivateKey toPrivateKey()
 		throws JOSEException {
-
-		return toRSAPrivateKey();
+		
+		PrivateKey prv = toRSAPrivateKey();
+		
+		if (prv != null) {
+			// Return private RSA key with key material
+			return prv;
+		}
+		
+		// Return private RSA key as PKCS#11 handle, or null
+		return privateKey;
 	}
 
 
@@ -1598,7 +1758,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	public KeyPair toKeyPair() 
 		throws JOSEException {
 		
-		return new KeyPair(toRSAPublicKey(), toRSAPrivateKey());
+		return new KeyPair(toRSAPublicKey(), toPrivateKey());
 	}
 
 
@@ -1617,8 +1777,8 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	@Override
 	public boolean isPrivate() {
 
-		// Check if 1st or 2nd form params are specified
-		return d != null || p != null;
+		// Check if 1st or 2nd form params are specified, or PKCS#11 handle
+		return d != null || p != null || privateKey != null;
 	}
 
 
@@ -1785,7 +1945,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 		}
 
 		try {
-			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth,
+			return new RSAKey(n, e, d, p, q, dp, dq, qi, oth, null,
 				JWKMetadata.parseKeyUse(jsonObject),
 				JWKMetadata.parseKeyOperations(jsonObject),
 				JWKMetadata.parseAlgorithm(jsonObject),

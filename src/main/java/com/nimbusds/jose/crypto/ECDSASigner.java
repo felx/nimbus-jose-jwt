@@ -92,8 +92,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
 	 * signer. This constructor is intended for a private EC key located
-	 * in a key store that doesn't expose the private key parameters (such
-	 * as a smart card or HSM).
+	 * in a PKCS#11 store that doesn't expose the private key parameters
+	 * (such as a smart card or HSM).
 	 *
 	 * @param privateKey The private EC key. Its algorithm must be "EC".
 	 *                   Must not be {@code null}.
@@ -135,7 +135,7 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 			throw new JOSEException("The EC JWK doesn't contain a private part");
 		}
 
-		privateKey = ecJWK.toECPrivateKey();
+		privateKey = ecJWK.toPrivateKey();
 	}
 	
 	
@@ -144,8 +144,8 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 *
 	 * @return The private EC key. Casting to
 	 *         {@link java.security.interfaces.ECPrivateKey} may not be
-	 *         possible if the key is located in a key store that doesn't
-	 *         expose the private key parameters.
+	 *         possible if the key is located in a PKCS#11 store that
+	 *         doesn't expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {
 		

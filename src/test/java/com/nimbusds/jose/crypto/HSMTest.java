@@ -27,10 +27,11 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
-import java.util.Enumeration;
 
 import static org.junit.Assert.*;
 
@@ -54,7 +55,7 @@ import org.junit.Test;
  * HSM test with Nitrokey.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-11-30
+ * @version 2016-12-01
  */
 public class HSMTest {
 	
@@ -163,7 +164,7 @@ public class HSMTest {
 	}
 	
 	
-//	@Test
+	@Test
 	public void testRSASign()
 		throws Exception {
 		
@@ -175,15 +176,10 @@ public class HSMTest {
 		
 		int numKeys = hsmKeyStore.size();
 		
-		System.out.println("HSM key aliases: ");
-		Enumeration<String> keyAliases = hsmKeyStore.aliases();
-		while(keyAliases.hasMoreElements()) {
-			System.out.println("\tKey alias: " + keyAliases.nextElement());
-		}
-		
 		String keyID = generateRSAKeyWithSelfSignedCert(hsmKeyStore);
 		
 		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+		assertFalse(privateKey instanceof RSAPrivateKey);
 			
 		RSASSASigner signer = new RSASSASigner(privateKey);
 		signer.getJCAContext().setProvider(hsmProvider);
@@ -194,8 +190,6 @@ public class HSMTest {
 		
 		jwt.sign(signer);
 		String jwtString = jwt.serialize();
-		
-		System.out.println(jwtString);
 			
 		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
 		assertTrue(SignedJWT.parse(jwtString).verify(new RSASSAVerifier(publicKey)));
@@ -207,7 +201,50 @@ public class HSMTest {
 	}
 	
 	
-//	@Test
+	@Test
+	public void testRSASignWithJWK()
+		throws Exception {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
+		
+		assertEquals("PKCS11", hsmKeyStore.getType());
+		
+		int numKeys = hsmKeyStore.size();
+		
+		String keyID = generateRSAKeyWithSelfSignedCert(hsmKeyStore);
+		
+		RSAPublicKey publicKey = (RSAPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
+		
+		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+		assertFalse(privateKey instanceof RSAPrivateKey);
+		
+		RSAKey rsaJWK = new RSAKey.Builder(publicKey)
+			.keyID(keyID)
+			.privateKey(privateKey)
+			.build();
+		
+		RSASSASigner signer = new RSASSASigner(rsaJWK);
+		signer.getJCAContext().setProvider(hsmProvider);
+		
+		SignedJWT jwt = new SignedJWT(
+			new JWSHeader.Builder(JWSAlgorithm.RS256).keyID(rsaJWK.getKeyID()).build(),
+			new JWTClaimsSet.Builder().subject("alice").build());
+		
+		jwt.sign(signer);
+		String jwtString = jwt.serialize();
+		
+		assertTrue(SignedJWT.parse(jwtString).verify(new RSASSAVerifier(publicKey)));
+		new RSAKey.Builder(publicKey).keyID(keyID).build();
+		
+		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+	@Test
 	public void testECSign()
 		throws Exception {
 		
@@ -219,15 +256,53 @@ public class HSMTest {
 		
 		int numKeys = hsmKeyStore.size();
 		
-		System.out.println("HSM key aliases: ");
-		Enumeration<String> keyAliases = hsmKeyStore.aliases();
-		while(keyAliases.hasMoreElements()) {
-			System.out.println("\tKey alias: " + keyAliases.nextElement());
-		}
+		String keyID = generateECKeyWithSelfSignedCert(hsmKeyStore);
+		
+		ECPublicKey publicKey = (ECPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
+		
+		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+		assertFalse(privateKey instanceof ECPrivateKey);
+		
+		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, publicKey)
+			.privateKey(privateKey)
+			.keyID(keyID)
+			.build();
+		
+		ECDSASigner signer = new ECDSASigner(ecJWK);
+		signer.getJCAContext().setProvider(hsmProvider);
+		
+		SignedJWT jwt = new SignedJWT(
+				new JWSHeader.Builder(JWSAlgorithm.ES256).keyID(ecJWK.getKeyID()).build(),
+				new JWTClaimsSet.Builder().subject("alice").build());
+		
+		jwt.sign(signer);
+		String jwtString = jwt.serialize();
+		
+		assertTrue(SignedJWT.parse(jwtString).verify(new ECDSAVerifier(publicKey)));
+		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
+		
+		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+	@Test
+	public void testECSignWithJWK()
+		throws Exception {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
+		
+		assertEquals("PKCS11", hsmKeyStore.getType());
+		
+		int numKeys = hsmKeyStore.size();
 		
 		String keyID = generateECKeyWithSelfSignedCert(hsmKeyStore);
 		
 		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
+		assertFalse(privateKey instanceof ECPrivateKey);
 			
 		ECDSASigner signer = new ECDSASigner(privateKey, ECKey.Curve.P_256);
 		signer.getJCAContext().setProvider(hsmProvider);
@@ -239,9 +314,6 @@ public class HSMTest {
 		jwt.sign(signer);
 		String jwtString = jwt.serialize();
 		
-		
-		System.out.println(jwtString);
-		
 		ECPublicKey publicKey = (ECPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
 		assertTrue(SignedJWT.parse(jwtString).verify(new ECDSAVerifier(publicKey)));
 		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
@@ -252,7 +324,7 @@ public class HSMTest {
 	}
 	
 	
-//	@Test
+	@Test
 	public void testAvailableAlgs() {
 		
 		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
@@ -260,7 +332,6 @@ public class HSMTest {
 		System.out.println("Properties:");
 		
 		for (String propName: hsmProvider.stringPropertyNames()) {
-			
 			System.out.println(propName + " = " + hsmProvider.getProperty(propName));
 		}
 		

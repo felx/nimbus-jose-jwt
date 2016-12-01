@@ -22,7 +22,9 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
+import java.security.PrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -40,7 +42,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-11-26
+ * @version 2016-12-01
  */
 public class ECKeyTest extends TestCase {
 
@@ -710,5 +712,39 @@ public class ECKeyTest extends TestCase {
 		
 		// null
 		assertNull(ECKey.Curve.forJWSAlgoritm(null));
+	}
+	
+	
+	// For private EC keys as PKCS#11 handle
+	public void testPrivateKeyHandle()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
+		gen.initialize(ECKey.Curve.P_256.toECParameterSpec());
+		KeyPair kp = gen.generateKeyPair();
+		
+		ECPublicKey publicKey = (ECPublicKey) kp.getPublic();
+		PrivateKey privateKey = kp.getPrivate(); // simulate private key with inaccessible key material
+		
+		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, publicKey)
+			.privateKey(privateKey)
+			.keyID("1")
+			.build();
+		
+		assertNotNull(ecJWK.toPublicKey());
+		assertEquals(privateKey, ecJWK.toPrivateKey());
+		assertTrue(ecJWK.isPrivate());
+		
+		kp = ecJWK.toKeyPair();
+		assertNotNull(kp.getPublic());
+		assertEquals(privateKey, kp.getPrivate());
+		
+		JSONObject json = ecJWK.toJSONObject();
+		assertEquals("EC", json.get("kty"));
+		assertEquals("1", json.get("kid"));
+		assertEquals("P-256", json.get("crv"));
+		assertNotNull(json.get("x"));
+		assertNotNull(json.get("y"));
+		assertEquals(5, json.size());
 	}
 }

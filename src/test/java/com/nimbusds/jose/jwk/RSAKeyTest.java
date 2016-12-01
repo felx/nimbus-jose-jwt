@@ -19,25 +19,28 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URI;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.*;
-
-import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
+import net.minidev.json.JSONObject;
 
 
 /**
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-07-03
+ * @version 2016-12-01
  */
 public class RSAKeyTest extends TestCase {
 
@@ -97,6 +100,114 @@ public class RSAKeyTest extends TestCase {
 
 
 	public void testFullConstructorAndSerialization()
+		throws Exception {
+
+		URI x5u = new URI("http://example.com/jwk.json");
+		Base64URL x5t = new Base64URL("abc");
+		List<Base64> x5c = new LinkedList<>();
+		x5c.add(new Base64("def"));
+		
+		// Recreate PrivateKey
+		KeyFactory factory = KeyFactory.getInstance("RSA");
+		PrivateKey privateKey = factory.generatePrivate(new RSAPrivateKeySpec(new Base64URL(n).decodeToBigInteger(), new Base64URL(d).decodeToBigInteger()));
+
+		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e), new Base64URL(d),
+			new Base64URL(p), new Base64URL(q),
+			new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
+			null,
+			privateKey,
+			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
+			x5u, x5t, x5c);
+
+		// Test getters
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyOperations());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+
+		assertEquals(new Base64URL(d), key.getPrivateExponent());
+
+		assertEquals(new Base64URL(p), key.getFirstPrimeFactor());
+		assertEquals(new Base64URL(q), key.getSecondPrimeFactor());
+
+		assertEquals(new Base64URL(dp), key.getFirstFactorCRTExponent());
+		assertEquals(new Base64URL(dq), key.getSecondFactorCRTExponent());
+
+		assertEquals(new Base64URL(qi), key.getFirstCRTCoefficient());
+
+		assertTrue(key.getOtherPrimes().isEmpty());
+		
+		// private key generated from key material, not PrivateKey ref
+		assertNotSame(privateKey, key.toPrivateKey());
+
+		assertTrue(key.isPrivate());
+
+
+		String jwkString = key.toJSONObject().toString();
+
+		key = RSAKey.parse(jwkString);
+
+		// Test getters
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyOperations());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+
+		assertEquals(new Base64URL(d), key.getPrivateExponent());
+
+		assertEquals(new Base64URL(p), key.getFirstPrimeFactor());
+		assertEquals(new Base64URL(q), key.getSecondPrimeFactor());
+
+		assertEquals(new Base64URL(dp), key.getFirstFactorCRTExponent());
+		assertEquals(new Base64URL(dq), key.getSecondFactorCRTExponent());
+
+		assertEquals(new Base64URL(qi), key.getFirstCRTCoefficient());
+
+		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertTrue(key.isPrivate());
+
+
+		// Test conversion to public JWK
+
+		key = key.toPublicJWK();
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyOperations());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+
+		assertNull(key.getPrivateExponent());
+
+		assertNull(key.getFirstPrimeFactor());
+		assertNull(key.getSecondPrimeFactor());
+
+		assertNull(key.getFirstFactorCRTExponent());
+		assertNull(key.getSecondFactorCRTExponent());
+
+		assertNull(key.getFirstCRTCoefficient());
+
+		assertTrue(key.getOtherPrimes().isEmpty());
+
+		assertFalse(key.isPrivate());
+	}
+
+
+	public void testFullConstructorAndSerialization_deprecated()
 		throws Exception {
 
 		URI x5u = new URI("http://example.com/jwk.json");
@@ -992,5 +1103,38 @@ public class RSAKeyTest extends TestCase {
 	public void testSize() {
 
 		assertEquals(2048, new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).build().size());
+	}
+	
+	
+	// For private RSA keys as PKCS#11 handle
+	public void testPrivateKeyHandle()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(1024);
+		KeyPair kp = gen.generateKeyPair();
+		
+		RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic();
+		PrivateKey privateKey = kp.getPrivate(); // simulate private key with inaccessible key material
+		
+		RSAKey rsaJWK = new RSAKey.Builder(publicKey)
+			.privateKey(privateKey)
+			.keyID("1")
+			.build();
+		
+		assertNotNull(rsaJWK.toPublicKey());
+		assertEquals(privateKey, rsaJWK.toPrivateKey());
+		assertTrue(rsaJWK.isPrivate());
+		
+		kp = rsaJWK.toKeyPair();
+		assertNotNull(kp.getPublic());
+		assertEquals(privateKey, kp.getPrivate());
+		
+		JSONObject json = rsaJWK.toJSONObject();
+		assertEquals("RSA", json.get("kty"));
+		assertEquals("1", json.get("kid"));
+		assertEquals(Base64URL.encode(publicKey.getPublicExponent()).toString(), json.get("e"));
+		assertEquals(Base64URL.encode(publicKey.getModulus()).toString(), json.get("n"));
+		assertEquals(4, json.size());
 	}
 }

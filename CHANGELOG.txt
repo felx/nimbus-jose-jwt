@@ -613,7 +613,8 @@ version 4.29 (2016-11-28)
       reading a BoundedInputStream, e.g. in
       DefaultResourceRetriever.retrieveResource(java.net.URL).
 
-version 4.30 (2016-11-30)
-    * Adds ECDSASigner support for private EC keys stored on a secure device
-      (such as smart cards and HSMs).
+version 4.30 (2016-12-01)
+    * RSAKey and ECKey can reference a private key in a PKCS#11 store, such as
+      smart card or HSM.
+    * Adds ECDSASigner support for private EC keys stored in a PKCS#11 store.
 

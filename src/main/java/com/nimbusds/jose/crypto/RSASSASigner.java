@@ -75,9 +75,9 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 
 	/**
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
-	 * This constructor can also accept a private RSA key located in a key
-	 * store that doesn't expose the private key parameters (such as a
-	 * smart card or HSM).
+	 * This constructor can also accept a private RSA key located in a
+	 * PKCS#11 store that doesn't expose the private key parameters (such
+	 * as a smart card or HSM).
 	 *
 	 * @param privateKey The private RSA key. Its algorithm must be "RSA".
 	 *                   Must not be {@code null}.
@@ -95,8 +95,8 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	/**
 	 * Creates a new RSA Signature-Scheme-with-Appendix (RSASSA) signer.
 	 *
-	 * @param rsaJWK The RSA JSON Web Key (JWK). Must contain a private
-	 *               part. Must not be {@code null}.
+	 * @param rsaJWK The RSA JSON Web Key (JWK). Must contain or reference
+	 *               a private part. Must not be {@code null}.
 	 *
 	 * @throws JOSEException If the RSA JWK doesn't contain a private part
 	 *                       or its extraction failed.
@@ -108,7 +108,7 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 			throw new JOSEException("The RSA JWK doesn't contain a private part");
 		}
 
-		privateKey = rsaJWK.toRSAPrivateKey();
+		privateKey = rsaJWK.toPrivateKey();
 	}
 
 
@@ -117,8 +117,8 @@ public class RSASSASigner extends RSASSAProvider implements JWSSigner {
 	 *
 	 * @return The private RSA key. Casting to
 	 *         {@link java.security.interfaces.RSAPrivateKey} may not be
-	 *         possible if the key is located in a key store that doesn't
-	 *         expose the private key parameters.
+	 *         possible if the key is located in a PKCS#11 store that
+	 *         doesn't expose the private key parameters.
 	 */
 	public PrivateKey getPrivateKey() {
 

@@ -49,6 +49,16 @@ import com.nimbusds.jose.JOSEException;
  * Uses the BouncyCastle.org provider for EC key import and export. This class
  * is immutable.
  *
+ * <p>Provides EC JWK import from / export to the following standard Java
+ * interfaces and classes:
+ *
+ * <ul>
+ *     <li>{@link java.security.interfaces.ECPublicKey}
+ *     <li>{@link java.security.interfaces.ECPrivateKey}
+ *     <li>{@link java.security.PrivateKey} for an EC key in a PKCS#11 store
+ *     <li>{@link java.security.KeyPair}
+ * </ul>
+ *
  * <p>Example JSON object representation of a public EC JWK:
  * 
  * <pre>
@@ -80,7 +90,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-11-26
+ * @version 2016-12-01
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -354,6 +364,12 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		 * The private 'd' EC coordinate, optional.
 		 */
 		private Base64URL d;
+		
+		
+		/**
+		 * The private EC key, as PKCS#11 handle, optional.
+		 */
+		private PrivateKey priv;
 
 
 		/**
@@ -485,6 +501,27 @@ public final class ECKey extends JWK implements AssymetricJWK {
 				this.d = encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS());
 			}
 			
+			return this;
+		}
+		
+		
+		/**
+		 * Sets the private EC key, typically for a key located in a
+		 * PKCS#11 store that doesn't expose the private key parameters
+		 * (such as a smart card or HSM).
+		 *
+		 * @param priv The private EC key reference. Its algorithm must
+		 *             be "EC". Must not be {@code null}.
+		 *
+		 * @return This builder.
+		 */
+		public Builder privateKey(final PrivateKey priv) {
+			
+			if (! "EC".equalsIgnoreCase(priv.getAlgorithm())) {
+				throw new IllegalArgumentException("The private key algorithm must be EC");
+			}
+			
+			this.priv = priv;
 			return this;
 		}
 
@@ -658,16 +695,20 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		public ECKey build() {
 
 			try {
-				if (d == null) {
+				if (d == null && priv == null) {
 					// Public key
 					return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c);
 				}
+				
+				if (priv != null) {
+					// PKCS#11 reference to private key
+					return new ECKey(crv, x, y, priv, use, ops, alg, kid, x5u, x5t, x5c);
+				}
 
-				// Pair
+				// Public / private key pair with 'd'
 				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c);
 
 			} catch (IllegalArgumentException e) {
-
 				throw new IllegalStateException(e.getMessage(), e);
 			}
 		}
@@ -688,7 +729,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 */
 	public static Base64URL encodeCoordinate(final int fieldSize, final BigInteger coordinate) {
 
-		byte[] unpadded = BigIntegerUtils.toBytesUnsigned(coordinate);
+		final byte[] unpadded = BigIntegerUtils.toBytesUnsigned(coordinate);
 
 		int bytesToOutput = (fieldSize + 7)/8;
 
@@ -698,7 +739,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			return Base64URL.encode(unpadded);
 		}
 
-		byte[] padded = new byte[bytesToOutput];
+		final byte[] padded = new byte[bytesToOutput];
 
 		System.arraycopy(unpadded, 0, padded, bytesToOutput - unpadded.length, unpadded.length);
 
@@ -725,9 +766,15 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	
 
 	/**
-	 * The private 'd' EC coordinate
+	 * The private 'd' EC coordinate.
 	 */
 	private final Base64URL d;
+	
+	
+	/**
+	 * Private PKCS#11 key handle.
+	 */
+	private final PrivateKey privateKey;
 
 
 	/**
@@ -780,6 +827,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		this.y = y;
 
 		this.d = null;
+		
+		this.privateKey = null;
 	}
 
 
@@ -841,6 +890,67 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		}
 
 		this.d = d;
+		
+		this.privateKey = null;
+	}
+
+
+	/**
+	 * Creates a new public / private Elliptic Curve JSON Web Key (JWK)
+	 * with the specified parameters. The private key is specified by its
+	 * PKCS#11 handle.
+	 *
+	 * @param crv  The cryptographic curve. Must not be {@code null}.
+	 * @param x    The public 'x' coordinate for the elliptic curve point.
+	 *             It is represented as the Base64URL encoding of the
+	 *             coordinate's big endian representation. Must not be
+	 *             {@code null}.
+	 * @param y    The public 'y' coordinate for the elliptic curve point.
+	 *             It is represented as the Base64URL encoding of the
+	 *             coordinate's big endian representation. Must not be
+	 *             {@code null}.
+	 * @param priv The private key as a PKCS#11 handle, {@code null} if not
+	 *             specified.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
+	 * @param ops  The key operations, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID, {@code null} if not specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not
+	 *             specified.
+	 */
+	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final PrivateKey priv,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
+
+		if (crv == null) {
+			throw new IllegalArgumentException("The curve must not be null");
+		}
+
+		this.crv = crv;
+
+		if (x == null) {
+			throw new IllegalArgumentException("The 'x' coordinate must not be null");
+		}
+
+		this.x = x;
+
+		if (y == null) {
+			throw new IllegalArgumentException("The 'y' coordinate must not be null");
+		}
+
+		this.y = y;
+		
+		d = null;
+		
+		this.privateKey = priv;
 	}
 
 
@@ -906,6 +1016,42 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		     encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS()),
 		     use, ops, alg, kid,
 		     x5u, x5t, x5c);
+	}
+
+
+	/**
+	 * Creates a new public / private Elliptic Curve JSON Web Key (JWK)
+	 * with the specified parameters. The private key is specified by its
+	 * PKCS#11 handle.
+	 *
+	 * @param crv  The cryptographic curve. Must not be {@code null}.
+	 * @param pub  The public EC key to represent. Must not be
+	 *             {@code null}.
+	 * @param priv The private key as a PKCS#11 handle, {@code null} if not
+	 *             specified.
+	 * @param use  The key use, {@code null} if not specified or if the key
+	 *             is intended for signing as well as encryption.
+	 * @param ops  The key operations, {@code null} if not specified.
+	 * @param alg  The intended JOSE algorithm for the key, {@code null} if
+	 *             not specified.
+	 * @param kid  The key ID, {@code null} if not specified.
+	 * @param x5u  The X.509 certificate URL, {@code null} if not
+	 *             specified.
+	 * @param x5t  The X.509 certificate thumbprint, {@code null} if not
+	 *             specified.
+	 * @param x5c  The X.509 certificate chain, {@code null} if not
+	 *             specified.
+	 */
+	public ECKey(final Curve crv, final ECPublicKey pub, final PrivateKey priv,
+		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		
+		this(
+			crv,
+			encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
+			encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
+			priv,
+			use, ops, alg, kid, x5u, x5t, x5c);
 	}
 
 
@@ -1099,8 +1245,16 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	@Override
 	public PrivateKey toPrivateKey()
 		throws JOSEException {
-
-		return toECPrivateKey();
+		
+		PrivateKey prv = toECPrivateKey();
+		
+		if (prv != null) {
+			// Return private EC key with key material
+			return prv;
+		}
+		
+		// Return private EC key as PKCS#11 handle, or null
+		return privateKey;
 	}
 	
 
@@ -1142,7 +1296,12 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	public KeyPair toKeyPair(final Provider provider)
 		throws JOSEException {
 
-		return new KeyPair(toECPublicKey(provider), toECPrivateKey(provider));
+		if (privateKey != null) {
+			// Private key as PKCS#11 handle
+			return new KeyPair(toECPublicKey(provider), privateKey);
+		} else {
+			return new KeyPair(toECPublicKey(provider), toECPrivateKey(provider));
+		}
 	}
 
 
@@ -1162,7 +1321,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	@Override
 	public boolean isPrivate() {
 
-		return d != null;
+		return d != null || privateKey != null;
 	}
 
 
