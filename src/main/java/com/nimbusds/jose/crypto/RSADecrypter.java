@@ -205,7 +205,7 @@ public class RSADecrypter extends RSACryptoProvider implements JWEDecrypter, Cri
 
 			int keyLength = header.getEncryptionMethod().cekBitLength();
 
-			// Protect against MMA attack by generating random CEK on failure,
+			// Protect against MMA attack by generating random CEK to be used on decryption failure,
 			// see http://www.ietf.org/mail-archive/web/jose/current/msg01832.html
 			final SecretKey randomCEK = ContentCryptoProvider.generateCEK(header.getEncryptionMethod(), getJCAContext().getSecureRandom());
 
