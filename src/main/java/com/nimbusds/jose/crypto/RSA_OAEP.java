@@ -24,6 +24,7 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -37,7 +38,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. Uses the BouncyCastle.org provider. This class is thread-safe
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-01-24
+ * @version 2016-12-04
  */
 @ThreadSafe
 class RSA_OAEP {
@@ -63,12 +64,13 @@ class RSA_OAEP {
 			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding", provider);
 			cipher.init(Cipher.ENCRYPT_MODE, pub, new SecureRandom());
 			return cipher.doFinal(cek.getEncoded());
-
+			
+		} catch (IllegalBlockSizeException e) {
+			throw new JOSEException("RSA block size exception: The RSA key is too short, try a longer one", e);
 		} catch (Exception e) {
 			// java.security.NoSuchAlgorithmException
 			// java.security.NoSuchPaddingException
 			// java.security.InvalidKeyException
-			// javax.crypto.IllegalBlockSizeException
 			// javax.crypto.BadPaddingException
 			throw new JOSEException(e.getMessage(), e);
 		}

@@ -623,3 +623,9 @@ version 4.31 (2016-12-01)
       encountered Content Encryption Key (CEK) decryption exception during the
       last decrypt run. Intended for logging and debugging purposes.
 
+version 4.31.1 (2016-12-04)
+    * Updates the JOSEException message on RSA IllegalBlockSizeException to
+      indicate that the RSA key is to short, and the chosen encryption method
+      (enc) requires a longer RSA key (issue #203).
+    * Refactors RSA encryption and decryption tests.
+

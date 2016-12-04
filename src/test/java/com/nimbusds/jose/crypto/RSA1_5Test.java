@@ -27,8 +27,10 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
@@ -41,7 +43,7 @@ import junit.framework.TestCase;
  * spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-01
+ * @version 2016-12-04
  */
 public class RSA1_5Test extends TestCase {
 
@@ -239,239 +241,103 @@ public class RSA1_5Test extends TestCase {
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A192GCM));
 		assertTrue(decrypter.supportedEncryptionMethods().contains(EncryptionMethod.A256GCM));
 	}
-
-
-	public void testWithA128CBC_HS256()
+	
+	
+	public void testRoundTripWithAllWithEncs()
 		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-
-		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-
-		assertEquals(PRIVATE_KEY, ((RSADecrypter) decrypter).getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(2048);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		List<EncryptionMethod> encs = Arrays.asList(
+			EncryptionMethod.A128CBC_HS256,
+			EncryptionMethod.A192CBC_HS384,
+			EncryptionMethod.A256CBC_HS512,
+			EncryptionMethod.A128GCM,
+			EncryptionMethod.A192GCM,
+			EncryptionMethod.A256GCM,
+			EncryptionMethod.A128CBC_HS256_DEPRECATED,
+			EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		
+		for (EncryptionMethod enc: encs) {
+			
+			JWEObject jwe = new JWEObject(
+				new JWEHeader(JWEAlgorithm.RSA1_5, enc),
+				new Payload("Hello, world!"));
+			
+			assertEquals(JWEObject.State.UNENCRYPTED, jwe.getState());
+			
+			jwe.encrypt(encrypter);
+			
+			assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
+			
+			String jweString = jwe.serialize();
+			
+			jwe = JWEObject.parse(jweString);
+			
+			jwe.decrypt(decrypter);
+			
+			assertEquals(JWEObject.State.DECRYPTED, jwe.getState());
+			
+			assertEquals("Hello, world!", jwe.getPayload().toString());
+		}
 	}
-
-
-	public void testWithA192CBC_HS384()
+	
+	
+	public void testRoundTripWithAllWithEncs_withBouncyCastleProvider()
 		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A192CBC_HS384);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-
-		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-
-		assertEquals(PRIVATE_KEY, ((RSADecrypter)decrypter).getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA256CBC_HS512()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256CBC_HS512);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-
-		assertEquals(PUBLIC_KEY, ((RSAEncrypter)encrypter).getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-
-		assertEquals(PRIVATE_KEY, ((RSADecrypter)decrypter).getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA128GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128GCM);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA192GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A192GCM);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA256GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256GCM);
-		Payload payload = new Payload("I think therefore I am.");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("I think therefore I am.", payload.toString());
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(2048);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		List<EncryptionMethod> encs = Arrays.asList(
+			EncryptionMethod.A128CBC_HS256,
+			EncryptionMethod.A192CBC_HS384,
+			EncryptionMethod.A256CBC_HS512,
+			EncryptionMethod.A128GCM,
+			EncryptionMethod.A192GCM,
+			EncryptionMethod.A256GCM,
+			EncryptionMethod.A128CBC_HS256_DEPRECATED,
+			EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+		
+		for (EncryptionMethod enc: encs) {
+			
+			JWEObject jwe = new JWEObject(
+				new JWEHeader(JWEAlgorithm.RSA1_5, enc),
+				new Payload("Hello, world!"));
+			
+			assertEquals(JWEObject.State.UNENCRYPTED, jwe.getState());
+			
+			jwe.encrypt(encrypter);
+			
+			assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
+			
+			String jweString = jwe.serialize();
+			
+			jwe = JWEObject.parse(jweString);
+			
+			jwe.decrypt(decrypter);
+			
+			assertEquals(JWEObject.State.DECRYPTED, jwe.getState());
+			
+			assertEquals("Hello, world!", jwe.getPayload().toString());
+		}
 	}
 
 
@@ -506,7 +372,7 @@ public class RSA1_5Test extends TestCase {
 	}
 
 
-	public void testExampleDecrypt()
+	public void testRFCExampleDecrypt()
 		throws Exception {
 
 		// From JWE spec http://tools.ietf.org/html/rfc7516#appendix-A.2
@@ -724,74 +590,6 @@ public class RSA1_5Test extends TestCase {
 	}
 
 
-	public void testWithDeprecatedA128CBC_HS256()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256_DEPRECATED);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithDeprecatedA256CBC_HS512()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A256CBC_HS512_DEPRECATED);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		JWEEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		JWEDecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
 	public void testExampleDecryptDeprecatedA128CBC_HS256()
 		throws Exception {
 
@@ -920,6 +718,30 @@ public class RSA1_5Test extends TestCase {
 		} catch (JOSEException e) {
 			assertEquals("AES/GCM/NoPadding decryption failed: Tag mismatch!", e.getMessage());
 			assertNull(decrypter.getCEKDecryptionException());
+		}
+	}
+	
+	
+	public void testRSAKeyTooShortToEncryptCEK()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(512);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		
+		JWEObject jwe = new JWEObject(
+			new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A256CBC_HS512),
+			new Payload("Hello, world!"));
+		
+		try {
+			jwe.encrypt(encrypter);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("RSA block size exception: The RSA key is too short, try a longer one", e.getMessage());
+			assertNotNull(e.getCause());
 		}
 	}
 }

@@ -26,6 +26,7 @@ import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.MGF1ParameterSpec;
 
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
@@ -42,7 +43,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2014-01-24
+ * @version 2016-12-04
  */
 @ThreadSafe
 class RSA_OAEP_256 {
@@ -71,12 +72,13 @@ class RSA_OAEP_256 {
 			Cipher cipher = CipherHelper.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding", provider);
 			cipher.init(Cipher.ENCRYPT_MODE, pub, algp);
 			return cipher.doFinal(cek.getEncoded());
-
+			
+		} catch (IllegalBlockSizeException e) {
+			throw new JOSEException("RSA block size exception: The RSA key is too short, try a longer one", e);
 		} catch (Exception e) {
 			// java.security.NoSuchAlgorithmException
 			// java.security.NoSuchPaddingException
 			// java.security.InvalidKeyException
-			// javax.crypto.IllegalBlockSizeException
 			// javax.crypto.BadPaddingException
 			throw new JOSEException(e.getMessage(), e);
 		}

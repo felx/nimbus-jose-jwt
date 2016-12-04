@@ -20,10 +20,15 @@ package com.nimbusds.jose.crypto;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
+import java.util.List;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
@@ -36,7 +41,7 @@ import junit.framework.TestCase;
  * JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-06-29
+ * @version 2016-12-04
  */
 public class RSA_OAEPTest extends TestCase {
 
@@ -147,159 +152,107 @@ public class RSA_OAEPTest extends TestCase {
 			fail(e.getMessage());
 		}
 	}
-
-
-	public void testWithA128GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A128GCM);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testwithSHA256AndA128GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, (decrypter).getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA192GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A192GCM);
-		Payload payload = new Payload("Hello world!");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("Hello world!", payload.toString());
-	}
-
-
-	public void testWithA256GCM()
-		throws Exception {
-
-		JWEHeader header = new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A256GCM);
-		Payload payload = new Payload("I think therefore I am.");
-
-		JWEObject jweObject = new JWEObject(header, payload);
-
-		assertEquals("State check", JWEObject.State.UNENCRYPTED, jweObject.getState());
-
-		RSAEncrypter encrypter = new RSAEncrypter(PUBLIC_KEY);
-		encrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PUBLIC_KEY, encrypter.getPublicKey());
-
-		jweObject.encrypt(encrypter);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		String jweString = jweObject.serialize();
-
-		jweObject = JWEObject.parse(jweString);
-
-		assertEquals("State check", JWEObject.State.ENCRYPTED, jweObject.getState());
-
-		RSADecrypter decrypter = new RSADecrypter(PRIVATE_KEY);
-		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
-		assertEquals(PRIVATE_KEY, decrypter.getPrivateKey());
-
-		jweObject.decrypt(decrypter);
-
-		assertEquals("State check", JWEObject.State.DECRYPTED, jweObject.getState());
-
-		payload = jweObject.getPayload();
-
-		assertEquals("I think therefore I am.", payload.toString());
-	}
-
 	
-	public void testDecryptWith256GCM()
+	
+	public void testRoundTripWithAllWithEncs()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(2048);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		List<EncryptionMethod> encs = Arrays.asList(
+			EncryptionMethod.A128CBC_HS256,
+			EncryptionMethod.A192CBC_HS384,
+			EncryptionMethod.A256CBC_HS512,
+			EncryptionMethod.A128GCM,
+			EncryptionMethod.A192GCM,
+			EncryptionMethod.A256GCM,
+			EncryptionMethod.A128CBC_HS256_DEPRECATED,
+			EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		
+		for (EncryptionMethod enc: encs) {
+			
+			JWEObject jwe = new JWEObject(
+				new JWEHeader(JWEAlgorithm.RSA_OAEP, enc),
+				new Payload("Hello, world!"));
+			
+			assertEquals(JWEObject.State.UNENCRYPTED, jwe.getState());
+			
+			jwe.encrypt(encrypter);
+			
+			assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
+			
+			String jweString = jwe.serialize();
+			
+			jwe = JWEObject.parse(jweString);
+			
+			jwe.decrypt(decrypter);
+			
+			assertEquals(JWEObject.State.DECRYPTED, jwe.getState());
+			
+			assertEquals("Hello, world!", jwe.getPayload().toString());
+		}
+	}
+	
+	
+	public void testRoundTripWithAllWithEncs_withBouncyCastleProvider()
+		throws Exception {
+		
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(2048);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		List<EncryptionMethod> encs = Arrays.asList(
+			EncryptionMethod.A128CBC_HS256,
+			EncryptionMethod.A192CBC_HS384,
+			EncryptionMethod.A256CBC_HS512,
+			EncryptionMethod.A128GCM,
+			EncryptionMethod.A192GCM,
+			EncryptionMethod.A256GCM,
+			EncryptionMethod.A128CBC_HS256_DEPRECATED,
+			EncryptionMethod.A256CBC_HS512_DEPRECATED);
+		
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
+		encrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+		
+		RSADecrypter decrypter = new RSADecrypter(privateKey);
+		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
+		
+		for (EncryptionMethod enc: encs) {
+			
+			JWEObject jwe = new JWEObject(
+				new JWEHeader(JWEAlgorithm.RSA_OAEP_256, enc),
+				new Payload("Hello, world!"));
+			
+			assertEquals(JWEObject.State.UNENCRYPTED, jwe.getState());
+			
+			jwe.encrypt(encrypter);
+			
+			assertEquals(JWEObject.State.ENCRYPTED, jwe.getState());
+			
+			String jweString = jwe.serialize();
+			
+			jwe = JWEObject.parse(jweString);
+			
+			jwe.decrypt(decrypter);
+			
+			assertEquals(JWEObject.State.DECRYPTED, jwe.getState());
+			
+			assertEquals("Hello, world!", jwe.getPayload().toString());
+		}
+	}
+	
+	
+	public void testRFCExampleDecryptWith256GCM()
 		throws Exception {
 
 		// JWE object from spec, appendix A-1
@@ -338,149 +291,143 @@ public class RSA_OAEPTest extends TestCase {
 
 	public void testCookbookExample()
 		throws Exception {
-
+		
 		// See http://tools.ietf.org/html/rfc7520#section-5.2
-
-		String json="{"+
-			"\"kty\":\"RSA\","+
-			"\"kid\":\"samwise.gamgee@hobbiton.example\","+
-			"\"use\":\"enc\","+
-			"\"n\":\"wbdxI55VaanZXPY29Lg5hdmv2XhvqAhoxUkanfzf2-5zVUxa6prHRr"+
-			"I4pP1AhoqJRlZfYtWWd5mmHRG2pAHIlh0ySJ9wi0BioZBl1XP2e-C-Fy"+
-			"XJGcTy0HdKQWlrfhTm42EW7Vv04r4gfao6uxjLGwfpGrZLarohiWCPnk"+
-			"Nrg71S2CuNZSQBIPGjXfkmIy2tl_VWgGnL22GplyXj5YlBLdxXp3XeSt"+
-			"sqo571utNfoUTU8E4qdzJ3U1DItoVkPGsMwlmmnJiwA7sXRItBCivR4M"+
-			"5qnZtdw-7v4WuR4779ubDuJ5nalMv2S66-RPcnFAzWSKxtBDnFJJDGIU"+
-			"e7Tzizjg1nms0Xq_yPub_UOlWn0ec85FCft1hACpWG8schrOBeNqHBOD"+
-			"FskYpUc2LC5JA2TaPF2dA67dg1TTsC_FupfQ2kNGcE1LgprxKHcVWYQb"+
-			"86B-HozjHZcqtauBzFNV5tbTuB-TpkcvJfNcFLlH3b8mb-H_ox35FjqB"+
-			"SAjLKyoeqfKTpVjvXhd09knwgJf6VKq6UC418_TOljMVfFTWXUxlnfhO"+
-			"OnzW6HSSzD1c9WrCuVzsUMv54szidQ9wf1cYWf3g5qFDxDQKis99gcDa"+
-			"iCAwM3yEBIzuNeeCa5dartHDb1xEB_HcHSeYbghbMjGfasvKn0aZRsnT"+
-			"yC0xhWBlsolZE\","+
-			"\"e\":\"AQAB\","+
-			"\"alg\":\"RSA-OAEP\","+
-			"\"d\":\"n7fzJc3_WG59VEOBTkayzuSMM780OJQuZjN_KbH8lOZG25ZoA7T4Bx"+
-			"cc0xQn5oZE5uSCIwg91oCt0JvxPcpmqzaJZg1nirjcWZ-oBtVk7gCAWq"+
-			"-B3qhfF3izlbkosrzjHajIcY33HBhsy4_WerrXg4MDNE4HYojy68TcxT"+
-			"2LYQRxUOCf5TtJXvM8olexlSGtVnQnDRutxEUCwiewfmmrfveEogLx9E"+
-			"A-KMgAjTiISXxqIXQhWUQX1G7v_mV_Hr2YuImYcNcHkRvp9E7ook0876"+
-			"DhkO8v4UOZLwA1OlUX98mkoqwc58A_Y2lBYbVx1_s5lpPsEqbbH-nqIj"+
-			"h1fL0gdNfihLxnclWtW7pCztLnImZAyeCWAG7ZIfv-Rn9fLIv9jZ6r7r"+
-			"-MSH9sqbuziHN2grGjD_jfRluMHa0l84fFKl6bcqN1JWxPVhzNZo01yD"+
-			"F-1LiQnqUYSepPf6X3a2SOdkqBRiquE6EvLuSYIDpJq3jDIsgoL8Mo1L"+
-			"oomgiJxUwL_GWEOGu28gplyzm-9Q0U0nyhEf1uhSR8aJAQWAiFImWH5W"+
-			"_IQT9I7-yrindr_2fWQ_i1UgMsGzA7aOGzZfPljRy6z-tY_KuBG00-28"+
-			"S_aWvjyUc-Alp8AUyKjBZ-7CWH32fGWK48j1t-zomrwjL_mnhsPbGs0c"+
-			"9WsWgRzI-K8gE\","+
-			"\"p\":\"7_2v3OQZzlPFcHyYfLABQ3XP85Es4hCdwCkbDeltaUXgVy9l9etKgh"+
-			"vM4hRkOvbb01kYVuLFmxIkCDtpi-zLCYAdXKrAK3PtSbtzld_XZ9nlsY"+
-			"a_QZWpXB_IrtFjVfdKUdMz94pHUhFGFj7nr6NNxfpiHSHWFE1zD_AC3m"+
-			"Y46J961Y2LRnreVwAGNw53p07Db8yD_92pDa97vqcZOdgtybH9q6uma-"+
-			"RFNhO1AoiJhYZj69hjmMRXx-x56HO9cnXNbmzNSCFCKnQmn4GQLmRj9s"+
-			"fbZRqL94bbtE4_e0Zrpo8RNo8vxRLqQNwIy85fc6BRgBJomt8QdQvIgP"+
-			"gWCv5HoQ\","+
-			"\"q\":\"zqOHk1P6WN_rHuM7ZF1cXH0x6RuOHq67WuHiSknqQeefGBA9PWs6Zy"+
-			"KQCO-O6mKXtcgE8_Q_hA2kMRcKOcvHil1hqMCNSXlflM7WPRPZu2qCDc"+
-			"qssd_uMbP-DqYthH_EzwL9KnYoH7JQFxxmcv5An8oXUtTwk4knKjkIYG"+
-			"RuUwfQTus0w1NfjFAyxOOiAQ37ussIcE6C6ZSsM3n41UlbJ7TCqewzVJ"+
-			"aPJN5cxjySPZPD3Vp01a9YgAD6a3IIaKJdIxJS1ImnfPevSJQBE79-EX"+
-			"e2kSwVgOzvt-gsmM29QQ8veHy4uAqca5dZzMs7hkkHtw1z0jHV90epQJ"+
-			"JlXXnH8Q\","+
-			"\"dp\":\"19oDkBh1AXelMIxQFm2zZTqUhAzCIr4xNIGEPNoDt1jK83_FJA-xn"+
-			"x5kA7-1erdHdms_Ef67HsONNv5A60JaR7w8LHnDiBGnjdaUmmuO8XAxQ"+
-			"J_ia5mxjxNjS6E2yD44USo2JmHvzeeNczq25elqbTPLhUpGo1IZuG72F"+
-			"ZQ5gTjXoTXC2-xtCDEUZfaUNh4IeAipfLugbpe0JAFlFfrTDAMUFpC3i"+
-			"XjxqzbEanflwPvj6V9iDSgjj8SozSM0dLtxvu0LIeIQAeEgT_yXcrKGm"+
-			"pKdSO08kLBx8VUjkbv_3Pn20Gyu2YEuwpFlM_H1NikuxJNKFGmnAq9Lc"+
-			"nwwT0jvoQ\","+
-			"\"dq\":\"S6p59KrlmzGzaQYQM3o0XfHCGvfqHLYjCO557HYQf72O9kLMCfd_1"+
-			"VBEqeD-1jjwELKDjck8kOBl5UvohK1oDfSP1DleAy-cnmL29DqWmhgwM"+
-			"1ip0CCNmkmsmDSlqkUXDi6sAaZuntyukyflI-qSQ3C_BafPyFaKrt1fg"+
-			"dyEwYa08pESKwwWisy7KnmoUvaJ3SaHmohFS78TJ25cfc10wZ9hQNOrI"+
-			"ChZlkiOdFCtxDqdmCqNacnhgE3bZQjGp3n83ODSz9zwJcSUvODlXBPc2"+
-			"AycH6Ci5yjbxt4Ppox_5pjm6xnQkiPgj01GpsUssMmBN7iHVsrE7N2iz"+
-			"nBNCeOUIQ\","+
-			"\"qi\":\"FZhClBMywVVjnuUud-05qd5CYU0dK79akAgy9oX6RX6I3IIIPckCc"+
-			"iRrokxglZn-omAY5CnCe4KdrnjFOT5YUZE7G_Pg44XgCXaarLQf4hl80"+
-			"oPEf6-jJ5Iy6wPRx7G2e8qLxnh9cOdf-kRqgOS3F48Ucvw3ma5V6KGMw"+
-			"QqWFeV31XtZ8l5cVI-I3NzBS7qltpUVgz2Ju021eyc7IlqgzR98qKONl"+
-			"27DuEES0aK0WE97jnsyO27Yp88Wa2RiBrEocM89QZI1seJiGDizHRUP4"+
-			"UZxw9zsXww46wy0P6f9grnYp7t8LkyDDk8eoI4KX6SNMNVcyVS9IWjlq"+
-			"8EzqZEKIA\""+
+		
+		String json = "{" +
+			"\"kty\":\"RSA\"," +
+			"\"kid\":\"samwise.gamgee@hobbiton.example\"," +
+			"\"use\":\"enc\"," +
+			"\"n\":\"wbdxI55VaanZXPY29Lg5hdmv2XhvqAhoxUkanfzf2-5zVUxa6prHRr" +
+			"I4pP1AhoqJRlZfYtWWd5mmHRG2pAHIlh0ySJ9wi0BioZBl1XP2e-C-Fy" +
+			"XJGcTy0HdKQWlrfhTm42EW7Vv04r4gfao6uxjLGwfpGrZLarohiWCPnk" +
+			"Nrg71S2CuNZSQBIPGjXfkmIy2tl_VWgGnL22GplyXj5YlBLdxXp3XeSt" +
+			"sqo571utNfoUTU8E4qdzJ3U1DItoVkPGsMwlmmnJiwA7sXRItBCivR4M" +
+			"5qnZtdw-7v4WuR4779ubDuJ5nalMv2S66-RPcnFAzWSKxtBDnFJJDGIU" +
+			"e7Tzizjg1nms0Xq_yPub_UOlWn0ec85FCft1hACpWG8schrOBeNqHBOD" +
+			"FskYpUc2LC5JA2TaPF2dA67dg1TTsC_FupfQ2kNGcE1LgprxKHcVWYQb" +
+			"86B-HozjHZcqtauBzFNV5tbTuB-TpkcvJfNcFLlH3b8mb-H_ox35FjqB" +
+			"SAjLKyoeqfKTpVjvXhd09knwgJf6VKq6UC418_TOljMVfFTWXUxlnfhO" +
+			"OnzW6HSSzD1c9WrCuVzsUMv54szidQ9wf1cYWf3g5qFDxDQKis99gcDa" +
+			"iCAwM3yEBIzuNeeCa5dartHDb1xEB_HcHSeYbghbMjGfasvKn0aZRsnT" +
+			"yC0xhWBlsolZE\"," +
+			"\"e\":\"AQAB\"," +
+			"\"alg\":\"RSA-OAEP\"," +
+			"\"d\":\"n7fzJc3_WG59VEOBTkayzuSMM780OJQuZjN_KbH8lOZG25ZoA7T4Bx" +
+			"cc0xQn5oZE5uSCIwg91oCt0JvxPcpmqzaJZg1nirjcWZ-oBtVk7gCAWq" +
+			"-B3qhfF3izlbkosrzjHajIcY33HBhsy4_WerrXg4MDNE4HYojy68TcxT" +
+			"2LYQRxUOCf5TtJXvM8olexlSGtVnQnDRutxEUCwiewfmmrfveEogLx9E" +
+			"A-KMgAjTiISXxqIXQhWUQX1G7v_mV_Hr2YuImYcNcHkRvp9E7ook0876" +
+			"DhkO8v4UOZLwA1OlUX98mkoqwc58A_Y2lBYbVx1_s5lpPsEqbbH-nqIj" +
+			"h1fL0gdNfihLxnclWtW7pCztLnImZAyeCWAG7ZIfv-Rn9fLIv9jZ6r7r" +
+			"-MSH9sqbuziHN2grGjD_jfRluMHa0l84fFKl6bcqN1JWxPVhzNZo01yD" +
+			"F-1LiQnqUYSepPf6X3a2SOdkqBRiquE6EvLuSYIDpJq3jDIsgoL8Mo1L" +
+			"oomgiJxUwL_GWEOGu28gplyzm-9Q0U0nyhEf1uhSR8aJAQWAiFImWH5W" +
+			"_IQT9I7-yrindr_2fWQ_i1UgMsGzA7aOGzZfPljRy6z-tY_KuBG00-28" +
+			"S_aWvjyUc-Alp8AUyKjBZ-7CWH32fGWK48j1t-zomrwjL_mnhsPbGs0c" +
+			"9WsWgRzI-K8gE\"," +
+			"\"p\":\"7_2v3OQZzlPFcHyYfLABQ3XP85Es4hCdwCkbDeltaUXgVy9l9etKgh" +
+			"vM4hRkOvbb01kYVuLFmxIkCDtpi-zLCYAdXKrAK3PtSbtzld_XZ9nlsY" +
+			"a_QZWpXB_IrtFjVfdKUdMz94pHUhFGFj7nr6NNxfpiHSHWFE1zD_AC3m" +
+			"Y46J961Y2LRnreVwAGNw53p07Db8yD_92pDa97vqcZOdgtybH9q6uma-" +
+			"RFNhO1AoiJhYZj69hjmMRXx-x56HO9cnXNbmzNSCFCKnQmn4GQLmRj9s" +
+			"fbZRqL94bbtE4_e0Zrpo8RNo8vxRLqQNwIy85fc6BRgBJomt8QdQvIgP" +
+			"gWCv5HoQ\"," +
+			"\"q\":\"zqOHk1P6WN_rHuM7ZF1cXH0x6RuOHq67WuHiSknqQeefGBA9PWs6Zy" +
+			"KQCO-O6mKXtcgE8_Q_hA2kMRcKOcvHil1hqMCNSXlflM7WPRPZu2qCDc" +
+			"qssd_uMbP-DqYthH_EzwL9KnYoH7JQFxxmcv5An8oXUtTwk4knKjkIYG" +
+			"RuUwfQTus0w1NfjFAyxOOiAQ37ussIcE6C6ZSsM3n41UlbJ7TCqewzVJ" +
+			"aPJN5cxjySPZPD3Vp01a9YgAD6a3IIaKJdIxJS1ImnfPevSJQBE79-EX" +
+			"e2kSwVgOzvt-gsmM29QQ8veHy4uAqca5dZzMs7hkkHtw1z0jHV90epQJ" +
+			"JlXXnH8Q\"," +
+			"\"dp\":\"19oDkBh1AXelMIxQFm2zZTqUhAzCIr4xNIGEPNoDt1jK83_FJA-xn" +
+			"x5kA7-1erdHdms_Ef67HsONNv5A60JaR7w8LHnDiBGnjdaUmmuO8XAxQ" +
+			"J_ia5mxjxNjS6E2yD44USo2JmHvzeeNczq25elqbTPLhUpGo1IZuG72F" +
+			"ZQ5gTjXoTXC2-xtCDEUZfaUNh4IeAipfLugbpe0JAFlFfrTDAMUFpC3i" +
+			"XjxqzbEanflwPvj6V9iDSgjj8SozSM0dLtxvu0LIeIQAeEgT_yXcrKGm" +
+			"pKdSO08kLBx8VUjkbv_3Pn20Gyu2YEuwpFlM_H1NikuxJNKFGmnAq9Lc" +
+			"nwwT0jvoQ\"," +
+			"\"dq\":\"S6p59KrlmzGzaQYQM3o0XfHCGvfqHLYjCO557HYQf72O9kLMCfd_1" +
+			"VBEqeD-1jjwELKDjck8kOBl5UvohK1oDfSP1DleAy-cnmL29DqWmhgwM" +
+			"1ip0CCNmkmsmDSlqkUXDi6sAaZuntyukyflI-qSQ3C_BafPyFaKrt1fg" +
+			"dyEwYa08pESKwwWisy7KnmoUvaJ3SaHmohFS78TJ25cfc10wZ9hQNOrI" +
+			"ChZlkiOdFCtxDqdmCqNacnhgE3bZQjGp3n83ODSz9zwJcSUvODlXBPc2" +
+			"AycH6Ci5yjbxt4Ppox_5pjm6xnQkiPgj01GpsUssMmBN7iHVsrE7N2iz" +
+			"nBNCeOUIQ\"," +
+			"\"qi\":\"FZhClBMywVVjnuUud-05qd5CYU0dK79akAgy9oX6RX6I3IIIPckCc" +
+			"iRrokxglZn-omAY5CnCe4KdrnjFOT5YUZE7G_Pg44XgCXaarLQf4hl80" +
+			"oPEf6-jJ5Iy6wPRx7G2e8qLxnh9cOdf-kRqgOS3F48Ucvw3ma5V6KGMw" +
+			"QqWFeV31XtZ8l5cVI-I3NzBS7qltpUVgz2Ju021eyc7IlqgzR98qKONl" +
+			"27DuEES0aK0WE97jnsyO27Yp88Wa2RiBrEocM89QZI1seJiGDizHRUP4" +
+			"UZxw9zsXww46wy0P6f9grnYp7t8LkyDDk8eoI4KX6SNMNVcyVS9IWjlq" +
+			"8EzqZEKIA\"" +
 			"}";
-
+		
 		RSAKey jwk = RSAKey.parse(json);
-
-
-		String jwe = "eyJhbGciOiJSU0EtT0FFUCIsImtpZCI6InNhbXdpc2UuZ2FtZ2VlQGhvYmJpdG"+
-			"9uLmV4YW1wbGUiLCJlbmMiOiJBMjU2R0NNIn0"+
-			"."+
-			"rT99rwrBTbTI7IJM8fU3Eli7226HEB7IchCxNuh7lCiud48LxeolRdtFF4nzQi"+
-			"beYOl5S_PJsAXZwSXtDePz9hk-BbtsTBqC2UsPOdwjC9NhNupNNu9uHIVftDyu"+
-			"cvI6hvALeZ6OGnhNV4v1zx2k7O1D89mAzfw-_kT3tkuorpDU-CpBENfIHX1Q58"+
-			"-Aad3FzMuo3Fn9buEP2yXakLXYa15BUXQsupM4A1GD4_H4Bd7V3u9h8Gkg8Bpx"+
-			"KdUV9ScfJQTcYm6eJEBz3aSwIaK4T3-dwWpuBOhROQXBosJzS1asnuHtVMt2pK"+
-			"IIfux5BC6huIvmY7kzV7W7aIUrpYm_3H4zYvyMeq5pGqFmW2k8zpO878TRlZx7"+
-			"pZfPYDSXZyS0CfKKkMozT_qiCwZTSz4duYnt8hS4Z9sGthXn9uDqd6wycMagnQ"+
-			"fOTs_lycTWmY-aqWVDKhjYNRf03NiwRtb5BE-tOdFwCASQj3uuAgPGrO2AWBe3"+
-			"8UjQb0lvXn1SpyvYZ3WFc7WOJYaTa7A8DRn6MC6T-xDmMuxC0G7S2rscw5lQQU"+
-			"06MvZTlFOt0UvfuKBa03cxA_nIBIhLMjY2kOTxQMmpDPTr6Cbo8aKaOnx6ASE5"+
-			"Jx9paBpnNmOOKH35j_QlrQhDWUN6A2Gg8iFayJ69xDEdHAVCGRzN3woEI2ozDR"+
-			"s"+
-			"."+
-			"-nBoKLH0YkLZPSI9"+
-			"."+
-			"o4k2cnGN8rSSw3IDo1YuySkqeS_t2m1GXklSgqBdpACm6UJuJowOHC5ytjqYgR"+
-			"L-I-soPlwqMUf4UgRWWeaOGNw6vGW-xyM01lTYxrXfVzIIaRdhYtEMRBvBWbEw"+
-			"P7ua1DRfvaOjgZv6Ifa3brcAM64d8p5lhhNcizPersuhw5f-pGYzseva-TUaL8"+
-			"iWnctc-sSwy7SQmRkfhDjwbz0fz6kFovEgj64X1I5s7E6GLp5fnbYGLa1QUiML"+
-			"7Cc2GxgvI7zqWo0YIEc7aCflLG1-8BboVWFdZKLK9vNoycrYHumwzKluLWEbSV"+
-			"maPpOslY2n525DxDfWaVFUfKQxMF56vn4B9QMpWAbnypNimbM8zVOw"+
-			"."+
+		
+		
+		String jwe = "eyJhbGciOiJSU0EtT0FFUCIsImtpZCI6InNhbXdpc2UuZ2FtZ2VlQGhvYmJpdG" +
+			"9uLmV4YW1wbGUiLCJlbmMiOiJBMjU2R0NNIn0" +
+			"." +
+			"rT99rwrBTbTI7IJM8fU3Eli7226HEB7IchCxNuh7lCiud48LxeolRdtFF4nzQi" +
+			"beYOl5S_PJsAXZwSXtDePz9hk-BbtsTBqC2UsPOdwjC9NhNupNNu9uHIVftDyu" +
+			"cvI6hvALeZ6OGnhNV4v1zx2k7O1D89mAzfw-_kT3tkuorpDU-CpBENfIHX1Q58" +
+			"-Aad3FzMuo3Fn9buEP2yXakLXYa15BUXQsupM4A1GD4_H4Bd7V3u9h8Gkg8Bpx" +
+			"KdUV9ScfJQTcYm6eJEBz3aSwIaK4T3-dwWpuBOhROQXBosJzS1asnuHtVMt2pK" +
+			"IIfux5BC6huIvmY7kzV7W7aIUrpYm_3H4zYvyMeq5pGqFmW2k8zpO878TRlZx7" +
+			"pZfPYDSXZyS0CfKKkMozT_qiCwZTSz4duYnt8hS4Z9sGthXn9uDqd6wycMagnQ" +
+			"fOTs_lycTWmY-aqWVDKhjYNRf03NiwRtb5BE-tOdFwCASQj3uuAgPGrO2AWBe3" +
+			"8UjQb0lvXn1SpyvYZ3WFc7WOJYaTa7A8DRn6MC6T-xDmMuxC0G7S2rscw5lQQU" +
+			"06MvZTlFOt0UvfuKBa03cxA_nIBIhLMjY2kOTxQMmpDPTr6Cbo8aKaOnx6ASE5" +
+			"Jx9paBpnNmOOKH35j_QlrQhDWUN6A2Gg8iFayJ69xDEdHAVCGRzN3woEI2ozDR" +
+			"s" +
+			"." +
+			"-nBoKLH0YkLZPSI9" +
+			"." +
+			"o4k2cnGN8rSSw3IDo1YuySkqeS_t2m1GXklSgqBdpACm6UJuJowOHC5ytjqYgR" +
+			"L-I-soPlwqMUf4UgRWWeaOGNw6vGW-xyM01lTYxrXfVzIIaRdhYtEMRBvBWbEw" +
+			"P7ua1DRfvaOjgZv6Ifa3brcAM64d8p5lhhNcizPersuhw5f-pGYzseva-TUaL8" +
+			"iWnctc-sSwy7SQmRkfhDjwbz0fz6kFovEgj64X1I5s7E6GLp5fnbYGLa1QUiML" +
+			"7Cc2GxgvI7zqWo0YIEc7aCflLG1-8BboVWFdZKLK9vNoycrYHumwzKluLWEbSV" +
+			"maPpOslY2n525DxDfWaVFUfKQxMF56vn4B9QMpWAbnypNimbM8zVOw" +
+			"." +
 			"UCGiqJxhBI3IFVdPalHHvA";
-
+		
 		JWEObject jweObject = JWEObject.parse(jwe);
-
+		
 		assertEquals(JWEAlgorithm.RSA_OAEP, jweObject.getHeader().getAlgorithm());
 		assertEquals(EncryptionMethod.A256GCM, jweObject.getHeader().getEncryptionMethod());
 		assertEquals("samwise.gamgee@hobbiton.example", jweObject.getHeader().getKeyID());
-
+		
 		RSADecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
 		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
-
+		
 		jweObject.decrypt(decrypter);
-
+		
 		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
 	}
 	
-	/**
-	 * RSA OAEP 256 JWE example from Brian Campbell (JOSE4J).
-	 */
-	public void testRSAOAEP256()
+	
+	public void testRSAKeyTooShortToEncryptCEK()
 		throws Exception {
 		
-		String jwkString = "{\"kty\":\"RSA\",\"n\":\"2cQJH1f6yF9DcGa8Cmbnhn4LHLs5L6kNb2rxkrNFZArJLRaKvaC3tMCKZ8ZgIpO9bVMPx5UMjJoaf7p9O5BSApVqA2J10fUbdSIomCcDwvGo0eyhty0DILLWTMXzGEVM3BXzuJQoeDkuUCXXcCwA4Msyyd2OHVu-pB2OrGv6fcjHwjINty3UoKm08lCvAevBKHsuA-FFwQII9bycvRx5wRqFUjdMAyiOmLYBHBaJSi11g3HVexMcb29v14PSlVzdGUMN8oboa-zcIyaPrIiczLqAkSXQNdEFHrjsJHfFeNMfOblLM7icKN_tyWujYeItt4kqUIimPn5dHjwgcQYE7w\",\"e\":\"AQAB\",\"d\":\"dyUz3ItVceX1Tv1WqtZMnKA_0jN5gWMcL7ayf5JISAlCssGfnUre2C10TH0UQjbVMIh-nLMnD5KNJw9Qz5MR28oGG932Gq7hm__ZeA34l-OCe4DdpgwhpvVSHOU9MS1RdSUpmPavAcA_X6ikrAHXZSaoHhxzUgrNTpvBYQMfJUv_492fStIseQ9rwAMOpCWOiWMZOQm3KJVTLLunXdKf_UxmzmKXYKYZWke3AWIzUqnOfqIjfDTMunF4UWU0zKlhcsaQNmYMVrJGajD1bJdy_dbUU3LE8sx-bdkUI6oBk-sFtTTVyVdQcetG9kChJ5EnY5R6tt_4_xFG5kxzTo6qaQ\",\"p\":\"7yQmgE60SL7QrXpAJhChLgKnXWi6C8tVx1lA8FTpphpLaCtK-HbgBVHCprC2CfaM1mxFJZahxgFjC9ehuV8OzMNyFs8kekS82EsQGksi8HJPxyR1fU6ATa36ogPG0nNaqm3EDmYyjowhntgBz2OkbFAsTMHTdna-pZBRJa9lm5U\",\"q\":\"6R4dzo9LwHLO73EMQPQsmwXjVOvAS5W6rgQ-BCtMhec_QosAXIVE3AGyfweqZm6rurXCVFykDLwJ30GepLQ8nTlzeV6clx0x70saGGKKVmCsHuVYWwgIRyJTrt4SX29NQDZ_FE52NlO3OhPkj1ExSk_pGMqGRFd26K8g0jJsXXM\",\"dp\":\"VByn-hs0qB2Ncmb8ZycUOgWu7ljmjz1up1ZKU_3ZzJWVDkej7-6H7vcJ-u1OqgRxFv4v9_-aWPWl68VlWbkIkJbx6vniv6qrrXwBZu4klOPwEYBOXsucrzXRYOjpJp5yNl2zRslFYQQC00bwpAxNCdfNLRZDlXhAqCUxlYqyt10\",\"dq\":\"MJFbuGtWZvQEdRJicS3uFSY25LxxRc4eJJ8xpIC44rT5Ew4Otzf0zrlzzM92Cv1HvhCcOiNK8nRCwkbTnJEIh-EuU70IdttYSfilqSruk2x0r8Msk1qrDtbyBF60CToRKC2ycDKgolTyuaDnX4yU7lyTvdyD-L0YQwYpmmFy_k0\",\"qi\":\"vy7XCwZ3jyMGik81TIZDAOQKC8FVUc0TG5KVYfti4tgwzUqFwtuB8Oc1ctCKRbE7uZUPwZh4OsCTLqIvqBQda_kaxOxo5EF7iXj6yHmZ2s8P_Z_u3JLuh-oAT_6kmbLx6CAO0DbtKtxp24Ivc1hDfqSwWORgN1AOrSRCmE3nwxg\"}";
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(512);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
 		
-		RSAKey jwk = RSAKey.parse(jwkString);
+		RSAEncrypter encrypter = new RSAEncrypter(publicKey);
 		
-		String jweString = "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4Q0JDLUhTMjU2In0.fL5IL5cMCjjU9G9_ZjsD2XO0HIwTOwbVwulcZVw31_rx2qTcHzbYhIvrvbcVLTfJzn8xbQ3UEL442ZgZ1PcFYKENYePXiEyvYxPN8dmvj_OfLSJDEqR6kvwOb6nghGtxfzdB_VRvFt2eehbCA3gWpiOYHHvSTFdBPGx2KZHQisLz3oZR8EWiZ1woEpHy8a7FoQ2zzuDlZEJQOUrh09b_EJxmcE2jL6wmEtgabyxy3VgWg3GqSPUISlJZV9HThuVJezzktJdpntRDnAPUqjc8IwByGpMleIQcPuBUseRRPr_OsroOJ6eTl5DuFCmBOKb-eNNw5v-GEcVYr1w7X9oXoA.0frdIwx8P8UAzh1s9_PgOA.RAzILH0xfs0yxzML1CzzGExCfE2_wzWKs0FVuXfM8R5H68yTqTbqIqRCp2feAH5GSvluzmztk2_CkGNSjAyoaw.4nMUXOgmgWvM-08tIZ-h5w";
+		JWEObject jwe = new JWEObject(
+			new JWEHeader(JWEAlgorithm.RSA_OAEP, EncryptionMethod.A256CBC_HS512),
+			new Payload("Hello, world!"));
 		
-		JWEObject jweObject = JWEObject.parse(jweString);
-		
-		assertEquals(JWEAlgorithm.RSA_OAEP_256, jweObject.getHeader().getAlgorithm());
-		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
-
-		RSADecrypter decrypter = new RSADecrypter(jwk.toRSAPrivateKey());
-		
-		// Get bouncycastle for the test
-		decrypter.getJCAContext().setProvider(BouncyCastleProviderSingleton.getInstance());
-		
-		jweObject.decrypt(decrypter);
-		
-		assertEquals(JWEObject.State.DECRYPTED, jweObject.getState());
-		
-		assertEquals("Well, as of this moment, they're on DOUBLE SECRET PROBATION!", jweObject.getPayload().toString());
-		
+		try {
+			jwe.encrypt(encrypter);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("RSA block size exception: The RSA key is too short, try a longer one", e.getMessage());
+			assertNotNull(e.getCause());
+		}
 	}
 }

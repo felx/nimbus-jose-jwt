@@ -21,17 +21,14 @@ package com.nimbusds.jose.crypto;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.interfaces.RSAPublicKey;
-
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.ByteUtils;
 import net.jcip.annotations.ThreadSafe;
-
-import com.nimbusds.jose.JOSEException;
 
 
 /**
@@ -39,7 +36,7 @@ import com.nimbusds.jose.JOSEException;
  * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-01
+ * @version 2016-12-04
  */
 @ThreadSafe
 class RSA1_5 {
@@ -65,12 +62,12 @@ class RSA1_5 {
 			Cipher cipher = CipherHelper.getInstance("RSA/ECB/PKCS1Padding", provider);
 			cipher.init(Cipher.ENCRYPT_MODE, pub);
 			return cipher.doFinal(cek.getEncoded());
-
+			
+		} catch (IllegalBlockSizeException e) {
+			throw new JOSEException("RSA block size exception: The RSA key is too short, try a longer one", e);
 		} catch (Exception e) {
-
 			// java.security.NoSuchAlgorithmException
 			// java.security.InvalidKeyException
-			// javax.crypto.IllegalBlockSizeException
 			throw new JOSEException("Couldn't encrypt Content Encryption Key (CEK): " + e.getMessage(), e);
 		}
 	}
