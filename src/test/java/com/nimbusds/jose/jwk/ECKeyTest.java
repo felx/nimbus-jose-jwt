@@ -42,7 +42,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-01
+ * @version 2016-12-05
  */
 public class ECKeyTest extends TestCase {
 
@@ -103,6 +103,23 @@ public class ECKeyTest extends TestCase {
 
 
 		public static final Base64URL Y = new Base64URL("AHgOZhhJb2ZiozkquiEa0Z9SfERJbWaaE7qEnCuk9VVZaWruKWKNzZadoIRPt8h305r14KRoxu8AfV20X-d_2Ups");
+	}
+	
+	
+	public void testStdCurves() {
+		
+		assertEquals("P-256", ECKey.Curve.P_256.getName());
+		assertEquals("secp256r1", ECKey.Curve.P_256.getStdName());
+		assertEquals("1.2.840.10045.3.1.7", ECKey.Curve.P_256.getOID());
+		
+		assertEquals("P-384", ECKey.Curve.P_384.getName());
+		assertEquals("secp384r1", ECKey.Curve.P_384.getStdName());
+		assertEquals("1.3.132.0.34", ECKey.Curve.P_384.getOID());
+		
+		assertEquals("P-521", ECKey.Curve.P_521.getName());
+		assertEquals("secp521r1", ECKey.Curve.P_521.getStdName());
+		assertEquals("1.3.132.0.35", ECKey.Curve.P_521.getOID());
+		
 	}
 
 

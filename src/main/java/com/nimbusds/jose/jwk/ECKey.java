@@ -90,7 +90,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-12-01
+ * @version 2016-12-05
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -122,21 +122,22 @@ public final class ECKey extends JWK implements AssymetricJWK {
 
 
 		/**
-		 * P-256 curve (secp256r1, also called prime256v1).
+		 * P-256 curve (secp256r1, also called prime256v1,
+		 * OID = 1.2.840.10045.3.1.7).
 		 */
-		public static final Curve P_256 = new Curve("P-256", "secp256r1");
+		public static final Curve P_256 = new Curve("P-256", "secp256r1", "1.2.840.10045.3.1.7");
 
 
 		/**
-		 * P-384 curve (secp384r1).
+		 * P-384 curve (secp384r1, OID = 1.3.132.0.34).
 		 */
-		public static final Curve P_384 = new Curve("P-384", "secp384r1");
+		public static final Curve P_384 = new Curve("P-384", "secp384r1", "1.3.132.0.34");
 
 
 		/**
 		 * P-521 curve (secp521r1).
 		 */
-		public static final Curve P_521 = new Curve("P-521", "secp521r1");
+		public static final Curve P_521 = new Curve("P-521", "secp521r1", "1.3.132.0.35");
 
 
 		/**
@@ -149,31 +150,42 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		 * The standard curve name, {@code null} if not specified.
 		 */
 		private final String stdName;
+		
+		
+		/**
+		 * The standard object identifier for the curve, {@code null}
+		 * if not specified.
+		 */
+		private final String oid;
 
 
 		/**
 		 * Creates a new cryptographic curve with the specified JOSE
-		 * name. A standard curve name is not unspecified.
+		 * name. A standard curve name and object identifier (OID) are
+		 * not unspecified.
 		 *
 		 * @param name The JOSE name of the cryptographic curve. Must not be
 		 *             {@code null}.
 		 */
 		public Curve(final String name) {
 
-			this(name, null);
+			this(name, null, null);
 		}
 
 
 		/**
 		 * Creates a new cryptographic curve with the specified JOSE
-		 * and standard names.
+		 * name, standard name and object identifier (OID).
 		 *
 		 * @param name    The JOSE name of the cryptographic curve. 
 		 *                Must not be {@code null}.
 		 * @param stdName The standard name of the cryptographic curve,
 		 *                {@code null} if not specified.
+		 * @param oid     The object identifier (OID) of the
+		 *                cryptographic curve, {@code null} if not
+		 *                specified.
 		 */
-		public Curve(final String name, final String stdName) {
+		public Curve(final String name, final String stdName, final String oid) {
 
 			if (name == null) {
 				throw new IllegalArgumentException("The JOSE cryptographic curve name must not be null");
@@ -182,6 +194,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			this.name = name;
 
 			this.stdName = stdName;
+			
+			this.oid = oid;
 		}
 
 
@@ -204,6 +218,18 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		public String getStdName() {
 
 			return stdName;
+		}
+		
+		
+		/**
+		 * Returns the standard object identifier (OID) of this
+		 * cryptographic curve.
+		 *
+		 * @return The OID, {@code null} if not specified.
+		 */
+		public String getOID() {
+			
+			return oid;
 		}
 
 
