@@ -433,12 +433,14 @@ public class JWKSet {
 	 * validated!
 	 *
 	 * @param keyStore The key store. Must not be {@code null}.
+	 * @param pwLookup The password lookup for password-protected keys,
+	 *                 {@code null} if not specified.
 	 *
 	 * @return The JWK set, empty if no keys were loaded.
 	 *
 	 * @throws KeyStoreException On a key store exception.
 	 */
-	public static JWKSet load(final KeyStore keyStore)
+	public static JWKSet load(final KeyStore keyStore, final PasswordLookup pwLookup)
 		throws KeyStoreException {
 		
 		List<JWK> jwks = new LinkedList<>();
@@ -446,7 +448,8 @@ public class JWKSet {
 		// Load RSA and EC keys
 		for (Enumeration<String> keyAliases = keyStore.aliases(); keyAliases.hasMoreElements(); ) {
 			
-			String keyAlias = keyAliases.nextElement();
+			final String keyAlias = keyAliases.nextElement();
+			final char[] keyPassword = pwLookup == null ? "".toCharArray() : pwLookup.lookupPassword(keyAlias);
 			
 			Certificate cert = keyStore.getCertificate(keyAlias);
 			if (cert == null) {
@@ -457,7 +460,7 @@ public class JWKSet {
 				
 				RSAKey rsaJWK;
 				try {
-					rsaJWK = RSAKey.load(keyStore, keyAlias, "".toCharArray());
+					rsaJWK = RSAKey.load(keyStore, keyAlias, keyPassword);
 				} catch (JOSEException e) {
 					continue; // skip cert
 				}
@@ -472,7 +475,7 @@ public class JWKSet {
 				
 				ECKey ecJWK;
 				try {
-					ecJWK = ECKey.load(keyStore, keyAlias, "".toCharArray());
+					ecJWK = ECKey.load(keyStore, keyAlias, keyPassword);
 				} catch (JOSEException e) {
 					continue; // skip cert
 				}
@@ -490,11 +493,12 @@ public class JWKSet {
 		// Load symmetric keys
 		for (Enumeration<String> keyAliases = keyStore.aliases(); keyAliases.hasMoreElements(); ) {
 			
-			String keyAlias = keyAliases.nextElement();
+			final String keyAlias = keyAliases.nextElement();
+			final char[] keyPassword = pwLookup == null ? "".toCharArray() : pwLookup.lookupPassword(keyAlias);
 			
 			OctetSequenceKey octJWK;
 			try {
-				octJWK = OctetSequenceKey.load(keyStore, keyAlias, "".toCharArray());
+				octJWK = OctetSequenceKey.load(keyStore, keyAlias, keyPassword);
 			} catch (JOSEException e) {
 				continue; // skip key
 			}

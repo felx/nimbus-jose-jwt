@@ -407,7 +407,7 @@ public class HSMTest {
 		assertTrue(ecJWK.isPrivate());
 		
 		// Load JWK set
-		JWKSet jwkSet = JWKSet.load(hsmKeyStore);
+		JWKSet jwkSet = JWKSet.load(hsmKeyStore, null);
 		assertTrue(jwkSet.getKeyByKeyId(rsaKeyID) instanceof RSAKey);
 		assertTrue(jwkSet.getKeyByKeyId(ecKeyID) instanceof ECKey);
 		

@@ -21,13 +21,30 @@ package com.nimbusds.jose.jwk;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
+import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
 
 import static net.jadler.Jadler.*;
@@ -37,6 +54,12 @@ import net.minidev.json.JSONObject;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 /**
@@ -746,5 +769,117 @@ public class JWKSetTest extends TestCase {
 		assertFalse(key.isPrivate());
 
 		closeJadler();
+	}
+	
+	
+	public void testLoadFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		// AES key
+		KeyGenerator secGen = KeyGenerator.getInstance("AES");
+		secGen.init(128);
+		SecretKey secretKey = secGen.generateKey();
+		
+		keyStore.setEntry("1", new KeyStore.SecretKeyEntry(secretKey), new KeyStore.PasswordProtection("1234".toCharArray()));
+		
+		// RSA key pair
+		KeyPairGenerator rsaGen = KeyPairGenerator.getInstance("RSA");
+		rsaGen.initialize(1024);
+		KeyPair kp = rsaGen.generateKeyPair();
+		RSAPublicKey rsaPublicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey rsaPrivateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		// Generate certificate
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			rsaPublicKey
+		);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(rsaPrivateKey));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		keyStore.setKeyEntry("2", rsaPrivateKey, "".toCharArray(), new Certificate[]{cert});
+		
+		
+		// EC key pair
+		KeyPairGenerator ecGen = KeyPairGenerator.getInstance("EC");
+		ecGen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		KeyPair ecKP = ecGen.generateKeyPair();
+		ECPublicKey ecPublicKey = (ECPublicKey)ecKP.getPublic();
+		ECPrivateKey ecPrivateKey = (ECPrivateKey)ecKP.getPrivate();
+		
+		// Generate certificate
+		issuer = new X500Name("cn=c2id");
+		serialNumber = new BigInteger(64, new SecureRandom());
+		now = new Date();
+		nbf = new Date(now.getTime() - 1000L);
+		exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		subject = new X500Name("cn=c2id");
+		x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			ecPublicKey
+		);
+		keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
+		certHolder = x509certBuilder.build(signerBuilder.build(ecPrivateKey));
+		cert = X509CertUtils.parse(certHolder.getEncoded());
+		keyStore.setKeyEntry("3", ecPrivateKey, "".toCharArray(), new java.security.cert.Certificate[]{cert});
+		
+		
+		
+		// Load
+		JWKSet jwkSet = JWKSet.load(keyStore, new PasswordLookup() {
+			@Override
+			public char[] lookupPassword(final String name) {
+				if ("1".equalsIgnoreCase(name)) return "1234".toCharArray();
+				else return "".toCharArray();
+			}
+		});
+		
+		
+		OctetSequenceKey octJWK = (OctetSequenceKey) jwkSet.getKeyByKeyId("1");
+		assertNotNull(octJWK);
+		assertEquals("1", octJWK.getKeyID());
+		assertTrue(Arrays.equals(secretKey.getEncoded(), octJWK.toByteArray()));
+		
+		RSAKey rsaKey = (RSAKey) jwkSet.getKeyByKeyId("2");
+		assertNotNull(rsaKey);
+		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
+		assertEquals("2", rsaKey.getKeyID());
+		assertEquals(1, rsaKey.getX509CertChain().size());
+		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertTrue(rsaKey.isPrivate());
+		
+		ECKey ecKey = (ECKey) jwkSet.getKeyByKeyId("3");
+		assertNotNull(ecKey);
+		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
+		assertEquals("3", ecKey.getKeyID());
+		assertEquals(1, ecKey.getX509CertChain().size());
+		assertNotNull(ecKey.getX509CertThumbprint());
+		assertTrue(ecKey.isPrivate());
+		
+		assertEquals(3, jwkSet.getKeys().size());
 	}
 }
