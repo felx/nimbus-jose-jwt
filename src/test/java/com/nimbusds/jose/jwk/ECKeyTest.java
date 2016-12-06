@@ -47,7 +47,7 @@ import net.minidev.json.JSONObject;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-05
+ * @version 2016-12-06
  */
 public class ECKeyTest extends TestCase {
 
@@ -392,7 +392,44 @@ public class ECKeyTest extends TestCase {
 		assertNull(key.getD());
 
 		assertFalse(key.isPrivate());
+	}
 
+
+	public void testCopyBuilder()
+		throws Exception {
+
+		URI x5u = new URI("http://example.com/jwk.json");
+		Base64URL x5t = new Base64URL("abc");
+		List<Base64> x5c = new LinkedList<>();
+		x5c.add(new Base64("def"));
+
+		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y).
+			d(ExampleKeyP256.D).
+			keyUse(KeyUse.SIGNATURE).
+			algorithm(JWSAlgorithm.ES256).
+			keyID("1").
+			x509CertURL(x5u).
+			x509CertThumbprint(x5t).
+			x509CertChain(x5c).
+			build();
+		
+		// Copy
+		key = new ECKey.Builder(key).build();
+
+		// Test getters
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertEquals(JWSAlgorithm.ES256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+
+		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(ExampleKeyP256.X, key.getX());
+		assertEquals(ExampleKeyP256.Y, key.getY());
+		assertEquals(ExampleKeyP256.D, key.getD());
+
+		assertTrue(key.isPrivate());
 	}
 
 

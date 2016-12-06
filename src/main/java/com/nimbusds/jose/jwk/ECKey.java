@@ -513,6 +513,29 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 			     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()));
 		}
+		
+		
+		/**
+		 * Creates a new Elliptic Curve JWK builder.
+		 *
+		 * @param ecJWK The EC JWK to start with. Must not be
+		 *              {@code null}.
+		 */
+		public Builder(final ECKey ecJWK) {
+			
+			crv = ecJWK.crv;
+			x = ecJWK.x;
+			y = ecJWK.y;
+			d = ecJWK.d;
+			priv = ecJWK.privateKey;
+			use = ecJWK.getKeyUse();
+			ops = ecJWK.getKeyOperations();
+			alg = ecJWK.getAlgorithm();
+			kid = ecJWK.getKeyID();
+			x5u = ecJWK.getX509CertURL();
+			x5t = ecJWK.getX509CertThumbprint();
+			x5c = ecJWK.getX509CertChain();
+		}
 
 
 		/**

@@ -633,6 +633,8 @@ version 4.32 (2016-12-06)
     * Adds standard object identifiers (OID) to ECKey.Curve instances.
     * Adds static KeyUse.from method to infer KeyUse of X.509 certificate
       subject public keys.
+    * Adds new RSAKey.Builder(RSAKey) constructor.
+    * Adds new ECKey.Builder(ECKey) constructor.
     * Adds static RSAKey.parse(X509Certificate) method to parse RSA JWKs from
       X.509 certificates with an RSA subject public key.
     * Adds static ECKey.parse(X509Certificate) method to parse EC JWKs from

@@ -464,6 +464,60 @@ public class RSAKeyTest extends TestCase {
 
 		assertTrue(key.isPrivate());
 	}
+	
+	
+	public void testCopyBuilder()
+		throws Exception {
+		
+		URI x5u = new URI("http://example.com/jwk.json");
+		Base64URL x5t = new Base64URL("abc");
+		List<Base64> x5c = new LinkedList<>();
+		x5c.add(new Base64("def"));
+		
+		RSAKey key = new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).
+			privateExponent(new Base64URL(d)).
+			firstPrimeFactor(new Base64URL(p)).
+			secondPrimeFactor(new Base64URL(q)).
+			firstFactorCRTExponent(new Base64URL(dp)).
+			secondFactorCRTExponent(new Base64URL(dq)).
+			firstCRTCoefficient(new Base64URL(qi)).
+			keyUse(KeyUse.SIGNATURE).
+			algorithm(JWSAlgorithm.RS256).
+			keyID("1").
+			x509CertURL(x5u).
+			x509CertThumbprint(x5t).
+			x509CertChain(x5c).
+			build();
+		
+		// Copy
+		key = new RSAKey.Builder(key).build();
+		
+		// Test getters
+		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
+		assertNull(key.getKeyOperations());
+		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
+		assertEquals("1", key.getKeyID());
+		assertEquals(x5u.toString(), key.getX509CertURL().toString());
+		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5c.size(), key.getX509CertChain().size());
+		
+		assertEquals(new Base64URL(n), key.getModulus());
+		assertEquals(new Base64URL(e), key.getPublicExponent());
+		
+		assertEquals(new Base64URL(d), key.getPrivateExponent());
+		
+		assertEquals(new Base64URL(p), key.getFirstPrimeFactor());
+		assertEquals(new Base64URL(q), key.getSecondPrimeFactor());
+		
+		assertEquals(new Base64URL(dp), key.getFirstFactorCRTExponent());
+		assertEquals(new Base64URL(dq), key.getSecondFactorCRTExponent());
+		
+		assertEquals(new Base64URL(qi), key.getFirstCRTCoefficient());
+		
+		assertTrue(key.getOtherPrimes().isEmpty());
+		
+		assertTrue(key.isPrivate());
+	}
 
 
 	public void testRSAPublicKeyExportAndImport()

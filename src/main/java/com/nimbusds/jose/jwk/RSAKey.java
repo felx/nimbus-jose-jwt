@@ -454,6 +454,34 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 			n = Base64URL.encode(pub.getModulus());
 			e = Base64URL.encode(pub.getPublicExponent());
 		}
+		
+		
+		/**
+		 * Creates a new RSA JWK builder.
+		 *
+		 * @param rsaJWK The RSA JWK to start with. Must not be
+		 *               {@code null}.
+		 */
+		public Builder(final RSAKey rsaJWK) {
+			
+			n = rsaJWK.n;
+			e = rsaJWK.e;
+			d = rsaJWK.d;
+			p = rsaJWK.p;
+			q = rsaJWK.q;
+			dp = rsaJWK.dp;
+			dq = rsaJWK.dq;
+			qi = rsaJWK.qi;
+			oth = rsaJWK.oth;
+			priv = rsaJWK.privateKey;
+			use = rsaJWK.getKeyUse();
+			ops = rsaJWK.getKeyOperations();
+			alg = rsaJWK.getAlgorithm();
+			kid = rsaJWK.getKeyID();
+			x5u = rsaJWK.getX509CertURL();
+			x5t = rsaJWK.getX509CertThumbprint();
+			x5c = rsaJWK.getX509CertChain();
+		}
 
 
 		/**
