@@ -646,6 +646,6 @@ version 4.32 (2016-12-06)
     * Adds static OctetSequenceKey.load(KeyStore,String,char[]) method to load
       a secret JWK from a JCA key store.
     * Adds static JWKSet.load(KeyStore,PasswordLookup) method to load JWKs from
-      a JCA key store.
+      a JCA key store.g
     * Makes org.bouncycastle:bcpkix-jdk15on an optional dependency.
 
