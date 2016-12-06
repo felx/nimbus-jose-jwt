@@ -18,6 +18,7 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 
 
@@ -33,7 +34,7 @@ import java.text.ParseException;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-04-02
+ * @version 2016-12-06
  */
 public enum KeyUse {
 
@@ -118,5 +119,67 @@ public enum KeyUse {
 		}
 
 		throw new ParseException("Invalid JWK use: " + s, 0);
+	}
+	
+	
+	/**
+	 * Infers the public key use of the specified X.509 certificate. Note
+	 * that there is no standard algorithm for mapping PKIX key usage to
+	 * JWK use. See RFC 2459, section 4.2.1.3, as well as the underlying
+	 * code for the chosen algorithm to infer JWK use.
+	 *
+	 * @param cert The X.509 certificate. Must not be {@code null}.
+	 *
+	 * @return The public key use, {@code null} if the key use couldn't be
+	 *         reliably determined.
+	 */
+	public static KeyUse from(final X509Certificate cert) {
+		
+		// digitalSignature bit
+		if (cert.getKeyUsage()[0]) {
+			return KeyUse.SIGNATURE;
+		}
+		
+		// nonRepudiation bit
+		if (cert.getKeyUsage()[1]) {
+			return SIGNATURE;
+		}
+		
+		// keyEncipherment bit
+		if (cert.getKeyUsage()[2]) {
+			return ENCRYPTION;
+		}
+		
+		// dataEncipherment bit
+		if (cert.getKeyUsage()[3]) {
+			return ENCRYPTION;
+		}
+		
+		// keyAgreement bit
+		if (cert.getKeyUsage()[4]) {
+			return ENCRYPTION;
+		}
+		
+		// keyCertSign bit
+		if (cert.getKeyUsage()[5]) {
+			return SIGNATURE;
+		}
+		
+		// cRLSign bit
+		if (cert.getKeyUsage()[6]) {
+			return SIGNATURE;
+		}
+		
+		// encipherOnly bit
+		if (cert.getKeyUsage()[7]) {
+			return ENCRYPTION;
+		}
+		
+		// decipherOnly bit
+		if (cert.getKeyUsage()[8]) {
+			return ENCRYPTION;
+		}
+		
+		return null;
 	}
 }
