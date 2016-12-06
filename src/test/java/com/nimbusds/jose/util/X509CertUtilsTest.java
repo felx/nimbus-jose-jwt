@@ -18,11 +18,15 @@
 package com.nimbusds.jose.util;
 
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 
-import com.nimbusds.jose.util.X509CertUtils;
+import com.nimbusds.jose.jwk.ECKey;
 import junit.framework.TestCase;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 
 /**
@@ -115,5 +119,62 @@ public class X509CertUtilsTest extends TestCase {
 		assertEquals("X.509", cert.getType());
 		assertEquals("CN=connect2id.com,OU=Domain Control Validated", cert.getSubjectX500Principal().getName());
 		assertTrue(cert.getPublicKey() instanceof RSAPublicKey);
+	}
+	
+	
+	public void testParseCertWithECKey()
+		throws Exception {
+		
+		String content = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
+		
+		X509Certificate cert = X509CertUtils.parse(content);
+		
+		assertTrue(cert.getPublicKey() instanceof ECPublicKey);
+		
+		// For definition, see rfc2459, 4.2.1.3 Key Usage
+		assertTrue ("Digital signature",       cert.getKeyUsage()[0]);
+		assertFalse("Non repudiation",         cert.getKeyUsage()[1]);
+		assertFalse("Key encipherment",        cert.getKeyUsage()[2]);
+		assertFalse("Data encipherment",       cert.getKeyUsage()[3]);
+		assertTrue ("Key agreement",           cert.getKeyUsage()[4]);
+		assertFalse("Key certificate signing", cert.getKeyUsage()[5]);
+		assertFalse("CRL signing",             cert.getKeyUsage()[6]);
+		assertFalse("Decipher",                cert.getKeyUsage()[7]);
+		assertFalse("Encipher",                cert.getKeyUsage()[8]);
+		
+		JcaX509CertificateHolder certHolder = new JcaX509CertificateHolder(cert);
+		
+		final String ecPubKeyAlg = "1.2.840.10045.2.1";
+		
+		assertEquals(ecPubKeyAlg, certHolder.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId());
+		assertEquals(ECKey.Curve.P_256.getOID(), certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString());
+	}
+	
+	
+	public void testParseCertWithRSAKey()
+		throws Exception {
+		
+		String content = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
+		
+		X509Certificate cert = X509CertUtils.parse(content);
+		
+		assertTrue(cert.getPublicKey() instanceof RSAPublicKey);
+		
+		// For definition, see rfc2459, 4.2.1.3 Key Usage
+		assertTrue ("Digital signature",       cert.getKeyUsage()[0]);
+		assertFalse("Non repudiation",         cert.getKeyUsage()[1]);
+		assertTrue ("Key encipherment",        cert.getKeyUsage()[2]);
+		assertFalse("Data encipherment",       cert.getKeyUsage()[3]);
+		assertFalse("Key agreement",           cert.getKeyUsage()[4]);
+		assertFalse("Key certificate signing", cert.getKeyUsage()[5]);
+		assertFalse("CRL signing",             cert.getKeyUsage()[6]);
+		assertFalse("Decipher",                cert.getKeyUsage()[7]);
+		assertFalse("Encipher",                cert.getKeyUsage()[8]);
+		
+		JcaX509CertificateHolder certHolder = new JcaX509CertificateHolder(cert);
+		
+		final String rsaPubKeyAlg = "1.2.840.113549.1.1.1";
+		assertEquals(rsaPubKeyAlg, certHolder.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId());
+		assertEquals("NULL", certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString());
 	}
 }
