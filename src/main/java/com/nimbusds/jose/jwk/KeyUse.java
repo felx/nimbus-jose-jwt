@@ -135,49 +135,31 @@ public enum KeyUse {
 	 */
 	public static KeyUse from(final X509Certificate cert) {
 		
-		// digitalSignature bit
-		if (cert.getKeyUsage()[0]) {
-			return KeyUse.SIGNATURE;
-		}
-		
-		// nonRepudiation bit
+		// nonRepudiation
 		if (cert.getKeyUsage()[1]) {
 			return SIGNATURE;
 		}
 		
-		// keyEncipherment bit
-		if (cert.getKeyUsage()[2]) {
+		// digitalSignature && keyEncipherment
+		// (e.g. RSA TLS certificate for authenticated encryption)
+		if (cert.getKeyUsage()[0] && cert.getKeyUsage()[2]) {
+			return KeyUse.ENCRYPTION;
+		}
+		
+		// digitalSignature && keyAgreement
+		// (e.g. EC TLS certificate for authenticated encryption)
+		if (cert.getKeyUsage()[0] && cert.getKeyUsage()[4]) {
+			return KeyUse.ENCRYPTION;
+		}
+		
+		// keyEncipherment || dataEncipherment || keyAgreement
+		if (cert.getKeyUsage()[2] || cert.getKeyUsage()[3] || cert.getKeyUsage()[4]) {
 			return ENCRYPTION;
 		}
 		
-		// dataEncipherment bit
-		if (cert.getKeyUsage()[3]) {
-			return ENCRYPTION;
-		}
-		
-		// keyAgreement bit
-		if (cert.getKeyUsage()[4]) {
-			return ENCRYPTION;
-		}
-		
-		// keyCertSign bit
-		if (cert.getKeyUsage()[5]) {
+		// keyCertSign || cRLSign
+		if (cert.getKeyUsage()[5] || cert.getKeyUsage()[6]) {
 			return SIGNATURE;
-		}
-		
-		// cRLSign bit
-		if (cert.getKeyUsage()[6]) {
-			return SIGNATURE;
-		}
-		
-		// encipherOnly bit
-		if (cert.getKeyUsage()[7]) {
-			return ENCRYPTION;
-		}
-		
-		// decipherOnly bit
-		if (cert.getKeyUsage()[8]) {
-			return ENCRYPTION;
 		}
 		
 		return null;
