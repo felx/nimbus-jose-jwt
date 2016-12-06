@@ -135,6 +135,10 @@ public enum KeyUse {
 	 */
 	public static KeyUse from(final X509Certificate cert) {
 		
+		if (cert.getKeyUsage() == null) {
+			return null;
+		}
+		
 		// nonRepudiation
 		if (cert.getKeyUsage()[1]) {
 			return SIGNATURE;

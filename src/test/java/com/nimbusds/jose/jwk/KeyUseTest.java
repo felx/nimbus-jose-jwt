@@ -20,13 +20,22 @@ package com.nimbusds.jose.jwk;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
+import java.util.Date;
 
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 /**
@@ -91,5 +100,36 @@ public class KeyUseTest extends TestCase {
 		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
 		X509Certificate x509Cert = X509CertUtils.parse(pemEncodedCert);
 		assertEquals(KeyUse.ENCRYPTION, KeyUse.from(x509Cert));
+	}
+	
+	
+	public void testKeyUseNotSpecified()
+		throws Exception {
+		
+		// Generate self-signed certificate
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		keyPairGenerator.initialize(1024);
+		KeyPair keyPair = keyPairGenerator.generateKeyPair();
+		
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			keyPair.getPublic()
+		);
+		
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(keyPair.getPrivate()));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		
+		assertNull(KeyUse.from(cert));
 	}
 }
