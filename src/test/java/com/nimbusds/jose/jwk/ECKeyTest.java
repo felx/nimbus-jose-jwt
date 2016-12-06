@@ -18,6 +18,7 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -25,15 +26,19 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.*;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.IOUtils;
+import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 
@@ -599,6 +604,14 @@ public class ECKeyTest extends TestCase {
 
 		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forStdName("secp521r1"));
 	}
+	
+	
+	public void testCurveForOID() {
+		
+		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forOID(ECKey.Curve.P_256.getOID()));
+		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forOID(ECKey.Curve.P_384.getOID()));
+		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forOID(ECKey.Curve.P_521.getOID()));
+	}
 
 
 	public void testThumbprint()
@@ -763,5 +776,39 @@ public class ECKeyTest extends TestCase {
 		assertNotNull(json.get("x"));
 		assertNotNull(json.get("y"));
 		assertEquals(5, json.size());
+	}
+	
+	
+	public void testParseFromX509Cert()
+		throws Exception {
+		
+		MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		ECKey ecKey = ECKey.parse(cert);
+		
+		assertEquals(KeyType.EC, ecKey.getKeyType());
+		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
+		assertEquals(cert.getSerialNumber().toString(10), ecKey.getKeyID());
+		assertEquals(1, ecKey.getX509CertChain().size());
+		assertEquals(Base64URL.encode(sha1.digest(cert.getEncoded())), ecKey.getX509CertThumbprint());
+		assertNull(ecKey.getAlgorithm());
+		assertNull(ecKey.getKeyOperations());
+	}
+	
+	
+	public void testParseFromX509CertWithRSAPublicKey()
+		throws Exception {
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		try {
+			ECKey.parse(cert);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("The public key of the X.509 certificate is not EC", e.getMessage());
+		}
 	}
 }

@@ -19,33 +19,28 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.Serializable;
-import java.net.URI;
 import java.math.BigInteger;
+import java.net.URI;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAMultiPrimePrivateCrtKey;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAMultiPrimePrivateCrtKeySpec;
-import java.security.spec.RSAOtherPrimeInfo;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.*;
 import java.text.ParseException;
 import java.util.*;
-
-import com.nimbusds.jose.util.ByteUtils;
-import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -129,7 +124,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2016-12-01
+ * @version 2016-12-06
  */
 @Immutable
 public final class RSAKey extends JWK implements AssymetricJWK {
@@ -1958,6 +1953,50 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 
 			// Inconsistent 2nd spec, conflicting 'use' and 'key_ops'
 			throw new ParseException(ex.getMessage(), 0);
+		}
+	}
+	
+	
+	/**
+	 * Parses a public RSA key from the specified X.509 certificate.
+	 *
+	 * <p>Set the following JWK parameters:
+	 *
+	 * <ul>
+	 *     <li>The JWK use inferred by {@link KeyUse#from}.
+	 *     <li>The JWK ID from the X.509 serial number (in base 10).
+	 *     <li>The JWK X.509 certificate chain (this certificate only).
+	 *     <li>The JWK X.509 certificate SHA-1 thumbprint.
+	 * </ul>
+	 *
+	 * @param cert The X.509 certificate. Must not be {@code null}.
+	 *
+	 * @return The public RSA key.
+	 *
+	 * @throws JOSEException If parsing failed.
+	 */
+	public static RSAKey parse(final X509Certificate cert)
+		throws JOSEException {
+		
+		if (! (cert.getPublicKey() instanceof RSAPublicKey)) {
+			throw new JOSEException("The public key of the X.509 certificate is not RSA");
+		}
+		
+		RSAPublicKey publicKey = (RSAPublicKey)cert.getPublicKey();
+		
+		try {
+			MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+			
+			return new RSAKey.Builder(publicKey)
+				.keyUse(KeyUse.from(cert))
+				.keyID(cert.getSerialNumber().toString(10))
+				.x509CertChain(Collections.singletonList(Base64.encode(cert.getEncoded())))
+				.x509CertThumbprint(Base64URL.encode(sha1.digest(cert.getEncoded())))
+				.build();
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Couldn't encode x5t parameter: " + e.getMessage(), e);
+		} catch (CertificateEncodingException e) {
+			throw new JOSEException("Couldn't encode x5c parameter: " + e.getMessage(), e);
 		}
 	}
 }

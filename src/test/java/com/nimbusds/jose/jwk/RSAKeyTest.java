@@ -18,20 +18,23 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.io.File;
 import java.net.URI;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
+import java.nio.charset.Charset;
+import java.security.*;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAPrivateKeySpec;
 import java.util.*;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.IOUtils;
+import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 
@@ -40,7 +43,7 @@ import net.minidev.json.JSONObject;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-01
+ * @version 2016-12-06
  */
 public class RSAKeyTest extends TestCase {
 
@@ -1136,5 +1139,37 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(Base64URL.encode(publicKey.getPublicExponent()).toString(), json.get("e"));
 		assertEquals(Base64URL.encode(publicKey.getModulus()).toString(), json.get("n"));
 		assertEquals(4, json.size());
+	}
+	
+	
+	public void testParseFromX509Cert()
+		throws Exception {
+		
+		MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		RSAKey rsaKey = RSAKey.parse(cert);
+		
+		assertEquals(KeyUse.ENCRYPTION, rsaKey.getKeyUse());
+		assertEquals(cert.getSerialNumber().toString(10), rsaKey.getKeyID());
+		assertEquals(1, rsaKey.getX509CertChain().size());
+		assertEquals(Base64URL.encode(sha1.digest(cert.getEncoded())), rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getAlgorithm());
+		assertNull(rsaKey.getKeyOperations());
+	}
+	
+	
+	public void testParseFromX509CertWithECPublicKey()
+		throws Exception {
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		try {
+			RSAKey.parse(cert);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("The public key of the X.509 certificate is not RSA", e.getMessage());
+		}
 	}
 }

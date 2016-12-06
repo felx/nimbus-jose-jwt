@@ -22,26 +22,27 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
-import java.security.spec.ECPrivateKeySpec;
-import java.security.spec.ECPublicKeySpec;
-import java.security.spec.InvalidKeySpecException;
+import java.security.spec.*;
 import java.text.ParseException;
-import java.util.List;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.*;
-import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.BigIntegerUtils;
+import com.nimbusds.jose.util.JSONObjectUtils;
+import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONObject;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 
 /**
@@ -90,7 +91,7 @@ import com.nimbusds.jose.JOSEException;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-12-05
+ * @version 2016-12-06
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -307,6 +308,28 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			} else if( "secp384r1".equals(stdName) ) {
 				return P_384;
 			} else if( "secp521r1".equals(stdName) ) {
+				return P_521;
+			} else {
+				return null;
+			}
+		}
+		
+		
+		/**
+		 * Gets the cryptographic curve for the specified object
+		 * identifier (OID).
+		 *
+		 * @param oid The object OID. May be {@code null}.
+		 *
+		 * @return The curve, {@code null} if it cannot be determined.
+		 */
+		public static Curve forOID(final String oid) {
+			
+			if (P_256.getOID().equals(oid)) {
+				return P_256;
+			} else if (P_384.getOID().equals(oid)) {
+				return P_384;
+			} else if (P_521.getOID().equals(oid)) {
 				return P_521;
 			} else {
 				return null;
@@ -1477,6 +1500,61 @@ public final class ECKey extends JWK implements AssymetricJWK {
 
 			// Conflicting 'use' and 'key_ops'
 			throw new ParseException(ex.getMessage(), 0);
+		}
+	}
+	
+	
+	/**
+	 * Parses a public EC key from the specified X.509 certificate.
+	 * Requires BouncyCastle.
+	 *
+	 * <p>Set the following JWK parameters:
+	 *
+	 * <ul>
+	 *     <li>The JWK use inferred by {@link KeyUse#from}.
+	 *     <li>The JWK ID from the X.509 serial number (in base 10).
+	 *     <li>The JWK X.509 certificate chain (this certificate only).
+	 *     <li>The JWK X.509 certificate SHA-1 thumbprint.
+	 * </ul>
+	 *
+	 * @param cert The X.509 certificate. Must not be {@code null}.
+	 *
+	 * @return The public EC key.
+	 *
+	 * @throws JOSEException If parsing failed.
+	 */
+	public static ECKey parse(final X509Certificate cert)
+		throws JOSEException {
+		
+		if (! (cert.getPublicKey() instanceof ECPublicKey)) {
+			throw new JOSEException("The public key of the X.509 certificate is not EC");
+		}
+		
+		ECPublicKey publicKey = (ECPublicKey) cert.getPublicKey();
+		
+		try {
+			JcaX509CertificateHolder certHolder = new JcaX509CertificateHolder(cert);
+			
+			String oid = certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString();
+			
+			Curve crv = Curve.forOID(oid);
+			
+			if (crv == null) {
+				throw new JOSEException("Couldn't determine EC JWK curve for OID " + oid);
+			}
+			
+			MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+			
+			return new ECKey.Builder(crv, publicKey)
+				.keyUse(KeyUse.from(cert))
+				.keyID(cert.getSerialNumber().toString(10))
+				.x509CertChain(Collections.singletonList(Base64.encode(cert.getEncoded())))
+				.x509CertThumbprint(Base64URL.encode(sha1.digest(cert.getEncoded())))
+				.build();
+		} catch (NoSuchAlgorithmException e) {
+			throw new JOSEException("Couldn't encode x5t parameter: " + e.getMessage(), e);
+		} catch (CertificateEncodingException e) {
+			throw new JOSEException("Couldn't encode x5c parameter: " + e.getMessage(), e);
 		}
 	}
 }
