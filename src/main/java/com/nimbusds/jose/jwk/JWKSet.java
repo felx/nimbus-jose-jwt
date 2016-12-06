@@ -22,13 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.security.*;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.*;
-import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.*;
@@ -66,7 +66,7 @@ import net.minidev.json.JSONObject;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-11-28
+ * @version 2016-12-06
  */
 public class JWKSet {
 
@@ -492,22 +492,16 @@ public class JWKSet {
 			
 			String keyAlias = keyAliases.nextElement();
 			
-			Key key;
+			OctetSequenceKey octJWK;
 			try {
-				key = keyStore.getKey(keyAlias, "".toCharArray());
-			} catch (UnrecoverableKeyException | NoSuchAlgorithmException e) {
+				octJWK = OctetSequenceKey.load(keyStore, keyAlias, "".toCharArray());
+			} catch (JOSEException e) {
 				continue; // skip key
 			}
 			
-			if (! (key instanceof SecretKey)) {
-				continue; // skip key
+			if (octJWK != null) {
+				jwks.add(octJWK);
 			}
-			
-			OctetSequenceKey octJWK = new OctetSequenceKey.Builder(((SecretKey)key))
-				.keyID(keyAlias)
-				.build();
-			
-			jwks.add(octJWK);
 		}
 		
 		return new JWKSet(jwks);

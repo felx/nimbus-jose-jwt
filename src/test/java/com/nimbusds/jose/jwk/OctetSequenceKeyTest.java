@@ -20,19 +20,20 @@ package com.nimbusds.jose.jwk;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.util.*;
-
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import junit.framework.TestCase;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
 
 
@@ -40,7 +41,7 @@ import net.minidev.json.JSONObject;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-07-03
+ * @version 2016-12-06
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -438,5 +439,83 @@ public class OctetSequenceKeyTest extends TestCase {
 		byte[] keyMaterial = new byte[24];
 		new SecureRandom().nextBytes(keyMaterial);
 		assertEquals(24 * 8, new OctetSequenceKey.Builder(keyMaterial).build().size());
+	}
+	
+	
+	public void testLoadFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		gen.init(128);
+		SecretKey secretKey = gen.generateKey();
+		
+		keyStore.setEntry("1", new KeyStore.SecretKeyEntry(secretKey), new KeyStore.PasswordProtection("1234".toCharArray()));
+		
+		OctetSequenceKey octJWK = OctetSequenceKey.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(octJWK);
+		assertEquals("1", octJWK.getKeyID());
+		assertTrue(Arrays.equals(secretKey.getEncoded(), octJWK.toByteArray()));
+	}
+	
+	
+	public void testLoadFromKeyStore_emptyPassword()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		gen.init(128);
+		SecretKey secretKey = gen.generateKey();
+		
+		keyStore.setEntry("1", new KeyStore.SecretKeyEntry(secretKey), new KeyStore.PasswordProtection("".toCharArray()));
+		
+		OctetSequenceKey octJWK = OctetSequenceKey.load(keyStore, "1", "".toCharArray());
+		assertNotNull(octJWK);
+		assertEquals("1", octJWK.getKeyID());
+		assertTrue(Arrays.equals(secretKey.getEncoded(), octJWK.toByteArray()));
+	}
+	
+	
+	public void testLoadFromKeyStore_notFound()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		assertNull(OctetSequenceKey.load(keyStore, "1", "1234".toCharArray()));
+	}
+	
+	
+	public void testLoadFromKeyStore_badPin()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		gen.init(128);
+		SecretKey secretKey = gen.generateKey();
+		
+		keyStore.setEntry("1", new KeyStore.SecretKeyEntry(secretKey), new KeyStore.PasswordProtection("1234".toCharArray()));
+		
+		try {
+			OctetSequenceKey.load(keyStore, "1", "badpin".toCharArray());
+			fail();
+		} catch (Exception e) {
+			assertEquals("Couldn't retrieve secret key (bad pin?): Given final block not properly padded", e.getMessage());
+			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
+		}
 	}
 }

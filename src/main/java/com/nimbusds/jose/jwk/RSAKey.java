@@ -2052,7 +2052,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	 *         the specified alias was found.
 	 *
 	 * @throws KeyStoreException On a key store exception.
-	 * @throws JOSEException     If EC key loading failed.
+	 * @throws JOSEException     If RSA key loading failed.
 	 */
 	public static RSAKey load(final KeyStore keyStore,
 				  final String alias,

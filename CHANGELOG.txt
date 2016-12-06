@@ -643,5 +643,7 @@ version 4.32 (2016-12-06)
       from a JCA key store.
     * Adds static ECKey.load(KeyStore,String,char[]) method to load an EC JWK
       from a JCA key store.
+    * Adds static OctetSequenceKey.load(KeyStore,String,char[]) method to load
+      a secret JWK from a JCA key store.
     * Makes org.bouncycastle:bcpkix-jdk15on an optional dependency.
 

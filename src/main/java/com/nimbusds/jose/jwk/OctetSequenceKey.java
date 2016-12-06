@@ -19,24 +19,22 @@ package com.nimbusds.jose.jwk;
 
 
 import java.net.URI;
+import java.security.*;
+import java.text.ParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.text.ParseException;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.nimbusds.jose.util.ByteUtils;
-import net.jcip.annotations.Immutable;
-
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import net.jcip.annotations.Immutable;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -59,7 +57,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2017-07-03
+ * @version 2016-12-06
  */
 @Immutable
 public final class OctetSequenceKey extends JWK implements SecretJWK {
@@ -549,5 +547,39 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 			JWKMetadata.parseX509CertURL(jsonObject),
 			JWKMetadata.parseX509CertThumbprint(jsonObject),
 			JWKMetadata.parseX509CertChain(jsonObject));
+	}
+	
+	
+	/**
+	 * Loads an octet sequence JWK from the specified JCA key store.
+	 *
+	 * @param keyStore The key store. Must not be {@code null}.
+	 * @param alias    The alias. Must not be {@code null}.
+	 * @param pin      The pin to unlock the private key if any, empty or
+	 *                 {@code null} if not required.
+	 *
+	 * @return The octet sequence JWK, {@code null} if no key with the
+	 *         specified alias was found.
+	 *
+	 * @throws KeyStoreException On a key store exception.
+	 * @throws JOSEException     If octet sequence key loading failed.
+	 */
+	public static OctetSequenceKey load(final KeyStore keyStore, final String alias, final char[] pin)
+		throws KeyStoreException, JOSEException {
+		
+		Key key;
+		try {
+			key = keyStore.getKey(alias, pin);
+		} catch (UnrecoverableKeyException | NoSuchAlgorithmException e) {
+			throw new JOSEException("Couldn't retrieve secret key (bad pin?): " + e.getMessage(), e);
+		}
+		
+		if (! (key instanceof SecretKey)) {
+			return null;
+		}
+		
+		return new OctetSequenceKey.Builder((SecretKey)key)
+			.keyID(alias)
+			.build();
 	}
 }

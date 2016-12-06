@@ -55,7 +55,7 @@ import org.junit.Test;
  * HSM test with Nitrokey.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-01
+ * @version 2016-12-06
  */
 public class HSMTest {
 	
