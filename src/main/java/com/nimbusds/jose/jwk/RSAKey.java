@@ -1293,7 +1293,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 
 			this.oth = Collections.emptyList();
 
-		} else {
+		} else if (p != null || q != null || dp != null || dq != null || qi != null) {
 
 			if (p == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first prime factor must not be null");
@@ -1303,9 +1303,17 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first factor CRT exponent must not be null");
 			} else if (dq == null) {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The second factor CRT exponent must not be null");
-			} else { // qi == null
+			} else {
 				throw new IllegalArgumentException("Incomplete second private (CRT) representation: The first CRT coefficient must not be null");
 			}
+		} else {
+			// No CRT params
+			this.p = null;
+			this.q = null;
+			this.dp = null;
+			this.dq = null;
+			this.qi = null;
+			this.oth = Collections.emptyList();
 		}
 		
 		this.privateKey = prv; // PKCS#11 handle
@@ -1874,8 +1882,8 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 
 
 	/**
-	 * Parses a public / private RSA Curve JWK from the specified JSON
-	 * object string representation.
+	 * Parses a public / private RSA JWK from the specified JSON object
+	 * string representation.
 	 *
 	 * @param s The JSON object string to parse. Must not be {@code null}.
 	 *
@@ -1986,7 +1994,7 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	
 	
 	/**
-	 * Parses a public RSA key from the specified X.509 certificate.
+	 * Parses a public RSA JWK from the specified X.509 certificate.
 	 *
 	 * <p>Set the following JWK parameters:
 	 *
@@ -2025,6 +2033,69 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 			throw new JOSEException("Couldn't encode x5t parameter: " + e.getMessage(), e);
 		} catch (CertificateEncodingException e) {
 			throw new JOSEException("Couldn't encode x5c parameter: " + e.getMessage(), e);
+		}
+	}
+	
+	
+	/**
+	 * Loads a public / private RSA JWK from the specified JCA key store.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
+	 *
+	 * @param keyStore The key store. Must not be {@code null}.
+	 * @param alias    The alias. Must not be {@code null}.
+	 * @param pin      The pin to unlock the private key if any, empty or
+	 *                 {@code null} if not required.
+	 *
+	 * @return The public / private RSA key, {@code null} if no key with
+	 *         the specified alias was found.
+	 *
+	 * @throws KeyStoreException On a key store exception.
+	 * @throws JOSEException     If EC key loading failed.
+	 */
+	public static RSAKey load(final KeyStore keyStore,
+				  final String alias,
+				  final char[] pin)
+		throws KeyStoreException, JOSEException {
+		
+		java.security.cert.Certificate cert = keyStore.getCertificate(alias);
+		
+		if (cert == null || ! (cert instanceof X509Certificate)) {
+			return null;
+		}
+		
+		X509Certificate x509Cert = (X509Certificate)cert;
+		
+		if (! (x509Cert.getPublicKey() instanceof RSAPublicKey)) {
+			throw new JOSEException("Couldn't load RSA JWK: The key algorithm is not RSA");
+		}
+		
+		RSAKey rsaJWK = RSAKey.parse(x509Cert);
+		
+		// Let kid=alias
+		rsaJWK = new RSAKey.Builder(rsaJWK).keyID(alias).build();
+		
+		// Check for private counterpart
+		Key key;
+		try {
+			key = keyStore.getKey(alias, pin);
+		} catch (UnrecoverableKeyException | NoSuchAlgorithmException e) {
+			throw new JOSEException("Couldn't retrieve private RSA key (bad pin?): " + e.getMessage(), e);
+		}
+		
+		if (key instanceof RSAPrivateKey) {
+			// Simple file based key store
+			return new RSAKey.Builder(rsaJWK)
+				.privateKey((RSAPrivateKey)key)
+				.build();
+		} else if (key instanceof PrivateKey && "RSA".equalsIgnoreCase(key.getAlgorithm())) {
+			// PKCS#11 store
+			return new RSAKey.Builder(rsaJWK)
+				.privateKey((PrivateKey)key)
+				.build();
+		} else {
+			return rsaJWK;
 		}
 	}
 }

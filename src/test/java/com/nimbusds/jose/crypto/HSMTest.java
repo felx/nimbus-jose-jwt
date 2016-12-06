@@ -37,6 +37,7 @@ import static org.junit.Assert.*;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.X509CertUtils;
@@ -373,6 +374,45 @@ public class HSMTest {
 		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
 		
 		hsmKeyStore.deleteEntry(keyID);
+		
+		assertEquals(numKeys, hsmKeyStore.size());
+	}
+	
+	
+//	@Test
+	public void testLoadJWKs()
+		throws Exception {
+		
+		Provider hsmProvider = loadHSMProvider(HSM_CONFIG);
+		
+		KeyStore hsmKeyStore = loadHSMKeyStore(hsmProvider, HSM_PIN);
+		
+		assertEquals("PKCS11", hsmKeyStore.getType());
+		
+		int numKeys = hsmKeyStore.size();
+		
+		String rsaKeyID = generateRSAKeyWithSelfSignedCert(hsmKeyStore);
+		String ecKeyID = generateECKeyWithSelfSignedCert(hsmKeyStore);
+		
+		// Load individual RSA JWK
+		RSAKey rsaJWK = RSAKey.load(hsmKeyStore, rsaKeyID, "".toCharArray());
+		assertEquals(rsaKeyID, rsaJWK.getKeyID());
+		assertNull(rsaJWK.getKeyUse());
+		assertTrue(rsaJWK.isPrivate());
+		
+		// Load individual EC JWK
+		ECKey ecJWK = ECKey.load(hsmKeyStore, ecKeyID, "".toCharArray());
+		assertEquals(ecKeyID, ecJWK.getKeyID());
+		assertNull(ecJWK.getKeyUse());
+		assertTrue(ecJWK.isPrivate());
+		
+		// Load JWK set
+		JWKSet jwkSet = JWKSet.load(hsmKeyStore);
+		assertTrue(jwkSet.getKeyByKeyId(rsaKeyID) instanceof RSAKey);
+		assertTrue(jwkSet.getKeyByKeyId(ecKeyID) instanceof ECKey);
+		
+		hsmKeyStore.deleteEntry(rsaKeyID);
+		hsmKeyStore.deleteEntry(ecKeyID);
 		
 		assertEquals(numKeys, hsmKeyStore.size());
 	}

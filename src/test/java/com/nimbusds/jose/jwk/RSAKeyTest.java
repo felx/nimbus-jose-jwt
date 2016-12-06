@@ -19,10 +19,12 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.File;
+import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.security.*;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.security.interfaces.RSAPrivateCrtKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -37,6 +39,12 @@ import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 /**
@@ -1225,5 +1233,121 @@ public class RSAKeyTest extends TestCase {
 		} catch (JOSEException e) {
 			assertEquals("The public key of the X.509 certificate is not RSA", e.getMessage());
 		}
+	}
+	
+	
+	public void testLoadFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		// Generate key pair
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(1024);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		// Generate certificate
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			publicKey
+		);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		
+		// Store
+		keyStore.setKeyEntry("1", privateKey, "1234".toCharArray(), new Certificate[]{cert});
+		
+		// Load
+		RSAKey rsaKey = RSAKey.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(rsaKey);
+		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
+		assertEquals("1", rsaKey.getKeyID());
+		assertEquals(1, rsaKey.getX509CertChain().size());
+		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertTrue(rsaKey.isPrivate());
+		
+		// Try to load with bad pin
+		try {
+			RSAKey.load(keyStore, "1", "".toCharArray());
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't retrieve private RSA key (bad pin?): Cannot recover key", e.getMessage());
+			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
+		}
+	}
+	
+	
+	public void testLoadFromKeyStore_publicKeyOnly()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		keyStore.setCertificateEntry("1", cert);
+		
+		RSAKey rsaKey = RSAKey.load(keyStore, "1", null);
+		assertNotNull(rsaKey);
+		assertEquals(KeyUse.ENCRYPTION, rsaKey.getKeyUse());
+		assertEquals("1", rsaKey.getKeyID());
+		assertEquals(1, rsaKey.getX509CertChain().size());
+		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertFalse(rsaKey.isPrivate());
+	}
+	
+	
+	public void testLoadFromKeyStore_notRSA()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		keyStore.setCertificateEntry("1", cert);
+		
+		try {
+			RSAKey.load(keyStore, "1", null);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't load RSA JWK: The key algorithm is not RSA", e.getMessage());
+		}
+	}
+	
+	
+	public void testLoadFromKeyStore_notFound()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		assertNull(RSAKey.load(keyStore, "1", null));
 	}
 }

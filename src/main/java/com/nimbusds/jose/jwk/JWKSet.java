@@ -22,12 +22,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.security.*;
+import java.security.cert.Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import javax.crypto.SecretKey;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.*;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -290,7 +293,7 @@ public class JWKSet {
 	 *
 	 * @param s The string to parse. Must not be {@code null}.
 	 *
-	 * @return The JSON Web Key (JWK) set.
+	 * @return The JWK set.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid
 	 *                        JSON Web Key (JWK) set.
@@ -308,7 +311,7 @@ public class JWKSet {
 	 *
 	 * @param json The JSON object to parse. Must not be {@code null}.
 	 *
-	 * @return The JSON Web Key (JWK) set.
+	 * @return The JWK set.
 	 *
 	 * @throws ParseException If the string couldn't be parsed to a valid
 	 *                        JSON Web Key (JWK) set.
@@ -358,7 +361,7 @@ public class JWKSet {
 	 *
 	 * @param file The JWK set file. Must not be {@code null}.
 	 *
-	 * @return The JSON Web Key (JWK) set.
+	 * @return The JWK set.
 	 *
 	 * @throws IOException    If the file couldn't be read.
 	 * @throws ParseException If the file couldn't be parsed to a valid
@@ -382,7 +385,7 @@ public class JWKSet {
 	 * @param sizeLimit      The read size limit, in bytes. If zero no
 	 *                       limit.
 	 *
-	 * @return The JSON Web Key (JWK) set.
+	 * @return The JWK set.
 	 *
 	 * @throws IOException    If the file couldn't be read.
 	 * @throws ParseException If the file couldn't be parsed to a valid
@@ -408,7 +411,7 @@ public class JWKSet {
 	 *
 	 * @param url The JWK set URL. Must not be {@code null}.
 	 *
-	 * @return The JSON Web Key (JWK) set.
+	 * @return The JWK set.
 	 *
 	 * @throws IOException    If the file couldn't be read.
 	 * @throws ParseException If the file couldn't be parsed to a valid
@@ -418,5 +421,95 @@ public class JWKSet {
 		throws IOException, ParseException {
 
 		return load(url, 0, 0, 0);
+	}
+	
+	
+	/**
+	 * Loads a JSON Web Key (JWK) set from the specified JCA key store. Key
+	 * conversion exceptions are silently swallowed. PKCS#11 stores are
+	 * also supported. Requires BouncyCastle.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificates are not
+	 * validated!
+	 *
+	 * @param keyStore The key store. Must not be {@code null}.
+	 *
+	 * @return The JWK set, empty if no keys were loaded.
+	 *
+	 * @throws KeyStoreException On a key store exception.
+	 */
+	public static JWKSet load(final KeyStore keyStore)
+		throws KeyStoreException {
+		
+		List<JWK> jwks = new LinkedList<>();
+		
+		// Load RSA and EC keys
+		for (Enumeration<String> keyAliases = keyStore.aliases(); keyAliases.hasMoreElements(); ) {
+			
+			String keyAlias = keyAliases.nextElement();
+			
+			Certificate cert = keyStore.getCertificate(keyAlias);
+			if (cert == null) {
+				continue; // skip
+			}
+			
+			if (cert.getPublicKey() instanceof RSAPublicKey) {
+				
+				RSAKey rsaJWK;
+				try {
+					rsaJWK = RSAKey.load(keyStore, keyAlias, "".toCharArray());
+				} catch (JOSEException e) {
+					continue; // skip cert
+				}
+				
+				if (rsaJWK == null) {
+					continue; // skip key
+				}
+				
+				jwks.add(rsaJWK);
+				
+			} else if (cert.getPublicKey() instanceof ECPublicKey) {
+				
+				ECKey ecJWK;
+				try {
+					ecJWK = ECKey.load(keyStore, keyAlias, "".toCharArray());
+				} catch (JOSEException e) {
+					continue; // skip cert
+				}
+				
+				if (ecJWK != null) {
+					jwks.add(ecJWK);
+				}
+				
+			} else {
+				continue;
+			}
+		}
+		
+		
+		// Load symmetric keys
+		for (Enumeration<String> keyAliases = keyStore.aliases(); keyAliases.hasMoreElements(); ) {
+			
+			String keyAlias = keyAliases.nextElement();
+			
+			Key key;
+			try {
+				key = keyStore.getKey(keyAlias, "".toCharArray());
+			} catch (UnrecoverableKeyException | NoSuchAlgorithmException e) {
+				continue; // skip key
+			}
+			
+			if (! (key instanceof SecretKey)) {
+				continue; // skip key
+			}
+			
+			OctetSequenceKey octJWK = new OctetSequenceKey.Builder(((SecretKey)key))
+				.keyID(keyAlias)
+				.build();
+			
+			jwks.add(octJWK);
+		}
+		
+		return new JWKSet(jwks);
 	}
 }

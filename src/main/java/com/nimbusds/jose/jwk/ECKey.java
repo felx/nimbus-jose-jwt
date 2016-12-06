@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
@@ -1528,8 +1529,11 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	
 	
 	/**
-	 * Parses a public EC key from the specified X.509 certificate.
-	 * Requires BouncyCastle.
+	 * Parses a public Elliptic Curve JWK from the specified X.509
+	 * certificate. Requires BouncyCastle.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
 	 *
 	 * <p>Set the following JWK parameters:
 	 *
@@ -1542,7 +1546,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *
 	 * @param cert The X.509 certificate. Must not be {@code null}.
 	 *
-	 * @return The public EC key.
+	 * @return The public Elliptic Curve JWK.
 	 *
 	 * @throws JOSEException If parsing failed.
 	 */
@@ -1578,6 +1582,70 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			throw new JOSEException("Couldn't encode x5t parameter: " + e.getMessage(), e);
 		} catch (CertificateEncodingException e) {
 			throw new JOSEException("Couldn't encode x5c parameter: " + e.getMessage(), e);
+		}
+	}
+	
+	
+	/**
+	 * Loads a public / private Elliptic Curve JWK from the specified JCA
+	 * key store. Requires BouncyCastle.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
+	 *
+	 * @param keyStore The key store. Must not be {@code null}.
+	 * @param alias    The alias. Must not be {@code null}.
+	 * @param pin      The pin to unlock the private key if any, empty or
+	 *                 {@code null} if not required.
+	 *
+	 * @return The public / private Elliptic Curve JWK., {@code null} if no
+	 *         key with the specified alias was found.
+	 *
+	 * @throws KeyStoreException On a key store exception.
+	 * @throws JOSEException     If EC key loading failed.
+	 */
+	public static ECKey load(final KeyStore keyStore,
+				 final String alias,
+				 final char[] pin)
+		throws KeyStoreException, JOSEException {
+		
+		Certificate cert = keyStore.getCertificate(alias);
+		
+		if (cert == null || ! (cert instanceof X509Certificate)) {
+			return null;
+		}
+		
+		X509Certificate x509Cert = (X509Certificate)cert;
+		
+		if (! (x509Cert.getPublicKey() instanceof ECPublicKey)) {
+			throw new JOSEException("Couldn't load EC JWK: The key algorithm is not EC");
+		}
+			
+		ECKey ecJWK = ECKey.parse(x509Cert);
+		
+		// Let kid=alias
+		ecJWK = new ECKey.Builder(ecJWK).keyID(alias).build();
+		
+		// Check for private counterpart
+		Key key;
+		try {
+			key = keyStore.getKey(alias, pin);
+		} catch (UnrecoverableKeyException | NoSuchAlgorithmException e) {
+			throw new JOSEException("Couldn't retrieve private EC key (bad pin?): " + e.getMessage(), e);
+		}
+			
+		if (key instanceof ECPrivateKey) {
+			// Simple file based key store
+			return new ECKey.Builder(ecJWK)
+				.privateKey((ECPrivateKey)key)
+				.build();
+		} else if (key instanceof PrivateKey && "EC".equalsIgnoreCase(key.getAlgorithm())) {
+			// PKCS#11 store
+			return new ECKey.Builder(ecJWK)
+				.privateKey((PrivateKey)key)
+				.build();
+		} else {
+			return ecJWK;
 		}
 	}
 }

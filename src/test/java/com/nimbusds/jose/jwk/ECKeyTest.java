@@ -22,10 +22,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.PrivateKey;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
@@ -41,6 +38,12 @@ import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
 import net.minidev.json.JSONObject;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 /**
@@ -847,5 +850,126 @@ public class ECKeyTest extends TestCase {
 		} catch (JOSEException e) {
 			assertEquals("The public key of the X.509 certificate is not EC", e.getMessage());
 		}
+	}
+	
+	
+	
+	
+	
+	public void testLoadFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		// Generate key pair
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
+		gen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		KeyPair kp = gen.generateKeyPair();
+		ECPublicKey publicKey = (ECPublicKey)kp.getPublic();
+		ECPrivateKey privateKey = (ECPrivateKey)kp.getPrivate();
+		
+		// Generate certificate
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			publicKey
+		);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		
+		// Store
+		keyStore.setKeyEntry("1", privateKey, "1234".toCharArray(), new java.security.cert.Certificate[]{cert});
+		
+		// Load
+		ECKey ecKey = ECKey.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(ecKey);
+		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
+		assertEquals("1", ecKey.getKeyID());
+		assertEquals(1, ecKey.getX509CertChain().size());
+		assertNotNull(ecKey.getX509CertThumbprint());
+		assertTrue(ecKey.isPrivate());
+		
+		// Try to load with bad pin
+		try {
+			ECKey.load(keyStore, "1", "".toCharArray());
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't retrieve private EC key (bad pin?): Cannot recover key", e.getMessage());
+			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
+		}
+	}
+	
+	
+	public void testLoadFromKeyStore_publicKeyOnly()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/wikipedia.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		keyStore.setCertificateEntry("1", cert);
+		
+		ECKey ecKey = ECKey.load(keyStore, "1", null);
+		assertNotNull(ecKey);
+		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
+		assertEquals("1", ecKey.getKeyID());
+		assertEquals(1, ecKey.getX509CertChain().size());
+		assertNotNull(ecKey.getX509CertThumbprint());
+		assertFalse(ecKey.isPrivate());
+	}
+	
+	
+	public void testLoadFromKeyStore_notEC()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
+		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
+		
+		keyStore.setCertificateEntry("1", cert);
+		
+		try {
+			ECKey.load(keyStore, "1", null);
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't load EC JWK: The key algorithm is not EC", e.getMessage());
+		}
+	}
+	
+	
+	public void testLoadFromKeyStore_notFound()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		assertNull(ECKey.load(keyStore, "1", null));
 	}
 }

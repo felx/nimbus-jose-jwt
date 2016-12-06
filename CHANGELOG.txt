@@ -635,9 +635,13 @@ version 4.32 (2016-12-06)
       subject public keys.
     * Adds new RSAKey.Builder(RSAKey) constructor.
     * Adds new ECKey.Builder(ECKey) constructor.
-    * Adds static RSAKey.parse(X509Certificate) method to parse RSA JWKs from
-      X.509 certificates with an RSA subject public key.
-    * Adds static ECKey.parse(X509Certificate) method to parse EC JWKs from
-      X.509 certificates with an EC subject public key.
+    * Adds static RSAKey.parse(X509Certificate) method to parse an RSA JWK from
+      a X.509 certificate with an RSA subject public key.
+    * Adds static ECKey.parse(X509Certificate) method to parse an EC JWK from a
+      X.509 certificate with an EC subject public key.
+    * Adds static RSAKey.load(KeyStore,String,char[]) method to load an RSA JWK
+      from a JCA key store.
+    * Adds static ECKey.load(KeyStore,String,char[]) method to load an EC JWK
+      from a JCA key store.
     * Makes org.bouncycastle:bcpkix-jdk15on an optional dependency.
 
