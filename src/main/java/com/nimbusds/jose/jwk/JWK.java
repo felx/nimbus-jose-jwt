@@ -241,9 +241,10 @@ public abstract class JWK implements JSONAware, Serializable {
 
 
 	/**
-	 * Gets the X.509 certificate thumbprint ({@code x5t}) of this JWK.
+	 * Gets the X.509 certificate SHA-1 thumbprint ({@code x5t}) of this
+	 * JWK.
 	 *
-	 * @return The X.509 certificate thumbprint, {@code null} if not
+	 * @return The X.509 certificate SHA-1 thumbprint, {@code null} if not
 	 *         specified.
 	 */
 	public Base64URL getX509CertThumbprint() {
