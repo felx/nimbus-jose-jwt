@@ -649,3 +649,7 @@ version 4.32 (2016-12-06)
       a JCA key store.g
     * Makes org.bouncycastle:bcpkix-jdk15on an optional dependency.
 
+version 4.33 (2016-12-07)
+    * Adds static JWK.parse(X509Certificate) method to parse an RSA or EC JWK
+      from a X.509 certificate with an RSA or EC public key.
+

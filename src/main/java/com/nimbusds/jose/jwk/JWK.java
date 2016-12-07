@@ -20,6 +20,9 @@ package com.nimbusds.jose.jwk;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.*;
 
@@ -60,7 +63,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-07-03
+ * @version 2016-12-07
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -475,6 +478,43 @@ public abstract class JWK implements JSONAware, Serializable {
 		} else {
 
 			throw new ParseException("Unsupported key type \"kty\" parameter: " + kty, 0);
+		}
+	}
+	
+	
+	/**
+	 * Parses a public {@link RSAKey RSA} or {@link ECKey EC JWK} from the
+	 * specified X.509 certificate. Requires BouncyCastle.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
+	 *
+	 * <p>Set the following JWK parameters:
+	 *
+	 * <ul>
+	 *     <li>For an EC key the curve is obtained from the subject public
+	 *         key info algorithm parameters.
+	 *     <li>The JWK use inferred by {@link KeyUse#from}.
+	 *     <li>The JWK ID from the X.509 serial number (in base 10).
+	 *     <li>The JWK X.509 certificate chain (this certificate only).
+	 *     <li>The JWK X.509 certificate SHA-1 thumbprint.
+	 * </ul>
+	 *
+	 * @param cert The X.509 certificate. Must not be {@code null}.
+	 *
+	 * @return The public RSA key.
+	 *
+	 * @throws JOSEException If parsing failed.
+	 */
+	public static JWK parse(final X509Certificate cert)
+		throws JOSEException {
+		
+		if (cert.getPublicKey() instanceof RSAPublicKey) {
+			return RSAKey.parse(cert);
+		} else if (cert.getPublicKey() instanceof ECPublicKey) {
+			return ECKey.parse(cert);
+		} else {
+			throw new JOSEException("Unsupported public key algorithm: " + cert.getPublicKey().getAlgorithm());
 		}
 	}
 }

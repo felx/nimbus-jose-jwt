@@ -1996,6 +1996,9 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	/**
 	 * Parses a public RSA JWK from the specified X.509 certificate.
 	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
+	 *
 	 * <p>Set the following JWK parameters:
 	 *
 	 * <ul>

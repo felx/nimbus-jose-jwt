@@ -1538,6 +1538,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 * <p>Set the following JWK parameters:
 	 *
 	 * <ul>
+	 *     <li>The curve is obtained from the subject public key info
+	 *         algorithm parameters.
 	 *     <li>The JWK use inferred by {@link KeyUse#from}.
 	 *     <li>The JWK ID from the X.509 serial number (in base 10).
 	 *     <li>The JWK X.509 certificate chain (this certificate only).
