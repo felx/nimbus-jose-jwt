@@ -502,7 +502,7 @@ public abstract class JWK implements JSONAware, Serializable {
 	 *
 	 * @param cert The X.509 certificate. Must not be {@code null}.
 	 *
-	 * @return The public RSA key.
+	 * @return The public RSA or EC JWK.
 	 *
 	 * @throws JOSEException If parsing failed.
 	 */
