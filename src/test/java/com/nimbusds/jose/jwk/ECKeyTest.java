@@ -853,9 +853,6 @@ public class ECKeyTest extends TestCase {
 	}
 	
 	
-	
-	
-	
 	public void testLoadFromKeyStore()
 		throws Exception {
 		

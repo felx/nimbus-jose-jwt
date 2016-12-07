@@ -20,6 +20,8 @@ package com.nimbusds.jose.jwk;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -513,6 +515,43 @@ public abstract class JWK implements JSONAware, Serializable {
 			return RSAKey.parse(cert);
 		} else if (cert.getPublicKey() instanceof ECPublicKey) {
 			return ECKey.parse(cert);
+		} else {
+			throw new JOSEException("Unsupported public key algorithm: " + cert.getPublicKey().getAlgorithm());
+		}
+	}
+	
+	
+	/**
+	 * Loads a public / private {@link RSAKey RSA} or {@link ECKey EC JWK}
+	 * from the specified JCA key store. Requires BouncyCastle.
+	 *
+	 * <p><strong>Important:</strong> The X.509 certificate is not
+	 * validated!
+	 *
+	 * @param keyStore The key store. Must not be {@code null}.
+	 * @param alias    The alias. Must not be {@code null}.
+	 * @param pin      The pin to unlock the private key if any, empty or
+	 *                 {@code null} if not required.
+	 *
+	 * @return The public / private RSA or EC JWK, {@code null} if no key
+	 *         with the specified alias was found.
+	 *
+	 * @throws KeyStoreException On a key store exception.
+	 * @throws JOSEException     If RSA or EC key loading failed.
+	 */
+	public static JWK load(final KeyStore keyStore, final String alias, final char[] pin)
+		throws KeyStoreException, JOSEException {
+		
+		java.security.cert.Certificate cert = keyStore.getCertificate(alias);
+		
+		if (cert == null || !(cert instanceof X509Certificate)) {
+			return null;
+		}
+		
+		if (cert.getPublicKey() instanceof RSAPublicKey) {
+			return RSAKey.load(keyStore, alias, pin);
+		} else if (cert.getPublicKey() instanceof ECPublicKey) {
+			return ECKey.load(keyStore, alias, pin);
 		} else {
 			throw new JOSEException("Unsupported public key algorithm: " + cert.getPublicKey().getAlgorithm());
 		}

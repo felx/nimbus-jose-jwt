@@ -19,12 +19,27 @@ package com.nimbusds.jose.jwk;
 
 
 import java.io.File;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.security.*;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Date;
 
+import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.IOUtils;
 import com.nimbusds.jose.util.X509CertUtils;
 import junit.framework.TestCase;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 
 /**
@@ -34,6 +49,7 @@ import junit.framework.TestCase;
  * @version 2016-12-07
  */
 public class JWKTest extends TestCase {
+	
 
 	public void testMIMEType() {
 
@@ -73,5 +89,124 @@ public class JWKTest extends TestCase {
 		assertFalse(jwk.isPrivate());
 		assertTrue(jwk instanceof ECKey);
 		assertEquals(ECKey.Curve.P_256, ((ECKey)jwk).getCurve());
+	}
+	
+	
+	public void testLoadRSAJWKFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		// Generate key pair
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("RSA");
+		gen.initialize(1024);
+		KeyPair kp = gen.generateKeyPair();
+		RSAPublicKey publicKey = (RSAPublicKey)kp.getPublic();
+		RSAPrivateKey privateKey = (RSAPrivateKey)kp.getPrivate();
+		
+		// Generate certificate
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			publicKey
+		);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		
+		// Store
+		keyStore.setKeyEntry("1", privateKey, "1234".toCharArray(), new Certificate[]{cert});
+		
+		// Load
+		RSAKey rsaKey = (RSAKey) JWK.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(rsaKey);
+		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
+		assertEquals("1", rsaKey.getKeyID());
+		assertEquals(1, rsaKey.getX509CertChain().size());
+		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertTrue(rsaKey.isPrivate());
+		
+		// Try to load with bad pin
+		try {
+			JWK.load(keyStore, "1", "".toCharArray());
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't retrieve private RSA key (bad pin?): Cannot recover key", e.getMessage());
+			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
+		}
+	}
+	
+	
+	public void testLoadECJWKFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		// Generate key pair
+		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
+		gen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		KeyPair kp = gen.generateKeyPair();
+		ECPublicKey publicKey = (ECPublicKey)kp.getPublic();
+		ECPrivateKey privateKey = (ECPrivateKey)kp.getPrivate();
+		
+		// Generate certificate
+		X500Name issuer = new X500Name("cn=c2id");
+		BigInteger serialNumber = new BigInteger(64, new SecureRandom());
+		Date now = new Date();
+		Date nbf = new Date(now.getTime() - 1000L);
+		Date exp = new Date(now.getTime() + 365*24*60*60*1000L); // in 1 year
+		X500Name subject = new X500Name("cn=c2id");
+		JcaX509v3CertificateBuilder x509certBuilder = new JcaX509v3CertificateBuilder(
+			issuer,
+			serialNumber,
+			nbf,
+			exp,
+			subject,
+			publicKey
+		);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
+		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
+		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));
+		X509Certificate cert = X509CertUtils.parse(certHolder.getEncoded());
+		
+		// Store
+		keyStore.setKeyEntry("1", privateKey, "1234".toCharArray(), new java.security.cert.Certificate[]{cert});
+		
+		// Load
+		ECKey ecKey = (ECKey)JWK.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(ecKey);
+		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
+		assertEquals("1", ecKey.getKeyID());
+		assertEquals(1, ecKey.getX509CertChain().size());
+		assertNotNull(ecKey.getX509CertThumbprint());
+		assertTrue(ecKey.isPrivate());
+		
+		// Try to load with bad pin
+		try {
+			JWK.load(keyStore, "1", "".toCharArray());
+			fail();
+		} catch (JOSEException e) {
+			assertEquals("Couldn't retrieve private EC key (bad pin?): Cannot recover key", e.getMessage());
+			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
+		}
 	}
 }

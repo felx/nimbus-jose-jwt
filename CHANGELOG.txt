@@ -652,4 +652,7 @@ version 4.32 (2016-12-06)
 version 4.33 (2016-12-07)
     * Adds static JWK.parse(X509Certificate) method to parse an RSA or EC JWK
       from a X.509 certificate with an RSA or EC public key.
+    * Adds static JWK.load(KeyStore,String,char[]) method to load an RSA or EC
+      JWK from a JCA key store.
+
 
