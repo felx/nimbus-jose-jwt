@@ -522,8 +522,10 @@ public abstract class JWK implements JSONAware, Serializable {
 	
 	
 	/**
-	 * Loads a public / private {@link RSAKey RSA} or {@link ECKey EC JWK}
-	 * from the specified JCA key store. Requires BouncyCastle.
+	 * Loads a JWK from the specified JCE key store. The JWK can be a
+	 * public / private {@link RSAKey RSA key}, a public / private
+	 * {@link ECKey EC key}, or a {@link OctetSequenceKey secret key}.
+	 * Requires BouncyCastle.
 	 *
 	 * <p><strong>Important:</strong> The X.509 certificate is not
 	 * validated!
@@ -533,8 +535,8 @@ public abstract class JWK implements JSONAware, Serializable {
 	 * @param pin      The pin to unlock the private key if any, empty or
 	 *                 {@code null} if not required.
 	 *
-	 * @return The public / private RSA or EC JWK, {@code null} if no key
-	 *         with the specified alias was found.
+	 * @return The public / private RSA or EC JWK, or secret JWK, or
+	 *         {@code null} if no key with the specified alias was found.
 	 *
 	 * @throws KeyStoreException On a key store exception.
 	 * @throws JOSEException     If RSA or EC key loading failed.
@@ -544,8 +546,9 @@ public abstract class JWK implements JSONAware, Serializable {
 		
 		java.security.cert.Certificate cert = keyStore.getCertificate(alias);
 		
-		if (cert == null || !(cert instanceof X509Certificate)) {
-			return null;
+		if (cert == null) {
+			// Try secret key
+			return OctetSequenceKey.load(keyStore, alias, pin);
 		}
 		
 		if (cert.getPublicKey() instanceof RSAPublicKey) {

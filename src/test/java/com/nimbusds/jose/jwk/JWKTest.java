@@ -28,7 +28,10 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.Date;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.IOUtils;
@@ -208,5 +211,38 @@ public class JWKTest extends TestCase {
 			assertEquals("Couldn't retrieve private EC key (bad pin?): Cannot recover key", e.getMessage());
 			assertTrue(e.getCause() instanceof UnrecoverableKeyException);
 		}
+	}
+	
+	
+	public void testLoadSecretKeyFromKeyStore()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		gen.init(128);
+		SecretKey secretKey = gen.generateKey();
+		
+		keyStore.setEntry("1", new KeyStore.SecretKeyEntry(secretKey), new KeyStore.PasswordProtection("1234".toCharArray()));
+		
+		OctetSequenceKey octJWK = (OctetSequenceKey)JWK.load(keyStore, "1", "1234".toCharArray());
+		assertNotNull(octJWK);
+		assertEquals("1", octJWK.getKeyID());
+		assertTrue(Arrays.equals(secretKey.getEncoded(), octJWK.toByteArray()));
+	}
+	
+	
+	public void testLoadJWK_notFound()
+		throws Exception {
+		
+		KeyStore keyStore = KeyStore.getInstance("JCEKS");
+		
+		char[] password = "secret".toCharArray();
+		keyStore.load(null, password);
+		
+		assertNull(JWK.load(keyStore, "no-such-key-id", "".toCharArray()));
 	}
 }
