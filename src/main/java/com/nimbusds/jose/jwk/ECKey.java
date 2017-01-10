@@ -88,11 +88,20 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
  * }
  * </pre>
  *
+ * <p>Use the builder to create a new EC JWK:
+ *
+ * <pre>
+ * ECKey key = new ECKey.Builder(ECKey.Curve.P_256, x, y)
+ * 	.keyUse(KeyUse.SIGNATURE)
+ * 	.keyID("123")
+ * 	.build();
+ * </pre>
+ *
  * <p>See http://en.wikipedia.org/wiki/Elliptic_curve_cryptography
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-12-06
+ * @version 2017-01-10
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK {
@@ -462,6 +471,12 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		 * The X.509 certificate chain, optional.
 		 */
 		private List<Base64> x5c;
+		
+		
+		/**
+		 * Reference to the underlying key store, {@code null} if none.
+		 */
+		private KeyStore ks;
 
 
 		/**
@@ -536,6 +551,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			x5u = ecJWK.getX509CertURL();
 			x5t = ecJWK.getX509CertThumbprint();
 			x5c = ecJWK.getX509CertChain();
+			ks = ecJWK.getKeyStore();
 		}
 
 
@@ -755,6 +771,21 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			this.x5c = x5c;
 			return this;
 		}
+		
+		
+		/**
+		 * Sets the underlying key store.
+		 *
+		 * @param keyStore Reference to the underlying key store,
+		 *                 {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keyStore(final KeyStore keyStore) {
+			
+			this.ks = keyStore;
+			return this;
+		}
 
 
 		/**
@@ -770,16 +801,16 @@ public final class ECKey extends JWK implements AssymetricJWK {
 			try {
 				if (d == null && priv == null) {
 					// Public key
-					return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c);
+					return new ECKey(crv, x, y, use, ops, alg, kid, x5u, x5t, x5c, ks);
 				}
 				
 				if (priv != null) {
 					// PKCS#11 reference to private key
-					return new ECKey(crv, x, y, priv, use, ops, alg, kid, x5u, x5t, x5c);
+					return new ECKey(crv, x, y, priv, use, ops, alg, kid, x5u, x5t, x5c, ks);
 				}
 
 				// Public / private key pair with 'd'
-				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c);
+				return new ECKey(crv, x, y, d, use, ops, alg, kid, x5u, x5t, x5c, ks);
 
 			} catch (IllegalArgumentException e) {
 				throw new IllegalStateException(e.getMessage(), e);
@@ -874,12 +905,15 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *            specified.
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
+	 * @param ks  Reference to the underlying key store, {@code null} if
+	 *            not specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 
-		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c, ks);
 
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
@@ -933,13 +967,16 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *            specified.
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
+	 * @param ks  Reference to the underlying key store, {@code null} if
+	 *            not specified.
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final Base64URL d,
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 
-		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
-
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c, ks);
+		
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
 		}
@@ -999,9 +1036,10 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 */
 	public ECKey(final Curve crv, final Base64URL x, final Base64URL y, final PrivateKey priv,
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 
-		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c);
+		super(KeyType.EC, use, ops, alg, kid, x5u, x5t, x5c, ks);
 
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
@@ -1044,16 +1082,20 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *            specified.
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
+	 * @param ks  Reference to the underlying key store, {@code null} if
+	 *            not specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 
 		this(crv, 
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 		     use, ops, alg, kid,
-		     x5u, x5t, x5c);
+		     x5u, x5t, x5c,
+		     ks);
 	}
 
 
@@ -1078,17 +1120,21 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *             specified.
 	 * @param x5c  The X.509 certificate chain, {@code null} if not 
 	 *             specified.
+	 * @param ks   Reference to the underlying key store, {@code null} if
+	 *             not specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, final ECPrivateKey priv, 
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 
 		this(crv,
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 		     encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 		     encodeCoordinate(priv.getParams().getCurve().getField().getFieldSize(), priv.getS()),
 		     use, ops, alg, kid,
-		     x5u, x5t, x5c);
+		     x5u, x5t, x5c,
+		     ks);
 	}
 
 
@@ -1114,17 +1160,21 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 *             specified.
 	 * @param x5c  The X.509 certificate chain, {@code null} if not
 	 *             specified.
+	 * @param ks   Reference to the underlying key store, {@code null} if
+	 *             not specified.
 	 */
 	public ECKey(final Curve crv, final ECPublicKey pub, final PrivateKey priv,
 		     final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		     final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		     final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		     final KeyStore ks) {
 		
 		this(
 			crv,
 			encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineX()),
 			encodeCoordinate(pub.getParams().getCurve().getField().getFieldSize(), pub.getW().getAffineY()),
 			priv,
-			use, ops, alg, kid, x5u, x5t, x5c);
+			use, ops, alg, kid, x5u, x5t, x5c,
+			ks);
 	}
 
 
@@ -1420,9 +1470,11 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	@Override
 	public ECKey toPublicJWK() {
 
-		return new ECKey(getCurve(), getX(), getY(),
-			         getKeyUse(), getKeyOperations(), getAlgorithm(), getKeyID(),
-			         getX509CertURL(), getX509CertThumbprint(), getX509CertChain());
+		return new ECKey(
+			getCurve(), getX(), getY(),
+			getKeyUse(), getKeyOperations(), getAlgorithm(), getKeyID(),
+			getX509CertURL(), getX509CertThumbprint(), getX509CertChain(),
+			getKeyStore());
 	}
 	
 
@@ -1506,7 +1558,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 					JWKMetadata.parseKeyID(jsonObject),
 					JWKMetadata.parseX509CertURL(jsonObject),
 					JWKMetadata.parseX509CertThumbprint(jsonObject),
-					JWKMetadata.parseX509CertChain(jsonObject));
+					JWKMetadata.parseX509CertChain(jsonObject),
+					null);
 
 			} else {
 				// Key pair
@@ -1517,7 +1570,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 					JWKMetadata.parseKeyID(jsonObject),
 					JWKMetadata.parseX509CertURL(jsonObject),
 					JWKMetadata.parseX509CertThumbprint(jsonObject),
-					JWKMetadata.parseX509CertChain(jsonObject));
+					JWKMetadata.parseX509CertChain(jsonObject),
+					null);
 			}
 
 		} catch (IllegalArgumentException ex) {
@@ -1626,7 +1680,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		ECKey ecJWK = ECKey.parse(x509Cert);
 		
 		// Let kid=alias
-		ecJWK = new ECKey.Builder(ecJWK).keyID(alias).build();
+		ecJWK = new ECKey.Builder(ecJWK).keyID(alias).keyStore(keyStore).build();
 		
 		// Check for private counterpart
 		Key key;

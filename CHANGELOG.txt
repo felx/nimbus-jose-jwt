@@ -655,4 +655,8 @@ version 4.33 (2016-12-07)
     * Adds static JWK.load(KeyStore,String,char[]) method to load an RSA, EC or
       secret JWK from a JCA key store.
 
+version 4.34 (2017-01-10)
+    * Adds a JWK.getKeyStore method to return a reference to the underlying
+      key store (if any). Useful to help select the correct JCA provider when
+      a JWK is loaded from a PKCS#11 key store (iss #207).
 

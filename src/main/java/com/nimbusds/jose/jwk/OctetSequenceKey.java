@@ -54,10 +54,18 @@ import net.minidev.json.JSONObject;
  *   "k"   : "GawgguFyGrWKav7AX4VKUg"
  * }
  * </pre>
+ *
+ * <p>Use the builder to create a new octet JWK:
+ *
+ * <pre>
+ * OctetSequenceKey key = new OctetSequenceKey.Builder(bytes)
+ * 	.keyID("123")
+ * 	.build();
+ * </pre>
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2016-12-06
+ * @version 2017-01-10
  */
 @Immutable
 public final class OctetSequenceKey extends JWK implements SecretJWK {
@@ -133,6 +141,12 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 		 * The X.509 certificate chain, optional.
 		 */
 		private List<Base64> x5c;
+		
+		
+		/**
+		 * Reference to the underlying key store, {@code null} if none.
+		 */
+		private KeyStore ks;
 
 
 		/**
@@ -334,6 +348,22 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 			this.x5c = x5c;
 			return this;
 		}
+		
+		
+		/**
+		 * Sets the underlying key store.
+		 *
+		 * @param keyStore Reference to the underlying key store,
+		 *                 {@code null} if none.
+		 *
+		 * @return This builder.
+		 */
+		public Builder keyStore(final KeyStore keyStore) {
+			
+			this.ks = keyStore;
+			return this;
+		}
+		
 
 		/**
 		 * Builds a new octet sequence JWK.
@@ -346,7 +376,7 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 		public OctetSequenceKey build() {
 
 			try {
-				return new OctetSequenceKey(k, use, ops, alg, kid, x5u, x5t, x5c);
+				return new OctetSequenceKey(k, use, ops, alg, kid, x5u, x5t, x5c, ks);
 
 			} catch (IllegalArgumentException e) {
 
@@ -374,12 +404,15 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 	 *            specified.
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
+	 * @param ks  Reference to the underlying key store, {@code null} if
+	 *            not specified.
 	 */
 	public OctetSequenceKey(final Base64URL k,
 				final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		                final URI x5u, final Base64URL x5t, final List<Base64> x5c) {
+		                final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+				final KeyStore ks) {
 	
-		super(KeyType.OCT, use, ops, alg, kid, x5u, x5t, x5c);
+		super(KeyType.OCT, use, ops, alg, kid, x5u, x5t, x5c, ks);
 
 		if (k == null) {
 			throw new IllegalArgumentException("The key value must not be null");
@@ -546,7 +579,9 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 			JWKMetadata.parseKeyID(jsonObject),
 			JWKMetadata.parseX509CertURL(jsonObject),
 			JWKMetadata.parseX509CertThumbprint(jsonObject),
-			JWKMetadata.parseX509CertChain(jsonObject));
+			JWKMetadata.parseX509CertChain(jsonObject),
+			null // key store
+		);
 	}
 	
 	
@@ -580,6 +615,7 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 		
 		return new OctetSequenceKey.Builder((SecretKey)key)
 			.keyID(alias)
+			.keyStore(keyStore)
 			.build();
 	}
 }

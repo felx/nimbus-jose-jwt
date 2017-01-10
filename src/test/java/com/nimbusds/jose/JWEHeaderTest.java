@@ -34,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests JWE header parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2017-01-10
  */
 public class JWEHeaderTest extends TestCase {
 
@@ -124,7 +124,7 @@ public class JWEHeaderTest extends TestCase {
 		final KeyUse use = KeyUse.ENCRYPTION;
 		final String kid = "1234";
 
-		RSAKey jwk = new RSAKey(mod, exp, use, null, JWEAlgorithm.RSA1_5, kid, null, null, null);
+		RSAKey jwk = new RSAKey.Builder(mod, exp).keyUse(use).algorithm(JWEAlgorithm.RSA1_5).keyID(kid).build();
 
 		List<Base64> certChain = new LinkedList<>();
 		certChain.add(new Base64("asd"));

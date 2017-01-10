@@ -40,20 +40,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.util.X509CertUtils;
-import junit.framework.TestCase;
-
 import static net.jadler.Jadler.*;
-
-import net.minidev.json.JSONObject;
 
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.X509CertUtils;
+import junit.framework.TestCase;
+import net.minidev.json.JSONObject;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.KeyUsage;
@@ -66,7 +63,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-12-14
+ * @version 2017-01-10
  */
 public class JWKSetTest extends TestCase {
 
@@ -142,22 +139,19 @@ public class JWKSetTest extends TestCase {
 	public void testSerializeAndParsePublicJWKSet()
 		throws Exception {
 
-		ECKey ecKey = new ECKey(ECKey.Curve.P_256, 
-				new Base64URL("abc"), 
-				new Base64URL("def"),
-				KeyUse.ENCRYPTION,
-			        null,
-				JWEAlgorithm.ECDH_ES,
-				"1234",
-				null, null, null);
+		ECKey ecKey = new ECKey.Builder(ECKey.Curve.P_256,
+			new Base64URL("abc"),
+			new Base64URL("def"))
+			.keyUse(KeyUse.ENCRYPTION)
+			.algorithm(JWEAlgorithm.ECDH_ES)
+			.keyID("1234")
+			.build();
 
-		RSAKey rsaKey = new RSAKey(new Base64URL("abc"),
-				new Base64URL("def"),
-				KeyUse.SIGNATURE,
-			        null,
-				JWSAlgorithm.RS256,
-				"5678",
-				null, null, null);
+		RSAKey rsaKey = new RSAKey.Builder(new Base64URL("abc"), new Base64URL("def"))
+			.keyUse(KeyUse.SIGNATURE)
+			.algorithm(JWSAlgorithm.RS256)
+			.keyID("5678")
+			.build();
 
 		JWKSet keySet = new JWKSet();
 
@@ -862,6 +856,7 @@ public class JWKSetTest extends TestCase {
 		assertNotNull(octJWK);
 		assertEquals("1", octJWK.getKeyID());
 		assertTrue(Arrays.equals(secretKey.getEncoded(), octJWK.toByteArray()));
+		assertEquals(keyStore, octJWK.getKeyStore());
 		
 		RSAKey rsaKey = (RSAKey) jwkSet.getKeyByKeyId("2");
 		assertNotNull(rsaKey);
@@ -870,6 +865,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(1, rsaKey.getX509CertChain().size());
 		assertNotNull(rsaKey.getX509CertThumbprint());
 		assertTrue(rsaKey.isPrivate());
+		assertEquals(keyStore, rsaKey.getKeyStore());
 		
 		ECKey ecKey = (ECKey) jwkSet.getKeyByKeyId("3");
 		assertNotNull(ecKey);
@@ -879,6 +875,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(1, ecKey.getX509CertChain().size());
 		assertNotNull(ecKey.getX509CertThumbprint());
 		assertTrue(ecKey.isPrivate());
+		assertEquals(keyStore, ecKey.getKeyStore());
 		
 		assertEquals(3, jwkSet.getKeys().size());
 	}

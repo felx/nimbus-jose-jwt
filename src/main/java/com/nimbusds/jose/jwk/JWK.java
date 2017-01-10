@@ -65,7 +65,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-12-07
+ * @version 2017-01-10
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -126,6 +126,12 @@ public abstract class JWK implements JSONAware, Serializable {
 	 * The X.509 certificate chain, optional.
 	 */
 	private final List<Base64> x5c;
+	
+	
+	/**
+	 * Reference to the underlying key store, {@code null} if none.
+	 */
+	private final KeyStore keyStore;
 
 
 	/**
@@ -143,15 +149,18 @@ public abstract class JWK implements JSONAware, Serializable {
 	 *            specified.
 	 * @param x5c The X.509 certificate chain, {@code null} if not 
 	 *            specified.
+	 * @param ks  Reference to the underlying key store, {@code null} if
+	 *            none.
 	 */
-	public JWK(final KeyType kty,
-		   final KeyUse use,
-		   final Set<KeyOperation> ops,
-		   final Algorithm alg,
-		   final String kid,
-		   final URI x5u,
-		   final Base64URL x5t,
-		   final List<Base64> x5c) {
+	protected JWK(final KeyType kty,
+		      final KeyUse use,
+		      final Set<KeyOperation> ops,
+		      final Algorithm alg,
+		      final String kid,
+		      final URI x5u,
+		      final Base64URL x5t,
+		      final List<Base64> x5c,
+		      final KeyStore ks) {
 
 		if (kty == null) {
 			throw new IllegalArgumentException("The key type \"kty\" parameter must not be null");
@@ -172,6 +181,8 @@ public abstract class JWK implements JSONAware, Serializable {
 		this.x5u = x5u;
 		this.x5t = x5t;
 		this.x5c = x5c;
+		
+		this.keyStore = ks;
 	}
 
 
@@ -271,6 +282,17 @@ public abstract class JWK implements JSONAware, Serializable {
 		}
 
 		return Collections.unmodifiableList(x5c);
+	}
+	
+	
+	/**
+	 * Returns a reference to the underlying key store.
+	 *
+	 * @return The underlying key store, {@code null} if none.
+	 */
+	public KeyStore getKeyStore() {
+		
+		return keyStore;
 	}
 
 
