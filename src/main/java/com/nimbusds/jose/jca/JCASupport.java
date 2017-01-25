@@ -21,10 +21,10 @@ package com.nimbusds.jose.jca;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
-
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
+import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -68,6 +68,10 @@ public final class JCASupport {
 	 *         {@code false}.
 	 */
 	public static boolean isSupported(final JWSAlgorithm alg) {
+		
+		if (alg.getName().equals(Algorithm.NONE.getName())) {
+			return true;
+		}
 
 		for (Provider p: Security.getProviders()) {
 

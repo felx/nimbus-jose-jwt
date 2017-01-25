@@ -660,3 +660,6 @@ version 4.34 (2017-01-10)
       key store (if any). Useful to help select the correct JCA provider when
       a JWK is loaded from a PKCS#11 key store (iss #207).
 
+version 4.34.1 (2017-01-25)
+    * Updates JCASupport to always mark "none" as supported JWS algorithm.
+

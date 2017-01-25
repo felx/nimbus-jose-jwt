@@ -240,4 +240,10 @@ public class JCASupportTest extends TestCase {
 		assertTrue(JCASupport.isSupported(EncryptionMethod.A192GCM, bc));
 		assertTrue(JCASupport.isSupported(EncryptionMethod.A256GCM, bc));
 	}
+	
+	
+	public void testAlgNoneAlwaysSupported() {
+		
+		assertTrue(JCASupport.isSupported(new JWSAlgorithm("none")));
+	}
 }
