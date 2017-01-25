@@ -89,6 +89,52 @@ public class JCASupportTest extends TestCase {
 	}
 
 
+	public void testJWSSupport_Default_Java_8() {
+
+		if (! System.getProperty("java.version").startsWith("1.8")) {
+			return;
+		}
+
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS256));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS384));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS512));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS256));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS384));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS512));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS512));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS256));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS384));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES256));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES384));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.ES512));
+	}
+
+
+	public void testJWSSupport_SUN_Java_8() {
+
+		if (! System.getProperty("java.version").startsWith("1.8")) {
+			return;
+		}
+
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS256, Security.getProvider("SunJCE")));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS384, Security.getProvider("SunJCE")));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.HS512, Security.getProvider("SunJCE")));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS256, Security.getProvider("SunRsaSign")));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS384, Security.getProvider("SunRsaSign")));
+		assertTrue(JCASupport.isSupported(JWSAlgorithm.RS512, Security.getProvider("SunRsaSign")));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS512, Security.getProvider("SunRsaSign")));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS256, Security.getProvider("SunRsaSign")));
+		assertFalse(JCASupport.isSupported(JWSAlgorithm.PS384, Security.getProvider("SunRsaSign")));
+
+		if (Security.getProvider("SunEC") != null) {
+			// Not supported on OpenJDK
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES256, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES384, Security.getProvider("SunEC")));
+			assertTrue(JCASupport.isSupported(JWSAlgorithm.ES512, Security.getProvider("SunEC")));
+		}
+	}
+
+
 	public void testJWSSupport_BC() {
 
 		Provider bc = BouncyCastleProviderSingleton.getInstance();
