@@ -18,12 +18,17 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECFieldFp;
+import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.EllipticCurve;
 
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
@@ -39,7 +44,7 @@ import com.nimbusds.jose.JWEHeader;
  * Elliptic Curve Diffie-Hellman key agreement functions and utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-20
+ * @version 2017-02-28
  */
 class ECDH {
 
@@ -226,6 +231,45 @@ class ECDH {
 			ConcatKDF.encodeDataWithLength(header.getAgreementPartyVInfo()),
 			ConcatKDF.encodeIntData(sharedKeyLength),
 			ConcatKDF.encodeNoData());
+	}
+	
+	
+	/**
+	 * Ensures the specified ephemeral public key is on the curve of the
+	 * private key. Intended to prevent an "Invalid Curve Attack",
+	 * independent from any JCA provider checks (the SUN provider in Java
+	 * 1.8.0_51+ and BouncyCastle have them, other / older provider do
+	 * not).
+	 *
+	 * <p>See https://www.cs.bris.ac.uk/Research/CryptographySecurity/RWC/2017/nguyen.quan.pdf
+	 *
+	 * @param ephemeralPublicKey The ephemeral public EC key. Must not be
+	 *                           {@code null}.
+	 * @param privateKey         The private EC key. Must not be
+	 *                           {@code null}.
+	 *
+	 * @throws JOSEException If the ephemeral public key didn't pass the
+	 *                       curve check.
+	 */
+	public static void ensurePointOnCurve(final ECPublicKey ephemeralPublicKey, final ECPrivateKey privateKey)
+		throws JOSEException {
+		
+		// Ensure the following is met:
+		// (y^2) mod p = (x^3 + ax + b) mod p
+		ECParameterSpec ecParameterSpec = privateKey.getParams();
+		EllipticCurve curve = ecParameterSpec.getCurve();
+		ECPoint point = ephemeralPublicKey.getW();
+		BigInteger x = point.getAffineX();
+		BigInteger y = point.getAffineY();
+		BigInteger a = curve.getA();
+		BigInteger b = curve.getB();
+		BigInteger p = ((ECFieldFp) curve.getField()).getP();
+		BigInteger leftSide = (y.pow(2)).mod(p);
+		BigInteger rightSide = (x.pow(3).add(a.multiply(x)).add(b)).mod(p);
+		
+		if (! leftSide.equals(rightSide)) {
+			throw new JOSEException("Invalid ephemeral public key: Point not on expected curve");
+		}
 	}
 
 

@@ -71,7 +71,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-08
+ * @version 2017-02-28
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -190,6 +190,9 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		}
 
 		ECPublicKey ephemeralPublicKey = ephemeralKey.toECPublicKey();
+		
+		// Curve check
+		ECDH.ensurePointOnCurve(ephemeralPublicKey, getPrivateKey());
 
 		// Derive 'Z'
 		SecretKey Z = ECDH.deriveSharedSecret(

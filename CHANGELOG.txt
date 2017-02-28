@@ -663,3 +663,12 @@ version 4.34 (2017-01-10)
 version 4.34.1 (2017-01-25)
     * Updates JCASupport to always mark "none" as supported JWS algorithm.
 
+version 4.34.2 (2017-02-28)
+    * Adds an explicit check during ECDH decryption to ensure the submitted
+      ephemeral public EC key is on the same curve as the private EC key.
+      Intended to prevent an "Invalid Curve Attack" with JCA providers that
+      don't perform this check internally. See http://c2id.co/3n for details.
+      Affected is the default Java SUN JCA provider that comes with Java prior
+      to version 1.8.0_51. Later Java versions and the BouncyCastle JCA
+      provider are not affected (iss #210).
+
