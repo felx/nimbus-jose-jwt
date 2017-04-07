@@ -29,6 +29,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -401,6 +402,45 @@ public class JWSHeaderTest extends TestCase {
 			.build();
 
 		assertTrue(header.toJSONObject().toJSONString().contains("\"aud\":[\"a\",\"b\"]"));
+	}
+	
+	
+	// iss #208
+	public void testHeaderParameterAsJSONObject()
+		throws Exception {
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("key", "value");
+		
+		JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.HS256)
+			.customParam("prm", jsonObject)
+			.build();
+		
+		jsonObject = (JSONObject) header.getCustomParam("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		
+		JSONObject headerJSONObject = header.toJSONObject();
+		assertEquals("HS256", headerJSONObject.get("alg"));
+		jsonObject = (JSONObject) headerJSONObject.get("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		assertEquals(2, headerJSONObject.size());
+		
+		Base64URL encodedHeader = header.toBase64URL();
+		
+		header = JWSHeader.parse(encodedHeader);
+		
+		jsonObject = (JSONObject) header.getCustomParam("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		
+		headerJSONObject = header.toJSONObject();
+		assertEquals("HS256", headerJSONObject.get("alg"));
+		jsonObject = (JSONObject) headerJSONObject.get("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		assertEquals(2, headerJSONObject.size());
 	}
 }
 
