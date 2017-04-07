@@ -781,4 +781,37 @@ public class JWTClaimsSetTest extends TestCase {
 			assertEquals("The \"act\" claim is not a JSON object or Map", e.getMessage());
 		}
 	}
+
+	// iss #208
+	public void testHeaderParameterAsJSONObject()
+		throws Exception {
+		
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("key", "value");
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("prm", jsonObject)
+			.build();
+		
+		jsonObject = claimsSet.getJSONObjectClaim("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		
+		JSONObject claimsJSONObject = claimsSet.toJSONObject();
+		jsonObject = (JSONObject) claimsJSONObject.get("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+		
+		JWT plainJWT = new PlainJWT(claimsSet);
+		
+		String compactEncodedJWT = plainJWT.serialize();
+		
+		plainJWT = PlainJWT.parse(compactEncodedJWT);
+		
+		claimsSet = plainJWT.getJWTClaimsSet();
+		
+		jsonObject = claimsSet.getJSONObjectClaim("prm");
+		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+	}
 }
