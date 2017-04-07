@@ -782,8 +782,8 @@ public class JWTClaimsSetTest extends TestCase {
 		}
 	}
 
-	// iss #208
-	public void testHeaderParameterAsJSONObject()
+	
+	public void testClaimAsJSONObject()
 		throws Exception {
 		
 		JSONObject jsonObject = new JSONObject();
