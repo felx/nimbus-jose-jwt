@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.util.*;
 
 import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jwt.util.DateUtils;
 import junit.framework.TestCase;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -780,5 +781,40 @@ public class JWTClaimsSetTest extends TestCase {
 		} catch (ParseException e) {
 			assertEquals("The \"act\" claim is not a JSON object or Map", e.getMessage());
 		}
+	}
+	
+	
+	// iss 213
+	public void testUnixTimestampOutput()
+		throws Exception {
+		
+		// Unix timestamps (seconds since epoch)
+		long iat = 123456L;
+		long nbf = 234567L;
+		long exp = 345678L;
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.issueTime(DateUtils.fromSecondsSinceEpoch(iat))
+			.notBeforeTime(DateUtils.fromSecondsSinceEpoch(nbf))
+			.expirationTime(DateUtils.fromSecondsSinceEpoch(exp))
+			.build();
+		
+		JSONObject jsonObject = claimsSet.toJSONObject();
+		
+		assertEquals(iat, jsonObject.get(("iat")));
+		assertEquals(nbf, jsonObject.get(("nbf")));
+		assertEquals(exp, jsonObject.get(("exp")));
+		assertEquals(3, jsonObject.size());
+		
+		JWT plainJWT = new PlainJWT(claimsSet);
+		
+		String compactEncodedJWT = plainJWT.serialize();
+		
+		jsonObject = PlainJWT.parse(compactEncodedJWT).getJWTClaimsSet().toJSONObject();
+		
+		assertEquals(iat, jsonObject.get(("iat")));
+		assertEquals(nbf, jsonObject.get(("nbf")));
+		assertEquals(exp, jsonObject.get(("exp")));
+		assertEquals(3, jsonObject.size());
 	}
 }
