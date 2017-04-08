@@ -88,9 +88,9 @@ public class DefaultJOSEProcessor<C extends SecurityContext> implements Configur
 	private static final JOSEException NO_JWE_DECRYPTER_FACTORY_EXCEPTION =
 		new JOSEException("No JWE decrypter is configured");
 	private static final BadJOSEException NO_JWS_KEY_CANDIDATES_EXCEPTION =
-		new BadJOSEException("JWS object rejected: No matching key(s) found");
+		new BadJOSEException("JWS object rejected: Another algorithm expected, or no matching key(s) found");
 	private static final BadJOSEException NO_JWE_KEY_CANDIDATES_EXCEPTION =
-		new BadJOSEException("JWE object rejected: No matching key(s) found");
+		new BadJOSEException("JWE object rejected: Another algorithm expected, or no matching key(s) found");
 	private static final BadJOSEException INVALID_SIGNATURE =
 		new BadJWSException("JWS object rejected: Invalid signature");
 	private static final BadJOSEException NO_MATCHING_VERIFIERS_EXCEPTION =

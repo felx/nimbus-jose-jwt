@@ -672,3 +672,6 @@ version 4.34.2 (2017-02-28)
       to version 1.8.0_51. Later Java versions and the BouncyCastle JCA
       provider are not affected (iss #210).
 
+version 4.34.3 (2017-04-08)
+    * Refines exception messages of DefaultJOSEProcessor and
+      DefaultJWTProcessor.

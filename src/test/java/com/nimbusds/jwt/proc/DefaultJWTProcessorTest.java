@@ -48,7 +48,7 @@ import junit.framework.TestCase;
 /**
  * Tests the default JWT processor.
  *
- * @version 2016-07-25
+ * @version 2017-04-08
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -526,7 +526,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 		try {
 			processor.process(jws, null);
 		} catch (BadJOSEException e) {
-			assertEquals("Signed JWT rejected: No matching key(s) found", e.getMessage());
+			assertEquals("Signed JWT rejected: Another algorithm expected, or no matching key(s) found", e.getMessage());
 		}
 	}
 
@@ -567,7 +567,7 @@ public class DefaultJWTProcessorTest extends TestCase {
 		try {
 			processor.process(jwt, null);
 		} catch (BadJOSEException e) {
-			assertEquals("Encrypted JWT rejected: No matching key(s) found", e.getMessage());
+			assertEquals("Encrypted JWT rejected: Another algorithm expected, or no matching key(s) found", e.getMessage());
 		}
 	}
 

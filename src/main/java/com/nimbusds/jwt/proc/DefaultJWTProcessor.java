@@ -97,9 +97,9 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	private static final JOSEException NO_JWE_DECRYPTER_FACTORY_EXCEPTION =
 		new JOSEException("No JWE decrypter is configured");
 	private static final BadJOSEException NO_JWS_KEY_CANDIDATES_EXCEPTION =
-		new BadJOSEException("Signed JWT rejected: No matching key(s) found");
+		new BadJOSEException("Signed JWT rejected: Another algorithm expected, or no matching key(s) found");
 	private static final BadJOSEException NO_JWE_KEY_CANDIDATES_EXCEPTION =
-		new BadJOSEException("Encrypted JWT rejected: No matching key(s) found");
+		new BadJOSEException("Encrypted JWT rejected: Another algorithm expected, or no matching key(s) found");
 	private static final BadJOSEException INVALID_SIGNATURE =
 		new BadJWSException("Signed JWT rejected: Invalid signature");
 	private static final BadJWTException INVALID_NESTED_JWT_EXCEPTION =

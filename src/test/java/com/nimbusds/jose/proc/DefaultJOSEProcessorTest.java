@@ -43,7 +43,7 @@ import com.nimbusds.jose.util.Base64URL;
 /**
  * Tests the default JOSE processor.
  *
- * @version 2016-05-13
+ * @version 2017-04-08
  */
 public class DefaultJOSEProcessorTest extends TestCase {
 
@@ -432,7 +432,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 		try {
 			processor.process(jws, null);
 		} catch (BadJOSEException e) {
-			assertEquals("JWS object rejected: No matching key(s) found", e.getMessage());
+			assertEquals("JWS object rejected: Another algorithm expected, or no matching key(s) found", e.getMessage());
 		}
 	}
 
@@ -473,7 +473,7 @@ public class DefaultJOSEProcessorTest extends TestCase {
 		try {
 			processor.process(jwt, null);
 		} catch (BadJOSEException e) {
-			assertEquals("JWE object rejected: No matching key(s) found", e.getMessage());
+			assertEquals("JWE object rejected: Another algorithm expected, or no matching key(s) found", e.getMessage());
 		}
 	}
 
