@@ -65,7 +65,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2017-01-10
+ * @version 2017-04-08
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -117,9 +117,16 @@ public abstract class JWK implements JSONAware, Serializable {
 
 
 	/**
-	 * X.509 certificate thumbprint, optional.
+	 * X.509 certificate SHA-1 thumbprint, optional.
 	 */
+	@Deprecated
 	private final Base64URL x5t;
+	
+	
+	/**
+	 * X.509 certificate SHA-256 thumbprint, optional.
+	 */
+	private Base64URL x5t256;
 
 
 	/**
@@ -137,20 +144,23 @@ public abstract class JWK implements JSONAware, Serializable {
 	/**
 	 * Creates a new JSON Web Key (JWK).
 	 *
-	 * @param kty The key type. Must not be {@code null}.
-	 * @param use The key use, {@code null} if not specified or if the key
-	 *            is intended for signing as well as encryption.
-	 * @param ops The key operations, {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if
-	 *            not specified.
-	 * @param kid The key ID, {@code null} if not specified.
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 * @param x5c The X.509 certificate chain, {@code null} if not 
-	 *            specified.
-	 * @param ks  Reference to the underlying key store, {@code null} if
-	 *            none.
+	 * @param kty    The key type. Must not be {@code null}.
+	 * @param use    The key use, {@code null} if not specified or if the
+	 *               key is intended for signing as well as encryption.
+	 * @param ops    The key operations, {@code null} if not specified.
+	 * @param alg    The intended JOSE algorithm for the key, {@code null}
+	 *               if not specified.
+	 * @param kid    The key ID, {@code null} if not specified.
+	 * @param x5u    The X.509 certificate URL, {@code null} if not
+	 *               specified.
+	 * @param x5t    The X.509 certificate thumbprint, {@code null} if not
+	 *               specified.
+	 * @param x5t256 The X.509 certificate SHA-256 thumbprint, {@code null}
+	 *               if not specified.
+	 * @param x5c    The X.509 certificate chain, {@code null} if not
+	 *               specified.
+	 * @param ks     Reference to the underlying key store, {@code null} if
+	 *               none.
 	 */
 	protected JWK(final KeyType kty,
 		      final KeyUse use,
@@ -159,6 +169,7 @@ public abstract class JWK implements JSONAware, Serializable {
 		      final String kid,
 		      final URI x5u,
 		      final Base64URL x5t,
+		      final Base64URL x5t256,
 		      final List<Base64> x5c,
 		      final KeyStore ks) {
 
@@ -180,6 +191,7 @@ public abstract class JWK implements JSONAware, Serializable {
 
 		this.x5u = x5u;
 		this.x5t = x5t;
+		this.x5t256 = x5t256;
 		this.x5c = x5c;
 		
 		this.keyStore = ks;
@@ -263,9 +275,23 @@ public abstract class JWK implements JSONAware, Serializable {
 	 * @return The X.509 certificate SHA-1 thumbprint, {@code null} if not
 	 *         specified.
 	 */
+	@Deprecated
 	public Base64URL getX509CertThumbprint() {
 
 		return x5t;
+	}
+	
+	
+	/**
+	 * Gets the X.509 certificate SHA-256 thumbprint ({@code x5t#S256}) of
+	 * this JWK.
+	 *
+	 * @return The X.509 certificate SHA-256 thumbprint, {@code null} if
+	 *         not specified.
+	 */
+	public Base64URL getX509CertSHA256Thumbprint() {
+		
+		return x5t256;
 	}
 
 
@@ -419,6 +445,10 @@ public abstract class JWK implements JSONAware, Serializable {
 		if (x5t != null) {
 			o.put("x5t", x5t.toString());
 		}
+		
+		if (x5t256 != null) {
+			o.put("x5t#S256", x5t256.toString());
+		}
 
 		if (x5c != null) {
 			o.put("x5c", x5c);
@@ -513,7 +543,7 @@ public abstract class JWK implements JSONAware, Serializable {
 	 * <p><strong>Important:</strong> The X.509 certificate is not
 	 * validated!
 	 *
-	 * <p>Set the following JWK parameters:
+	 * <p>Sets the following JWK parameters:
 	 *
 	 * <ul>
 	 *     <li>For an EC key the curve is obtained from the subject public
@@ -521,7 +551,7 @@ public abstract class JWK implements JSONAware, Serializable {
 	 *     <li>The JWK use inferred by {@link KeyUse#from}.
 	 *     <li>The JWK ID from the X.509 serial number (in base 10).
 	 *     <li>The JWK X.509 certificate chain (this certificate only).
-	 *     <li>The JWK X.509 certificate SHA-1 thumbprint.
+	 *     <li>The JWK X.509 certificate SHA-256 thumbprint.
 	 * </ul>
 	 *
 	 * @param cert The X.509 certificate. Must not be {@code null}.

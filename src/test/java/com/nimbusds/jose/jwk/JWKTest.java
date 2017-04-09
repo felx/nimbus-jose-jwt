@@ -49,7 +49,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the base JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-07
+ * @version 2017-04-09
  */
 public class JWKTest extends TestCase {
 	
@@ -71,7 +71,8 @@ public class JWKTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
 		assertNull(jwk.getKeyOperations());
 		assertEquals(1, jwk.getX509CertChain().size());
-		assertNotNull(jwk.getX509CertThumbprint());
+		assertNull(jwk.getX509CertThumbprint());
+		assertNotNull(jwk.getX509CertSHA256Thumbprint());
 		assertFalse(jwk.isPrivate());
 		assertTrue(jwk instanceof RSAKey);
 	}
@@ -88,7 +89,8 @@ public class JWKTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, jwk.getKeyUse());
 		assertNull(jwk.getKeyOperations());
 		assertEquals(1, jwk.getX509CertChain().size());
-		assertNotNull(jwk.getX509CertThumbprint());
+		assertNull(jwk.getX509CertThumbprint());
+		assertNotNull(jwk.getX509CertSHA256Thumbprint());
 		assertFalse(jwk.isPrivate());
 		assertTrue(jwk instanceof ECKey);
 		assertEquals(ECKey.Curve.P_256, ((ECKey)jwk).getCurve());
@@ -140,7 +142,8 @@ public class JWKTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals("1", rsaKey.getKeyID());
 		assertEquals(1, rsaKey.getX509CertChain().size());
-		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getX509CertThumbprint());
+		assertNotNull(rsaKey.getX509CertSHA256Thumbprint());
 		assertTrue(rsaKey.isPrivate());
 		
 		// Try to load with bad pin
@@ -200,7 +203,8 @@ public class JWKTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
 		assertEquals("1", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
-		assertNotNull(ecKey.getX509CertThumbprint());
+		assertNull(ecKey.getX509CertThumbprint());
+		assertNotNull(ecKey.getX509CertSHA256Thumbprint());
 		assertTrue(ecKey.isPrivate());
 		
 		// Try to load with bad pin

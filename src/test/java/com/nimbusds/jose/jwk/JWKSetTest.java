@@ -63,7 +63,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-01-10
+ * @version 2017-04-09
  */
 public class JWKSetTest extends TestCase {
 
@@ -863,7 +863,8 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals("2", rsaKey.getKeyID());
 		assertEquals(1, rsaKey.getX509CertChain().size());
-		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getX509CertThumbprint());
+		assertNotNull(rsaKey.getX509CertSHA256Thumbprint());
 		assertTrue(rsaKey.isPrivate());
 		assertEquals(keyStore, rsaKey.getKeyStore());
 		
@@ -873,7 +874,8 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
 		assertEquals("3", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
-		assertNotNull(ecKey.getX509CertThumbprint());
+		assertNull(ecKey.getX509CertThumbprint());
+		assertNotNull(ecKey.getX509CertSHA256Thumbprint());
 		assertTrue(ecKey.isPrivate());
 		assertEquals(keyStore, ecKey.getKeyStore());
 		

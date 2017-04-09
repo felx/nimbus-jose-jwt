@@ -51,7 +51,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-01-10
+ * @version 2017-04-09
  */
 public class RSAKeyTest extends TestCase {
 
@@ -115,6 +115,7 @@ public class RSAKeyTest extends TestCase {
 
 		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
+		Base64URL x5t256 = new Base64URL("abc256");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 		
@@ -130,7 +131,7 @@ public class RSAKeyTest extends TestCase {
 			null,
 			privateKey,
 			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
-			x5u, x5t, x5c,
+			x5u, x5t, x5t256, x5c,
 			keyStore);
 
 		// Test getters
@@ -140,6 +141,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 
@@ -175,6 +177,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(new Base64URL(n), key.getModulus());
@@ -227,6 +230,7 @@ public class RSAKeyTest extends TestCase {
 
 		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
+		Base64URL x5t256 = new Base64URL("abc256");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
@@ -235,7 +239,7 @@ public class RSAKeyTest extends TestCase {
 			new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
 			null,
 			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
-			x5u, x5t, x5c);
+			x5u, x5t, x5t256, x5c);
 
 		// Test getters
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
@@ -244,6 +248,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(new Base64URL(n), key.getModulus());
@@ -275,6 +280,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(new Base64URL(n), key.getModulus());
@@ -327,23 +333,25 @@ public class RSAKeyTest extends TestCase {
 
 		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
+		Base64URL x5t256 = new Base64URL("abc");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
-		RSAKey key = new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).
-			privateExponent(new Base64URL(d)).
-			firstPrimeFactor(new Base64URL(p)).
-			secondPrimeFactor(new Base64URL(q)).
-			firstFactorCRTExponent(new Base64URL(dp)).
-			secondFactorCRTExponent(new Base64URL(dq)).
-			firstCRTCoefficient(new Base64URL(qi)).
-			keyUse(KeyUse.SIGNATURE).
-			algorithm(JWSAlgorithm.RS256).
-			keyID("1").
-			x509CertURL(x5u).
-			x509CertThumbprint(x5t).
-			x509CertChain(x5c).
-			build();
+		RSAKey key = new RSAKey.Builder(new Base64URL(n), new Base64URL(e))
+			.privateExponent(new Base64URL(d))
+			.firstPrimeFactor(new Base64URL(p))
+			.secondPrimeFactor(new Base64URL(q))
+			.firstFactorCRTExponent(new Base64URL(dp))
+			.secondFactorCRTExponent(new Base64URL(dq))
+			.firstCRTCoefficient(new Base64URL(qi))
+			.keyUse(KeyUse.SIGNATURE)
+			.algorithm(JWSAlgorithm.RS256)
+			.keyID("1")
+			.x509CertURL(x5u)
+			.x509CertThumbprint(x5t)
+			.x509CertSHA256Thumbprint(x5t256)
+			.x509CertChain(x5c)
+			.build();
 
 		// Test getters
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
@@ -352,6 +360,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
@@ -384,6 +393,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 
 		assertEquals(new Base64URL(n), key.getModulus());
@@ -410,6 +420,7 @@ public class RSAKeyTest extends TestCase {
 
 		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
+		Base64URL x5t256 = new Base64URL("abc256");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 
@@ -431,6 +442,7 @@ public class RSAKeyTest extends TestCase {
 			.keyID("1")
 			.x509CertURL(x5u)
 			.x509CertThumbprint(x5t)
+			.x509CertSHA256Thumbprint(x5t256)
 			.x509CertChain(x5c)
 			.keyStore(keyStore)
 			.build();
@@ -444,6 +456,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 
@@ -470,6 +483,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
@@ -489,6 +503,7 @@ public class RSAKeyTest extends TestCase {
 		
 		URI x5u = new URI("http://example.com/jwk.json");
 		Base64URL x5t = new Base64URL("abc");
+		Base64URL x5t256 = new Base64URL("abc256");
 		List<Base64> x5c = new LinkedList<>();
 		x5c.add(new Base64("def"));
 		
@@ -506,6 +521,7 @@ public class RSAKeyTest extends TestCase {
 			.keyID("1")
 			.x509CertURL(x5u)
 			.x509CertThumbprint(x5t)
+			.x509CertSHA256Thumbprint(x5t256)
 			.x509CertChain(x5c)
 			.keyStore(keyStore)
 			.build();
@@ -520,6 +536,7 @@ public class RSAKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertEquals(x5u.toString(), key.getX509CertURL().toString());
 		assertEquals(x5t.toString(), key.getX509CertThumbprint().toString());
+		assertEquals(x5t256.toString(), key.getX509CertSHA256Thumbprint().toString());
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 		
@@ -548,7 +565,7 @@ public class RSAKeyTest extends TestCase {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e),
 			null, null, null, null,
-			null, null, null, null);
+			null, null, null, null, null);
 
 		// Public key export
 		RSAPublicKey pubKey = key.toRSAPublicKey();
@@ -558,7 +575,7 @@ public class RSAKeyTest extends TestCase {
 
 
 		// Public key import
-		key = new RSAKey(pubKey, null, null, null, null, null, null, null, null);
+		key = new RSAKey(pubKey, null, null, null, null, null, null, null, null, null);
 		assertEquals(new Base64URL(n), key.getModulus());
 		assertEquals(new Base64URL(e), key.getPublicExponent());
 	}
@@ -572,7 +589,7 @@ public class RSAKeyTest extends TestCase {
 			new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
 			null,
 			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
-			null, null, null);
+			null, null, null, null);
 
 		// Private key export with CRT (2nd form)
 		RSAPrivateKey privKey = key.toRSAPrivateKey();
@@ -612,7 +629,7 @@ public class RSAKeyTest extends TestCase {
 
 
 		// Key pair import, 1st private form
-		key = new RSAKey(pubKey, privKey, KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1", null, null, null, null);
+		key = new RSAKey(pubKey, privKey, KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1", null, null, null, null, null);
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
@@ -636,7 +653,7 @@ public class RSAKeyTest extends TestCase {
 
 
 		// Key pair import, 2nd private form
-		key = new RSAKey(pubKey, privCrtKey, KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1", null, null, null, null);
+		key = new RSAKey(pubKey, privCrtKey, KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1", null, null,null, null, null);
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
 		assertEquals(JWSAlgorithm.RS256, key.getAlgorithm());
 		assertEquals("1", key.getKeyID());
@@ -666,7 +683,7 @@ public class RSAKeyTest extends TestCase {
 
 		RSAKey key = new RSAKey(new Base64URL(n), new Base64URL(e),
 			null, null, null, null,
-			null, null, null, null);
+			null, null, null, null, null);
 
 		assertTrue(key instanceof AssymetricJWK);
 
@@ -678,7 +695,7 @@ public class RSAKeyTest extends TestCase {
 
 
 		// Public key import
-		key = new RSAKey(pubKey, null, null, null, null, null, null, null, null);
+		key = new RSAKey(pubKey, null, null, null, null, null, null, null, null, null);
 		assertEquals(new Base64URL(n), key.getModulus());
 		assertEquals(new Base64URL(e), key.getPublicExponent());
 	}
@@ -692,7 +709,7 @@ public class RSAKeyTest extends TestCase {
 			new Base64URL(dp), new Base64URL(dq), new Base64URL(qi),
 			null,
 			KeyUse.SIGNATURE, null, JWSAlgorithm.RS256, "1",
-			null, null, null);
+			null, null, null, null);
 
 		assertTrue(key instanceof AssymetricJWK);
 
@@ -779,7 +796,7 @@ public class RSAKeyTest extends TestCase {
 		RSAPublicKey rsaPublicKeyIn = (RSAPublicKey) keyPair.getPublic();
 		RSAPrivateCrtKey rsaPrivateKeyIn = (RSAPrivateCrtKey) keyPair.getPrivate();
 
-		RSAKey rsaJWK = new RSAKey(rsaPublicKeyIn, rsaPrivateKeyIn, null, null, null, null, null, null, null, null);
+		RSAKey rsaJWK = new RSAKey(rsaPublicKeyIn, rsaPrivateKeyIn, null, null, null, null,null, null, null, null, null);
 
 		// Compare JWK values with original Java RSA values
 		assertEquals(rsaPublicKeyIn.getPublicExponent(), rsaJWK.getPublicExponent().decodeToBigInteger());
@@ -839,11 +856,11 @@ public class RSAKeyTest extends TestCase {
 		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
 		try {
-			new RSAKey(new Base64URL(n), new Base64URL(e), use, ops, null, null, null, null, null, null);
+			new RSAKey(new Base64URL(n), new Base64URL(e), use, ops, null, null, null, null, null, null, null);
 
 			fail();
 		} catch (IllegalArgumentException e) {
-			// ok
+			assertEquals("They key use \"use\" and key options \"key_opts\" parameters cannot be set together", e.getMessage());
 		}
 
 		try {
@@ -851,7 +868,7 @@ public class RSAKeyTest extends TestCase {
 				keyUse(use).keyOperations(ops).build();
 			fail();
 		} catch (IllegalStateException e) {
-			// ok
+			assertEquals("They key use \"use\" and key options \"key_opts\" parameters cannot be set together", e.getMessage());
 		}
 	}
 
@@ -1221,7 +1238,7 @@ public class RSAKeyTest extends TestCase {
 	public void testParseFromX509Cert()
 		throws Exception {
 		
-		MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+		MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
 		String pemEncodedCert = IOUtils.readFileToString(new File("src/test/certs/ietf.crt"), Charset.forName("UTF-8"));
 		X509Certificate cert = X509CertUtils.parse(pemEncodedCert);
 		RSAKey rsaKey = RSAKey.parse(cert);
@@ -1229,7 +1246,8 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, rsaKey.getKeyUse());
 		assertEquals(cert.getSerialNumber().toString(10), rsaKey.getKeyID());
 		assertEquals(1, rsaKey.getX509CertChain().size());
-		assertEquals(Base64URL.encode(sha1.digest(cert.getEncoded())), rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getX509CertThumbprint());
+		assertEquals(Base64URL.encode(sha256.digest(cert.getEncoded())), rsaKey.getX509CertSHA256Thumbprint());
 		assertNull(rsaKey.getAlgorithm());
 		assertNull(rsaKey.getKeyOperations());
 	}
@@ -1295,7 +1313,8 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
 		assertEquals("1", rsaKey.getKeyID());
 		assertEquals(1, rsaKey.getX509CertChain().size());
-		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getX509CertThumbprint());
+		assertNotNull(rsaKey.getX509CertSHA256Thumbprint());
 		assertTrue(rsaKey.isPrivate());
 		assertEquals(keyStore, rsaKey.getKeyStore());
 		
@@ -1328,7 +1347,8 @@ public class RSAKeyTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, rsaKey.getKeyUse());
 		assertEquals("1", rsaKey.getKeyID());
 		assertEquals(1, rsaKey.getX509CertChain().size());
-		assertNotNull(rsaKey.getX509CertThumbprint());
+		assertNull(rsaKey.getX509CertThumbprint());
+		assertNotNull(rsaKey.getX509CertSHA256Thumbprint());
 		assertFalse(rsaKey.isPrivate());
 		assertEquals(keyStore, rsaKey.getKeyStore());
 	}

@@ -65,7 +65,7 @@ import net.minidev.json.JSONObject;
  * 
  * @author Justin Richer
  * @author Vladimir Dzhuvinov
- * @version 2017-01-10
+ * @version 2017-04-08
  */
 @Immutable
 public final class OctetSequenceKey extends JWK implements SecretJWK {
@@ -132,9 +132,16 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 
 
 		/**
-		 * X.509 certificate thumbprint, optional.
+		 * X.509 certificate SHA-1 thumbprint, optional.
 		 */
+		@Deprecated
 		private Base64URL x5t;
+		
+		
+		/**
+		 * X.509 certificate SHA-256 thumbprint, optional.
+		 */
+		private Base64URL x5t256;
 
 
 		/**
@@ -318,22 +325,40 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 			this.x5u = x5u;
 			return this;
 		}
-
-
+		
+		
 		/**
-		 * Sets the X.509 certificate thumbprint ({@code x5t}) of the
-		 * JWK.
+		 * Sets the X.509 certificate SHA-1 thumbprint ({@code x5t}) of
+		 * the JWK.
 		 *
-		 * @param x5t The X.509 certificate thumbprint, {@code null} if 
-		 *            not specified.
+		 * @param x5t The X.509 certificate SHA-1 thumbprint,
+		 *            {@code null} if not specified.
 		 *
 		 * @return This builder.
 		 */
+		@Deprecated
 		public Builder x509CertThumbprint(final Base64URL x5t) {
-
+			
 			this.x5t = x5t;
 			return this;
 		}
+		
+		
+		/**
+		 * Sets the X.509 certificate SHA-256 thumbprint
+		 * ({@code x5t#S256}) of the JWK.
+		 *
+		 * @param x5t256 The X.509 certificate SHA-256 thumbprint,
+		 *               {@code null} if not specified.
+		 *
+		 * @return This builder.
+		 */
+		public Builder x509CertSHA256Thumbprint(final Base64URL x5t256) {
+			
+			this.x5t256 = x5t256;
+			return this;
+		}
+		
 
 		/**
 		 * Sets the X.509 certificate chain ({@code x5c}) of the JWK.
@@ -376,7 +401,7 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 		public OctetSequenceKey build() {
 
 			try {
-				return new OctetSequenceKey(k, use, ops, alg, kid, x5u, x5t, x5c, ks);
+				return new OctetSequenceKey(k, use, ops, alg, kid, x5u, x5t, x5t256, x5c, ks);
 
 			} catch (IllegalArgumentException e) {
 
@@ -390,29 +415,31 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 	 * Creates a new octet sequence JSON Web Key (JWK) with the specified
 	 * parameters.
 	 *
-	 * @param k   The key value. It is represented as the Base64URL 
-	 *            encoding of the value's big endian representation. Must
-	 *            not be {@code null}.
-	 * @param use The key use, {@code null} if not specified or if the key
-	 *            is intended for signing as well as encryption.
-	 * @param ops The key operations, {@code null} if not specified.
-	 * @param alg The intended JOSE algorithm for the key, {@code null} if
-	 *            not specified.
-	 * @param kid The key ID. {@code null} if not specified.
-	 * @param x5u The X.509 certificate URL, {@code null} if not specified.
-	 * @param x5t The X.509 certificate thumbprint, {@code null} if not
-	 *            specified.
-	 * @param x5c The X.509 certificate chain, {@code null} if not 
-	 *            specified.
-	 * @param ks  Reference to the underlying key store, {@code null} if
-	 *            not specified.
+	 * @param k      The key value. It is represented as the Base64URL
+	 *               encoding of the value's big endian representation.
+	 *               Must not be {@code null}.
+	 * @param use    The key use, {@code null} if not specified or if the
+	 *               key is intended for signing as well as encryption.
+	 * @param ops    The key operations, {@code null} if not specified.
+	 * @param alg    The intended JOSE algorithm for the key, {@code null}
+	 *               if not specified.
+	 * @param kid    The key ID. {@code null} if not specified.
+	 * @param x5u    The X.509 certificate URL, {@code null} if not specified.
+	 * @param x5t    The X.509 certificate SHA-1 thumbprint, {@code null}
+	 *               if not specified.
+	 * @param x5t256 The X.509 certificate SHA-256 thumbprint, {@code null}
+	 *               if not specified.
+	 * @param x5c    The X.509 certificate chain, {@code null} if not
+	 *               specified.
+	 * @param ks     Reference to the underlying key store, {@code null} if
+	 *               not specified.
 	 */
 	public OctetSequenceKey(final Base64URL k,
 				final KeyUse use, final Set<KeyOperation> ops, final Algorithm alg, final String kid,
-		                final URI x5u, final Base64URL x5t, final List<Base64> x5c,
+		                final URI x5u, final Base64URL x5t, final Base64URL x5t256, final List<Base64> x5c,
 				final KeyStore ks) {
 	
-		super(KeyType.OCT, use, ops, alg, kid, x5u, x5t, x5c, ks);
+		super(KeyType.OCT, use, ops, alg, kid, x5u, x5t, x5t256, x5c, ks);
 
 		if (k == null) {
 			throw new IllegalArgumentException("The key value must not be null");
@@ -579,6 +606,7 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 			JWKMetadata.parseKeyID(jsonObject),
 			JWKMetadata.parseX509CertURL(jsonObject),
 			JWKMetadata.parseX509CertThumbprint(jsonObject),
+			JWKMetadata.parseX509CertSHA256Thumbprint(jsonObject),
 			JWKMetadata.parseX509CertChain(jsonObject),
 			null // key store
 		);

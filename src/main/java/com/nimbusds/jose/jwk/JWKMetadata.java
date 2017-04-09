@@ -36,7 +36,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * JSON Web Key (JWK) metadata.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-19
+ * @version 2017-04-08
  */
 final class JWKMetadata {
 
@@ -50,7 +50,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static KeyType parseKeyType(final JSONObject o)
+	static KeyType parseKeyType(final JSONObject o)
 		throws ParseException {
 
 		return KeyType.parse(JSONObjectUtils.getString(o, "kty"));
@@ -67,7 +67,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static KeyUse parseKeyUse(final JSONObject o)
+	static KeyUse parseKeyUse(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("use")) {
@@ -87,7 +87,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static Set<KeyOperation> parseKeyOperations(final JSONObject o)
+	static Set<KeyOperation> parseKeyOperations(final JSONObject o)
 		throws ParseException {
 		
 		if(o.containsKey("key_ops")) {
@@ -107,7 +107,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static Algorithm parseAlgorithm(final JSONObject o)
+	static Algorithm parseAlgorithm(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("alg")) {
@@ -127,7 +127,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static String parseKeyID(final JSONObject o)
+	static String parseKeyID(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("kid")) {
@@ -147,7 +147,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static URI parseX509CertURL(final JSONObject o)
+	static URI parseX509CertURL(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("x5u")) {
@@ -168,11 +168,32 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static Base64URL parseX509CertThumbprint(final JSONObject o)
+	static Base64URL parseX509CertThumbprint(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("x5t")) {
 			return new Base64URL(JSONObjectUtils.getString(o, "x5t"));
+		} else {
+			return null;
+		}
+	}
+
+
+	/**
+	 * Parses the optional X.509 certificate SHA-256 thumbprint.
+	 *
+	 * @param o The JSON object to parse. Must not be {@code null}.
+	 *
+	 * @return The X.509 certificate SHA-256 thumbprint, {@code null} if
+	 *         not specified.
+	 *
+	 * @throws ParseException If parsing failed.
+	 */
+	static Base64URL parseX509CertSHA256Thumbprint(final JSONObject o)
+		throws ParseException {
+
+		if (o.containsKey("x5t#S256")) {
+			return new Base64URL(JSONObjectUtils.getString(o, "x5t#S256"));
 		} else {
 			return null;
 		}
@@ -189,7 +210,7 @@ final class JWKMetadata {
 	 *
 	 * @throws ParseException If parsing failed.
 	 */
-	public static List<Base64> parseX509CertChain(final JSONObject o)
+	static List<Base64> parseX509CertChain(final JSONObject o)
 		throws ParseException {
 
 		if (o.containsKey("x5c")) {
