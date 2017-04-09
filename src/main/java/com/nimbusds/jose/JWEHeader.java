@@ -76,7 +76,7 @@ import com.nimbusds.jose.util.X509CertChainUtils;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2017-04-09
  */
 @Immutable
 public final class JWEHeader extends CommonSEHeader {
@@ -188,6 +188,7 @@ public final class JWEHeader extends CommonSEHeader {
 		/**
 		 * X.509 certificate SHA-1 thumbprint.
 		 */
+		@Deprecated
 		private Base64URL x5t;
 
 
@@ -430,6 +431,7 @@ public final class JWEHeader extends CommonSEHeader {
 		 *
 		 * @return This builder.
 		 */
+		@Deprecated
 		public Builder x509CertThumbprint(final Base64URL x5t) {
 
 			this.x5t = x5t;

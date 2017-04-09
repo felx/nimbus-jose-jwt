@@ -21,11 +21,10 @@ package com.nimbusds.jose;
 import java.net.URI;
 import java.util.*;
 
-import net.minidev.json.JSONObject;
-
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -49,7 +48,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2017-04-09
  */
 abstract class CommonSEHeader extends Header {
 
@@ -208,6 +207,7 @@ abstract class CommonSEHeader extends Header {
 	 * @return The X.509 certificate SHA-1 thumbprint parameter,
 	 *         {@code null} if not specified.
 	 */
+	@Deprecated
 	public Base64URL getX509CertThumbprint() {
 
 		return x5t;
