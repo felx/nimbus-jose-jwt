@@ -50,9 +50,9 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Supports the following key management algorithms:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5}
- *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP}
  *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP_256}
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA_OAEP} (deprecated)
+ *     <li>{@link com.nimbusds.jose.JWEAlgorithm#RSA1_5} (deprecated)
  * </ul>
  *
  * <p>Supports the following content encryption algorithms:
