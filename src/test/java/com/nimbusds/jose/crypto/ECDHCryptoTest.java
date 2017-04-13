@@ -50,7 +50,7 @@ import com.nimbusds.jose.util.Container;
  * Tests ECDH encryption and decryption.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-09-18
+ * @version 2017-04-13
  */
 public class ECDHCryptoTest extends TestCase {
 
@@ -697,31 +697,6 @@ public class ECDHCryptoTest extends TestCase {
 
 		try {
 			new ECDHDecrypter(ecPrivateKey);
-			fail();
-		} catch (JOSEException e) {
-			// ok
-		}
-	}
-
-
-	public void testRejectECJWKWithUnsupportedCurve()
-		throws Exception {
-
-		KeyPair keyPair = createUnsupportedECKeyPair();
-		ECPublicKey ecPublicKey = (ECPublicKey)keyPair.getPublic();
-		ECPrivateKey ecPrivateKey = (ECPrivateKey)keyPair.getPrivate();
-
-		ECKey ecJWK = new ECKey.Builder(new ECKey.Curve("P-224"), ecPublicKey).privateKey(ecPrivateKey).build();
-
-		try {
-			new ECDHEncrypter(ecJWK);
-			fail();
-		} catch (JOSEException e) {
-			// ok
-		}
-
-		try {
-			new ECDHDecrypter(ecJWK);
 			fail();
 		} catch (JOSEException e) {
 			// ok

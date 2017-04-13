@@ -24,6 +24,7 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
+import java.text.ParseException;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
@@ -33,7 +34,8 @@ import junit.framework.TestCase;
 
 
 /**
- * Submitted by Antonio Sanso. See iss #210.
+ * Submitted by Antonio Sanso. See iss #210. Modified to suit new checks for
+ * iss #217.
  */
 public class ECDHCurveCheckTest extends TestCase {
 	
@@ -110,17 +112,24 @@ public class ECDHCurveCheckTest extends TestCase {
 		
 		// The malicious JWE contains a public key with order 113
 		String maliciousJWE1 = "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4IjoiZ1RsaTY1ZVRRN3otQmgxNDdmZjhLM203azJVaURpRzJMcFlrV0FhRkpDYyIsInkiOiJjTEFuakthNGJ6akQ3REpWUHdhOUVQclJ6TUc3ck9OZ3NpVUQta2YzMEZzIiwiY3J2IjoiUC0yNTYifX0.qGAdxtEnrV_3zbIxU2ZKrMWcejNltjA_dtefBFnRh9A2z9cNIqYRWg.pEA5kX304PMCOmFSKX_cEg.a9fwUrx2JXi1OnWEMOmZhXd94-bEGCH9xxRwqcGuG2AMo-AwHoljdsH5C_kcTqlXS5p51OB1tvgQcMwB5rpTxg.72CHiYFecyDvuUa43KKT6w";
-		JWEObject jweObject1 = JWEObject.parse(maliciousJWE1);
-		
-		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
-//		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		JWEObject jweObject1 = null;
 		
 		try {
-			jweObject1.decrypt(decrypter);
+			jweObject1 = JWEObject.parse(maliciousJWE1);
 			fail();
-		} catch (JOSEException e) {
-			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
+		} catch (ParseException e) {
+			assertEquals("Invalid JWE header: Invalid EC JWK: The 'x' and 'y' public coordinates are not on the P-256 curve", e.getMessage());
 		}
+		
+//		ECDHDecrypter decrypter = new ECDHDecrypter(ecJWK.toECPrivateKey());
+////		decrypter.getJCAContext().setKeyEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+//
+//		try {
+//			jweObject1.decrypt(decrypter);
+//			fail();
+//		} catch (JOSEException e) {
+//			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
+//		}
 		
 		// this proof that receiverPrivateKey is equals 26 % 113
 //		assertEquals("Gambling is illegal at Bushwood sir, and I never slice.",
@@ -160,15 +169,22 @@ public class ECDHCurveCheckTest extends TestCase {
 		// The malicious JWE contains a public key with order 2447
 		String maliciousJWE2 = "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4IjoiWE9YR1E5XzZRQ3ZCZzN1OHZDSS1VZEJ2SUNBRWNOTkJyZnFkN3RHN29RNCIsInkiOiJoUW9XTm90bk56S2x3aUNuZUprTElxRG5UTnc3SXNkQkM1M1ZVcVZqVkpjIiwiY3J2IjoiUC0yNTYifX0.UGb3hX3ePAvtFB9TCdWsNkFTv9QWxSr3MpYNiSBdW630uRXRBT3sxw.6VpU84oMob16DxOR98YTRw.y1UslvtkoWdl9HpugfP0rSAkTw1xhm_LbK1iRXzGdpYqNwIG5VU33UBpKAtKFBoA1Kk_sYtfnHYAvn-aes4FTg.UZPN8h7FcvA5MIOq-Pkj8A";
 		
-		JWEObject jweObject2 = JWEObject.parse(maliciousJWE2);
-//		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		JWEObject jweObject2 = null;
 		
 		try {
-			jweObject2.decrypt(decrypter);
+			jweObject2 = JWEObject.parse(maliciousJWE2);
 			fail();
-		} catch (JOSEException e) {
-			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
+		} catch (ParseException e) {
+			assertEquals("Invalid JWE header: Invalid EC JWK: The 'x' and 'y' public coordinates are not on the P-256 curve", e.getMessage());
 		}
+//		decrypter.getJCAContext().setContentEncryptionProvider(BouncyCastleProviderSingleton.getInstance());
+		
+//		try {
+//			jweObject2.decrypt(decrypter);
+//			fail();
+//		} catch (JOSEException e) {
+//			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
+//		}
 		
 		// this proof that receiverPrivateKey is equals 2446 % 2447
 //		assertEquals("Gambling is illegal at Bushwood sir, and I never slice.",

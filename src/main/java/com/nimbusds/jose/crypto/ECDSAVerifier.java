@@ -24,11 +24,11 @@ import java.security.SignatureException;
 import java.security.interfaces.ECPublicKey;
 import java.util.Set;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.utils.ECChecks;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -52,7 +52,7 @@ import com.nimbusds.jose.util.Base64URL;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version 2015-06-07
+ * @version 2017-04-13
  */
 @ThreadSafe
 public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, CriticalHeaderParamsAware {
@@ -83,8 +83,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 
 		this(publicKey, null);
 	}
-
-
+	
 
 	/**
 	 * Creates a new Elliptic Curve Digital Signature Algorithm (ECDSA)
@@ -118,6 +117,12 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 		super(ECDSA.resolveAlgorithm(publicKey));
 
 		this.publicKey = publicKey;
+		
+		if (! ECChecks.isPointOnCurve(
+			publicKey,
+			ECKey.Curve.forJWSAlgoritm(supportedECDSAAlgorithm()).toECParameterSpec())) {
+			throw new JOSEException("Curve / public key parameters mismatch");
+		}
 
 		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 	}

@@ -18,7 +18,12 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.util.*;
 import javax.crypto.KeyGenerator;
 
@@ -33,9 +38,34 @@ import junit.framework.TestCase;
  * Tests the JWK matcher.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-08-24
+ * @version 2017-04-13
  */
 public class JWKMatcherTest extends TestCase {
+	
+	
+	private static final Base64URL EC_P256_X;
+	
+	private static final Base64URL EC_P256_Y;
+	
+	static {
+		try {
+			ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+			
+			KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+			generator.initialize(ecParameterSpec);
+			KeyPair keyPair = generator.generateKeyPair();
+			
+			ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic()).
+				privateKey((ECPrivateKey) keyPair.getPrivate()).
+				build();
+			
+			EC_P256_X = ecJWK.getX();
+			EC_P256_Y = ecJWK.getY();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 
 	public void testMinimalConstructor() {
@@ -391,7 +421,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyType(KeyType.RSA).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("kty=RSA", matcher.toString());
 	}
@@ -402,7 +432,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyTypes(KeyType.RSA, KeyType.EC).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build()));
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("kty=[RSA, EC]", matcher.toString());
 	}
@@ -413,7 +443,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyUse(KeyUse.ENCRYPTION).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256,EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("use=enc", matcher.toString());
 	}
@@ -424,8 +454,8 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyUses(KeyUse.SIGNATURE, null).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build()));
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3").keyUse(KeyUse.ENCRYPTION).build()));
+		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build()));
 		
 		assertEquals("use=[sig, null]", matcher.toString());
 	}
@@ -437,7 +467,7 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.DECRYPT))).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("key_ops=decrypt", matcher.toString());
 	}
@@ -449,7 +479,7 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY))).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("key_ops=[sign, verify]", matcher.toString());
 	}
@@ -462,9 +492,9 @@ public class JWKMatcherTest extends TestCase {
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build()));
 
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build()));
+		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
+		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build()));
 		
 		assertEquals("key_ops=[sign, null]", matcher.toString());

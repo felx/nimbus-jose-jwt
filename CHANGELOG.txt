@@ -687,3 +687,9 @@ version 4.35 (2017-04-09)
     * Refines exception messages of DefaultJOSEProcessor and
       DefaultJWTProcessor.
 
+version 4.36 (2017-04-13)
+    * Adds a check at ECKey construction time to ensure the public 'x' and 'y'
+      coordinates are on the specified curve (iss #217).
+    * Adds a new ECDSAProvider.supportedECDSAAlgorithm() method that returns
+      the name of the supported ECDSA algorithm (ES256, ES384 or ES512).
+

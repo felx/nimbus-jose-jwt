@@ -177,7 +177,7 @@ class ECDSA {
 		throws JOSEException {
 
 		if (derSignature.length < 8 || derSignature[0] != 48) {
-			throw new JOSEException("Invalid  ECDSA signature format");
+			throw new JOSEException("Invalid ECDSA signature format");
 		}
 
 		int offset;
@@ -186,7 +186,7 @@ class ECDSA {
 		} else if (derSignature[1] == (byte) 0x81) {
 			offset = 3;
 		} else {
-			throw new JOSEException("Invalid  ECDSA signature format");
+			throw new JOSEException("Invalid ECDSA signature format");
 		}
 
 		byte rLength = derSignature[offset + 1];
@@ -210,7 +210,7 @@ class ECDSA {
 			|| (derSignature[offset - 1] & 0xff) != 2 + rLength + 2 + sLength
 			|| derSignature[offset] != 2
 			|| derSignature[offset + 2 + rLength] != 2) {
-			throw new JOSEException("Invalid  ECDSA signature format");
+			throw new JOSEException("Invalid ECDSA signature format");
 		}
 
 		final byte[] concatSignature = new byte[2 * rawLen];

@@ -27,6 +27,9 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
+import java.security.spec.ECPoint;
+import java.security.spec.ECPublicKeySpec;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import com.nimbusds.jose.JOSEException;
@@ -50,7 +53,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-09
+ * @version 2017-04-13
  */
 public class ECKeyTest extends TestCase {
 
@@ -140,13 +143,13 @@ public class ECKeyTest extends TestCase {
 	}
 
 
-	public void testKeySizeForUnknownCurve() {
+	public void testUnknownCurve() {
 
 		try {
-			new ECKey.Builder(new ECKey.Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build().size();
+			new ECKey.Builder(new ECKey.Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build();
 			fail();
-		} catch (UnsupportedOperationException e) {
-			assertEquals("Couldn't determine field size for curve unknown", e.getMessage());
+		} catch (IllegalStateException e) {
+			assertEquals("Unknown / unsupported curve: unknown", e.getMessage());
 		}
 	}
 
@@ -997,5 +1000,98 @@ public class ECKeyTest extends TestCase {
 		keyStore.load(null, password);
 		
 		assertNull(ECKey.load(keyStore, "1", null));
+	}
+	
+	
+	// iss #217
+	public void testEnsurePublicXYCoordinatesOnCurve()
+		throws Exception {
+		
+		try {
+			new ECKey(
+				ECKey.Curve.P_256,
+				ExampleKeyP384Alt.X, // on diff curve
+				ExampleKeyP384Alt.Y, // on diff curve
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Invalid EC JWK: The 'x' and 'y' public coordinates are not on the P-256 curve", e.getMessage());
+		}
+		
+		try {
+			new ECKey(
+				ECKey.Curve.P_256,
+				ExampleKeyP384Alt.X, // on diff curve
+				ExampleKeyP384Alt.Y, // on diff curve
+				ExampleKeyP256.D,    // private D coordinate
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null,
+				null);
+			fail();
+		} catch (IllegalArgumentException e) {
+			assertEquals("Invalid EC JWK: The 'x' and 'y' public coordinates are not on the P-256 curve", e.getMessage());
+		}
+	}
+	
+	
+	// iss #217
+	public void testCurveMismatch()
+		throws Exception {
+		
+		// EC key on P_256
+		ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+		generator.initialize(ecParameterSpec);
+		KeyPair keyPair = generator.generateKeyPair();
+		ECKey ecJWK_p256 = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey) keyPair.getPublic())
+			.privateKey((ECPrivateKey) keyPair.getPrivate())
+			.build();
+		
+		// EC key on P_384
+		ecParameterSpec = ECKey.Curve.P_384.toECParameterSpec();
+		generator = KeyPairGenerator.getInstance("EC");
+		generator.initialize(ecParameterSpec);
+		keyPair = generator.generateKeyPair();
+		ECKey ecJWK_p384 = new ECKey.Builder(ECKey.Curve.P_384, (ECPublicKey) keyPair.getPublic())
+			.privateKey((ECPrivateKey) keyPair.getPrivate())
+			.build();
+		
+		
+		// Try to create EC key with P_256 params, but with x and y from P_384 curve key
+		
+		ECPoint w = new ECPoint(ecJWK_p384.getX().decodeToBigInteger(), ecJWK_p384.getY().decodeToBigInteger());
+		ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(w, ECKey.Curve.P_256.toECParameterSpec());
+		
+		// Default Sun provider
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance("EC");
+			keyFactory.generatePublic(publicKeySpec);
+			fail();
+		} catch (RuntimeException e) {
+			assertEquals("Point coordinates do not match field size", e.getMessage());
+		}
+		
+		// BouncyCastle provider
+		try {
+			KeyFactory keyFactory = KeyFactory.getInstance("EC", BouncyCastleProviderSingleton.getInstance());
+			keyFactory.generatePublic(publicKeySpec);
+			fail();
+		} catch (InvalidKeySpecException e) {
+			assertEquals("invalid KeySpec: x value invalid for SecP256R1FieldElement", e.getMessage());
+		}
 	}
 }

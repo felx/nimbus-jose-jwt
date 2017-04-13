@@ -35,6 +35,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -63,7 +64,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-09
+ * @version 2017-04-13
  */
 public class JWKSetTest extends TestCase {
 
@@ -138,10 +139,15 @@ public class JWKSetTest extends TestCase {
 
 	public void testSerializeAndParsePublicJWKSet()
 		throws Exception {
-
-		ECKey ecKey = new ECKey.Builder(ECKey.Curve.P_256,
-			new Base64URL("abc"),
-			new Base64URL("def"))
+		
+		ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+		
+		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+		generator.initialize(ecParameterSpec);
+		KeyPair keyPair = generator.generateKeyPair();
+		
+		ECKey ecKey = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic())
+			.privateKey((ECPrivateKey) keyPair.getPrivate())
 			.keyUse(KeyUse.ENCRYPTION)
 			.algorithm(JWEAlgorithm.ECDH_ES)
 			.keyID("1234")
@@ -172,25 +178,25 @@ public class JWKSetTest extends TestCase {
 		assertEquals(2, keySet.getKeys().size());
 
 		// Check first EC key
-		ecKey = (ECKey)keySet.getKeys().get(0);
-		assertNotNull(ecKey);
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
-		assertEquals("abc", ecKey.getX().toString());
-		assertEquals("def", ecKey.getY().toString());
-		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
-		assertNull(ecKey.getKeyOperations());
-		assertEquals(JWEAlgorithm.ECDH_ES, ecKey.getAlgorithm());
-		assertEquals("1234", ecKey.getKeyID());
+		ECKey ecKeyOut = (ECKey)keySet.getKeys().get(0);
+		assertNotNull(ecKeyOut);
+		assertEquals(ECKey.Curve.P_256, ecKeyOut.getCurve());
+		assertEquals(ecKey.getX(), ecKeyOut.getX());
+		assertEquals(ecKey.getY(), ecKeyOut.getY());
+		assertEquals(KeyUse.ENCRYPTION, ecKeyOut.getKeyUse());
+		assertNull(ecKeyOut.getKeyOperations());
+		assertEquals(JWEAlgorithm.ECDH_ES, ecKeyOut.getAlgorithm());
+		assertEquals("1234", ecKeyOut.getKeyID());
 
 		// Check second RSA key
-		rsaKey = (RSAKey)keySet.getKeys().get(1);
-		assertNotNull(rsaKey);
-		assertEquals("abc", rsaKey.getModulus().toString());
-		assertEquals("def", rsaKey.getPublicExponent().toString());
-		assertEquals(KeyUse.SIGNATURE, rsaKey.getKeyUse());
-		assertNull(rsaKey.getKeyOperations());
-		assertEquals(JWSAlgorithm.RS256, rsaKey.getAlgorithm());
-		assertEquals("5678", rsaKey.getKeyID());
+		RSAKey rsaKeyOut = (RSAKey)keySet.getKeys().get(1);
+		assertNotNull(rsaKeyOut);
+		assertEquals("abc", rsaKeyOut.getModulus().toString());
+		assertEquals("def", rsaKeyOut.getPublicExponent().toString());
+		assertEquals(KeyUse.SIGNATURE, rsaKeyOut.getKeyUse());
+		assertNull(rsaKeyOut.getKeyOperations());
+		assertEquals(JWSAlgorithm.RS256, rsaKeyOut.getAlgorithm());
+		assertEquals("5678", rsaKeyOut.getKeyID());
 
 		// Check additional JWKSet members
 		assertEquals(1, keySet.getAdditionalMembers().size());

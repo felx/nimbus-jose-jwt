@@ -18,6 +18,11 @@
 package com.nimbusds.jose.jwk;
 
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECParameterSpec;
 import java.util.*;
 
 import junit.framework.TestCase;
@@ -30,10 +35,33 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests the JWK selector.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-04-15
+ * @version 2017-04-13
  */
 public class JWKSelectorTest extends TestCase {
-
+	
+	private static final Base64URL EC_P256_X;
+	
+	private static final Base64URL EC_P256_Y;
+	
+	static {
+		try {
+			ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+			
+			KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+			generator.initialize(ecParameterSpec);
+			KeyPair keyPair = generator.generateKeyPair();
+			
+			ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic()).
+				privateKey((ECPrivateKey) keyPair.getPrivate()).
+				build();
+			
+			EC_P256_X = ecJWK.getX();
+			EC_P256_Y = ecJWK.getY();
+			
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void testConstructor() {
 
@@ -67,7 +95,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -87,7 +115,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -111,7 +139,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -132,8 +160,8 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -159,7 +187,7 @@ public class JWKSelectorTest extends TestCase {
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -180,8 +208,8 @@ public class JWKSelectorTest extends TestCase {
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, new Base64URL("x"), new Base64URL("y")).keyID("3")
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);

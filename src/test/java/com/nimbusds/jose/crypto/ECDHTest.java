@@ -18,16 +18,9 @@
 package com.nimbusds.jose.crypto;
 
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECParameterSpec;
 import java.util.Arrays;
 import javax.crypto.SecretKey;
 
-import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
@@ -37,7 +30,7 @@ import junit.framework.TestCase;
 /**
  * Tests the ECDH key agreement derivation.
  *
- * @version 2017-02-28
+ * @version 2017-04-13
  */
 public class ECDHTest extends TestCase{
 
@@ -125,80 +118,5 @@ public class ECDHTest extends TestCase{
 			(byte)246, (byte)218, (byte)167, (byte)121, (byte)140, (byte)254, (byte)144, (byte)196 };
 
 		assertTrue(Arrays.equals(expected, sharedSecret.getEncoded()));
-	}
-	
-	
-	private static ECPrivateKey generateECPrivateKey(final ECKey.Curve curve)
-		throws Exception {
-		
-		final ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
-		
-		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
-		generator.initialize(ecParameterSpec);
-		KeyPair keyPair = generator.generateKeyPair();
-		
-		return (ECPrivateKey) keyPair.getPrivate();
-	}
-	
-	
-	private static ECPublicKey generateECPublicKey(final ECKey.Curve curve)
-		throws Exception {
-		
-		final ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
-		
-		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
-		generator.initialize(ecParameterSpec);
-		KeyPair keyPair = generator.generateKeyPair();
-		
-		return (ECPublicKey) keyPair.getPublic();
-	}
-	
-	
-	public void testCurveCheckOk()
-		throws Exception {
-		
-		ECPublicKey ephemeralPublicKey = generateECPublicKey(ECKey.Curve.P_256);
-		ECPrivateKey privateKey = generateECPrivateKey(ECKey.Curve.P_256);
-		ECDH.ensurePointOnCurve(ephemeralPublicKey, privateKey);
-	}
-	
-	
-	public void testCurveCheckNegative_P256_attackPt1()
-		throws Exception {
-		
-		// The malicious JWE contains a public key with order 113
-		String maliciousJWE = "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4IjoiZ1RsaTY1ZVRRN3otQmgxNDdmZjhLM203azJVaURpRzJMcFlrV0FhRkpDYyIsInkiOiJjTEFuakthNGJ6akQ3REpWUHdhOUVQclJ6TUc3ck9OZ3NpVUQta2YzMEZzIiwiY3J2IjoiUC0yNTYifX0.qGAdxtEnrV_3zbIxU2ZKrMWcejNltjA_dtefBFnRh9A2z9cNIqYRWg.pEA5kX304PMCOmFSKX_cEg.a9fwUrx2JXi1OnWEMOmZhXd94-bEGCH9xxRwqcGuG2AMo-AwHoljdsH5C_kcTqlXS5p51OB1tvgQcMwB5rpTxg.72CHiYFecyDvuUa43KKT6w";
-		JWEObject jweObject = JWEObject.parse(maliciousJWE);
-		
-		ECPublicKey ephemeralPublicKey = jweObject.getHeader().getEphemeralPublicKey().toECPublicKey();
-		
-		ECPrivateKey privateKey = generateECPrivateKey(ECKey.Curve.P_256);
-		
-		try {
-			ECDH.ensurePointOnCurve(ephemeralPublicKey, privateKey);
-			fail();
-		} catch (JOSEException e) {
-			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
-		}
-	}
-	
-	
-	public void testCurveCheckNegative_P256_attackPt2()
-		throws Exception {
-		
-		// The malicious JWE contains a public key with order 2447
-		String maliciousJWE = "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4IjoiWE9YR1E5XzZRQ3ZCZzN1OHZDSS1VZEJ2SUNBRWNOTkJyZnFkN3RHN29RNCIsInkiOiJoUW9XTm90bk56S2x3aUNuZUprTElxRG5UTnc3SXNkQkM1M1ZVcVZqVkpjIiwiY3J2IjoiUC0yNTYifX0.UGb3hX3ePAvtFB9TCdWsNkFTv9QWxSr3MpYNiSBdW630uRXRBT3sxw.6VpU84oMob16DxOR98YTRw.y1UslvtkoWdl9HpugfP0rSAkTw1xhm_LbK1iRXzGdpYqNwIG5VU33UBpKAtKFBoA1Kk_sYtfnHYAvn-aes4FTg.UZPN8h7FcvA5MIOq-Pkj8A";
-		JWEObject jweObject = JWEObject.parse(maliciousJWE);
-		
-		ECPublicKey ephemeralPublicKey = jweObject.getHeader().getEphemeralPublicKey().toECPublicKey();
-		
-		ECPrivateKey privateKey = generateECPrivateKey(ECKey.Curve.P_256);
-		
-		try {
-			ECDH.ensurePointOnCurve(ephemeralPublicKey, privateKey);
-			fail();
-		} catch (JOSEException e) {
-			assertEquals("Invalid ephemeral public key: Point not on expected curve", e.getMessage());
-		}
 	}
 }

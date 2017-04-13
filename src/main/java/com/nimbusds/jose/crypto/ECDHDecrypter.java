@@ -21,10 +21,10 @@ package com.nimbusds.jose.crypto;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.util.Set;
-
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.utils.ECChecks;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -71,7 +71,7 @@ import com.nimbusds.jose.util.Base64URL;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-02-28
+ * @version 2017-04-13
  */
 public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, CriticalHeaderParamsAware {
 
@@ -192,7 +192,9 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 		ECPublicKey ephemeralPublicKey = ephemeralKey.toECPublicKey();
 		
 		// Curve check
-		ECDH.ensurePointOnCurve(ephemeralPublicKey, getPrivateKey());
+		if (! ECChecks.isPointOnCurve(ephemeralPublicKey, getPrivateKey())) {
+			throw new JOSEException("Invalid ephemeral public EC key: Point(s) not on the expected curve");
+		}
 
 		// Derive 'Z'
 		SecretKey Z = ECDH.deriveSharedSecret(

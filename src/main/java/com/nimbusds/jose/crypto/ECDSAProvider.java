@@ -39,7 +39,7 @@ import com.nimbusds.jose.JWSAlgorithm;
  * 
  * @author Axel Nennker
  * @author Vladimir Dzhuvinov
- * @version 2015-06-07
+ * @version 2017-05-13
  */
 abstract class ECDSAProvider extends BaseJWSProvider {
 
@@ -76,6 +76,19 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 		if (! SUPPORTED_ALGORITHMS.contains(alg)) {
 			throw new JOSEException("Unsupported EC DSA algorithm: " + alg);
 		}
+	}
+	
+	
+	/**
+	 * Returns the supported ECDSA algorithm.
+	 *
+	 * @see #supportedECDSAAlgorithm()
+	 *
+	 * @return The supported ECDSA algorithm.
+	 */
+	public JWSAlgorithm supportedECDSAAlgorithm() {
+		
+		return supportedJWSAlgorithms().iterator().next();
 	}
 }
 

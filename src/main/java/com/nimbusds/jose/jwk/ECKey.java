@@ -37,6 +37,7 @@ import java.util.Set;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.utils.ECChecks;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.BigIntegerUtils;
@@ -904,6 +905,28 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 * Private PKCS#11 key handle.
 	 */
 	private final PrivateKey privateKey;
+	
+	
+	/**
+	 * Ensures the specified 'x' and 'y' public coordinates are on the
+	 * given curve.
+	 *
+	 * @param crv The curve. Must not be {@code null}.
+	 * @param x   The public 'x' coordinate. Must not be {@code null}.
+	 * @param y   The public 'y' coordinate. Must not be {@code null}.
+	 */
+	private static void ensurePublicCoordinatesOnCurve(final Curve crv, final Base64URL x, final Base64URL y) {
+		
+		ECParameterSpec ecSpec = crv.toECParameterSpec();
+		
+		if (ecSpec == null) {
+			throw new IllegalArgumentException("Unknown / unsupported curve: " + crv);
+		}
+		
+		if (! ECChecks.isPointOnCurve(x.decodeToBigInteger(), y.decodeToBigInteger(), crv.toECParameterSpec())) {
+			throw new IllegalArgumentException("Invalid EC JWK: The 'x' and 'y' public coordinates are not on the " + crv + " curve");
+		}
+	}
 
 
 	/**
@@ -960,6 +983,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		}
 
 		this.y = y;
+		
+		ensurePublicCoordinatesOnCurve(crv, x, y);
 
 		this.d = null;
 		
@@ -1026,6 +1051,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 
 		this.y = y;
 		
+		ensurePublicCoordinatesOnCurve(crv, x, y);
+		
 		if (d == null) {
 			throw new IllegalArgumentException("The 'd' coordinate must not be null");
 		}
@@ -1091,6 +1118,8 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		}
 
 		this.y = y;
+		
+		ensurePublicCoordinatesOnCurve(crv, x, y);
 		
 		d = null;
 		
