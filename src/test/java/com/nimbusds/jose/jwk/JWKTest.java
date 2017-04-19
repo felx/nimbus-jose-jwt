@@ -49,7 +49,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the base JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-09
+ * @version 2017-04-19
  */
 public class JWKTest extends TestCase {
 	
@@ -127,7 +127,7 @@ public class JWKTest extends TestCase {
 			subject,
 			publicKey
 		);
-		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation);
 		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
 		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
 		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));
@@ -187,7 +187,7 @@ public class JWKTest extends TestCase {
 			subject,
 			publicKey
 		);
-		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation);
 		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
 		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
 		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(privateKey));

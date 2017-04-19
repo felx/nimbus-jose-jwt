@@ -695,3 +695,6 @@ version 4.36 (2017-04-13)
     * Adds a new ECDSAProvider.supportedECDSAAlgorithm() method that returns
       the name of the supported ECDSA algorithm (ES256, ES384 or ES512).
 
+version 4.36.1 (2017-04-19)
+    * Removes redundant KeyUsage OR operation in JWK tests (iss #218).
+

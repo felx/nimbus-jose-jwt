@@ -64,7 +64,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests JSON Web Key (JWK) set parsing and serialisation.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-13
+ * @version 2017-04-19
  */
 public class JWKSetTest extends TestCase {
 
@@ -809,7 +809,7 @@ public class JWKSetTest extends TestCase {
 			subject,
 			rsaPublicKey
 		);
-		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		KeyUsage keyUsage = new KeyUsage(KeyUsage.nonRepudiation);
 		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
 		JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA256withRSA");
 		X509CertificateHolder certHolder = x509certBuilder.build(signerBuilder.build(rsaPrivateKey));
@@ -839,7 +839,7 @@ public class JWKSetTest extends TestCase {
 			subject,
 			ecPublicKey
 		);
-		keyUsage = new KeyUsage(KeyUsage.nonRepudiation | KeyUsage.nonRepudiation);
+		keyUsage = new KeyUsage(KeyUsage.nonRepudiation);
 		x509certBuilder.addExtension(Extension.keyUsage, true, keyUsage);
 		signerBuilder = new JcaContentSignerBuilder("SHA256withECDSA");
 		certHolder = x509certBuilder.build(signerBuilder.build(ecPrivateKey));
