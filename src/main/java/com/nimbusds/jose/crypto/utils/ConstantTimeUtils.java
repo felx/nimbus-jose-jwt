@@ -1,7 +1,7 @@
 /*
  * nimbus-jose-jwt
  *
- * Copyright 2012-2016, Connect2id Ltd.
+ * Copyright 2012-2016, Connect2id Ltd and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -15,16 +15,16 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.nimbusds.jose.crypto;
+package com.nimbusds.jose.crypto.utils;
 
 
 /**
  * Array utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-09-01
+ * @version 2017-04-26
  */
-class ConstantTimeUtils {
+public class ConstantTimeUtils {
 
 
 	/**

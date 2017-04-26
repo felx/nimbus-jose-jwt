@@ -22,18 +22,17 @@ import java.nio.ByteBuffer;
 import java.security.Provider;
 import java.security.SecureRandom;
 import java.util.Arrays;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.crypto.utils.ConstantTimeUtils;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

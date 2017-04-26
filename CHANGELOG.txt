@@ -698,3 +698,5 @@ version 4.36 (2017-04-13)
 version 4.36.1 (2017-04-19)
     * Removes redundant KeyUsage OR operation in JWK tests (iss #218).
 
+version 4.37 (2017-04-27)
+    * Exposes public com.nimbusds.jose.crypto.utils.ConstantTimeUtils class.

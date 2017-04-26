@@ -1,7 +1,7 @@
 /*
  * nimbus-jose-jwt
  *
- * Copyright 2012-2016, Connect2id Ltd.
+ * Copyright 2012-2016, Connect2id Ltd and contributors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -15,7 +15,7 @@
  * specific language governing permissions and limitations under the License.
  */
 
-package com.nimbusds.jose.crypto;
+package com.nimbusds.jose.crypto.utils;
 
 
 import junit.framework.TestCase;
@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 public class ConstantTimeUtilsTest extends TestCase {
 
 
-	public void testConstantTimeEquality() {
+	public void testEquality() {
 
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7, 8};
@@ -36,7 +36,7 @@ public class ConstantTimeUtilsTest extends TestCase {
 	}
 
 
-	public void testConstantTimeInequality() {
+	public void testInequality() {
 
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7, 7};
@@ -45,7 +45,7 @@ public class ConstantTimeUtilsTest extends TestCase {
 	}
 
 
-	public void testConstantTimeLengthMismatch() {
+	public void testLengthMismatch() {
 
 		byte[] a = { 1, 2, 3, 4, 5, 6, 7, 8};
 		byte[] b = { 1, 2, 3, 4, 5, 6, 7};
