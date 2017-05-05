@@ -80,7 +80,7 @@ import com.nimbusds.jwt.*;
  * {@link com.nimbusds.jose.proc.DefaultJOSEProcessor} class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-07-25
+ * @version 2017-05-05
  */
 public class DefaultJWTProcessor<C extends SecurityContext>
 	implements ConfigurableJWTProcessor<C> {
@@ -103,7 +103,7 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 	private static final BadJOSEException INVALID_SIGNATURE =
 		new BadJWSException("Signed JWT rejected: Invalid signature");
 	private static final BadJWTException INVALID_NESTED_JWT_EXCEPTION =
-		new BadJWTException("The payload is not a nested JWT");
+		new BadJWTException("The payload is not a nested signed JWT");
 	private static final BadJOSEException NO_MATCHING_VERIFIERS_EXCEPTION =
 		new BadJOSEException("JWS object rejected: No matching verifier(s) found");
 	private static final BadJOSEException NO_MATCHING_DECRYPTERS_EXCEPTION =
@@ -398,14 +398,14 @@ public class DefaultJWTProcessor<C extends SecurityContext>
 			if ("JWT".equalsIgnoreCase(encryptedJWT.getHeader().getContentType())) {
 
 				// Handle nested signed JWT, see http://tools.ietf.org/html/rfc7519#section-5.2
-				SignedJWT nestedJWT = encryptedJWT.getPayload().toSignedJWT();
+				SignedJWT signedJWTPayload = encryptedJWT.getPayload().toSignedJWT();
 
-				if (nestedJWT == null) {
+				if (signedJWTPayload == null) {
 					// Cannot parse payload to signed JWT
 					throw INVALID_NESTED_JWT_EXCEPTION;
 				}
 
-				return process(nestedJWT, context);
+				return process(signedJWTPayload, context);
 			}
 
 			return verifyAndReturnClaims(encryptedJWT, context);

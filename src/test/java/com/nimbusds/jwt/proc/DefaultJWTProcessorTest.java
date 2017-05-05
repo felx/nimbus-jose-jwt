@@ -19,20 +19,25 @@ package com.nimbusds.jwt.proc;
 
 
 import java.net.URL;
-import java.security.Key;
-import java.security.SecureRandom;
-import java.security.Security;
+import java.security.*;
+import java.security.interfaces.RSAPublicKey;
 import java.util.*;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.crypto.AESEncrypter;
 import com.nimbusds.jose.crypto.DirectEncrypter;
 import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
 import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
 import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -48,7 +53,7 @@ import junit.framework.TestCase;
 /**
  * Tests the default JWT processor.
  *
- * @version 2017-04-08
+ * @version 2017-05-05
  */
 public class DefaultJWTProcessorTest extends TestCase {
 
@@ -933,5 +938,175 @@ public class DefaultJWTProcessorTest extends TestCase {
 
 		// Print out the token claims set
 		System.out.println(claimsSet.toJSONObject());
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void testNestedWithMissingContentTypeHeader()
+		throws Exception {
+		
+		byte[] random32 = new byte[32];
+		new SecureRandom().nextBytes(random32);
+		final SecretKey hmacKey = new SecretKeySpec(random32, "HmacSha256");
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("alice").build();
+		SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claimsSet);
+		signedJWT.sign(new MACSigner(hmacKey));
+		
+		final SecretKey aesKey = new SecretKeySpec(random32, "AES");
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128GCM),
+			new Payload(signedJWT));
+		jweObject.encrypt(new AESEncrypter(aesKey));
+		
+		String jwe = jweObject.serialize();
+		
+		DefaultJWTProcessor proc = new DefaultJWTProcessor();
+		proc.setJWEKeySelector(new JWEKeySelector() {
+			@Override
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) throws KeySourceException {
+				return Collections.singletonList(aesKey);
+			}
+		});
+		proc.setJWSKeySelector(new JWSKeySelector() {
+			@Override
+			public List<? extends Key> selectJWSKeys(JWSHeader header, SecurityContext context) throws KeySourceException {
+				return Collections.singletonList(hmacKey);
+			}
+		});
+		
+		try {
+			proc.process(jwe, null);
+			fail();
+		} catch (BadJWTException e) {
+			assertEquals("Payload of JWE object is not a valid JSON object", e.getMessage());
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public void testNestedWithPlainJWT()
+		throws Exception {
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().subject("alice").build();
+		PlainJWT plainJWT = new PlainJWT(claimsSet);
+		
+		byte[] random32 = new byte[32];
+		new SecureRandom().nextBytes(random32);
+		final SecretKey aesKey = new SecretKeySpec(random32, "AES");
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader.Builder(JWEAlgorithm.A256GCMKW, EncryptionMethod.A128GCM).contentType("JWT").build(),
+			new Payload(plainJWT.serialize()));
+		jweObject.encrypt(new AESEncrypter(aesKey));
+		
+		String jwe = jweObject.serialize();
+		
+		DefaultJWTProcessor proc = new DefaultJWTProcessor();
+		proc.setJWEKeySelector(new JWEKeySelector() {
+			@Override
+			public List<? extends Key> selectJWEKeys(JWEHeader header, SecurityContext context) throws KeySourceException {
+				return Collections.singletonList(aesKey);
+			}
+		});
+		
+		try {
+			proc.process(jwe, null);
+			fail();
+		} catch (BadJWTException e) {
+			assertEquals("The payload is not a nested signed JWT", e.getMessage());
+		}
+	}
+	
+	
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/222/jwe-vulnerability-cannot-force-content
+	@SuppressWarnings("unchecked")
+	public void testRejectPlainNestedJWT_noCTY()
+		throws Exception {
+		
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		keyPairGenerator.initialize(1024);
+		KeyPair keyPair = keyPairGenerator.generateKeyPair();
+		RSAKey rsaJWK = new RSAKey.Builder((RSAPublicKey)keyPair.getPublic())
+			.privateKey(keyPair.getPrivate())
+			.keyID("1")
+			.build();
+		
+		KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSha256");
+		SecretKey hmacKey = keyGenerator.generateKey();
+		OctetSequenceKey hmacJWK = new OctetSequenceKey.Builder(hmacKey).build();
+		
+		DefaultJWTProcessor proc = new DefaultJWTProcessor();
+		proc.setJWEKeySelector(new JWEDecryptionKeySelector(
+			JWEAlgorithm.RSA_OAEP_256,
+			EncryptionMethod.A128GCM,
+			new ImmutableJWKSet(new JWKSet(rsaJWK))
+		));
+		proc.setJWSKeySelector(new JWSVerificationKeySelector(
+			JWSAlgorithm.HS256,
+			new ImmutableJWKSet(new JWKSet(hmacJWK))
+		));
+		
+		PlainJWT plainJWT = new PlainJWT(new JWTClaimsSet.Builder().subject("alice").build());
+		
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM),
+			new Payload(plainJWT.serialize()));
+		jweObject.encrypt(new RSAEncrypter(rsaJWK));
+		
+		String jwe = jweObject.serialize();
+		
+		try {
+			proc.process(jwe, null);
+			fail();
+		} catch (BadJWTException e) {
+			assertEquals("Payload of JWE object is not a valid JSON object", e.getMessage());
+		}
+	}
+	
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/222/jwe-vulnerability-cannot-force-content
+	@SuppressWarnings("unchecked")
+	public void testRejectPlainNestedJWT_withCTY()
+		throws Exception {
+		
+		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+		keyPairGenerator.initialize(1024);
+		KeyPair keyPair = keyPairGenerator.generateKeyPair();
+		RSAKey rsaJWK = new RSAKey.Builder((RSAPublicKey)keyPair.getPublic())
+			.privateKey(keyPair.getPrivate())
+			.keyID("1")
+			.build();
+		
+		KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSha256");
+		SecretKey hmacKey = keyGenerator.generateKey();
+		OctetSequenceKey hmacJWK = new OctetSequenceKey.Builder(hmacKey).build();
+		
+		DefaultJWTProcessor proc = new DefaultJWTProcessor();
+		proc.setJWEKeySelector(new JWEDecryptionKeySelector(
+			JWEAlgorithm.RSA_OAEP_256,
+			EncryptionMethod.A128GCM,
+			new ImmutableJWKSet(new JWKSet(rsaJWK))
+		));
+		proc.setJWSKeySelector(new JWSVerificationKeySelector(
+			JWSAlgorithm.HS256,
+			new ImmutableJWKSet(new JWKSet(hmacJWK))
+		));
+		
+		PlainJWT plainJWT = new PlainJWT(new JWTClaimsSet.Builder().subject("alice").build());
+		
+		JWEObject jweObject = new JWEObject(
+			new JWEHeader.Builder(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM)
+				.contentType("JWT")
+				.build(),
+			new Payload(plainJWT.serialize()));
+		jweObject.encrypt(new RSAEncrypter(rsaJWK));
+		
+		String jwe = jweObject.serialize();
+		
+		try {
+			proc.process(jwe, null);
+			fail();
+		} catch (BadJWTException e) {
+			assertEquals("The payload is not a nested signed JWT", e.getMessage());
+		}
 	}
 }
