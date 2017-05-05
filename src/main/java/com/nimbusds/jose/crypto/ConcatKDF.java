@@ -42,7 +42,7 @@ import net.jcip.annotations.ThreadSafe;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-07-26
+ * @version 2017-05-05
  */
 @ThreadSafe
 class ConcatKDF implements JCAAware<JCAContext> {
@@ -98,16 +98,16 @@ class ConcatKDF implements JCAAware<JCAContext> {
 	/**
 	 * Derives a key from the specified inputs.
 	 *
-	 * @param sharedSecret The shared secret. Must not be {@code null}.
-	 * @param keyLength    The length of the key to derive, in bits.
-	 * @param otherInfo    Other info, {@code null} if not specified.
+	 * @param sharedSecret  The shared secret. Must not be {@code null}.
+	 * @param keyLengthBits The length of the key to derive, in bits.
+	 * @param otherInfo     Other info, {@code null} if not specified.
 	 *
 	 * @return The derived key, with algorithm set to "AES".
 	 *
 	 * @throws JOSEException If the key derivation failed.
 	 */
 	public SecretKey deriveKey(final SecretKey sharedSecret,
-				   final int keyLength,
+				   final int keyLengthBits,
 				   final byte[] otherInfo)
 		throws JOSEException {
 
@@ -115,7 +115,7 @@ class ConcatKDF implements JCAAware<JCAContext> {
 
 		final MessageDigest md = getMessageDigest();
 
-		for (int i=1; i <= computeDigestCycles(md.getDigestLength(), keyLength); i++) {
+		for (int i=1; i <= computeDigestCycles(ByteUtils.bitLength(md.getDigestLength()), keyLengthBits); i++) {
 
 			byte[] counterBytes = IntegerUtils.toBytes(i);
 
@@ -135,7 +135,7 @@ class ConcatKDF implements JCAAware<JCAContext> {
 
 		byte[] derivedKeyMaterial = baos.toByteArray();
 
-		final int keyLengthBytes = ByteUtils.byteLength(keyLength);
+		final int keyLengthBytes = ByteUtils.byteLength(keyLengthBits);
 
 		if (derivedKeyMaterial.length == keyLengthBytes) {
 			// Return immediately
@@ -229,15 +229,16 @@ class ConcatKDF implements JCAAware<JCAContext> {
 	 * Computes the required digest (hashing) cycles for the specified
 	 * message digest length and derived key length.
 	 *
-	 * @param digestLength The length of the message digest.
-	 * @param keyLength    The length of the derived key.
+	 * @param digestLengthBits The length of the message digest, in bits.
+	 * @param keyLengthBits    The length of the derived key, in bits.
 	 *
 	 * @return The digest cycles.
 	 */
-	public static int computeDigestCycles(final int digestLength, final int keyLength) {
+	public static int computeDigestCycles(final int digestLengthBits, final int keyLengthBits) {
 
-		double digestCycles = (double) keyLength / (double) digestLength;
-		return (int) Math.ceil(digestCycles);
+		// return the ceiling of keyLength / digestLength
+		
+		return (keyLengthBits + digestLengthBits - 1) / digestLengthBits;
 	}
 
 

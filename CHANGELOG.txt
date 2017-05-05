@@ -700,3 +700,8 @@ version 4.36.1 (2017-04-19)
 
 version 4.37 (2017-04-27)
     * Exposes public com.nimbusds.jose.crypto.utils.ConstantTimeUtils class.
+
+version 4.37.1 (2017-05-05)
+    * Fixes a bug in ConcatKDF which resulted in redundant digest cycles in the
+      key derivation routine (iss #220).
+
