@@ -19,6 +19,8 @@ package com.nimbusds.jwt;
 
 
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.*;
 
@@ -70,7 +72,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-04-10
+ * @version 2017-05-29
  */
 @Immutable
 public final class JWTClaimsSet implements Serializable {
@@ -543,6 +545,33 @@ public final class JWTClaimsSet implements Serializable {
 		}
 
 		return Collections.unmodifiableList(Arrays.asList(stringArray));
+	}
+	
+	
+	/**
+	 * Gets the specified claim (registered or custom) as a
+	 * {@link java.net.URI}.
+	 *
+	 * @param name The name of the claim. Must not be {@code null}.
+	 *
+	 * @return The value of the claim, {@code null} if not specified.
+	 *
+	 * @throws ParseException If the claim couldn't be parsed to a URI.
+	 */
+	public URI getURIClaim(final String name)
+		throws ParseException {
+		
+		String uriString = getStringClaim(name);
+		
+		if (uriString == null) {
+			return null;
+		}
+		
+		try {
+			return new URI(uriString);
+		} catch (URISyntaxException e) {
+			throw new ParseException("The \"" + name + "\" claim is not a URI: " + e.getMessage(), 0);
+		}
 	}
 
 

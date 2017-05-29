@@ -705,3 +705,6 @@ version 4.37.1 (2017-05-05)
     * Fixes a bug in ConcatKDF which resulted in redundant digest cycles in the
       key derivation routine (iss #220).
 
+version 4.38 (2017-05-29)
+    * Adds new JWTClaimsSet.getURIClaim method.
+

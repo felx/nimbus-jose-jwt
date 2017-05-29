@@ -18,6 +18,7 @@
 package com.nimbusds.jwt;
 
 
+import java.net.URI;
 import java.text.ParseException;
 import java.util.*;
 
@@ -32,7 +33,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2016-04-10
+ * @version 2017-05-29
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -647,6 +648,39 @@ public class JWTClaimsSetTest extends TestCase {
 		claimsSet = JWTClaimsSet.parse(base64URL.decodeToString());
 
 		assertEquals("João", claimsSet.getStringClaim("fullName"));
+	}
+	
+	
+	public void testURIClaim()
+		throws Exception {
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().claim("uri", URI.create("https://example.com").toString()).build();
+		
+		String json = claimsSet.toJSONObject().toJSONString();
+		
+		claimsSet = JWTClaimsSet.parse(json);
+		
+		assertEquals(URI.create("https://example.com"), claimsSet.getURIClaim("uri"));
+		
+		assertNull(claimsSet.getURIClaim("no-such-uri-claim"));
+	}
+	
+	
+	public void testParseInvalidURIClaim()
+		throws Exception {
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder().claim("uri", "a b c").build();
+		
+		String json = claimsSet.toJSONObject().toJSONString();
+		
+		claimsSet = JWTClaimsSet.parse(json);
+		
+		try {
+			claimsSet.getURIClaim("uri");
+			fail();
+		} catch (ParseException e) {
+			assertEquals("The \"uri\" claim is not a URI: Illegal character in path at index 1: a b c", e.getMessage());
+		}
 	}
 
 
