@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
+import com.nimbusds.jose.util.IntegerOverflowException;
 
 
 /**
@@ -32,7 +33,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * <p>See RFC 7518 (JWA), section 5.1, point 14.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-14
+ * @version 2017-06-01
  */
 class AAD {
 
@@ -75,10 +76,13 @@ class AAD {
 	 *
 	 * @return The computed AAD bit length, as a 64 bit big-endian
 	 *         representation (8 byte array).
+	 *
+	 * @throws IntegerOverflowException On a integer overflow.
 	 */
-	public static byte[] computeLength(final byte[] aad) {
+	public static byte[] computeLength(final byte[] aad)
+		throws IntegerOverflowException {
 
-		final int bitLength = ByteUtils.bitLength(aad);
+		final int bitLength = ByteUtils.safeBitLength(aad);
 		return ByteBuffer.allocate(8).putLong(bitLength).array();
 	}
 }

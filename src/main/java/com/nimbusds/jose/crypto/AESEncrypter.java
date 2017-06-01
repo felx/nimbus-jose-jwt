@@ -21,13 +21,12 @@ package com.nimbusds.jose.crypto;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.Container;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -71,7 +70,7 @@ import com.nimbusds.jose.util.Container;
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
  * @author Dimitar A. Stoikov
- * @version 2016-10-13
+ * @version 2017-06-01
  */
 @ThreadSafe
 public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
@@ -145,42 +144,42 @@ public class AESEncrypter extends AESCryptoProvider implements JWEEncrypter {
 
 		if (alg.equals(JWEAlgorithm.A128KW)) {
 
-			if(ByteUtils.bitLength(getKey().getEncoded()) != 128){
+			if(ByteUtils.safeBitLength(getKey().getEncoded()) != 128){
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 128 bits for A128KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192KW)) {
 
-			if(ByteUtils.bitLength(getKey().getEncoded()) != 192){
+			if(ByteUtils.safeBitLength(getKey().getEncoded()) != 192){
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 192 bits for A192KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256KW)) {
 
-			if (ByteUtils.bitLength(getKey().getEncoded()) != 256) {
+			if (ByteUtils.safeBitLength(getKey().getEncoded()) != 256) {
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 256 bits for A256KW encryption");
 			}
 			algFamily = AlgFamily.AESKW;
 
 		} else if (alg.equals(JWEAlgorithm.A128GCMKW)) {
 
-			if(ByteUtils.bitLength(getKey().getEncoded()) != 128){
+			if(ByteUtils.safeBitLength(getKey().getEncoded()) != 128){
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 128 bits for A128GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A192GCMKW)) {
 
-			if(ByteUtils.bitLength(getKey().getEncoded()) != 192){
+			if(ByteUtils.safeBitLength(getKey().getEncoded()) != 192){
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 192 bits for A192GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;
 
 		} else if (alg.equals(JWEAlgorithm.A256GCMKW)) {
 
-			if(ByteUtils.bitLength(getKey().getEncoded()) != 256){
+			if(ByteUtils.safeBitLength(getKey().getEncoded()) != 256){
 				throw new KeyLengthException("The Key Encryption Key (KEK) length must be 256 bits for A256GCMKW encryption");
 			}
 			algFamily = AlgFamily.AESGCMKW;

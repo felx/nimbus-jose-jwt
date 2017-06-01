@@ -26,7 +26,7 @@ import java.io.IOException;
  * Byte utilities.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-12
+ * @version 2017-06-01
  */
 public class ByteUtils {
 
@@ -93,6 +93,28 @@ public class ByteUtils {
 
 
 	/**
+	 * Returns the bit length of the specified byte length, preventing
+	 * integer overflow.
+	 *
+	 * @param byteLength The byte length.
+	 *
+	 * @return The bit length.
+	 *
+	 * @throws IntegerOverflowException On a integer overflow.
+	 */
+	public static int safeBitLength(final int byteLength)
+		throws IntegerOverflowException {
+		
+		long longResult = (long)byteLength * (long)8;
+		if((long)((int)longResult) != longResult) {
+			throw new IntegerOverflowException();
+		} else {
+			return (int)longResult;
+		}
+	}
+
+
+	/**
 	 * Returns the byte length of the specified byte array.
 	 *
 	 * @param byteArray The byte array. May be {@code null}.
@@ -105,6 +127,27 @@ public class ByteUtils {
 			return 0;
 		} else {
 			return bitLength(byteArray.length);
+		}
+	}
+
+
+	/**
+	 * Returns the byte length of the specified byte array, preventing
+	 * integer overflow.
+	 *
+	 * @param byteArray The byte array. May be {@code null}.
+	 *
+	 * @return The bite length, zero if the array is {@code null}.
+	 *
+	 * @throws IntegerOverflowException On a integer overflow.
+	 */
+	public static int safeBitLength(final byte[] byteArray)
+		throws IntegerOverflowException {
+
+		if (byteArray == null) {
+			return 0;
+		} else {
+			return safeBitLength(byteArray.length);
 		}
 	}
 

@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import com.nimbusds.jose.JOSEException;
 import junit.framework.TestCase;
 
 
@@ -65,5 +66,49 @@ public class ByteUtilsTest extends TestCase {
 		byte[] concat = ByteUtils.concat(firstHalf, secondHalf);
 		
 		assertTrue(Base64URL.encode(hash).equals(Base64URL.encode(concat)));
+	}
+	
+	
+	public void testSafeBitLength_OK()
+		throws JOSEException {
+		
+		assertEquals(8, ByteUtils.bitLength(1));
+		assertEquals(16, ByteUtils.bitLength(2));
+		assertEquals(32, ByteUtils.bitLength(4));
+		assertEquals(64, ByteUtils.bitLength(8));
+	}
+	
+	
+	public void testSafeBitLength_IntegerOverflow() {
+		
+		try {
+			ByteUtils.safeBitLength(Integer.MAX_VALUE);
+			fail();
+		} catch (IntegerOverflowException e) {
+			assertEquals("Integer overflow", e.getMessage());
+		}
+	}
+	
+	
+	public void testArraySafeBitLength_OK()
+		throws JOSEException {
+		
+		assertEquals( 8, ByteUtils.bitLength(new byte[1]));
+		assertEquals(16, ByteUtils.bitLength(new byte[2]));
+		assertEquals(32, ByteUtils.bitLength(new byte[4]));
+		assertEquals(64, ByteUtils.bitLength(new byte[8]));
+	}
+	
+	
+	public void testArraySafeBitLength_IntegerOverflow() {
+		
+		try {
+			ByteUtils.safeBitLength(new byte[Integer.MAX_VALUE]);
+			fail();
+		} catch (OutOfMemoryError e) {
+			System.out.println("Test not run due to " + e);
+		} catch (IntegerOverflowException e) {
+			assertEquals("Integer overflow", e.getMessage());
+		}
 	}
 }

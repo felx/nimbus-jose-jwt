@@ -18,6 +18,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import java.util.Arrays;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -27,7 +28,6 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
-
 import org.junit.Assert;
 
 
@@ -36,7 +36,8 @@ import org.junit.Assert;
  * vectors from draft-ietf-jose-json-web-algorithms-10, appendix C.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-05-30
+ * @author Quan Nguyen
+ * @version 2017-06-01
  */
 public class AESCBCTest extends TestCase {
 
@@ -150,7 +151,8 @@ public class AESCBCTest extends TestCase {
 		  (byte)0xbc, (byte)0x1b, (byte)0x26, (byte)0x77, (byte)0x61, (byte)0x95, (byte)0x5b, (byte)0xc5  };
 
 
-	public void testAADLengthComputation() {
+	public void testAADLengthComputation()
+		throws JOSEException {
 
 		Assert.assertArrayEquals(AAD_LENGTH, com.nimbusds.jose.crypto.AAD.computeLength(AAD));
 	}
@@ -243,4 +245,63 @@ public class AESCBCTest extends TestCase {
 			assertEquals("MAC check failed", e.getMessage());
 		}
 	}
+	
+	
+	public void testIntegerOverflowHmacBypass()
+		throws Exception {
+		
+		SecretKey inputKey = new SecretKeySpec(INPUT_KEY_256, "AES");
+		
+		Assert.assertArrayEquals("Input key", INPUT_KEY_256, inputKey.getEncoded());
+		byte[] iv = new byte[16];
+		byte[] aad = new byte[8];
+		byte[] plaintext = new byte[536870928];
+		for (int i = 0; i < plaintext.length; i++ ){
+			// Doesn't matter what value is, but rand is too expensive for large array
+			plaintext[i] = (byte) i;
+		}
+		
+		AuthenticatedCipherText act;
+		
+		try {
+			act = AESCBC.encryptAuthenticated(inputKey, iv, plaintext, aad, null, null);
+		} catch (OutOfMemoryError e) {
+			System.out.println("Test not run due to " + e);
+			return;
+		}
+		
+		byte[] ciphertext = act.getCipherText();
+		byte[] authTag = act.getAuthenticationTag();
+		
+		// Now shift aad and ciphertext around so that HMAC doesn't change,
+		// but the plaintext will change.
+		int n = 0;
+		byte[] buffer = new byte[aad.length + iv.length + ciphertext.length];
+		System.arraycopy(aad, 0, buffer, n, aad.length);
+		n += aad.length;
+		System.arraycopy(iv, 0, buffer, n, iv.length);
+		n += iv.length;
+		System.arraycopy(ciphertext, 0, buffer, n, ciphertext.length);
+		// Note that due to integer overflow :536870920 * 8 = 64
+		int newAadSize = 536870920;
+		byte[] newAad = Arrays.copyOfRange(buffer, 0, newAadSize);
+		byte[] newIv = Arrays.copyOfRange(buffer, newAadSize, newAadSize + 16);
+		byte[] newCiphertext = Arrays.copyOfRange(buffer, newAadSize + 16,
+			buffer.length);
+		
+		try {
+			byte[] decrypted = AESCBC.decryptAuthenticated(inputKey, newIv,
+				newCiphertext, newAad,
+				authTag, // Note that the authTag does NOT change.
+				null, null);
+			// Reaching this point means that the HMac check is
+			// bypassed although the decrypted data is different
+			// from plaintext.
+			// Assert.assertArrayEquals(decrypted, plaintext);
+			fail();
+		} catch (JOSEException ignored) {
+			// ok
+		}
+	}
+	
 }

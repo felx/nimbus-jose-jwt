@@ -21,19 +21,19 @@ package com.nimbusds.jose.crypto;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import com.nimbusds.jose.util.Base64URL;
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.util.Base64URL;
+import com.nimbusds.jose.util.IntegerOverflowException;
+import junit.framework.TestCase;
 
 
 /**
  * Tests the Additional Authenticated Data (AAD) functions.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-17
+ * @version 2017-06-01
  */
 public class AADTest extends TestCase {
 
@@ -58,7 +58,8 @@ public class AADTest extends TestCase {
 	}
 
 
-	public void testComputeLength() {
+	public void testComputeLength()
+		throws IntegerOverflowException {
 
 		byte[] aad = new byte[]{0, 1, 2, 3}; // 32 bits
 

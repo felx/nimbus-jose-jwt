@@ -42,7 +42,7 @@ import net.jcip.annotations.ThreadSafe;
  * <p>See NIST.800-56A.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-05-05
+ * @version 2017-06-01
  */
 @ThreadSafe
 class ConcatKDF implements JCAAware<JCAContext> {
@@ -115,7 +115,7 @@ class ConcatKDF implements JCAAware<JCAContext> {
 
 		final MessageDigest md = getMessageDigest();
 
-		for (int i=1; i <= computeDigestCycles(ByteUtils.bitLength(md.getDigestLength()), keyLengthBits); i++) {
+		for (int i=1; i <= computeDigestCycles(ByteUtils.safeBitLength(md.getDigestLength()), keyLengthBits); i++) {
 
 			byte[] counterBytes = IntegerUtils.toBytes(i);
 

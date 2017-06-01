@@ -35,9 +35,7 @@ import java.util.*;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.Base64;
-import com.nimbusds.jose.util.Base64URL;
-import com.nimbusds.jose.util.ByteUtils;
-import com.nimbusds.jose.util.JSONObjectUtils;
+import com.nimbusds.jose.util.*;
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -133,7 +131,7 @@ import net.minidev.json.JSONObject;
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
  * @author Cedric Staub
- * @version 2017-04-08
+ * @version 2017-06-01
  */
 @Immutable
 public final class RSAKey extends JWK implements AssymetricJWK {
@@ -1933,7 +1931,11 @@ public final class RSAKey extends JWK implements AssymetricJWK {
 	@Override
 	public int size() {
 
-		return ByteUtils.bitLength(n.decode());
+		try {
+			return ByteUtils.safeBitLength(n.decode());
+		} catch (IntegerOverflowException e) {
+			throw new ArithmeticException(e.getMessage());
+		}
 	}
 
 

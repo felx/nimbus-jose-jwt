@@ -20,15 +20,13 @@ package com.nimbusds.jose.crypto;
 
 import java.security.*;
 import java.security.spec.InvalidParameterSpecException;
-
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
-
-import net.jcip.annotations.ThreadSafe;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.Container;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -40,7 +38,7 @@ import com.nimbusds.jose.util.Container;
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
  * @author Dimitar A. Stoikov
- * @version 2016-10-13
+ * @version 2017-06-01
  */
 @ThreadSafe
 class AESGCM {
@@ -199,8 +197,8 @@ class AESGCM {
 	private static void validate(final byte[] iv, final int authTagLength)
 		throws JOSEException {
 		
-		if (ByteUtils.bitLength(iv) != IV_BIT_LENGTH) {
-			throw new JOSEException(String.format("IV length of %d bits is required, got %d", IV_BIT_LENGTH, ByteUtils.bitLength(iv)));
+		if (ByteUtils.safeBitLength(iv) != IV_BIT_LENGTH) {
+			throw new JOSEException(String.format("IV length of %d bits is required, got %d", IV_BIT_LENGTH, ByteUtils.safeBitLength(iv)));
 		}
 
 		if (authTagLength != AUTH_TAG_BIT_LENGTH) {

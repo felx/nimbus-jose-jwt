@@ -36,7 +36,7 @@ import net.jcip.annotations.ThreadSafe;
  * decryption. This class is thread-safe.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-12-04
+ * @version 2017-06-01
  */
 @ThreadSafe
 class RSA1_5 {
@@ -98,7 +98,7 @@ class RSA1_5 {
 			cipher.init(Cipher.DECRYPT_MODE, priv);
 			byte[] secretKeyBytes = cipher.doFinal(encryptedCEK);
 
-			if (ByteUtils.bitLength(secretKeyBytes) != keyLength) {
+			if (ByteUtils.safeBitLength(secretKeyBytes) != keyLength) {
 				// CEK key length mismatch
 				return null;
 			}

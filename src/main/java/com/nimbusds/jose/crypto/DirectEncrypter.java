@@ -59,7 +59,7 @@ import com.nimbusds.jose.util.ByteUtils;
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2014-06-29
+ * @version 2017-06-01
  */
 @ThreadSafe
 public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypter {
@@ -132,7 +132,7 @@ public class DirectEncrypter extends DirectCryptoProvider implements JWEEncrypte
 		// Check key length matches encryption method
 		EncryptionMethod enc = header.getEncryptionMethod();
 
-		if (enc.cekBitLength() != ByteUtils.bitLength(getKey().getEncoded())) {
+		if (enc.cekBitLength() != ByteUtils.safeBitLength(getKey().getEncoded())) {
 			throw new KeyLengthException(enc.cekBitLength(), enc);
 		}
 

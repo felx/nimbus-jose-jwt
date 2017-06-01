@@ -28,13 +28,14 @@ import com.nimbusds.jose.jca.JWEJCAContext;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.Container;
+import com.nimbusds.jose.util.IntegerOverflowException;
 
 
 /**
  * JWE content encryption / decryption provider.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-10-13
+ * @version 2017-06-01
  */
 class ContentCryptoProvider {
 
@@ -126,8 +127,12 @@ class ContentCryptoProvider {
 	private static void checkCEKLength(final SecretKey cek, final EncryptionMethod enc)
 		throws KeyLengthException {
 
-		if (enc.cekBitLength() != ByteUtils.bitLength(cek.getEncoded())) {
-			throw new KeyLengthException("The Content Encryption Key (CEK) length for " + enc + " must be " + enc.cekBitLength() + " bits");
+		try {
+			if (enc.cekBitLength() != ByteUtils.safeBitLength(cek.getEncoded())) {
+				throw new KeyLengthException("The Content Encryption Key (CEK) length for " + enc + " must be " + enc.cekBitLength() + " bits");
+			}
+		} catch (IntegerOverflowException e) {
+			throw new KeyLengthException("The Content Encryption Key (CEK) is too long: " + e.getMessage());
 		}
 	}
 

@@ -38,7 +38,7 @@ import com.nimbusds.jose.util.Container;
  *
  * @author Melisa Halsband
  * @author Vladimir Dzhuvinov
- * @version 2016-10-13
+ * @version 2017-06-01
  */
 @ThreadSafe
 class AESGCMKW {
@@ -97,9 +97,9 @@ class AESGCMKW {
 
 		byte[] keyBytes = AESGCM.decrypt(kek, iv, authEncrCEK.getCipherText(), new byte[0], authEncrCEK.getAuthenticationTag(), provider);
 
-		if (ByteUtils.bitLength(keyBytes) != keyLength) {
+		if (ByteUtils.safeBitLength(keyBytes) != keyLength) {
 
-			throw new KeyLengthException("CEK key length mismatch: " + ByteUtils.bitLength(keyBytes) + " != " + keyLength);
+			throw new KeyLengthException("CEK key length mismatch: " + ByteUtils.safeBitLength(keyBytes) + " != " + keyLength);
 		}
 
 		return new SecretKeySpec(keyBytes, "AES");
