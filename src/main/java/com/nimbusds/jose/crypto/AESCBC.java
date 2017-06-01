@@ -46,7 +46,7 @@ import net.jcip.annotations.ThreadSafe;
  *
  * @author Vladimir Dzhuvinov
  * @author Axel Nennker
- * @version 2015-05-26
+ * @version 2017-05-30
  */
 @ThreadSafe
 class AESCBC {
@@ -351,21 +351,11 @@ class AESCBC {
 
 		byte[] expectedAuthTag = Arrays.copyOf(hmac, compositeKey.getTruncatedMACByteLength());
 
-		boolean macCheckPassed = true;
-
 		if (! ConstantTimeUtils.areEqual(expectedAuthTag, authTag)) {
-			// Thwart timing attacks by delaying exception until after decryption
-			macCheckPassed = false;
-		}
-
-		byte[] plainText = decrypt(compositeKey.getAESKey(), iv, cipherText, ceProvider);
-
-		if (! macCheckPassed) {
-
 			throw new JOSEException("MAC check failed");
 		}
 
-		return plainText;
+		return decrypt(compositeKey.getAESKey(), iv, cipherText, ceProvider);
 	}
 
 
@@ -413,26 +403,23 @@ class AESCBC {
 
 			epv = new Base64URL((String)header.getCustomParam("epv")).decode();
 		}
-
-		SecretKey cekAlt = LegacyConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
-
-		final byte[] plainText = AESCBC.decrypt(cekAlt, iv.decode(), cipherText.decode(), ceProvider);
-
+		
 		SecretKey cik = LegacyConcatKDF.generateCIK(secretKey, header.getEncryptionMethod(), epu, epv);
-
+		
 		String macInput = header.toBase64URL().toString() + "." +
 			encryptedKey.toString() + "." +
 			iv.toString() + "." +
 			cipherText.toString();
-
+		
 		byte[] mac = HMAC.compute(cik, macInput.getBytes(), macProvider);
-
+		
 		if (! ConstantTimeUtils.areEqual(authTag.decode(), mac)) {
-
-			throw new JOSEException("HMAC integrity check failed");
+			throw new JOSEException("MAC check failed");
 		}
 
-		return plainText;
+		SecretKey cekAlt = LegacyConcatKDF.generateCEK(secretKey, header.getEncryptionMethod(), epu, epv);
+
+		return AESCBC.decrypt(cekAlt, iv.decode(), cipherText.decode(), ceProvider);
 	}
 
 

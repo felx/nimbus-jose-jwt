@@ -21,6 +21,11 @@ package com.nimbusds.jose.crypto;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
 
 import org.junit.Assert;
@@ -31,7 +36,7 @@ import org.junit.Assert;
  * vectors from draft-ietf-jose-json-web-algorithms-10, appendix C.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-17
+ * @version 2017-05-30
  */
 public class AESCBCTest extends TestCase {
 
@@ -176,5 +181,66 @@ public class AESCBCTest extends TestCase {
 
 		Assert.assertArrayEquals("Cipher text", CIPHER_TEXT_512, act.getCipherText());
 		Assert.assertArrayEquals("Auth tag", AUTH_TAG_512, act.getAuthenticationTag());
+	}
+	
+	
+	public void testCBCPaddingOracleAttack()
+		throws Exception {
+		
+		SecretKey inputKey = new SecretKeySpec(INPUT_KEY_256, "AES");
+		
+		Assert.assertArrayEquals("Input key", INPUT_KEY_256, inputKey.getEncoded());
+		
+		AuthenticatedCipherText act = AESCBC.encryptAuthenticated(inputKey, IV, PLAIN_TEXT, AAD, null, null);
+		
+		byte[] cipherText = act.getCipherText();
+		
+		// Now change the cipher text to make CBC padding invalid.
+		cipherText[cipherText.length - 1] ^= 0x01;
+		
+		try {
+			AESCBC.decryptAuthenticated(inputKey, IV, cipherText, AAD, act.getAuthenticationTag(), null, null);
+		} catch (JOSEException e) {
+			assertEquals("MAC check failed", e.getMessage());
+		}
+	}
+	
+	
+	public void testCBCPaddingOracleAttackOldConcatKDF()
+		throws Exception {
+		
+		SecretKey inputKey = new SecretKeySpec(INPUT_KEY_256, "AES");
+		
+		Assert.assertArrayEquals("Input key", INPUT_KEY_256, inputKey.getEncoded());
+		
+		AuthenticatedCipherText act = AESCBC.encryptWithConcatKDF(
+			new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256_DEPRECATED),
+			new SecretKeySpec(INPUT_KEY_256, "AES"),
+			Base64URL.encode(INPUT_KEY_256), // mock
+			IV,
+			PLAIN_TEXT,
+			null,
+			null
+			);
+		
+		byte[] cipherText = act.getCipherText();
+		
+		// Now change the cipher text to make CBC padding invalid.
+		cipherText[cipherText.length - 1] ^= 0x01;
+		
+		try {
+			AESCBC.decryptWithConcatKDF(
+				new JWEHeader(JWEAlgorithm.RSA1_5, EncryptionMethod.A128CBC_HS256_DEPRECATED),
+				new SecretKeySpec(INPUT_KEY_256, "AES"),
+				Base64URL.encode(INPUT_KEY_256), // mock
+				Base64URL.encode(IV),
+				Base64URL.encode(cipherText),
+				Base64URL.encode(act.getAuthenticationTag()),
+				null,
+				null
+			);
+		} catch (JOSEException e) {
+			assertEquals("MAC check failed", e.getMessage());
+		}
 	}
 }
