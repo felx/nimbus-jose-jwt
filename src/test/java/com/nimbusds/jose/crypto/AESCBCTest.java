@@ -36,7 +36,6 @@ import org.junit.Assert;
  * vectors from draft-ietf-jose-json-web-algorithms-10, appendix C.
  *
  * @author Vladimir Dzhuvinov
- * @author Quan Nguyen
  * @version 2017-06-01
  */
 public class AESCBCTest extends TestCase {
