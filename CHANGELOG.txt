@@ -708,3 +708,12 @@ version 4.37.1 (2017-05-05)
 version 4.38 (2017-05-29)
     * Adds new JWTClaimsSet.getURIClaim method.
 
+version 4.39 (2017-06-02)
+    * Fixes authenticated AES/CBC decryption to prevent Padding Oracle
+      attacks (issue #223).
+    * Adds new ByteUtils.safeBitLength methods that throw a checked
+      IntegerOverflowException (extends JOSEException) on overflow.
+    * Switches to safe bit length computation (using the new
+      ByteUtils.safeBitLength methods) in crypto operations (issue #224).
+
+
