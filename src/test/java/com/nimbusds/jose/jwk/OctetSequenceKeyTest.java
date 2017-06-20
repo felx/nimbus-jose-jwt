@@ -41,7 +41,7 @@ import net.minidev.json.JSONObject;
  * Tests the Octet Sequence JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-08
+ * @version 2017-06-20
  */
 public class OctetSequenceKeyTest extends TestCase {
 
@@ -187,15 +187,28 @@ public class OctetSequenceKeyTest extends TestCase {
 	}
 
 
-	public void testRejectUseAndOpsTogether() {
+	public void testKeyUseConsistentWithOps() {
 
-		Set<KeyOperation> ops = new LinkedHashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
+		KeyUse use = KeyUse.SIGNATURE;
+		
+		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
+		JWK jwk = new OctetSequenceKey(new Base64URL("GawgguFyGrWKav7AX4VKUg"), use, ops, null, null, null, null, null, null, null);
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+	}
+	
+	
+	public void testRejectKeyUseNotConsistentWithOps() {
+		
 		try {
-			new OctetSequenceKey(new Base64URL("GawgguFyGrWKav7AX4VKUg"), KeyUse.SIGNATURE, ops, null, null, null, null, null, null, null);
+			new OctetSequenceKey.Builder(new Base64URL("GawgguFyGrWKav7AX4VKUg"))
+				.keyUse(KeyUse.SIGNATURE)
+				.keyOperations(Collections.singleton(KeyOperation.ENCRYPT))
+				.build();
 			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
+		} catch (IllegalStateException e) {
+			assertEquals("The key use \"use\" and key options \"key_opts\" parameters are not consistent, see RFC 7517, section 4.3", e.getMessage());
 		}
 	}
 

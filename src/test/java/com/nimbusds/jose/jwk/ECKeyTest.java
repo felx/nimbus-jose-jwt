@@ -53,7 +53,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-19
+ * @version 2017-06-20
  */
 public class ECKeyTest extends TestCase {
 
@@ -563,26 +563,38 @@ public class ECKeyTest extends TestCase {
 	}
 
 
-	public void testRejectKeyUseWithOps() {
+	public void testKeyUseConsistentWithOps() {
 
 		KeyUse use = KeyUse.SIGNATURE;
 
 		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
+		JWK jwk = new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, use, ops, null, null, null, null, null, null, null);
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+		
+		jwk = new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y)
+			.keyUse(use)
+			.keyOperations(ops)
+			.build();
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+	}
+	
+	
+	public void testRejectKeyUseNotConsistentWithOps() {
+		
+		KeyUse use = KeyUse.SIGNATURE;
+		
+		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.ENCRYPT, KeyOperation.DECRYPT));
+		
 		try {
-			new ECKey(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y, use, ops, null, null, null, null, null, null, null);
-
-			fail();
-		} catch (IllegalArgumentException e) {
-			// ok
-		}
-
-		try {
-			new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y).
-				keyUse(use).keyOperations(ops).build();
-			fail();
+			new ECKey.Builder(ExampleKeyP256.CRV, ExampleKeyP256.X, ExampleKeyP256.Y)
+				.keyUse(use)
+				.keyOperations(ops)
+				.build();
 		} catch (IllegalStateException e) {
-			// ok
+			assertEquals("The key use \"use\" and key options \"key_opts\" parameters are not consistent, see RFC 7517, section 4.3", e.getMessage());
 		}
 	}
 

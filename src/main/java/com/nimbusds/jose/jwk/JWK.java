@@ -65,7 +65,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2017-04-08
+ * @version 2017-06-20
  */
 public abstract class JWK implements JSONAware, Serializable {
 
@@ -179,8 +179,9 @@ public abstract class JWK implements JSONAware, Serializable {
 
 		this.kty = kty;
 
-		if (use != null && ops != null) {
-			throw new IllegalArgumentException("They key use \"use\" and key options \"key_opts\" parameters cannot be set together");
+		if (! KeyUseAndOpsConsistency.areConsistent(use, ops)) {
+			throw new IllegalArgumentException("The key use \"use\" and key options \"key_opts\" parameters are not consistent, " +
+				"see RFC 7517, section 4.3");
 		}
 
 		this.use = use;

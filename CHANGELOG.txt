@@ -717,4 +717,6 @@ version 4.39 (2017-06-02)
       ByteUtils.safeBitLength methods) in crypto operations (issue #224).
 
 version 4.39.1 (2017-06-20)
+    * Allows construction of JWKs with consistent key use (use) and key
+      operations (key_ops) parameters (issue #226).
     * Removes erroneous BouncyCastle PKIX dependency (issue #225).

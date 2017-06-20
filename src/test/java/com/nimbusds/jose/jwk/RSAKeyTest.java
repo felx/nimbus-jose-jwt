@@ -51,7 +51,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the RSA JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-19
+ * @version 2017-06-20
  */
 public class RSAKeyTest extends TestCase {
 
@@ -849,26 +849,49 @@ public class RSAKeyTest extends TestCase {
 	}
 
 
-	public void testRejectKeyUseWithOps() {
+	public void testKeyUseConsistentWithOps() {
 
 		KeyUse use = KeyUse.SIGNATURE;
 
 		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY));
 
+		JWK jwk = new RSAKey(new Base64URL(n), new Base64URL(e), use, ops, null, null, null, null, null, null, null);
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+		
+		jwk = new RSAKey.Builder(new Base64URL(n), new Base64URL(e))
+			.keyUse(use)
+			.keyOperations(ops)
+			.build();
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+		
+		// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/226/jwk-constructor-erroneously-throws
+		use = KeyUse.SIGNATURE;
+		ops = Collections.singleton(KeyOperation.SIGN);
+		jwk = new RSAKey.Builder(new Base64URL(n), new Base64URL(e))
+			.privateExponent(new Base64URL(d))
+			.keyUse(use)
+			.keyOperations(ops)
+			.build();
+		assertEquals(use, jwk.getKeyUse());
+		assertEquals(ops, jwk.getKeyOperations());
+	}
+	
+	
+	public void testRejectKeyUseNotConsistentWithOps() {
+		
+		KeyUse use = KeyUse.SIGNATURE;
+		
+		Set<KeyOperation> ops = new HashSet<>(Arrays.asList(KeyOperation.ENCRYPT, KeyOperation.DECRYPT));
+		
 		try {
-			new RSAKey(new Base64URL(n), new Base64URL(e), use, ops, null, null, null, null, null, null, null);
-
-			fail();
-		} catch (IllegalArgumentException e) {
-			assertEquals("They key use \"use\" and key options \"key_opts\" parameters cannot be set together", e.getMessage());
-		}
-
-		try {
-			new RSAKey.Builder(new Base64URL(n), new Base64URL(e)).
-				keyUse(use).keyOperations(ops).build();
-			fail();
+			new RSAKey.Builder(new Base64URL(n), new Base64URL(e))
+				.keyUse(use)
+				.keyOperations(ops)
+				.build();
 		} catch (IllegalStateException e) {
-			assertEquals("They key use \"use\" and key options \"key_opts\" parameters cannot be set together", e.getMessage());
+			assertEquals("The key use \"use\" and key options \"key_opts\" parameters are not consistent, see RFC 7517, section 4.3", e.getMessage());
 		}
 	}
 
