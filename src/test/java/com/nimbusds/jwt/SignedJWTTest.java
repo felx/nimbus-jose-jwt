@@ -21,10 +21,13 @@ package com.nimbusds.jwt;
 import java.net.URI;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Date;
 
+import com.nimbusds.jose.crypto.MACSigner;
+import com.nimbusds.jose.crypto.MACVerifier;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
@@ -123,5 +126,21 @@ public class SignedJWTTest extends TestCase {
 
 		JWSVerifier verifier = new RSASSAVerifier(publicKey);
 		assertTrue(signedJWT.verify(verifier));
+	}
+	
+	
+	public void testTrimWhitespace()
+		throws Exception {
+		
+		byte[] secret = new byte[32];
+		new SecureRandom().nextBytes(secret);
+		
+		SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), new JWTClaimsSet.Builder().build());
+		jwt.sign(new MACSigner(secret));
+		
+		String jwtString = " " + jwt.serialize() + " ";
+		
+		jwt = SignedJWT.parse(jwtString);
+		assertTrue(jwt.verify(new MACVerifier(secret)));
 	}
 }

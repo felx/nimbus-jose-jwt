@@ -21,10 +21,9 @@ package com.nimbusds.jose;
 import java.io.Serializable;
 import java.text.ParseException;
 
-import net.minidev.json.JSONObject;
-
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.JSONObjectUtils;
+import net.minidev.json.JSONObject;
 
 
 /**
@@ -32,7 +31,7 @@ import com.nimbusds.jose.util.JSONObjectUtils;
  * Signature (JWS) secured and JSON Web Encryption (JWE) secured objects.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-06-10
+ * @version 2017-07-11
  */
 public abstract class JOSEObject implements Serializable {
 	
@@ -212,52 +211,54 @@ public abstract class JOSEObject implements Serializable {
 	public static Base64URL[] split(final String s)
 		throws ParseException {
 
+		final String t = s.trim();
+		
 		// We must have 2 (JWS) or 4 dots (JWE)
 
 		// String.split() cannot handle empty parts
-		final int dot1 = s.indexOf(".");
+		final int dot1 = t.indexOf(".");
 
 		if (dot1 == -1) {
 			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Missing part delimiters", 0);
 		}
 
-		final int dot2 = s.indexOf(".", dot1 + 1);
+		final int dot2 = t.indexOf(".", dot1 + 1);
 
 		if (dot2 == -1) {
 			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Missing second delimiter", 0);
 		}
 
 		// Third dot for JWE only
-		final int dot3 = s.indexOf(".", dot2 + 1);
+		final int dot3 = t.indexOf(".", dot2 + 1);
 
 		if (dot3 == -1) {
 
 			// Two dots only? -> We have a JWS
 			Base64URL[] parts = new Base64URL[3];
-			parts[0] = new Base64URL(s.substring(0, dot1));
-			parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
-			parts[2] = new Base64URL(s.substring(dot2 + 1));
+			parts[0] = new Base64URL(t.substring(0, dot1));
+			parts[1] = new Base64URL(t.substring(dot1 + 1, dot2));
+			parts[2] = new Base64URL(t.substring(dot2 + 1));
 			return parts;
 		}
 
 		// Fourth final dot for JWE
-		final int dot4 = s.indexOf(".", dot3 + 1);
+		final int dot4 = t.indexOf(".", dot3 + 1);
 
 		if (dot4 == -1) {
 			throw new ParseException("Invalid serialized JWE object: Missing fourth delimiter", 0);
 		}
 
-		if (dot4 != -1 && s.indexOf(".", dot4 + 1) != -1) {
+		if (dot4 != -1 && t.indexOf(".", dot4 + 1) != -1) {
 			throw new ParseException("Invalid serialized unsecured/JWS/JWE object: Too many part delimiters", 0);
 		}
 
 		// Four dots -> five parts
 		Base64URL[] parts = new Base64URL[5];
-		parts[0] = new Base64URL(s.substring(0, dot1));
-		parts[1] = new Base64URL(s.substring(dot1 + 1, dot2));
-		parts[2] = new Base64URL(s.substring(dot2 + 1, dot3));
-		parts[3] = new Base64URL(s.substring(dot3 + 1, dot4));
-		parts[4] = new Base64URL(s.substring(dot4 + 1));
+		parts[0] = new Base64URL(t.substring(0, dot1));
+		parts[1] = new Base64URL(t.substring(dot1 + 1, dot2));
+		parts[2] = new Base64URL(t.substring(dot2 + 1, dot3));
+		parts[3] = new Base64URL(t.substring(dot3 + 1, dot4));
+		parts[4] = new Base64URL(t.substring(dot4 + 1));
 		return parts;
 	}
 

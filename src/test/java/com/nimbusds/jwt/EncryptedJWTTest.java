@@ -29,21 +29,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
+import com.nimbusds.jose.crypto.*;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWEHeader;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
-import com.nimbusds.jose.crypto.RSADecrypter;
-import com.nimbusds.jose.crypto.RSAEncrypter;
 
 
 /**
  * Tests an encrypted JWT object. Uses test RSA keys from the JWE spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-19
+ * @version 2017-07-11
  */
 public class EncryptedJWTTest extends TestCase {
 
@@ -229,5 +231,24 @@ public class EncryptedJWTTest extends TestCase {
 		assertEquals(iat, jwt.getJWTClaimsSet().getIssueTime());
 
 		assertEquals(jti, jwt.getJWTClaimsSet().getJWTID());
+	}
+	
+	
+	public void testTrimWhitespace()
+		throws Exception {
+		
+		KeyGenerator gen = KeyGenerator.getInstance("AES");
+		gen.init(128);
+		SecretKey key = gen.generateKey();
+		
+		EncryptedJWT jwt = new EncryptedJWT(new JWEHeader(JWEAlgorithm.DIR, EncryptionMethod.A128GCM), new JWTClaimsSet.Builder().build());
+		jwt.encrypt(new DirectEncrypter(key));
+		
+		String jwtString = " " + jwt.serialize() + " ";
+		
+		jwt = EncryptedJWT.parse(jwtString);
+		
+		jwt.decrypt(new DirectDecrypter(key));
+		assertTrue(jwt.getJWTClaimsSet().toJSONObject().isEmpty());
 	}
 }

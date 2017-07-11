@@ -32,7 +32,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests plain JWT object. Uses test vectors from JWT spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-08-19
+ * @version 2017-07-11
  */
 public class PlainJWTTest extends TestCase {
 
@@ -47,7 +47,7 @@ public class PlainJWTTest extends TestCase {
 			.build();
 
 		JWTClaimsSet readOnlyClaimsSet = claimsSet;
-
+		
 		PlainJWT jwt = new PlainJWT(readOnlyClaimsSet);
 
 		assertEquals("alice", jwt.getJWTClaimsSet().getSubject());
@@ -149,5 +149,14 @@ public class PlainJWTTest extends TestCase {
 		assertEquals("DP01gy3QkwVGGdIejIJgLXCtRTga", plainJWT.getJWTClaimsSet().getAudience().get(0));
 		assertEquals("https://localhost:9443/oauth2endpoints/token", plainJWT.getJWTClaimsSet().getIssuer());
 		assertEquals(new Date(373886405L * 1000), plainJWT.getJWTClaimsSet().getIssueTime());
+	}
+	
+	
+	public void testTrimWhitespace()
+		throws Exception {
+		
+		PlainJWT jwt = new PlainJWT(new JWTClaimsSet.Builder().build());
+		String jwtString = " " + jwt.serialize() + " ";
+		PlainJWT.parse(jwtString);
 	}
 }
