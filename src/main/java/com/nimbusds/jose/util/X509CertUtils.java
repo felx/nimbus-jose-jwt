@@ -24,8 +24,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
-import com.nimbusds.jose.util.Base64;
-
 
 /**
  *  X.509 certificate utilities.
