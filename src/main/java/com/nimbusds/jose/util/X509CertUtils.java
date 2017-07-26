@@ -19,17 +19,14 @@ package com.nimbusds.jose.util;
 
 
 import java.io.ByteArrayInputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.security.cert.*;
 
 
 /**
  *  X.509 certificate utilities.
  *
  *  @author Vladimir Dzhuvinov
- *  @version 2015-11-16
+ *  @version 2017-07-26
  */
 public class X509CertUtils {
 
@@ -109,5 +106,24 @@ public class X509CertUtils {
 		buf = buf.replaceAll("\\s", "");
 
 		return parse(new Base64(buf).decode());
+	}
+	
+	
+	/**
+	 * Computes the X.509 certificate SHA-256 thumbprint ({@code x5t#S256}).
+	 *
+	 * @param cert The X.509 certificate. Must not be {@code null}.
+	 *
+	 * @return The SHA-256 thumbprint, BASE64URL-encoded, {@code null} if
+	 *         a certificate encoding exception is encountered.
+	 */
+	public static Base64URL computeSHA256Thumbprint(final X509Certificate cert) {
+	
+		try {
+			byte[] derEncodedCert = cert.getEncoded();
+			return Base64URL.encode(derEncodedCert);
+		} catch (CertificateEncodingException e) {
+			return null;
+		}
 	}
 }

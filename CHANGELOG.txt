@@ -723,3 +723,8 @@ version 4.39.1 (2017-06-20)
 
 version 4.39.2 (2017-07-11)
     * Trips JOSE and JWT strings before parsing (issue #228).
+
+version 4.40 (2017-07-26)
+    * Adds X509CertUtils.computeSHA256Thumbprint utility method for computing
+      the SHA-256 thumbprint of X.509 certificates, BASE64URL encoded.
+

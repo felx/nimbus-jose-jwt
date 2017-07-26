@@ -177,4 +177,15 @@ public class X509CertUtilsTest extends TestCase {
 		assertEquals(rsaPubKeyAlg, certHolder.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId());
 		assertEquals("NULL", certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString());
 	}
+	
+	
+	public void testSHA256Thumbprint()
+		throws Exception {
+		
+		X509Certificate cert = X509CertUtils.parse(PEM_CERT);
+		
+		Base64URL thumbPrint = X509CertUtils.computeSHA256Thumbprint(cert);
+		
+		assertEquals(Base64URL.encode(cert.getEncoded()), thumbPrint);
+	}
 }
