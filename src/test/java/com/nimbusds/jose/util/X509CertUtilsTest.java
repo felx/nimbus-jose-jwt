@@ -188,4 +188,13 @@ public class X509CertUtilsTest extends TestCase {
 		
 		assertEquals(Base64URL.encode(cert.getEncoded()), thumbPrint);
 	}
+	
+	
+	public void testPEMRoundTrip() {
+		
+		X509Certificate cert = X509CertUtils.parse(PEM_CERT);
+		String pemString = X509CertUtils.toPEMString(cert);
+		System.out.println(pemString);
+		assertEquals(cert.getSubjectDN(), X509CertUtils.parse(pemString).getSubjectDN());
+	}
 }

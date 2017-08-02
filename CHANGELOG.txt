@@ -728,3 +728,6 @@ version 4.40 (2017-07-26)
     * Adds X509CertUtils.computeSHA256Thumbprint utility method for computing
       the SHA-256 thumbprint of X.509 certificates, BASE64URL encoded.
 
+version 4.41 (2017-08-02)
+    * Adds new X509CertUtils.toPEMString utility method.
+
