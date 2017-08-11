@@ -731,3 +731,6 @@ version 4.40 (2017-07-26)
 version 4.41 (2017-08-02)
     * Adds new X509CertUtils.toPEMString utility method.
 
+version 4.41.1 (2017-08-11)
+    * Fixes buggy X509CertUtils.computeSHA256Thumbprint(X509Certificate)
+      utility method (issue #232).

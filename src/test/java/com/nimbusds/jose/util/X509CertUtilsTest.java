@@ -20,6 +20,7 @@ package com.nimbusds.jose.util;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -184,9 +185,13 @@ public class X509CertUtilsTest extends TestCase {
 		
 		X509Certificate cert = X509CertUtils.parse(PEM_CERT);
 		
+		MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+		byte[] hash = sha256.digest(cert.getEncoded());
+		assertEquals(256, ByteUtils.bitLength(hash));
+		
 		Base64URL thumbPrint = X509CertUtils.computeSHA256Thumbprint(cert);
 		
-		assertEquals(Base64URL.encode(cert.getEncoded()), thumbPrint);
+		assertEquals(Base64URL.encode(hash), thumbPrint);
 	}
 	
 	
@@ -194,7 +199,7 @@ public class X509CertUtilsTest extends TestCase {
 		
 		X509Certificate cert = X509CertUtils.parse(PEM_CERT);
 		String pemString = X509CertUtils.toPEMString(cert);
-		System.out.println(pemString);
+//		System.out.println(pemString);
 		assertEquals(cert.getSubjectDN(), X509CertUtils.parse(pemString).getSubjectDN());
 	}
 }

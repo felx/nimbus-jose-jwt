@@ -19,6 +19,8 @@ package com.nimbusds.jose.util;
 
 
 import java.io.ByteArrayInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.*;
 
 
@@ -146,8 +148,9 @@ public class X509CertUtils {
 	
 		try {
 			byte[] derEncodedCert = cert.getEncoded();
-			return Base64URL.encode(derEncodedCert);
-		} catch (CertificateEncodingException e) {
+			MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+			return Base64URL.encode(sha256.digest(derEncodedCert));
+		} catch (NoSuchAlgorithmException | CertificateEncodingException e) {
 			return null;
 		}
 	}
