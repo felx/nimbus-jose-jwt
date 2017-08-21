@@ -144,7 +144,8 @@ version 2.13.0 (2013-03-28)
 	* Adds support for A128CBC+HS256 and A256CBC+HS512 encryption methods.
 	* Implements ECKey export and import.
 	* Adds JWE DEFLATE support.
-	* Implements basic MMA attack protection for RSA1_5 JWE algorithm.
+	* Implements basic MMA attack protection for RSA1_5 JWE algorithm (issue
+	  #23).
 	* Refactors JOSE header filters.
 	* Refactors crypto package.
 	* Adds support to translate JWKs to and from native Java key objects.
@@ -288,7 +289,7 @@ version 2.26 (2014-05-23)
 
 version 2.26.1 (2014-07-14)
     * Removes checked exception from RSA1_5.decryptCEK(...) to minimise
-      exposure to timing attacks (issue #91).
+      exposure to timing attacks for JWE with RSA1_5 (issue #91).
     * BASE64 and BASE64URL decoder successfully ignores separator (\r, \n) and
       other illegal characters (issue #96).
 
@@ -312,7 +313,8 @@ version 3.1.1 (2014-08-21)
       instead of JWTClaimsSet.
 
 version 3.1.2 (2014-09-01)
-    * Closes timing attack vulnerability in MACVerifier (issue #107).
+    * Closes timing attack vulnerability in MACVerifier for JWS with HS256,
+      HS384 and HS512 (issue #107).
     
 version 3.2 (2014-10-14)
     * Adds signed JWT support to Payload class (iss #108).
@@ -625,7 +627,7 @@ version 4.31 (2016-12-01)
 
 version 4.31.1 (2016-12-04)
     * Updates the JOSEException message on RSA IllegalBlockSizeException to
-      indicate that the RSA key is to short, and the chosen encryption method
+      indicate that the RSA key is too short, and the chosen encryption method
       (enc) requires a longer RSA key (issue #203).
     * Refactors RSA encryption and decryption tests.
 
@@ -670,7 +672,7 @@ version 4.34.2 (2017-02-28)
       don't perform this check internally. See http://c2id.co/3n for details.
       Affected is the default Java SUN JCA provider that comes with Java prior
       to version 1.8.0_51. Later Java versions and the BouncyCastle JCA
-      provider are not affected (iss #210).
+      provider are not affected (issue #210). Allocated CVE-2017-12974.
 
 version 4.35 (2017-04-09)
     * Adds support for JWK x5t#S256 header parameter (iss #205).
@@ -709,12 +711,17 @@ version 4.38 (2017-05-29)
     * Adds new JWTClaimsSet.getURIClaim method.
 
 version 4.39 (2017-06-02)
-    * Fixes authenticated AES/CBC decryption to prevent Padding Oracle
-      attacks (issue #223).
+    * Fixes authenticated AES/CBC decryption to prevent Padding Oracle attacks
+      in JWE with A128CBC-HS256, A192CBC-HS384 and A256CBC-HS512 encryption
+      method (issue #223). Allocated CVE-2017-12973.
     * Adds new ByteUtils.safeBitLength methods that throw a checked
       IntegerOverflowException (extends JOSEException) on overflow.
     * Switches to safe bit length computation (using the new
       ByteUtils.safeBitLength methods) in crypto operations (issue #224).
+    * Fixes authenticated AES/CBC decryption to prevent integer overflow
+      attacks that can cause the HMAC check to be bypassed. Affected is JWE
+      decryption with A128CBC-HS256, A192CBC-HS384 and A256CBC-HS512 encryption
+      method (issue #224). Allocated CVE-2017-12972.
 
 version 4.39.1 (2017-06-20)
     * Allows construction of JWKs with consistent key use (use) and key
