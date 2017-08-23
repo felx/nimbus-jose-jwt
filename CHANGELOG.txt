@@ -741,3 +741,8 @@ version 4.41 (2017-08-02)
 version 4.41.1 (2017-08-11)
     * Fixes buggy X509CertUtils.computeSHA256Thumbprint(X509Certificate)
       utility method (issue #232).
+
+version 4.41.2 (2017-08-23)
+    * Fixes JWTClaimsSet.getAudience when the "aud" claim is stored internally
+      as the special case string representation (issue #236).
+

@@ -24,8 +24,8 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.*;
 
-import com.nimbusds.jose.util.JSONObjectUtils;
 import com.nimbusds.jose.util.DateUtils;
+import com.nimbusds.jose.util.JSONObjectUtils;
 import net.jcip.annotations.Immutable;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -72,7 +72,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2017-05-29
+ * @version 2018-08-23
  */
 @Immutable
 public final class JWTClaimsSet implements Serializable {
@@ -367,12 +367,19 @@ public final class JWTClaimsSet implements Serializable {
 
 
 	/**
-	 * Gets the audience ({@code aud}) clam.
+	 * Gets the audience ({@code aud}) claim.
 	 *
 	 * @return The audience claim, empty list if not specified.
 	 */
 	public List<String> getAudience() {
 
+		Object audValue = getClaim(AUDIENCE_CLAIM);
+		
+		if (audValue instanceof String) {
+			// Special case
+			return Collections.singletonList((String)audValue);
+		}
+		
 		List<String> aud;
 		try {
 			aud = getStringListClaim(AUDIENCE_CLAIM);

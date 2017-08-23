@@ -33,7 +33,7 @@ import net.minidev.json.JSONObject;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2017-05-29
+ * @version 2018-08-23
  */
 public class JWTClaimsSetTest extends TestCase {
 
@@ -846,6 +846,30 @@ public class JWTClaimsSetTest extends TestCase {
 		
 		jsonObject = claimsSet.getJSONObjectClaim("prm");
 		assertEquals("value", jsonObject.get("key"));
+		assertEquals(1, jsonObject.size());
+	}
+	
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/236
+	public void testGetAudienceFromStringClaim() {
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("aud", "1")
+			.build();
+		
+		assertEquals(Collections.singletonList("1"), claimsSet.getAudience());
+	}
+	
+	
+	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/236
+	public void testAudienceStringToJSONObject()
+		throws Exception {
+		
+		JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
+			.claim("aud", "1")
+			.build();
+		
+		JSONObject jsonObject = claimsSet.toJSONObject();
+		assertEquals("1", jsonObject.get("aud"));
 		assertEquals(1, jsonObject.size());
 	}
 }
