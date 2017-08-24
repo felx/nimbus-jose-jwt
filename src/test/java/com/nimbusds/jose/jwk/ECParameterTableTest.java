@@ -30,7 +30,7 @@ import org.bouncycastle.jce.spec.ECNamedCurveSpec;
  * Tests the EC parameter table.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-20
+ * @version 2018-08-23
  */
 public class ECParameterTableTest extends TestCase {
 
@@ -38,7 +38,7 @@ public class ECParameterTableTest extends TestCase {
 	public void testP256()
 		throws Exception {
 
-		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(ECKey.Curve.P_256.getStdName());
+		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(Curve.P_256.getStdName());
 
 		ECParameterSpec expectedSpec = new ECNamedCurveSpec(curveParams.getName(),
 			curveParams.getCurve(),
@@ -46,7 +46,7 @@ public class ECParameterTableTest extends TestCase {
 			curveParams.getN());
 
 		// Lookup
-		ECParameterSpec spec = ECParameterTable.get(ECKey.Curve.P_256);
+		ECParameterSpec spec = ECParameterTable.get(Curve.P_256);
 
 		assertEquals(expectedSpec.getCurve().getField().getFieldSize(), spec.getCurve().getField().getFieldSize());
 		assertEquals(expectedSpec.getCurve().getA(), spec.getCurve().getA());
@@ -57,14 +57,14 @@ public class ECParameterTableTest extends TestCase {
 		assertEquals(expectedSpec.getCofactor(), spec.getCofactor());
 
 		// Reverse lookup
-		assertEquals(ECKey.Curve.P_256, ECParameterTable.get(expectedSpec));
+		assertEquals(Curve.P_256, ECParameterTable.get(expectedSpec));
 	}
 
 
 	public void testP384()
 		throws Exception {
 
-		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(ECKey.Curve.P_384.getStdName());
+		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(Curve.P_384.getStdName());
 
 		ECParameterSpec expectedSpec = new ECNamedCurveSpec(curveParams.getName(),
 			curveParams.getCurve(),
@@ -72,7 +72,7 @@ public class ECParameterTableTest extends TestCase {
 			curveParams.getN());
 
 		// Lookup
-		ECParameterSpec spec = ECParameterTable.get(ECKey.Curve.P_384);
+		ECParameterSpec spec = ECParameterTable.get(Curve.P_384);
 
 		assertEquals(expectedSpec.getCurve().getField().getFieldSize(), spec.getCurve().getField().getFieldSize());
 		assertEquals(expectedSpec.getCurve().getA(), spec.getCurve().getA());
@@ -83,14 +83,14 @@ public class ECParameterTableTest extends TestCase {
 		assertEquals(expectedSpec.getCofactor(), spec.getCofactor());
 
 		// Reverse lookup
-		assertEquals(ECKey.Curve.P_384, ECParameterTable.get(expectedSpec));
+		assertEquals(Curve.P_384, ECParameterTable.get(expectedSpec));
 	}
 
 
 	public void testP521()
 		throws Exception {
 
-		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(ECKey.Curve.P_521.getStdName());
+		ECNamedCurveParameterSpec curveParams = ECNamedCurveTable.getParameterSpec(Curve.P_521.getStdName());
 
 		ECParameterSpec expectedSpec = new ECNamedCurveSpec(curveParams.getName(),
 			curveParams.getCurve(),
@@ -98,7 +98,7 @@ public class ECParameterTableTest extends TestCase {
 			curveParams.getN());
 
 		// Lookup
-		ECParameterSpec spec = ECParameterTable.get(ECKey.Curve.P_521);
+		ECParameterSpec spec = ECParameterTable.get(Curve.P_521);
 
 		assertEquals(expectedSpec.getCurve().getField().getFieldSize(), spec.getCurve().getField().getFieldSize());
 		assertEquals(expectedSpec.getCurve().getA(), spec.getCurve().getA());
@@ -109,6 +109,6 @@ public class ECParameterTableTest extends TestCase {
 		assertEquals(expectedSpec.getCofactor(), spec.getCofactor());
 
 		// Reverse lookup
-		assertEquals(ECKey.Curve.P_521, ECParameterTable.get(expectedSpec));
+		assertEquals(Curve.P_521, ECParameterTable.get(expectedSpec));
 	}
 }

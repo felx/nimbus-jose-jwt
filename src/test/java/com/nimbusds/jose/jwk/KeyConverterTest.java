@@ -88,7 +88,7 @@ public class KeyConverterTest extends TestCase {
 		pairGen.initialize(EC256SPEC);
 		keyPair = pairGen.generateKeyPair();
 
-		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic())
+		ECKey ecJWK = new ECKey.Builder(Curve.P_256, (ECPublicKey)keyPair.getPublic())
 			.privateKey((ECPrivateKey)keyPair.getPrivate())
 			.build();
 

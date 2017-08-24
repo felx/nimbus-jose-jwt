@@ -21,12 +21,11 @@ package com.nimbusds.jose.crypto;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
+import junit.framework.TestCase;
 
 
 /**
@@ -82,12 +81,12 @@ public class AlgorithmSupportMessageTest extends TestCase {
 
 	public void testWithEllipticCurve() {
 
-		ECKey.Curve unsupported = new ECKey.Curve("P-986");
+		Curve unsupported = new Curve("P-986");
 
-		Collection<ECKey.Curve> supported = new LinkedHashSet<>();
-		supported.add(ECKey.Curve.P_256);
-		supported.add(ECKey.Curve.P_384);
-		supported.add(ECKey.Curve.P_521);
+		Collection<Curve> supported = new LinkedHashSet<>();
+		supported.add(Curve.P_256);
+		supported.add(Curve.P_384);
+		supported.add(Curve.P_521);
 
 		String msg = AlgorithmSupportMessage.unsupportedEllipticCurve(unsupported, supported);
 

@@ -25,35 +25,35 @@ import java.security.spec.*;
 /**
  * Elliptic curve parameter table.
  *
- * <p>Supports all standard EC JWK curves:
+ * <p>Supports the following standard EC JWK curves:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_521}
  * </ul>
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-20
+ * @version 2017-08-23
  */
 class ECParameterTable {
 
 
 	/**
 	 * The parameter spec for a
-	 * {@link com.nimbusds.jose.jwk.ECKey.Curve#P_256} curve.
+	 * {@link com.nimbusds.jose.jwk.Curve#P_256} curve.
 	 */
 	private static final ECParameterSpec P_256_SPEC;
 
 	/**
 	 * The parameter spec for a
-	 * {@link com.nimbusds.jose.jwk.ECKey.Curve#P_384} curve.
+	 * {@link com.nimbusds.jose.jwk.Curve#P_384} curve.
 	 */
 	private static final ECParameterSpec P_384_SPEC;
 
 	/**
 	 * The parameter spec for a
-	 * {@link com.nimbusds.jose.jwk.ECKey.Curve#P_521} curve.
+	 * {@link com.nimbusds.jose.jwk.Curve#P_521} curve.
 	 */
 	private static final ECParameterSpec P_521_SPEC;
 
@@ -134,13 +134,13 @@ class ECParameterTable {
 	 * @return The EC parameter spec, {@code null} if it cannot be
 	 *         determined.
 	 */
-	public static ECParameterSpec get(final ECKey.Curve curve) {
+	public static ECParameterSpec get(final Curve curve) {
 
-		if (ECKey.Curve.P_256.equals(curve)) {
+		if (Curve.P_256.equals(curve)) {
 			return P_256_SPEC;
-		} else if (ECKey.Curve.P_384.equals(curve)) {
+		} else if (Curve.P_384.equals(curve)) {
 			return P_384_SPEC;
-		} else if (ECKey.Curve.P_521.equals(curve)) {
+		} else if (Curve.P_521.equals(curve)) {
 			return P_521_SPEC;
 		} else {
 			return null;
@@ -157,7 +157,7 @@ class ECParameterTable {
 	 * @return The JWK elliptic curve, {@code null} if it cannot be
 	 *         determined.
 	 */
-	public static ECKey.Curve get(final ECParameterSpec spec) {
+	public static Curve get(final ECParameterSpec spec) {
 
 		if (spec == null) {
 			return null;
@@ -171,7 +171,7 @@ class ECParameterTable {
 			spec.getOrder().equals(P_256_SPEC.getOrder()) &&
 			spec.getCofactor() == P_256_SPEC.getCofactor()) {
 
-			return ECKey.Curve.P_256;
+			return Curve.P_256;
 
 		} else if (spec.getCurve().getField().getFieldSize() == P_384_SPEC.getCurve().getField().getFieldSize() &&
 			spec.getCurve().getA().equals(P_384_SPEC.getCurve().getA()) &&
@@ -181,7 +181,7 @@ class ECParameterTable {
 			spec.getOrder().equals(P_384_SPEC.getOrder()) &&
 			spec.getCofactor() == P_384_SPEC.getCofactor()) {
 
-			return ECKey.Curve.P_384;
+			return Curve.P_384;
 
 		} else if (spec.getCurve().getField().getFieldSize() == P_521_SPEC.getCurve().getField().getFieldSize() &&
 			spec.getCurve().getA().equals(P_521_SPEC.getCurve().getA()) &&
@@ -191,7 +191,7 @@ class ECParameterTable {
 			spec.getOrder().equals(P_521_SPEC.getOrder()) &&
 			spec.getCofactor() == P_521_SPEC.getCofactor()) {
 
-			return ECKey.Curve.P_521;
+			return Curve.P_521;
 
 		} else {
 			return null;

@@ -25,17 +25,15 @@ import java.security.KeyPairGenerator;
 import java.security.SecureRandom;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.*;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.crypto.factories.DefaultJWEDecrypterFactory;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.util.ByteUtils;
+import junit.framework.TestCase;
 
 
 /**
@@ -90,7 +88,7 @@ public class DefaultJWEDecrypterFactoryTest extends TestCase {
 	}
 
 
-	private static ECPrivateKey generateECPrivateKey(final ECKey.Curve curve)
+	private static ECPrivateKey generateECPrivateKey(final Curve curve)
 		throws Exception {
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
@@ -103,7 +101,7 @@ public class DefaultJWEDecrypterFactoryTest extends TestCase {
 		throws Exception {
 
 		JWEHeader header = new JWEHeader(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256);
-		Key key = generateECPrivateKey(ECKey.Curve.P_256);
+		Key key = generateECPrivateKey(Curve.P_256);
 
 		JWEDecrypterFactory factory = new DefaultJWEDecrypterFactory();
 
@@ -114,7 +112,7 @@ public class DefaultJWEDecrypterFactoryTest extends TestCase {
 
 		ECDHDecrypter ecdhDecrypter = (ECDHDecrypter)decrypter;
 		assertEquals(key, ecdhDecrypter.getPrivateKey());
-		assertTrue(ecdhDecrypter.supportedEllipticCurves().contains(ECKey.Curve.P_256));
+		assertTrue(ecdhDecrypter.supportedEllipticCurves().contains(Curve.P_256));
 	}
 
 

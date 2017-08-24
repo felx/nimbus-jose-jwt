@@ -22,6 +22,7 @@ import java.util.Arrays;
 import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
@@ -30,7 +31,7 @@ import junit.framework.TestCase;
 /**
  * Tests the ECDH key agreement derivation.
  *
- * @version 2017-04-13
+ * @version 2018-08-23
  */
 public class ECDHTest extends TestCase{
 
@@ -39,7 +40,7 @@ public class ECDHTest extends TestCase{
 		throws Exception {
 
 		ECKey ecJWK = new ECKey.Builder(
-			ECKey.Curve.P_256,
+			Curve.P_256,
 			new Base64URL("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4"),
 			new Base64URL("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM")).
 			d(new Base64URL("870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE")).
@@ -63,7 +64,7 @@ public class ECDHTest extends TestCase{
 		throws Exception {
 
 		ECKey ecJWK = new ECKey.Builder(
-			ECKey.Curve.P_384,
+			Curve.P_384,
 			new Base64URL("fqxniq8aXNPh3kJE45IqV5ZZWk4a9kSt1n4rfX8ZcHFj3EoJ7uCYSrc1aojxBFOF"),
 			new Base64URL("InYXxcXnfv_pcH5k31EC-Uengvd0bVuF0SJ6cbjs9UBiT1Ym2aaI0cyW54afjU-0"))
 			.d(new Base64URL("hUdUjG8Bru5knbrULOI-aDhtyZumcbFb025gnDBfwEas-W7kpFao8IEqnQHeQDVH"))
@@ -79,7 +80,7 @@ public class ECDHTest extends TestCase{
 		throws Exception {
 
 		ECKey ecJWK = new ECKey.Builder(
-			ECKey.Curve.P_521,
+			Curve.P_521,
 			new Base64URL("Ab8rUh0gVFn_toNpPkSctd3yJ03JJuLVoHtECLGrAiNJQ1hWvEXPbjuWZ5lNchOSws-C5vWVCxiXHt88JTqIYB3g"),
 			new Base64URL("ADDpbPJYw_eONxiCdcJmY39eBKNQCA_vRtqDTTK0nzXEXs63dx1Mswp1kUzDSFj4_Gwm30AyHYLZhD88yY9oW-5e"))
 			.d(new Base64URL("ADO81GOJgx5lfUevC1Ps5NiqEtkT4qIp68rhQzfY2Fb0IKgG07qyBwt6peV7yab7vlgaf01XUgPQQY1_xm4EK7CB"))

@@ -36,6 +36,7 @@ import java.util.Date;
 import static org.junit.Assert.*;
 
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -48,7 +49,6 @@ import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.junit.Test;
 
 
 /**
@@ -138,7 +138,7 @@ public class HSMTest {
 		throws NoSuchAlgorithmException, IOException, OperatorCreationException, KeyStoreException, InvalidAlgorithmParameterException {
 		
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("EC", hsmKeyStore.getProvider());
-		keyPairGenerator.initialize(ECKey.Curve.P_256.toECParameterSpec());
+		keyPairGenerator.initialize(Curve.P_256.toECParameterSpec());
 		KeyPair keyPair = keyPairGenerator.generateKeyPair();
 
 		X500Name issuer = new X500Name("cn=c2id");
@@ -318,7 +318,7 @@ public class HSMTest {
 		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
 		assertFalse(privateKey instanceof ECPrivateKey);
 		
-		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, publicKey)
+		ECKey ecJWK = new ECKey.Builder(Curve.P_256, publicKey)
 			.privateKey(privateKey)
 			.keyID(keyID)
 			.build();
@@ -334,7 +334,7 @@ public class HSMTest {
 		String jwtString = jwt.serialize();
 		
 		assertTrue(SignedJWT.parse(jwtString).verify(new ECDSAVerifier(publicKey)));
-		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
+		new ECKey.Builder(Curve.P_256, publicKey).keyID(keyID).build();
 		
 		hsmKeyStore.deleteEntry(keyID);
 		
@@ -359,7 +359,7 @@ public class HSMTest {
 		PrivateKey privateKey = (PrivateKey)hsmKeyStore.getKey(keyID, "".toCharArray());
 		assertFalse(privateKey instanceof ECPrivateKey);
 			
-		ECDSASigner signer = new ECDSASigner(privateKey, ECKey.Curve.P_256);
+		ECDSASigner signer = new ECDSASigner(privateKey, Curve.P_256);
 		signer.getJCAContext().setProvider(hsmProvider);
 		
 		SignedJWT jwt = new SignedJWT(
@@ -371,7 +371,7 @@ public class HSMTest {
 		
 		ECPublicKey publicKey = (ECPublicKey)hsmKeyStore.getCertificate(keyID).getPublicKey();
 		assertTrue(SignedJWT.parse(jwtString).verify(new ECDSAVerifier(publicKey)));
-		new ECKey.Builder(ECKey.Curve.P_256, publicKey).keyID(keyID).build();
+		new ECKey.Builder(Curve.P_256, publicKey).keyID(keyID).build();
 		
 		hsmKeyStore.deleteEntry(keyID);
 		

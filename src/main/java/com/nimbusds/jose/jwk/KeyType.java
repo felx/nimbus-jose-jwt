@@ -23,12 +23,10 @@ import java.io.Serializable;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.Requirement;
 import net.jcip.annotations.Immutable;
-
 import net.minidev.json.JSONAware;
 import net.minidev.json.JSONObject;
-
-import com.nimbusds.jose.Requirement;
 
 
 /**
@@ -41,13 +39,14 @@ import com.nimbusds.jose.Requirement;
  *     <li>{@link #EC}
  *     <li>{@link #RSA}
  *     <li>{@link #OCT}
+ *     <li>{@link #OKP}
  * </ul>
  *
  * <p>Additional key types can be defined using the constructor.
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2015-11-30
+ * @version 2017-08-23
  */
 @Immutable
 public final class KeyType implements JSONAware, Serializable {
@@ -81,9 +80,15 @@ public final class KeyType implements JSONAware, Serializable {
 
 
 	/**
-	 * Octet sequence key type (optional)
+	 * Octet sequence key type (optional).
 	 */
 	public static final KeyType OCT = new KeyType("oct", Requirement.OPTIONAL);
+	
+	
+	/**
+	 * Octet key pair (optional).
+	 */
+	public static final KeyType OKP = new KeyType("OKP", Requirement.OPTIONAL);
 	
 
 	/**
@@ -196,19 +201,14 @@ public final class KeyType implements JSONAware, Serializable {
 	public static KeyType parse(final String s) {
 
 		if (s.equals(EC.getValue())) {
-
 			return EC;
-
 		} else if (s.equals(RSA.getValue())) {
-
 			return RSA;
-
 		} else if (s.equals(OCT.getValue())) {
-
 			return OCT;
-
+		} else if (s.equals(OKP.getValue())) {
+			return OKP;
 		} else {
-			
 			return new KeyType(s, null);
 		}
 	}
@@ -245,6 +245,8 @@ public final class KeyType implements JSONAware, Serializable {
 			return KeyType.OCT;
 		} else if (JWEAlgorithm.Family.PBES2.contains(alg)) {
 			return KeyType.OCT;
+		} else if (JWSAlgorithm.Family.ED.contains(alg)) {
+			return KeyType.OKP;
 		} else {
 			return null;
 		}

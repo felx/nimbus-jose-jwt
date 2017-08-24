@@ -39,13 +39,13 @@ import net.jcip.annotations.Immutable;
  *     <li>Private only key.
  *     <li>Public only key.
  *     <li>Minimum, maximum or exact key sizes.
- *     <li>Any, unspecified, one or more curves for EC keys (crv).
+ *     <li>Any, unspecified, one or more curves for EC and OKP keys (crv).
  * </ul>
  *
  * <p>Matching by X.509 certificate URL, thumbprint and chain is not supported.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-08-24
+ * @version 2017-08-23
  */
 @Immutable
 public class JWKMatcher {
@@ -124,9 +124,9 @@ public class JWKMatcher {
 	
 	
 	/**
-	 * The curves to match (for EC keys).
+	 * The curves to match (for EC and OKP keys).
 	 */
-	private final Set<ECKey.Curve> curves;
+	private final Set<Curve> curves;
 
 
 	/**
@@ -216,9 +216,9 @@ public class JWKMatcher {
 		
 		
 		/**
-		 * The curves to match (for EC keys).
+		 * The curves to match (for EC and OKP keys).
 		 */
-		private Set<ECKey.Curve> curves;
+		private Set<Curve> curves;
 
 
 		/**
@@ -593,13 +593,13 @@ public class JWKMatcher {
 		
 		
 		/**
-		 * Sets a single curve to match (for EC keys).
+		 * Sets a single curve to match (for EC and OKP keys).
 		 *
 		 * @param curve The curve, {@code null} if not specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder curve(final ECKey.Curve curve) {
+		public Builder curve(final Curve curve) {
 			
 			if (curve == null) {
 				curves = null;
@@ -611,13 +611,13 @@ public class JWKMatcher {
 		
 		
 		/**
-		 * Sets multiple curves to match (for EC keys).
+		 * Sets multiple curves to match (for EC and OKP keys).
 		 *
 		 * @param curves The curves.
 		 *
 		 * @return This builder.
 		 */
-		public Builder curves(final ECKey.Curve... curves) {
+		public Builder curves(final Curve... curves) {
 			
 			curves(new LinkedHashSet<>(Arrays.asList(curves)));
 			return this;
@@ -625,13 +625,13 @@ public class JWKMatcher {
 		
 		
 		/**
-		 * Sets multiple curves to match (for EC keys).
+		 * Sets multiple curves to match (for EC and OKP keys).
 		 *
 		 * @param curves The curves, {@code null} if not specified.
 		 *
 		 * @return This builder.
 		 */
-		public Builder curves(final Set<ECKey.Curve> curves) {
+		public Builder curves(final Set<Curve> curves) {
 			
 			this.curves = curves;
 			return this;
@@ -746,7 +746,7 @@ public class JWKMatcher {
 			  final boolean publicOnly,
 			  final int minSizeBits,
 			  final int maxSizeBits,
-			  final Set<ECKey.Curve> curves) {
+			  final Set<Curve> curves) {
 		
 		this(types, uses, ops, algs, ids, privateOnly, publicOnly, minSizeBits, maxSizeBits, null, curves);
 	}
@@ -773,8 +773,8 @@ public class JWKMatcher {
 	 *                    maximum size limit.
 	 * @param sizesBits   The key sizes in bits, {@code null} if not
 	 *                    specified.
-	 * @param curves      The curves to match (for EC keys), {@code null}
-	 *                    if not specified.
+	 * @param curves      The curves to match (for EC and OKP keys),
+	 *                    {@code null} if not specified.
 	 */
 	@Deprecated
 	public JWKMatcher(final Set<KeyType> types,
@@ -787,7 +787,7 @@ public class JWKMatcher {
 			  final int minSizeBits,
 			  final int maxSizeBits,
 			  final Set<Integer> sizesBits,
-			  final Set<ECKey.Curve> curves) {
+			  final Set<Curve> curves) {
 		
 		this(types, uses, ops, algs, ids, false, false, privateOnly, publicOnly, minSizeBits, maxSizeBits, sizesBits, curves);
 	}
@@ -816,8 +816,8 @@ public class JWKMatcher {
 	 *                    maximum size limit.
 	 * @param sizesBits   The key sizes in bits, {@code null} if not
 	 *                    specified.
-	 * @param curves      The curves to match (for EC keys), {@code null}
-	 *                    if not specified.
+	 * @param curves      The curves to match (for EC and OKP keys),
+	 *                    {@code null} if not specified.
 	 */
 	public JWKMatcher(final Set<KeyType> types,
 			  final Set<KeyUse> uses,
@@ -831,7 +831,7 @@ public class JWKMatcher {
 			  final int minSizeBits,
 			  final int maxSizeBits,
 			  final Set<Integer> sizesBits,
-			  final Set<ECKey.Curve> curves) {
+			  final Set<Curve> curves) {
 
 		this.types = types;
 		this.uses = uses;
@@ -1014,11 +1014,11 @@ public class JWKMatcher {
 	
 	
 	/**
-	 * Returns the curves to match (for EC keys).
+	 * Returns the curves to match (for EC and OKP keys).
 	 *
 	 * @return The curves, {@code null} if not specified.
 	 */
-	public Set<ECKey.Curve> getCurves() {
+	public Set<Curve> getCurves() {
 		
 		return curves;
 	}
@@ -1087,12 +1087,12 @@ public class JWKMatcher {
 		
 		if (curves != null) {
 			
-			if (! (key instanceof ECKey))
+			if (! (key instanceof CurveBasedJWK))
 				return false;
 			
-			ECKey ecKey = (ECKey)key;
+			CurveBasedJWK curveBasedJWK = (CurveBasedJWK) key;
 			
-			if (! curves.contains(ecKey.getCurve()))
+			if (! curves.contains(curveBasedJWK.getCurve()))
 				return false;
 		}
 

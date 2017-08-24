@@ -25,7 +25,7 @@ import java.util.Set;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
 
 
 /**
@@ -44,9 +44,9 @@ import com.nimbusds.jose.jwk.ECKey;
  * <p>Supports the following elliptic curves:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_521}
  * </ul>
  *
  * <p>Supports the following content encryption algorithms:
@@ -83,7 +83,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * The supported EC JWK curves by the ECDH crypto provider class.
 	 */
-	public static final Set<ECKey.Curve> SUPPORTED_ELLIPTIC_CURVES;
+	public static final Set<Curve> SUPPORTED_ELLIPTIC_CURVES;
 
 
 	static {
@@ -94,10 +94,10 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 		algs.add(JWEAlgorithm.ECDH_ES_A256KW);
 		SUPPORTED_ALGORITHMS = Collections.unmodifiableSet(algs);
 
-		Set<ECKey.Curve> curves = new LinkedHashSet<>();
-		curves.add(ECKey.Curve.P_256);
-		curves.add(ECKey.Curve.P_384);
-		curves.add(ECKey.Curve.P_521);
+		Set<Curve> curves = new LinkedHashSet<>();
+		curves.add(Curve.P_256);
+		curves.add(Curve.P_384);
+		curves.add(Curve.P_521);
 		SUPPORTED_ELLIPTIC_CURVES = Collections.unmodifiableSet(curves);
 	}
 
@@ -105,7 +105,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	/**
 	 * The elliptic curve.
 	 */
-	private final ECKey.Curve curve;
+	private final Curve curve;
 
 
 	/**
@@ -123,12 +123,12 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 *
 	 * @throws JOSEException If the elliptic curve is not supported.
 	 */
-	protected ECDHCryptoProvider(final ECKey.Curve curve)
+	protected ECDHCryptoProvider(final Curve curve)
 		throws JOSEException {
 
 		super(SUPPORTED_ALGORITHMS, ContentCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
 
-		ECKey.Curve definedCurve = curve != null ? curve : new ECKey.Curve("unknown");
+		Curve definedCurve = curve != null ? curve : new Curve("unknown");
 
 		if (! SUPPORTED_ELLIPTIC_CURVES.contains(curve)) {
 			throw new JOSEException(AlgorithmSupportMessage.unsupportedEllipticCurve(
@@ -158,7 +158,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 *
 	 * @return The supported elliptic curves.
 	 */
-	public Set<ECKey.Curve> supportedEllipticCurves() {
+	public Set<Curve> supportedEllipticCurves() {
 
 		return SUPPORTED_ELLIPTIC_CURVES;
 	}
@@ -169,7 +169,7 @@ abstract class ECDHCryptoProvider extends BaseJWEProvider {
 	 *
 	 * @return The elliptic curve.
 	 */
-	public ECKey.Curve getCurve() {
+	public Curve getCurve() {
 
 		return curve;
 	}

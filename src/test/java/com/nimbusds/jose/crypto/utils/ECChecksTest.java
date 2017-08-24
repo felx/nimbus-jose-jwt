@@ -24,14 +24,14 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
 import junit.framework.TestCase;
 
 
 public class ECChecksTest extends TestCase {
 	
 	
-	private static ECPrivateKey generateECPrivateKey(final ECKey.Curve curve)
+	private static ECPrivateKey generateECPrivateKey(final Curve curve)
 		throws Exception {
 		
 		final ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
@@ -44,7 +44,7 @@ public class ECChecksTest extends TestCase {
 	}
 	
 	
-	private static ECPublicKey generateECPublicKey(final ECKey.Curve curve)
+	private static ECPublicKey generateECPublicKey(final Curve curve)
 		throws Exception {
 		
 		final ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
@@ -60,8 +60,8 @@ public class ECChecksTest extends TestCase {
 	public void testCurveCheckOk()
 		throws Exception {
 		
-		ECPublicKey ephemeralPublicKey = generateECPublicKey(ECKey.Curve.P_256);
-		ECPrivateKey privateKey = generateECPrivateKey(ECKey.Curve.P_256);
+		ECPublicKey ephemeralPublicKey = generateECPublicKey(Curve.P_256);
+		ECPrivateKey privateKey = generateECPrivateKey(Curve.P_256);
 		assertTrue(ECChecks.isPointOnCurve(ephemeralPublicKey, privateKey));
 	}
 }

@@ -25,6 +25,7 @@ import javax.crypto.SecretKey;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.utils.ECChecks;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 
@@ -52,9 +53,9 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Supports the following elliptic curves:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_521}
  * </ul>
  *
  * <p>Supports the following content encryption algorithms:
@@ -136,7 +137,7 @@ public class ECDHDecrypter extends ECDHCryptoProvider implements JWEDecrypter, C
 	public ECDHDecrypter(final ECPrivateKey privateKey, final Set<String> defCritHeaders)
 		throws JOSEException {
 
-		super(ECKey.Curve.forECParameterSpec(privateKey.getParams()));
+		super(Curve.forECParameterSpec(privateKey.getParams()));
 
 		critPolicy.setDeferredCriticalHeaderParams(defCritHeaders);
 

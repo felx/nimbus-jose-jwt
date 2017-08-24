@@ -23,23 +23,14 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.ECFieldFp;
-import java.security.spec.ECParameterSpec;
-import java.security.spec.ECPoint;
-import java.security.spec.EllipticCurve;
+import java.security.spec.*;
 import java.util.Collections;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSSigner;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
+import junit.framework.TestCase;
 
 
 /**
@@ -258,7 +249,7 @@ public class ECDSARoundTripTest extends TestCase {
 
 		// Create the public and private keys
 		KeyPair keyPair = createECKeyPair(EC256SPEC);
-		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey) keyPair.getPublic()).
+		ECKey ecJWK = new ECKey.Builder(Curve.P_256, (ECPublicKey) keyPair.getPublic()).
 			privateKey((ECPrivateKey) keyPair.getPrivate()).
 			build();
 

@@ -48,6 +48,11 @@ import net.minidev.json.JSONObject;
  *     <li>{@link #getKeyUse use} (optional)
  *     <li>{@link #getKeyOperations key_ops} (optional)
  *     <li>{@link #getKeyID kid} (optional)
+ *     <li>{@link #getX509CertURL()}  x5u} (optional)
+ *     <li>{@link #getX509CertThumbprint()}  x5t} (optional)
+ *     <li>{@link #getX509CertSHA256Thumbprint()}  x5t#S256} (optional)
+ *     <li>{@link #getX509CertChain() x5c} (optional)
+ *     <li>{@link #getKeyStore()}
  * </ul>
  *
  * <p>Example JWK (of the Elliptic Curve type):
@@ -529,6 +534,10 @@ public abstract class JWK implements JSONAware, Serializable {
 		} else if (kty == KeyType.OCT) {
 			
 			return OctetSequenceKey.parse(jsonObject);
+			
+		} else if (kty == KeyType.OKP) {
+			
+			return OctetKeyPair.parse(jsonObject);
 
 		} else {
 

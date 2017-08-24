@@ -22,14 +22,13 @@ import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
-
 import javax.crypto.SecretKey;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.*;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -55,9 +54,9 @@ import com.nimbusds.jose.util.Base64URL;
  * <p>Supports the following elliptic curves:
  *
  * <ul>
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_256}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_384}
- *     <li>{@link com.nimbusds.jose.jwk.ECKey.Curve#P_521}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_256}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_384}
+ *     <li>{@link com.nimbusds.jose.jwk.Curve#P_521}
  * </ul>
  *
  * <p>Supports the following content encryption algorithms:
@@ -96,7 +95,7 @@ public class ECDHEncrypter extends ECDHCryptoProvider implements JWEEncrypter {
 	public ECDHEncrypter(final ECPublicKey publicKey)
 		throws JOSEException {
 
-		super(ECKey.Curve.forECParameterSpec(publicKey.getParams()));
+		super(Curve.forECParameterSpec(publicKey.getParams()));
 
 		this.publicKey = publicKey;
 	}

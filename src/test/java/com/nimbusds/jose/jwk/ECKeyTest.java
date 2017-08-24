@@ -53,7 +53,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-06-20
+ * @version 2018-08-24
  */
 public class ECKeyTest extends TestCase {
 
@@ -62,7 +62,7 @@ public class ECKeyTest extends TestCase {
 	private static final class ExampleKeyP256 {
 
 
-		public static final ECKey.Curve CRV = ECKey.Curve.P_256;
+		public static final Curve CRV = Curve.P_256;
 
 
 		public static final Base64URL X = new Base64URL("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4");
@@ -79,7 +79,7 @@ public class ECKeyTest extends TestCase {
 	private static final class ExampleKeyP256Alt {
 
 
-		public static final ECKey.Curve CRV = ECKey.Curve.P_256;
+		public static final Curve CRV = Curve.P_256;
 
 
 		public static final Base64URL X = new Base64URL("3l2Da_flYc-AuUTm2QzxgyvJxYM_2TeB9DMlwz7j1PE");
@@ -93,7 +93,7 @@ public class ECKeyTest extends TestCase {
 	private static final class ExampleKeyP384Alt {
 
 
-		public static final ECKey.Curve CRV = ECKey.Curve.P_384;
+		public static final Curve CRV = Curve.P_384;
 
 
 		public static final Base64URL X = new Base64URL("Xy0mn0LmRyDBeHBjZrqH9z5Weu5pzCZYl1FJGHdoEj1utAoCpD4-Wn3VAIT-qgFF");
@@ -105,32 +105,15 @@ public class ECKeyTest extends TestCase {
 
 	// Test parameters are from Anders Rundgren, public only
 	private static final class ExampleKeyP521Alt {
-
-
-		public static final ECKey.Curve CRV = ECKey.Curve.P_521;
-
-
+		
+		
+		public static final Curve CRV = Curve.P_521;
+		
+		
 		public static final Base64URL X = new Base64URL("AfwEaSkqoPQynn4SdAXOqbyDuK6KsbI04i-6aWvh3GdvREZuHaWFyg791gcvJ4OqG13-gzfYxZxfblPMqfOtQrzk");
-
-
+		
+		
 		public static final Base64URL Y = new Base64URL("AHgOZhhJb2ZiozkquiEa0Z9SfERJbWaaE7qEnCuk9VVZaWruKWKNzZadoIRPt8h305r14KRoxu8AfV20X-d_2Ups");
-	}
-	
-	
-	public void testStdCurves() {
-		
-		assertEquals("P-256", ECKey.Curve.P_256.getName());
-		assertEquals("secp256r1", ECKey.Curve.P_256.getStdName());
-		assertEquals("1.2.840.10045.3.1.7", ECKey.Curve.P_256.getOID());
-		
-		assertEquals("P-384", ECKey.Curve.P_384.getName());
-		assertEquals("secp384r1", ECKey.Curve.P_384.getStdName());
-		assertEquals("1.3.132.0.34", ECKey.Curve.P_384.getOID());
-		
-		assertEquals("P-521", ECKey.Curve.P_521.getName());
-		assertEquals("secp521r1", ECKey.Curve.P_521.getStdName());
-		assertEquals("1.3.132.0.35", ECKey.Curve.P_521.getOID());
-		
 	}
 
 
@@ -146,7 +129,7 @@ public class ECKeyTest extends TestCase {
 	public void testUnknownCurve() {
 
 		try {
-			new ECKey.Builder(new ECKey.Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build();
+			new ECKey.Builder(new Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build();
 			fail();
 		} catch (IllegalStateException e) {
 			assertEquals("Unknown / unsupported curve: unknown", e.getMessage());
@@ -183,7 +166,7 @@ public class ECKeyTest extends TestCase {
 	}
 
 
-	public void testFullConstructorAndSerialization()
+	public void testFullPrivateConstructorAndSerialization()
 		throws Exception {
 
 		URI x5u = new URI("http://example.com/jwk.json");
@@ -200,6 +183,7 @@ public class ECKeyTest extends TestCase {
 			KeyUse.SIGNATURE, ops, JWSAlgorithm.ES256, "1", x5u, x5t, x5t256, x5c, keyStore);
 
 		assertTrue(key instanceof AssymetricJWK);
+		assertTrue(key instanceof CurveBasedJWK);
 
 		// Test getters
 		assertEquals(KeyUse.SIGNATURE, key.getKeyUse());
@@ -212,7 +196,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -231,7 +215,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -253,7 +237,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertNull(key.getD());
@@ -262,7 +246,7 @@ public class ECKeyTest extends TestCase {
 	}
 
 
-	public void testFullConstructorAndSerializationWithOps()
+	public void testPrivateConstructorAndSerializationWithOps()
 		throws Exception {
 
 		URI x5u = new URI("http://example.com/jwk.json");
@@ -290,7 +274,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -311,7 +295,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -335,7 +319,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertNull(key.getD());
@@ -354,7 +338,7 @@ public class ECKeyTest extends TestCase {
 		
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 
-		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y)
+		ECKey key = new ECKey.Builder(Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y)
 			.d(ExampleKeyP256.D)
 			.keyUse(KeyUse.SIGNATURE)
 			.algorithm(JWSAlgorithm.ES256)
@@ -374,7 +358,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -392,7 +376,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals("1", key.getKeyID());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -412,7 +396,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertNull(key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertNull(key.getD());
@@ -431,7 +415,7 @@ public class ECKeyTest extends TestCase {
 		
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 
-		ECKey key = new ECKey.Builder(ECKey.Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y)
+		ECKey key = new ECKey.Builder(Curve.P_256, ExampleKeyP256.X, ExampleKeyP256.Y)
 			.d(ExampleKeyP256.D)
 			.keyUse(KeyUse.SIGNATURE)
 			.algorithm(JWSAlgorithm.ES256)
@@ -454,7 +438,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(x5c.size(), key.getX509CertChain().size());
 		assertEquals(keyStore, key.getKeyStore());
 
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -483,8 +467,8 @@ public class ECKeyTest extends TestCase {
 		assertEquals(ExampleKeyP256.D.decodeToBigInteger(), priv.getS());
 
 		// Import
-		key = new ECKey.Builder(ECKey.Curve.P_256, pub).privateKey(priv).build();
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		key = new ECKey.Builder(Curve.P_256, pub).privateKey(priv).build();
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256.X, key.getX());
 		assertEquals(ExampleKeyP256.Y, key.getY());
 		assertEquals(ExampleKeyP256.D, key.getD());
@@ -509,7 +493,7 @@ public class ECKeyTest extends TestCase {
 
 		// Import
 		key = new ECKey.Builder(ExampleKeyP256Alt.CRV, pub).build();
-		assertEquals(ECKey.Curve.P_256, key.getCurve());
+		assertEquals(Curve.P_256, key.getCurve());
 		assertEquals(ExampleKeyP256Alt.X, key.getX());
 		assertEquals(ExampleKeyP256Alt.Y, key.getY());
 
@@ -532,7 +516,7 @@ public class ECKeyTest extends TestCase {
 
 		// Import
 		key = new ECKey.Builder(ExampleKeyP384Alt.CRV, pub).build();
-		assertEquals(ECKey.Curve.P_384, key.getCurve());
+		assertEquals(Curve.P_384, key.getCurve());
 		assertEquals(ExampleKeyP384Alt.X, key.getX());
 		assertEquals(ExampleKeyP384Alt.Y, key.getY());
 
@@ -555,7 +539,7 @@ public class ECKeyTest extends TestCase {
 
 		// Import
 		key = new ECKey.Builder(ExampleKeyP521Alt.CRV, pub).build();
-		assertEquals(ECKey.Curve.P_521, key.getCurve());
+		assertEquals(Curve.P_521, key.getCurve());
 		assertEquals(ExampleKeyP521Alt.X, key.getX());
 		assertEquals(ExampleKeyP521Alt.Y, key.getY());
 
@@ -622,7 +606,7 @@ public class ECKeyTest extends TestCase {
 		assertEquals(KeyType.EC, jwk.getKeyType());
 		assertEquals("bilbo.baggins@hobbiton.example", jwk.getKeyID());
 		assertEquals(KeyUse.SIGNATURE, jwk.getKeyUse());
-		assertEquals(ECKey.Curve.P_521, jwk.getCurve());
+		assertEquals(Curve.P_521, jwk.getCurve());
 
 		assertEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
 			"A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
@@ -637,7 +621,7 @@ public class ECKeyTest extends TestCase {
 		ECPublicKey ecPublicKey = jwk.toECPublicKey();
 		ECPrivateKey ecPrivateKey = jwk.toECPrivateKey();
 
-		jwk = new ECKey.Builder(ECKey.Curve.P_521, ecPublicKey).privateKey(ecPrivateKey).build();
+		jwk = new ECKey.Builder(Curve.P_521, ecPublicKey).privateKey(ecPrivateKey).build();
 
 		assertEquals("AHKZLLOsCOzz5cY97ewNUajB957y-C-U88c3v13nmGZx6sYl_oJXu9" +
 			"A5RkTKqjqvjyekWF-7ytDyRXYgCF5cj0Kt", jwk.getX().toString());
@@ -647,49 +631,6 @@ public class ECKeyTest extends TestCase {
 
 		assertEquals("AAhRON2r9cqXX1hg-RoI6R1tX5p2rUAYdmpHZoC1XNM56KtscrX6zb" +
 			"KipQrCW9CGZH3T4ubpnoTKLDYJ_fF3_rJt", jwk.getD().toString());
-	}
-
-
-	public void testUnsupportedCurveParams() {
-
-		assertNull(new ECKey.Curve("unsupported").toECParameterSpec());
-	}
-
-
-	public void testCurveParams() {
-
-		ECParameterSpec ecParameterSpec;
-
-		ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
-		assertNotNull(ecParameterSpec);
-		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forECParameterSpec(ecParameterSpec));
-
-		ecParameterSpec = ECKey.Curve.P_384.toECParameterSpec();
-		assertNotNull(ecParameterSpec);
-		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forECParameterSpec(ecParameterSpec));
-
-		ecParameterSpec = ECKey.Curve.P_521.toECParameterSpec();
-		assertNotNull(ecParameterSpec);
-		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forECParameterSpec(ecParameterSpec));
-	}
-
-
-	public void testCurveForStdName() {
-
-		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forStdName("secp256r1"));
-		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forStdName("prime256v1"));
-
-		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forStdName("secp384r1"));
-
-		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forStdName("secp521r1"));
-	}
-	
-	
-	public void testCurveForOID() {
-		
-		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forOID(ECKey.Curve.P_256.getOID()));
-		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forOID(ECKey.Curve.P_384.getOID()));
-		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forOID(ECKey.Curve.P_521.getOID()));
 	}
 
 
@@ -798,44 +739,18 @@ public class ECKeyTest extends TestCase {
 	}
 	
 	
-	// https://bitbucket.org/connect2id/nimbus-jose-jwt/issues/197/jwsalgorithm-should-have-knowledge-of-its
-	public void testCurveForJWSAlgorithm() {
-		
-		assertEquals(ECKey.Curve.P_256, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES256));
-		assertEquals(ECKey.Curve.P_384, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES384));
-		assertEquals(ECKey.Curve.P_521, ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.ES512));
-		
-		// Not EC based
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS256));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS384));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.RS512));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS256));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS384));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.PS512));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS256));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS384));
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.HS512));
-		
-		// Unsupported
-		assertNull(ECKey.Curve.forJWSAlgoritm(JWSAlgorithm.parse("unsupported-jws-alg")));
-		
-		// null
-		assertNull(ECKey.Curve.forJWSAlgoritm(null));
-	}
-	
-	
 	// For private EC keys as PKCS#11 handle
 	public void testPrivateKeyHandle()
 		throws Exception {
 		
 		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
-		gen.initialize(ECKey.Curve.P_256.toECParameterSpec());
+		gen.initialize(Curve.P_256.toECParameterSpec());
 		KeyPair kp = gen.generateKeyPair();
 		
 		ECPublicKey publicKey = (ECPublicKey) kp.getPublic();
 		PrivateKey privateKey = kp.getPrivate(); // simulate private key with inaccessible key material
 		
-		ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, publicKey)
+		ECKey ecJWK = new ECKey.Builder(Curve.P_256, publicKey)
 			.privateKey(privateKey)
 			.keyID("1")
 			.build();
@@ -867,7 +782,7 @@ public class ECKeyTest extends TestCase {
 		ECKey ecKey = ECKey.parse(cert);
 		
 		assertEquals(KeyType.EC, ecKey.getKeyType());
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
 		assertEquals(cert.getSerialNumber().toString(10), ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
@@ -903,7 +818,7 @@ public class ECKeyTest extends TestCase {
 		
 		// Generate key pair
 		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
-		gen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		gen.initialize(Curve.P_521.toECParameterSpec());
 		KeyPair kp = gen.generateKeyPair();
 		ECPublicKey publicKey = (ECPublicKey)kp.getPublic();
 		ECPrivateKey privateKey = (ECPrivateKey)kp.getPrivate();
@@ -935,7 +850,7 @@ public class ECKeyTest extends TestCase {
 		// Load
 		ECKey ecKey = ECKey.load(keyStore, "1", "1234".toCharArray());
 		assertNotNull(ecKey);
-		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(Curve.P_521, ecKey.getCurve());
 		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
 		assertEquals("1", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
@@ -970,7 +885,7 @@ public class ECKeyTest extends TestCase {
 		
 		ECKey ecKey = ECKey.load(keyStore, "1", null);
 		assertNotNull(ecKey);
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals(KeyUse.ENCRYPTION, ecKey.getKeyUse());
 		assertEquals("1", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
@@ -1021,7 +936,7 @@ public class ECKeyTest extends TestCase {
 		
 		try {
 			new ECKey(
-				ECKey.Curve.P_256,
+				Curve.P_256,
 				ExampleKeyP384Alt.X, // on diff curve
 				ExampleKeyP384Alt.Y, // on diff curve
 				null,
@@ -1040,7 +955,7 @@ public class ECKeyTest extends TestCase {
 		
 		try {
 			new ECKey(
-				ECKey.Curve.P_256,
+				Curve.P_256,
 				ExampleKeyP384Alt.X, // on diff curve
 				ExampleKeyP384Alt.Y, // on diff curve
 				ExampleKeyP256.D,    // private D coordinate
@@ -1065,20 +980,20 @@ public class ECKeyTest extends TestCase {
 		throws Exception {
 		
 		// EC key on P_256
-		ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+		ECParameterSpec ecParameterSpec = Curve.P_256.toECParameterSpec();
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
 		generator.initialize(ecParameterSpec);
 		KeyPair keyPair = generator.generateKeyPair();
-		ECKey ecJWK_p256 = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey) keyPair.getPublic())
+		ECKey ecJWK_p256 = new ECKey.Builder(Curve.P_256, (ECPublicKey) keyPair.getPublic())
 			.privateKey((ECPrivateKey) keyPair.getPrivate())
 			.build();
 		
 		// EC key on P_384
-		ecParameterSpec = ECKey.Curve.P_384.toECParameterSpec();
+		ecParameterSpec = Curve.P_384.toECParameterSpec();
 		generator = KeyPairGenerator.getInstance("EC");
 		generator.initialize(ecParameterSpec);
 		keyPair = generator.generateKeyPair();
-		ECKey ecJWK_p384 = new ECKey.Builder(ECKey.Curve.P_384, (ECPublicKey) keyPair.getPublic())
+		ECKey ecJWK_p384 = new ECKey.Builder(Curve.P_384, (ECPublicKey) keyPair.getPublic())
 			.privateKey((ECPrivateKey) keyPair.getPrivate())
 			.build();
 		
@@ -1086,7 +1001,7 @@ public class ECKeyTest extends TestCase {
 		// Try to create EC key with P_256 params, but with x and y from P_384 curve key
 		
 		ECPoint w = new ECPoint(ecJWK_p384.getX().decodeToBigInteger(), ecJWK_p384.getY().decodeToBigInteger());
-		ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(w, ECKey.Curve.P_256.toECParameterSpec());
+		ECPublicKeySpec publicKeySpec = new ECPublicKeySpec(w, Curve.P_256.toECParameterSpec());
 		
 		// Default Sun provider
 		try {

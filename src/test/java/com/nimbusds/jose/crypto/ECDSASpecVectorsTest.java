@@ -18,6 +18,7 @@
 package com.nimbusds.jose.crypto;
 
 
+import com.nimbusds.jose.jwk.Curve;
 import junit.framework.TestCase;
 
 import com.nimbusds.jose.JWSAlgorithm;
@@ -33,7 +34,7 @@ import com.nimbusds.jose.util.Base64URL;
  * Tests ES256 JWS signing and verification. Uses test vectors from JWS spec.
  *
  * @author Vladimir Dzhuvinov
- * @version 2015-05-30
+ * @version 2018-08-23
  */
 public class ECDSASpecVectorsTest extends TestCase {
 
@@ -71,7 +72,7 @@ public class ECDSASpecVectorsTest extends TestCase {
 		(byte) 223, (byte) 132, (byte) 244, (byte) 178 };
 
 
-	private final static ECKey EC_JWK = new ECKey.Builder(ECKey.Curve.P_256,
+	private final static ECKey EC_JWK = new ECKey.Builder(Curve.P_256,
 		Base64URL.encode(x), Base64URL.encode(y)).
 		d(Base64URL.encode(d)).
 		build();

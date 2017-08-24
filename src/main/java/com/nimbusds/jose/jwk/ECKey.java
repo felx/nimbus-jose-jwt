@@ -18,7 +18,6 @@
 package com.nimbusds.jose.jwk;
 
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.net.URI;
 import java.security.*;
@@ -36,7 +35,6 @@ import java.util.Set;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.utils.ECChecks;
 import com.nimbusds.jose.util.Base64;
 import com.nimbusds.jose.util.Base64URL;
@@ -49,8 +47,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
 /**
  * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). 
- * Uses the BouncyCastle.org provider for EC key import and export. This class
- * is immutable.
+ * This class is immutable.
  *
  * <p>Provides EC JWK import from / export to the following standard Java
  * interfaces and classes:
@@ -75,7 +72,7 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
  * }
  * </pre>
  *
- * <p>Example JSON object representation of a public and private EC JWK:
+ * <p>Example JSON object representation of a private EC JWK:
  *
  * <pre>
  * {
@@ -92,9 +89,9 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
  * <p>Use the builder to create a new EC JWK:
  *
  * <pre>
- * ECKey key = new ECKey.Builder(ECKey.Curve.P_256, x, y)
+ * ECKey key = new ECKey.Builder(Curve.P_256, x, y)
  * 	.keyUse(KeyUse.SIGNATURE)
- * 	.keyID("123")
+ * 	.keyID("1")
  * 	.build();
  * </pre>
  *
@@ -102,288 +99,13 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2017-04-08
+ * @version 2018-08-23
  */
 @Immutable
-public final class ECKey extends JWK implements AssymetricJWK {
+public final class ECKey extends JWK implements AssymetricJWK, CurveBasedJWK {
 
 
 	private static final long serialVersionUID = 1L;
-
-
-	/**
-	 * Cryptographic curve. This class is immutable.
-	 *
-	 * <p>Includes constants for the following standard cryptographic 
-	 * curves:
-	 *
-	 * <ul>
-	 *     <li>{@link #P_256}
-	 *     <li>{@link #P_384}
-	 *     <li>{@link #P_521}
-	 * </ul>
-	 *
-	 * <p>See "Digital Signature Standard (DSS)", FIPS PUB 186-3, June 
-	 * 2009, National Institute of Standards and Technology (NIST).
-	 */
-	@Immutable
-	public static class Curve implements Serializable {
-
-
-		private static final long serialVersionUID = 1L;
-
-
-		/**
-		 * P-256 curve (secp256r1, also called prime256v1,
-		 * OID = 1.2.840.10045.3.1.7).
-		 */
-		public static final Curve P_256 = new Curve("P-256", "secp256r1", "1.2.840.10045.3.1.7");
-
-
-		/**
-		 * P-384 curve (secp384r1, OID = 1.3.132.0.34).
-		 */
-		public static final Curve P_384 = new Curve("P-384", "secp384r1", "1.3.132.0.34");
-
-
-		/**
-		 * P-521 curve (secp521r1).
-		 */
-		public static final Curve P_521 = new Curve("P-521", "secp521r1", "1.3.132.0.35");
-
-
-		/**
-		 * The JOSE curve name.
-		 */
-		private final String name;
-
-
-		/**
-		 * The standard curve name, {@code null} if not specified.
-		 */
-		private final String stdName;
-		
-		
-		/**
-		 * The standard object identifier for the curve, {@code null}
-		 * if not specified.
-		 */
-		private final String oid;
-
-
-		/**
-		 * Creates a new cryptographic curve with the specified JOSE
-		 * name. A standard curve name and object identifier (OID) are
-		 * not unspecified.
-		 *
-		 * @param name The JOSE name of the cryptographic curve. Must not be
-		 *             {@code null}.
-		 */
-		public Curve(final String name) {
-
-			this(name, null, null);
-		}
-
-
-		/**
-		 * Creates a new cryptographic curve with the specified JOSE
-		 * name, standard name and object identifier (OID).
-		 *
-		 * @param name    The JOSE name of the cryptographic curve. 
-		 *                Must not be {@code null}.
-		 * @param stdName The standard name of the cryptographic curve,
-		 *                {@code null} if not specified.
-		 * @param oid     The object identifier (OID) of the
-		 *                cryptographic curve, {@code null} if not
-		 *                specified.
-		 */
-		public Curve(final String name, final String stdName, final String oid) {
-
-			if (name == null) {
-				throw new IllegalArgumentException("The JOSE cryptographic curve name must not be null");
-			}
-
-			this.name = name;
-
-			this.stdName = stdName;
-			
-			this.oid = oid;
-		}
-
-
-		/**
-		 * Returns the JOSE name of this cryptographic curve.
-		 *
-		 * @return The JOSE name.
-		 */
-		public String getName() {
-
-			return name;
-		}
-
-
-		/**
-		 * Returns the standard name of this cryptographic curve.
-		 *
-		 * @return The standard name, {@code null} if not specified.
-		 */
-		public String getStdName() {
-
-			return stdName;
-		}
-		
-		
-		/**
-		 * Returns the standard object identifier (OID) of this
-		 * cryptographic curve.
-		 *
-		 * @return The OID, {@code null} if not specified.
-		 */
-		public String getOID() {
-			
-			return oid;
-		}
-
-
-		/**
-		 * Returns the parameter specification for this cryptographic
-		 * curve.
-		 *
-		 * @return The EC parameter specification, {@code null} if it
-		 *         cannot be determined.
-		 */
-		public ECParameterSpec toECParameterSpec() {
-
-			return ECParameterTable.get(this);
-		}
-
-
-		/**
-		 * @see #getName
-		 */
-		@Override
-		public String toString() {
-
-			return getName();
-		}
-
-
-		@Override
-		public boolean equals(final Object object) {
-
-			return object instanceof Curve &&
-			       this.toString().equals(object.toString());
-		}
-
-
-		/**
-		 * Parses a cryptographic curve from the specified string.
-		 *
-		 * @param s The string to parse. Must not be {@code null} or
-		 *          empty.
-		 *
-		 * @return The cryptographic curve.
-		 */
-		public static Curve parse(final String s) {
-
-			if (s == null || s.trim().isEmpty()) {
-				throw new IllegalArgumentException("The cryptographic curve string must not be null or empty");
-			}
-
-			if (s.equals(P_256.getName())) {
-				return P_256;
-
-			} else if (s.equals(P_384.getName())) {
-				return P_384;
-
-			} else if (s.equals(P_521.getName())) {
-				return P_521;
-
-			} else {
-				return new Curve(s);
-			}
-		}
-
-
-		/**
-		 * Gets the cryptographic curve for the specified standard
-		 * name.
-		 *
-		 * @param stdName The standard curve name. May be {@code null}.
-		 *
-		 * @return The curve, {@code null} if it cannot be determined.
-		 */
-		public static Curve forStdName(final String stdName) {
-			if( "secp256r1".equals(stdName) || "prime256v1".equals(stdName)) {
-				 return P_256;
-			} else if( "secp384r1".equals(stdName) ) {
-				return P_384;
-			} else if( "secp521r1".equals(stdName) ) {
-				return P_521;
-			} else {
-				return null;
-			}
-		}
-		
-		
-		/**
-		 * Gets the cryptographic curve for the specified object
-		 * identifier (OID).
-		 *
-		 * @param oid The object OID. May be {@code null}.
-		 *
-		 * @return The curve, {@code null} if it cannot be determined.
-		 */
-		public static Curve forOID(final String oid) {
-			
-			if (P_256.getOID().equals(oid)) {
-				return P_256;
-			} else if (P_384.getOID().equals(oid)) {
-				return P_384;
-			} else if (P_521.getOID().equals(oid)) {
-				return P_521;
-			} else {
-				return null;
-			}
-		}
-		
-		
-		/**
-		 * Gets the cryptographic curve for the specified JWS
-		 * algorithm.
-		 *
-		 * @param alg The JWS algorithm. May be {@code null}.
-		 *
-		 * @return The curve, {@code null} if the JWS algorithm is not
-		 *         curve based, or the JWS algorithm is not supported.
-		 */
-		public static Curve forJWSAlgoritm(final JWSAlgorithm alg) {
-			
-			if (JWSAlgorithm.ES256.equals(alg)) {
-				return P_256;
-			} else if (JWSAlgorithm.ES384.equals(alg)) {
-				return P_384;
-			} else if (JWSAlgorithm.ES512.equals(alg)) {
-				return P_521;
-			} else {
-				return null;
-			}
-		}
-
-
-		/**
-		 * Gets the cryptographic curve for the specified parameter
-		 * specification.
-		 *
-		 * @param spec The EC parameter spec. May be {@code null}.
-		 *
-		 * @return The curve, {@code null} if it cannot be determined.
-		 */
-		public static Curve forECParameterSpec(final ECParameterSpec spec) {
-
-			return ECParameterTable.get(spec);
-		}
-	}
 
 
 	/**
@@ -392,11 +114,11 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	 * <p>Example usage:
 	 *
 	 * <pre>
-	 * ECKey key = new ECKey.Builder(Curve.P521, x, y).
-	 *             d(d).
-	 *             algorithm(JWSAlgorithm.ES512).
-	 *             keyID("789").
-	 *             build();
+	 * ECKey key = new ECKey.Builder(Curve.P521, x, y)
+	 *     .d(d)
+	 *     .algorithm(JWSAlgorithm.ES512)
+	 *     .keyID("1")
+	 *     .build();
 	 * </pre>
 	 */
 	public static class Builder {
@@ -568,10 +290,10 @@ public final class ECKey extends JWK implements AssymetricJWK {
 		 * Sets the private 'd' coordinate for the elliptic curve 
 		 * point. The alternative method is {@link #privateKey}.
 		 *
-		 * @param d The 'd' coordinate. It is represented as the 
-		 *          Base64URL encoding of the coordinate's big endian 
-		 *          representation. {@code null} if not specified (for
-		 *          a public key).
+		 * @param d The private 'd' coordinate. It is represented as
+		 *          the Base64URL encoding of the coordinate's big
+		 *          endian representation. {@code null} if not
+		 *          specified (for a public key).
 		 *
 		 * @return This builder.
 		 */
@@ -815,9 +537,9 @@ public final class ECKey extends JWK implements AssymetricJWK {
 
 
 		/**
-		 * Builds a new octet sequence JWK.
+		 * Builds a new Elliptic Curve JWK.
 		 *
-		 * @return The octet sequence JWK.
+		 * @return The Elliptic Curve JWK.
 		 *
 		 * @throws IllegalStateException If the JWK parameters were
 		 *                               inconsistently specified.
@@ -1248,11 +970,7 @@ public final class ECKey extends JWK implements AssymetricJWK {
 	}
 
 
-	/**
-	 * Gets the cryptographic curve.
-	 *
-	 * @return The cryptographic curve.
-	 */
+	@Override
 	public Curve getCurve() {
 
 		return crv;

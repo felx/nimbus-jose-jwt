@@ -25,19 +25,17 @@ import java.security.SecureRandom;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
-import junit.framework.TestCase;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.util.ByteUtils;
+import junit.framework.TestCase;
 
 
 /**
@@ -242,7 +240,7 @@ public class DefaultJWSVerifierFactoryTest extends TestCase {
 	}
 
 
-	private static ECPublicKey generateECPublicKey(final ECKey.Curve curve)
+	private static ECPublicKey generateECPublicKey(final Curve curve)
 		throws Exception {
 
 		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("EC");
@@ -255,7 +253,7 @@ public class DefaultJWSVerifierFactoryTest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.ES256);
-		Key key = generateECPublicKey(ECKey.Curve.P_256);
+		Key key = generateECPublicKey(Curve.P_256);
 
 		JWSVerifierFactory factory = new DefaultJWSVerifierFactory();
 
@@ -271,7 +269,7 @@ public class DefaultJWSVerifierFactoryTest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.ES384);
-		Key key = generateECPublicKey(ECKey.Curve.P_384);
+		Key key = generateECPublicKey(Curve.P_384);
 
 		JWSVerifierFactory factory = new DefaultJWSVerifierFactory();
 
@@ -287,7 +285,7 @@ public class DefaultJWSVerifierFactoryTest extends TestCase {
 		throws Exception {
 
 		JWSHeader header = new JWSHeader(JWSAlgorithm.ES512);
-		Key key = generateECPublicKey(ECKey.Curve.P_521);
+		Key key = generateECPublicKey(Curve.P_521);
 
 		JWSVerifierFactory factory = new DefaultJWSVerifierFactory();
 

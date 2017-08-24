@@ -21,9 +21,8 @@ package com.nimbusds.jose.jwk;
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.Requirement;
+import junit.framework.TestCase;
 
 
 /**
@@ -41,6 +40,9 @@ public class KeyTypeTest extends TestCase {
 		assertEquals(Requirement.RECOMMENDED, KeyType.EC.getRequirement());
 
 		assertEquals("oct", KeyType.OCT.getValue());
+		assertEquals(Requirement.OPTIONAL, KeyType.OCT.getRequirement());
+		
+		assertEquals("OKP", KeyType.OKP.getValue());
 		assertEquals(Requirement.OPTIONAL, KeyType.OCT.getRequirement());
 	}
 
@@ -61,6 +63,8 @@ public class KeyTypeTest extends TestCase {
 		assertEquals(KeyType.EC, KeyType.forAlgorithm(JWSAlgorithm.ES256));
 		assertEquals(KeyType.EC, KeyType.forAlgorithm(JWSAlgorithm.ES384));
 		assertEquals(KeyType.EC, KeyType.forAlgorithm(JWSAlgorithm.ES512));
+		
+		assertEquals(KeyType.OKP, KeyType.forAlgorithm(JWSAlgorithm.EdDSA));
 
 		assertEquals(KeyType.OCT, KeyType.forAlgorithm(JWSAlgorithm.HS256));
 		assertEquals(KeyType.OCT, KeyType.forAlgorithm(JWSAlgorithm.HS384));

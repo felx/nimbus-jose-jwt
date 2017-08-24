@@ -39,7 +39,7 @@ public interface AssymetricJWK {
 	 *
 	 * @return The Java public key.
 	 *
-	 * @throws JOSEException If conversion failed.
+	 * @throws JOSEException If conversion failed or is not supported.
 	 */
 	PublicKey toPublicKey()
 		throws JOSEException;
@@ -50,7 +50,7 @@ public interface AssymetricJWK {
 	 *
 	 * @return The Java private key, {@code null} if not specified.
 	 *
-	 * @throws JOSEException If conversion failed.
+	 * @throws JOSEException If conversion failed or is not supported.
 	 */
 	PrivateKey toPrivateKey()
 		throws JOSEException;
@@ -62,7 +62,7 @@ public interface AssymetricJWK {
 	 * @return The Java key pair. The private key will be {@code null} if
 	 *         not specified.
 	 *
-	 * @throws JOSEException If conversion failed.
+	 * @throws JOSEException If conversion failed or is not supported.
 	 */
 	KeyPair toKeyPair()
 		throws JOSEException;

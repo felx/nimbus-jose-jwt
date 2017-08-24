@@ -25,7 +25,7 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
 import junit.framework.TestCase;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
@@ -148,7 +148,7 @@ public class X509CertUtilsTest extends TestCase {
 		final String ecPubKeyAlg = "1.2.840.10045.2.1";
 		
 		assertEquals(ecPubKeyAlg, certHolder.getSubjectPublicKeyInfo().getAlgorithm().getAlgorithm().getId());
-		assertEquals(ECKey.Curve.P_256.getOID(), certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString());
+		assertEquals(Curve.P_256.getOID(), certHolder.getSubjectPublicKeyInfo().getAlgorithm().getParameters().toString());
 	}
 	
 	

@@ -111,7 +111,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertFalse(key.isPrivate());
@@ -140,13 +140,13 @@ public class JWKSetTest extends TestCase {
 	public void testSerializeAndParsePublicJWKSet()
 		throws Exception {
 		
-		ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+		ECParameterSpec ecParameterSpec = Curve.P_256.toECParameterSpec();
 		
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
 		generator.initialize(ecParameterSpec);
 		KeyPair keyPair = generator.generateKeyPair();
 		
-		ECKey ecKey = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic())
+		ECKey ecKey = new ECKey.Builder(Curve.P_256, (ECPublicKey)keyPair.getPublic())
 			.privateKey((ECPrivateKey) keyPair.getPrivate())
 			.keyUse(KeyUse.ENCRYPTION)
 			.algorithm(JWEAlgorithm.ECDH_ES)
@@ -180,7 +180,7 @@ public class JWKSetTest extends TestCase {
 		// Check first EC key
 		ECKey ecKeyOut = (ECKey)keySet.getKeys().get(0);
 		assertNotNull(ecKeyOut);
-		assertEquals(ECKey.Curve.P_256, ecKeyOut.getCurve());
+		assertEquals(Curve.P_256, ecKeyOut.getCurve());
 		assertEquals(ecKey.getX(), ecKeyOut.getX());
 		assertEquals(ecKey.getY(), ecKeyOut.getY());
 		assertEquals(KeyUse.ENCRYPTION, ecKeyOut.getKeyUse());
@@ -318,7 +318,7 @@ public class JWKSetTest extends TestCase {
 
 		ECKey ecKey = (ECKey)key;
 
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertEquals("870MB6gfuTJ4HtUnUvYMyJpr5eUZNP4Bk43bVdj3eAE", ecKey.getD().toString());
@@ -467,7 +467,7 @@ public class JWKSetTest extends TestCase {
 		assertNull(key.getKeyOperations());
 
 		ECKey ecKey = (ECKey)key;
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertFalse(key.isPrivate());
@@ -529,7 +529,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertFalse(key.isPrivate());
@@ -653,7 +653,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertFalse(key.isPrivate());
@@ -744,7 +744,7 @@ public class JWKSetTest extends TestCase {
 		assertEquals(KeyUse.ENCRYPTION, key.getKeyUse());
 
 		ECKey ecKey = (ECKey)key;
-		assertEquals(ECKey.Curve.P_256, ecKey.getCurve());
+		assertEquals(Curve.P_256, ecKey.getCurve());
 		assertEquals("MKBCTNIcKUSDii11ySs3526iDZ8AiTo7Tu6KPAqv7D4", ecKey.getX().toString());
 		assertEquals("4Etl6SRW2YiLUrN5vfvVHuhp7x8PxltmWWlbbM4IFyM", ecKey.getY().toString());
 		assertFalse(key.isPrivate());
@@ -819,7 +819,7 @@ public class JWKSetTest extends TestCase {
 		
 		// EC key pair
 		KeyPairGenerator ecGen = KeyPairGenerator.getInstance("EC");
-		ecGen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		ecGen.initialize(Curve.P_521.toECParameterSpec());
 		KeyPair ecKP = ecGen.generateKeyPair();
 		ECPublicKey ecPublicKey = (ECPublicKey)ecKP.getPublic();
 		ECPrivateKey ecPrivateKey = (ECPrivateKey)ecKP.getPrivate();
@@ -876,7 +876,7 @@ public class JWKSetTest extends TestCase {
 		
 		ECKey ecKey = (ECKey) jwkSet.getKeyByKeyId("3");
 		assertNotNull(ecKey);
-		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(Curve.P_521, ecKey.getCurve());
 		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
 		assertEquals("3", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
