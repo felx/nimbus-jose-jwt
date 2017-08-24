@@ -24,14 +24,14 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.interfaces.ECPrivateKey;
 
-import net.jcip.annotations.ThreadSafe;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSSigner;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
@@ -102,7 +102,7 @@ public class ECDSASigner extends ECDSAProvider implements JWSSigner {
 	 *
 	 * @throws JOSEException If the elliptic curve of key is not supported.
 	 */
-	public ECDSASigner(final PrivateKey privateKey, final ECKey.Curve curve)
+	public ECDSASigner(final PrivateKey privateKey, final Curve curve)
 		throws JOSEException {
 
 		super(ECDSA.resolveAlgorithm(curve));

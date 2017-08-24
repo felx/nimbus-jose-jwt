@@ -23,7 +23,7 @@ import java.util.Collection;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
 
 
 /**
@@ -129,8 +129,8 @@ class AlgorithmSupportMessage {
 	 *
 	 * @return The message.
 	 */
-	public static String unsupportedEllipticCurve(final ECKey.Curve unsupported,
-						      final Collection<ECKey.Curve> supported) {
+	public static String unsupportedEllipticCurve(final Curve unsupported,
+						      final Collection<Curve> supported) {
 
 		return "Unsupported elliptic curve " + unsupported + ", must be " + itemize(supported);
 	}

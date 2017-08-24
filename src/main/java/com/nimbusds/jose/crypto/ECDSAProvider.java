@@ -82,7 +82,7 @@ abstract class ECDSAProvider extends BaseJWSProvider {
 	/**
 	 * Returns the supported ECDSA algorithm.
 	 *
-	 * @see #supportedECDSAAlgorithm()
+	 * @see #supportedJWSAlgorithms()
 	 *
 	 * @return The supported ECDSA algorithm.
 	 */

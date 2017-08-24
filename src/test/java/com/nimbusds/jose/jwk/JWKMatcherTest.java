@@ -38,10 +38,9 @@ import junit.framework.TestCase;
  * Tests the JWK matcher.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-13
+ * @version 2018-08-24
  */
 public class JWKMatcherTest extends TestCase {
-	
 	
 	private static final Base64URL EC_P256_X;
 	
@@ -49,13 +48,13 @@ public class JWKMatcherTest extends TestCase {
 	
 	static {
 		try {
-			ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+			ECParameterSpec ecParameterSpec = Curve.P_256.toECParameterSpec();
 			
 			KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
 			generator.initialize(ecParameterSpec);
 			KeyPair keyPair = generator.generateKeyPair();
 			
-			ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic()).
+			ECKey ecJWK = new ECKey.Builder(Curve.P_256, (ECPublicKey)keyPair.getPublic()).
 				privateKey((ECPrivateKey) keyPair.getPrivate()).
 				build();
 			
@@ -184,9 +183,9 @@ public class JWKMatcherTest extends TestCase {
 		Set<String> ids = new HashSet<>();
 		ids.add("1");
 		
-		Set<ECKey.Curve> curves = new HashSet<>();
-		curves.add(ECKey.Curve.P_256);
-		curves.add(ECKey.Curve.P_384);
+		Set<Curve> curves = new HashSet<>();
+		curves.add(Curve.P_256);
+		curves.add(Curve.P_384);
 
 		JWKMatcher matcher = new JWKMatcher(types, uses, ops, algs, ids, true, true, 128, 256, curves);
 
@@ -228,9 +227,9 @@ public class JWKMatcherTest extends TestCase {
 		
 		Set<Integer> sizes = new HashSet<>(Arrays.asList(128, 256));
 		
-		Set<ECKey.Curve> curves = new HashSet<>();
-		curves.add(ECKey.Curve.P_256);
-		curves.add(ECKey.Curve.P_384);
+		Set<Curve> curves = new HashSet<>();
+		curves.add(Curve.P_256);
+		curves.add(Curve.P_384);
 
 		JWKMatcher matcher = new JWKMatcher(types, uses, ops, algs, ids, true, true, 128, 256, sizes, curves);
 
@@ -274,9 +273,9 @@ public class JWKMatcherTest extends TestCase {
 		
 		Set<Integer> sizes = new HashSet<>(Arrays.asList(128, 256));
 		
-		Set<ECKey.Curve> curves = new HashSet<>();
-		curves.add(ECKey.Curve.P_256);
-		curves.add(ECKey.Curve.P_384);
+		Set<Curve> curves = new HashSet<>();
+		curves.add(Curve.P_256);
+		curves.add(Curve.P_384);
 
 		JWKMatcher matcher = new JWKMatcher(types, uses, ops, algs, ids, true, true, true, true, 128, 256, sizes, curves);
 
@@ -320,9 +319,9 @@ public class JWKMatcherTest extends TestCase {
 		
 		Set<Integer> sizes = new HashSet<>(Arrays.asList(128, 256));
 		
-		Set<ECKey.Curve> curves = new HashSet<>();
-		curves.add(ECKey.Curve.P_256);
-		curves.add(ECKey.Curve.P_384);
+		Set<Curve> curves = new HashSet<>();
+		curves.add(Curve.P_256);
+		curves.add(Curve.P_384);
 		
 		JWKMatcher matcher = new JWKMatcher.Builder()
 			.keyTypes(types)
@@ -365,7 +364,7 @@ public class JWKMatcherTest extends TestCase {
 			.privateOnly(true)
 			.publicOnly(true)
 			.keySizes(128, 256)
-			.curves(ECKey.Curve.P_256, null)
+			.curves(Curve.P_256, null)
 			.build();
 
 		Set<KeyType> types = matcher.getKeyTypes();
@@ -401,8 +400,8 @@ public class JWKMatcherTest extends TestCase {
 		assertTrue(matcher.getKeySizes().contains(256));
 		assertEquals(2, matcher.getKeySizes().size());
 		
-		Set<ECKey.Curve> curves = matcher.getCurves();
-		assertTrue(curves.containsAll(Arrays.asList(ECKey.Curve.P_256, null)));
+		Set<Curve> curves = matcher.getCurves();
+		assertTrue(curves.containsAll(Arrays.asList(Curve.P_256, null)));
 		assertEquals(2, curves.size());
 	}
 
@@ -421,7 +420,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyType(KeyType.RSA).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("kty=RSA", matcher.toString());
 	}
@@ -432,7 +431,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyTypes(KeyType.RSA, KeyType.EC).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build()));
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertTrue(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("kty=[RSA, EC]", matcher.toString());
 	}
@@ -443,7 +442,7 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyUse(KeyUse.ENCRYPTION).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256,EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256,EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("use=enc", matcher.toString());
 	}
@@ -454,8 +453,8 @@ public class JWKMatcherTest extends TestCase {
 		JWKMatcher matcher = new JWKMatcher.Builder().keyUses(KeyUse.SIGNATURE, null).build();
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build()));
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build()));
+		assertTrue(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build()));
 		
 		assertEquals("use=[sig, null]", matcher.toString());
 	}
@@ -467,7 +466,7 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.DECRYPT))).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("key_ops=decrypt", matcher.toString());
 	}
@@ -479,7 +478,7 @@ public class JWKMatcherTest extends TestCase {
 
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY))).build()));
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 		
 		assertEquals("key_ops=[sign, verify]", matcher.toString());
 	}
@@ -492,9 +491,9 @@ public class JWKMatcherTest extends TestCase {
 		assertTrue(matcher.matches(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build()));
 
-		assertTrue(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
+		assertTrue(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build()));
 
-		assertFalse(matcher.matches(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
+		assertFalse(matcher.matches(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build()));
 		
 		assertEquals("key_ops=[sign, null]", matcher.toString());
@@ -630,13 +629,13 @@ public class JWKMatcherTest extends TestCase {
 		
 		JWKMatcher m = new JWKMatcher.Builder()
 			.keyType(KeyType.EC)
-			.curve(ECKey.Curve.P_256)
+			.curve(Curve.P_256)
 			.build();
 		
 		assertTrue(m.matches(ecKey));
 		
 		m = new JWKMatcher.Builder()
-			.curve(ECKey.Curve.P_256)
+			.curve(Curve.P_256)
 			.build();
 		
 		assertTrue(m.matches(ecKey));
@@ -655,7 +654,7 @@ public class JWKMatcherTest extends TestCase {
 		
 		JWKMatcher m = new JWKMatcher.Builder()
 			.keyType(KeyType.EC)
-			.curve(ECKey.Curve.P_384)
+			.curve(Curve.P_384)
 			.build();
 		
 		assertFalse(m.matches(ecKey));
@@ -709,7 +708,7 @@ public class JWKMatcherTest extends TestCase {
 		RSAKey jwk = RSAKey.parse(json);
 		
 		JWKMatcher m = new JWKMatcher.Builder()
-			.curve(ECKey.Curve.P_256)
+			.curve(Curve.P_256)
 			.build();
 		
 		assertFalse(m.matches(jwk));
@@ -830,5 +829,24 @@ public class JWKMatcherTest extends TestCase {
 		jwk = new OctetSequenceKey.Builder(keyGen.generateKey()).keyID("1").build();
 		
 		assertTrue(matcher.matches(jwk));
+	}
+	
+	
+	public void testMatchOKP()
+		throws Exception {
+		
+		String json = "{\"kty\":\"OKP\",\"crv\":\"X448\",\"kid\":\"Dave\",\n" +
+			"   \"x\":\"PreoKbDNIPW8_AtZm2_sz22kYnEHvbDU80W0MCfYuXL8PjT7QjKhPKcG3LV67D2uB73BxnvzNgk\"}";
+		
+		OctetKeyPair okp = OctetKeyPair.parse(json);
+		
+		JWKMatcher matcher = new JWKMatcher.Builder()
+			.keyTypes(KeyType.OKP)
+			.curve(Curve.X448)
+			.keyID("Dave")
+			.keySize(448)
+			.build();
+		
+		assertTrue(matcher.matches(okp));
 	}
 }

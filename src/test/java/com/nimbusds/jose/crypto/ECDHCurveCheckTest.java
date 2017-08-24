@@ -26,8 +26,12 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.text.ParseException;
 
-import com.nimbusds.jose.*;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import junit.framework.TestCase;
@@ -40,7 +44,7 @@ import junit.framework.TestCase;
 public class ECDHCurveCheckTest extends TestCase {
 	
 	
-	private static ECKey generateECJWK(final ECKey.Curve curve)
+	private static ECKey generateECJWK(final Curve curve)
 		throws Exception {
 		
 		final ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
@@ -91,7 +95,7 @@ public class ECDHCurveCheckTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256_attackPoint1()
 		throws Exception {
 		
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 		
 		BigInteger privateReceiverKey = ecJWK.toECPrivateKey().getS();
 		
@@ -144,7 +148,7 @@ public class ECDHCurveCheckTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256_attackPoint2()
 		throws Exception {
 		
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 		
 		BigInteger privateReceiverKey = ecJWK.toECPrivateKey().getS();
 		

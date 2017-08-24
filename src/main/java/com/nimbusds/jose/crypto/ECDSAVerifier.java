@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.utils.ECChecks;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import net.jcip.annotations.ThreadSafe;
@@ -120,7 +121,7 @@ public class ECDSAVerifier extends ECDSAProvider implements JWSVerifier, Critica
 		
 		if (! ECChecks.isPointOnCurve(
 			publicKey,
-			ECKey.Curve.forJWSAlgoritm(supportedECDSAAlgorithm()).toECParameterSpec())) {
+			Curve.forJWSAlgorithm(supportedECDSAAlgorithm()).iterator().next().toECParameterSpec())) {
 			throw new JOSEException("Curve / public key parameters mismatch");
 		}
 

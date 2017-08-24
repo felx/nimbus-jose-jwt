@@ -49,7 +49,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the base JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-04-19
+ * @version 2017-08-24
  */
 public class JWKTest extends TestCase {
 	
@@ -93,7 +93,7 @@ public class JWKTest extends TestCase {
 		assertNotNull(jwk.getX509CertSHA256Thumbprint());
 		assertFalse(jwk.isPrivate());
 		assertTrue(jwk instanceof ECKey);
-		assertEquals(ECKey.Curve.P_256, ((ECKey)jwk).getCurve());
+		assertEquals(Curve.P_256, ((ECKey)jwk).getCurve());
 	}
 	
 	
@@ -167,7 +167,7 @@ public class JWKTest extends TestCase {
 		
 		// Generate key pair
 		KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
-		gen.initialize(ECKey.Curve.P_521.toECParameterSpec());
+		gen.initialize(Curve.P_521.toECParameterSpec());
 		KeyPair kp = gen.generateKeyPair();
 		ECPublicKey publicKey = (ECPublicKey)kp.getPublic();
 		ECPrivateKey privateKey = (ECPrivateKey)kp.getPrivate();
@@ -199,7 +199,7 @@ public class JWKTest extends TestCase {
 		// Load
 		ECKey ecKey = (ECKey)JWK.load(keyStore, "1", "1234".toCharArray());
 		assertNotNull(ecKey);
-		assertEquals(ECKey.Curve.P_521, ecKey.getCurve());
+		assertEquals(Curve.P_521, ecKey.getCurve());
 		assertEquals(KeyUse.SIGNATURE, ecKey.getKeyUse());
 		assertEquals("1", ecKey.getKeyID());
 		assertEquals(1, ecKey.getX509CertChain().size());
@@ -248,5 +248,22 @@ public class JWKTest extends TestCase {
 		keyStore.load(null, password);
 		
 		assertNull(JWK.load(keyStore, "no-such-key-id", "".toCharArray()));
+	}
+	
+	
+	public void testParseOKP()
+		throws Exception {
+		
+		String json = "{\"kty\":\"OKP\",\"crv\":\"X448\",\"kid\":\"Dave\",\"x\":\"PreoKbDNIPW8_AtZm2_sz22kYnEHvbDU80W0MCfYuXL8PjT7QjKhPKcG3LV67D2uB73BxnvzNgk\"}";
+		
+		JWK jwk = JWK.parse(json);
+		assertEquals(KeyType.OKP, jwk.getKeyType());
+		
+		OctetKeyPair okp = (OctetKeyPair)jwk;
+		
+		assertEquals(Curve.X448, okp.getCurve());
+		assertEquals("PreoKbDNIPW8_AtZm2_sz22kYnEHvbDU80W0MCfYuXL8PjT7QjKhPKcG3LV67D2uB73BxnvzNgk", okp.getX().toString());
+		assertEquals("Dave", okp.getKeyID());
+		assertFalse(okp.isPrivate());
 	}
 }

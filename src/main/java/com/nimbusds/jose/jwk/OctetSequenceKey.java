@@ -83,10 +83,10 @@ public final class OctetSequenceKey extends JWK implements SecretJWK {
 	 * <p>Example usage:
 	 *
 	 * <pre>
-	 * OctetSequenceKey key = new OctetSequenceKey.Builder(k).
-	 *                        algorithm(JWSAlgorithm.HS512).
-	 *                        keyID("123").
-	 *                        build();
+	 * OctetSequenceKey key = new OctetSequenceKey.Builder(k)
+	 *     .algorithm(JWSAlgorithm.HS512)
+	 *     .keyID("123")
+	 *     .build();
 	 * </pre>
 	 */
 	public static class Builder {

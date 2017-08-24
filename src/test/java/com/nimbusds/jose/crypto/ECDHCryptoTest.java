@@ -26,24 +26,21 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.Collections;
 import java.util.HashSet;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import junit.framework.TestCase;
-
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.jce.spec.ECNamedCurveSpec;
-
-import org.jose4j.jwe.JsonWebEncryption;
-
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.bc.BouncyCastleProviderSingleton;
+import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jose.util.ByteUtils;
 import com.nimbusds.jose.util.Container;
+import junit.framework.TestCase;
+import org.bouncycastle.jce.ECNamedCurveTable;
+import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
+import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.jose4j.jwe.JsonWebEncryption;
 
 
 /**
@@ -55,7 +52,7 @@ import com.nimbusds.jose.util.Container;
 public class ECDHCryptoTest extends TestCase {
 
 
-	private static ECKey generateECJWK(final ECKey.Curve curve)
+	private static ECKey generateECJWK(final Curve curve)
 		throws Exception {
 
 		ECParameterSpec ecParameterSpec = curve.toECParameterSpec();
@@ -73,7 +70,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -87,7 +84,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_256, epk.getCurve());
+		assertEquals(Curve.P_256, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -109,7 +106,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256_A128KW()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES_A128KW, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -123,7 +120,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_256, epk.getCurve());
+		assertEquals(Curve.P_256, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -145,7 +142,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P384()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_384);
+		ECKey ecJWK = generateECJWK(Curve.P_384);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -159,7 +156,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertEquals(Curve.P_384, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -181,7 +178,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P384_A128KW()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_384);
+		ECKey ecJWK = generateECJWK(Curve.P_384);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES_A128KW, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -195,7 +192,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertEquals(Curve.P_384, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -217,7 +214,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P521()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_521);
+		ECKey ecJWK = generateECJWK(Curve.P_521);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -231,7 +228,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_521, epk.getCurve());
+		assertEquals(Curve.P_521, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -253,7 +250,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P521_A128KW()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_521);
+		ECKey ecJWK = generateECJWK(Curve.P_521);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES_A128KW, EncryptionMethod.A128GCM).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -267,7 +264,7 @@ public class ECDHCryptoTest extends TestCase {
 		jweObject.encrypt(encrypter);
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_521, epk.getCurve());
+		assertEquals(Curve.P_521, epk.getCurve());
 		assertNotNull(epk.getX());
 		assertNotNull(epk.getY());
 		assertNull(epk.getD());
@@ -289,7 +286,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256_DecryptWithJose4j()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A256CBC_HS512).
 			agreementPartyUInfo(Base64URL.encode("Alice")).
@@ -312,7 +309,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_Curve_P256_EncryptWithJose4j()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		// Encrypt
 		JsonWebEncryption jwe = new JsonWebEncryption();
@@ -332,7 +329,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_A128KW_Curve_P256_DecryptWithJose4j()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(
 			JWEAlgorithm.ECDH_ES_A128KW,
@@ -357,7 +354,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCycle_ECDH_ES_A128KW_Curve_P256_EncryptWithJose4j()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		// Encrypt
 		JsonWebEncryption jwe = new JsonWebEncryption();
@@ -433,7 +430,7 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals(EncryptionMethod.A128CBC_HS256, jweHeader.getEncryptionMethod());
 
 		ECKey epkParsed = jweHeader.getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_256, epk.getCurve());
+		assertEquals(Curve.P_256, epk.getCurve());
 		assertEquals("mPUKT_bAWGHIhg0TpjjqVsP1rXWQu_vwVOHHtNkdYoA", epkParsed.getX().toString());
 		assertEquals("8BQAsImGeAS46fyWw5MhYfGTT0IjBpFw2SS34Dv4Irs", epkParsed.getY().toString());
 
@@ -525,7 +522,7 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals(EncryptionMethod.A128GCM, jweHeader.getEncryptionMethod());
 
 		ECKey epkParsed = jweHeader.getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertEquals(Curve.P_384, epk.getCurve());
 		assertEquals("uBo4kHPw6kbjx5l0xowrd_oYzBmaz-GKFZu4xAFFkbYiWgutEK6iuEDsQ6wNdNg3", epkParsed.getX().toString());
 		assertEquals("sp3p5SGhZVC2faXumI-e9JU2Mo8KpoYrFDr5yPNVtW4PgEwZOyQTA-JdaY8tb7E0", epkParsed.getY().toString());
 
@@ -596,7 +593,7 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals(EncryptionMethod.A128GCM, jweObject.getHeader().getEncryptionMethod());
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_384, epk.getCurve());
+		assertEquals(Curve.P_384, epk.getCurve());
 		assertEquals("uBo4kHPw6kbjx5l0xowrd_oYzBmaz-GKFZu4xAFFkbYiWgutEK6iuEDsQ6wNdNg3", epk.getX().toString());
 		assertEquals("sp3p5SGhZVC2faXumI-e9JU2Mo8KpoYrFDr5yPNVtW4PgEwZOyQTA-JdaY8tb7E0", epk.getY().toString());
 
@@ -648,7 +645,7 @@ public class ECDHCryptoTest extends TestCase {
 		assertEquals(EncryptionMethod.A128CBC_HS256, jweObject.getHeader().getEncryptionMethod());
 
 		ECKey epk = jweObject.getHeader().getEphemeralPublicKey();
-		assertEquals(ECKey.Curve.P_256, epk.getCurve());
+		assertEquals(Curve.P_256, epk.getCurve());
 		assertEquals("mPUKT_bAWGHIhg0TpjjqVsP1rXWQu_vwVOHHtNkdYoA", epk.getX().toString());
 		assertEquals("8BQAsImGeAS46fyWw5MhYfGTT0IjBpFw2SS34Dv4Irs", epk.getY().toString());
 
@@ -707,7 +704,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testECKeyGetters()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		ECPublicKey ecPublicKey = ecJWK.toECPublicKey();
 		ECDHEncrypter encrypter = new ECDHEncrypter(ecPublicKey);
@@ -722,7 +719,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCritParamDeferral()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").
@@ -743,7 +740,7 @@ public class ECDHCryptoTest extends TestCase {
 	public void testCritParamReject()
 		throws Exception {
 
-		ECKey ecJWK = generateECJWK(ECKey.Curve.P_256);
+		ECKey ecJWK = generateECJWK(Curve.P_256);
 
 		JWEHeader header = new JWEHeader.Builder(JWEAlgorithm.ECDH_ES, EncryptionMethod.A128CBC_HS256).
 			customParam("exp", "2014-04-24").

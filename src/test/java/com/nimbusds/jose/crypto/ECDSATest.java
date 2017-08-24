@@ -24,14 +24,14 @@ import java.security.interfaces.ECPublicKey;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.ECKey;
+import com.nimbusds.jose.jwk.Curve;
 import junit.framework.TestCase;
 
 
 /**
  * Tests the static ECDSA utilities.
  *
- * @version 2015-05-30
+ * @version 2018-08-24
  */
 public class ECDSATest extends TestCase {
 
@@ -39,15 +39,15 @@ public class ECDSATest extends TestCase {
 	public void testResolveAlgFromCurve()
 		throws JOSEException {
 
-		assertEquals(JWSAlgorithm.ES256, ECDSA.resolveAlgorithm(ECKey.Curve.P_256));
-		assertEquals(JWSAlgorithm.ES384, ECDSA.resolveAlgorithm(ECKey.Curve.P_384));
-		assertEquals(JWSAlgorithm.ES512, ECDSA.resolveAlgorithm(ECKey.Curve.P_521));
+		assertEquals(JWSAlgorithm.ES256, ECDSA.resolveAlgorithm(Curve.P_256));
+		assertEquals(JWSAlgorithm.ES384, ECDSA.resolveAlgorithm(Curve.P_384));
+		assertEquals(JWSAlgorithm.ES512, ECDSA.resolveAlgorithm(Curve.P_521));
 
 		try {
-			ECDSA.resolveAlgorithm((ECKey.Curve)null);
+			ECDSA.resolveAlgorithm((Curve)null);
 
 		} catch (JOSEException e) {
-			assertEquals("The EC key curve is not supported, must be P256, P384 or P521", e.getMessage());
+			assertEquals("The EC key curve is not supported, must be P-256, P-384 or P-521", e.getMessage());
 		}
 	}
 

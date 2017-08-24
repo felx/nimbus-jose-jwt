@@ -25,10 +25,9 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.*;
 
-import junit.framework.TestCase;
-
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64URL;
+import junit.framework.TestCase;
 
 
 /**
@@ -45,13 +44,13 @@ public class JWKSelectorTest extends TestCase {
 	
 	static {
 		try {
-			ECParameterSpec ecParameterSpec = ECKey.Curve.P_256.toECParameterSpec();
+			ECParameterSpec ecParameterSpec = Curve.P_256.toECParameterSpec();
 			
 			KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
 			generator.initialize(ecParameterSpec);
 			KeyPair keyPair = generator.generateKeyPair();
 			
-			ECKey ecJWK = new ECKey.Builder(ECKey.Curve.P_256, (ECPublicKey)keyPair.getPublic()).
+			ECKey ecJWK = new ECKey.Builder(Curve.P_256, (ECPublicKey)keyPair.getPublic()).
 				privateKey((ECPrivateKey) keyPair.getPrivate()).
 				build();
 			
@@ -95,7 +94,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -115,7 +114,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -139,7 +138,7 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.ENCRYPTION).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -160,8 +159,8 @@ public class JWKSelectorTest extends TestCase {
 
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1").keyUse(KeyUse.SIGNATURE).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3").keyUse(KeyUse.ENCRYPTION).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -187,7 +186,7 @@ public class JWKSelectorTest extends TestCase {
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Arrays.asList(KeyOperation.SIGN, KeyOperation.VERIFY))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
 
 		JWKSet jwkSet = new JWKSet(keyList);
 
@@ -208,8 +207,8 @@ public class JWKSelectorTest extends TestCase {
 		List<JWK> keyList = new ArrayList<>();
 		keyList.add(new RSAKey.Builder(new Base64URL("n"), new Base64URL("e")).keyID("1")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.SIGN))).build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
-		keyList.add(new ECKey.Builder(ECKey.Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("2").build());
+		keyList.add(new ECKey.Builder(Curve.P_256, EC_P256_X, EC_P256_Y).keyID("3")
 			.keyOperations(new HashSet<>(Collections.singletonList(KeyOperation.ENCRYPT))).build());
 
 		JWKSet jwkSet = new JWKSet(keyList);

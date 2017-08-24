@@ -42,12 +42,13 @@ import net.jcip.annotations.Immutable;
  *     <li>{@link #PS256}
  *     <li>{@link #PS384}
  *     <li>{@link #PS512}
+ *     <li>{@link #EdDSA}
  * </ul>
  *
  * <p>Additional JWS algorithm names can be defined using the constructors.
  *
  * @author Vladimir Dzhuvinov
- * @version 2016-08-24
+ * @version 2017-08-22
  */
 @Immutable
 public final class JWSAlgorithm extends Algorithm {
@@ -129,6 +130,12 @@ public final class JWSAlgorithm extends Algorithm {
 	 * function with SHA-512 (optional).
 	 */
 	public static final JWSAlgorithm PS512 = new JWSAlgorithm("PS512", Requirement.OPTIONAL);
+	
+	
+	/**
+	 * EdDSA signature algorithms (optional).
+	 */
+	public static final JWSAlgorithm EdDSA = new JWSAlgorithm("EdDSA", Requirement.OPTIONAL);
 
 
 	/**
@@ -160,11 +167,21 @@ public final class JWSAlgorithm extends Algorithm {
 		
 		
 		/**
+		 * Edwards Curve signature (EdDSA).
+		 */
+		public static final Family ED = new Family(EdDSA);
+		
+		
+		/**
 		 * Super family of all digital signature based JWS algorithms.
 		 */
-		public static final Family SIGNATURE = new Family(ArrayUtils.concat(
-			RSA.toArray(new JWSAlgorithm[]{}),
-			EC.toArray(new JWSAlgorithm[]{})));
+		public static final Family SIGNATURE = new Family(ArrayUtils
+			.concat(
+				RSA.toArray(new JWSAlgorithm[]{}),
+				EC.toArray(new JWSAlgorithm[]{}),
+				ED.toArray(new JWSAlgorithm[]{})
+			)
+		);
 
 
 		/***
@@ -237,6 +254,8 @@ public final class JWSAlgorithm extends Algorithm {
 			return PS384;
 		} else if (s.equals(PS512.getName())) {
 			return PS512;
+		} else if (s.equals(EdDSA.getName())) {
+			return EdDSA;
 		} else {
 			return new JWSAlgorithm(s);
 		}

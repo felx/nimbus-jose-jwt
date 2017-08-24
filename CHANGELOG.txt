@@ -746,3 +746,19 @@ version 4.41.2 (2017-08-23)
     * Fixes JWTClaimsSet.getAudience when the "aud" claim is stored internally
       as the special case string representation (issue #236).
 
+version 5.0 (2017-08-24)
+    * Adds OctetKeyPair class to represent Octet Key Pair (OKP) JSON Web Keys
+      (JWK). See "CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in
+      JSON Object Signing and Encryption (JOSE)" (RFC 8037).
+    * Adds new JWSAlgorithm.EdDSA constant for Edwards-curve Digital Signature
+      Algorithm (EdDSA).
+    * Factors out ECKey.Curve inner class into separate Curve class (breaking
+      change).
+    * Adds new Curve.Ed25519 constant for Ed25519 curve.
+    * Adds new Curve.Ed448 constant for Ed448 curve.
+    * Adds new Curve.X25519 constant for X25519 curve.
+    * Adds new Curve.X448 constant for X448 curve.
+    * Adds new CurveBasedJWK interface for ECKey and OctetKeyPair.
+    * Updates JWKMatcher to support OctetKeyPair matching.
+    * Updates JWK.parse method to support OctetKeyPair parsing.
+

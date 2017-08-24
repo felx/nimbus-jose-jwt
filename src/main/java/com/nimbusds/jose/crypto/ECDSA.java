@@ -24,10 +24,9 @@ import java.security.Signature;
 import java.security.interfaces.ECKey;
 import java.security.spec.ECParameterSpec;
 
-import static com.nimbusds.jose.jwk.ECKey.Curve;
-
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.jwk.Curve;
 
 
 /**
@@ -71,7 +70,7 @@ class ECDSA {
 		throws JOSEException {
 
 		if (curve == null) {
-			throw new JOSEException("The EC key curve is not supported, must be P256, P384 or P521");
+			throw new JOSEException("The EC key curve is not supported, must be P-256, P-384 or P-521");
 		} else if (Curve.P_256.equals(curve)) {
 			return JWSAlgorithm.ES256;
 		} else if (Curve.P_384.equals(curve)) {
