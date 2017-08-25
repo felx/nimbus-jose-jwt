@@ -28,10 +28,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.*;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
@@ -48,6 +45,14 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 /**
  * Public and private {@link KeyType#EC Elliptic Curve} JSON Web Key (JWK). 
  * This class is immutable.
+ *
+ * <p>Supported curves:
+ *
+ * <ul>
+ *     <li>{@link Curve#P_256 P-256}
+ *     <li>{@link Curve#P_384 P-384}
+ *     <li>{@link Curve#P_521 P-512}
+ * </ul>
  *
  * <p>Provides EC JWK import from / export to the following standard Java
  * interfaces and classes:
@@ -99,13 +104,21 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
  *
  * @author Vladimir Dzhuvinov
  * @author Justin Richer
- * @version 2018-08-23
+ * @version 2018-08-25
  */
 @Immutable
 public final class ECKey extends JWK implements AssymetricJWK, CurveBasedJWK {
 
 
 	private static final long serialVersionUID = 1L;
+	
+	
+	/**
+	 * Supported EC curves.
+	 */
+	public static final Set<Curve> SUPPORTED_CURVES = Collections.unmodifiableSet(
+		new HashSet<>(Arrays.asList(Curve.P_256, Curve.P_384, Curve.P_521))
+	);
 
 
 	/**
@@ -639,9 +652,7 @@ public final class ECKey extends JWK implements AssymetricJWK, CurveBasedJWK {
 	 */
 	private static void ensurePublicCoordinatesOnCurve(final Curve crv, final Base64URL x, final Base64URL y) {
 		
-		ECParameterSpec ecSpec = crv.toECParameterSpec();
-		
-		if (ecSpec == null) {
+		if (! SUPPORTED_CURVES.contains(crv)) {
 			throw new IllegalArgumentException("Unknown / unsupported curve: " + crv);
 		}
 		

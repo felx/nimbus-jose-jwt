@@ -24,9 +24,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.text.ParseException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import com.nimbusds.jose.Algorithm;
 import com.nimbusds.jose.JOSEException;
@@ -40,7 +38,16 @@ import net.minidev.json.JSONObject;
 
 /**
  * {@link KeyType#OKP Octet key pair} JSON Web Key (JWK), used to represent
- * Edwards-curve keys.
+ * Edwards-curve keys. This class is immutable.
+ *
+ * <p>Supported curves:
+ *
+ * <ul>
+ *     <li>{@link Curve#Ed25519 Ed25519}
+ *     <li>{@link Curve#Ed448 Ed448}
+ *     <li>{@link Curve#X25519 X25519}
+ *     <li>{@link Curve#X448 X448}
+ * </ul>
  *
  * <p>Example JSON object representation of a public OKP JWK:
  *
@@ -77,13 +84,21 @@ import net.minidev.json.JSONObject;
  * </pre>
  *
  * @author Vladimir Dzhuvinov
- * @version 2017-08-24
+ * @version 2017-08-25
  */
 @Immutable
 public class OctetKeyPair extends JWK implements AssymetricJWK, CurveBasedJWK {
 	
 	
 	private static final long serialVersionUID = 1L;
+	
+	
+	/**
+	 * Supported Edwards curves.
+	 */
+	public static final Set<Curve> SUPPORTED_CURVES = Collections.unmodifiableSet(
+		new HashSet<>(Arrays.asList(Curve.Ed25519, Curve.Ed448, Curve.X25519, Curve.X448))
+	);
 	
 	
 	/**
@@ -145,7 +160,7 @@ public class OctetKeyPair extends JWK implements AssymetricJWK, CurveBasedJWK {
 		
 		
 		/**
-		 * X.509 certificate URL, optional. TODO
+		 * X.509 certificate URL, optional.
 		 */
 		private URI x5u;
 		
@@ -504,6 +519,10 @@ public class OctetKeyPair extends JWK implements AssymetricJWK, CurveBasedJWK {
 			throw new IllegalArgumentException("The curve must not be null");
 		}
 		
+		if (! SUPPORTED_CURVES.contains(crv)) {
+			throw new IllegalArgumentException("Unknown / unsupported curve: " + crv);
+		}
+		
 		this.crv = crv;
 		
 		if (x == null) {
@@ -549,6 +568,10 @@ public class OctetKeyPair extends JWK implements AssymetricJWK, CurveBasedJWK {
 		
 		if (crv == null) {
 			throw new IllegalArgumentException("The curve must not be null");
+		}
+		
+		if (! SUPPORTED_CURVES.contains(crv)) {
+			throw new IllegalArgumentException("Unknown / unsupported curve: " + crv);
 		}
 		
 		this.crv = crv;

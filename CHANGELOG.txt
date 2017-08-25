@@ -762,3 +762,12 @@ version 5.0 (2017-08-24)
     * Updates JWKMatcher to support OctetKeyPair matching.
     * Updates JWK.parse method to support OctetKeyPair parsing.
 
+version 5.1 (2017-08-25)
+    * Adds ECKey.SUPPORTED_CURVES public static constant listing the supported
+      curves.
+    * Adds OctetKeyPair.SUPPORTED_CURVES public static constant listing the
+      supported curves.
+    * Adds check in OctetKeyPair constructor to throw an
+      IllegalArgumentException if the curve is not Ed25519, Ed448, X25519 or
+      X448.
+

@@ -53,7 +53,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
  * Tests the EC JWK class.
  *
  * @author Vladimir Dzhuvinov
- * @version 2018-08-24
+ * @version 2018-08-25
  */
 public class ECKeyTest extends TestCase {
 
@@ -124,15 +124,25 @@ public class ECKeyTest extends TestCase {
 		assertEquals(384, new ECKey.Builder(ExampleKeyP384Alt.CRV, ExampleKeyP384Alt.X, ExampleKeyP384Alt.Y).build().size());
 		assertEquals(521, new ECKey.Builder(ExampleKeyP521Alt.CRV, ExampleKeyP521Alt.X, ExampleKeyP521Alt.Y).build().size());
 	}
+	
+	
+	public void testSupportedCurvesConstant() {
+		
+		assertTrue(ECKey.SUPPORTED_CURVES.contains(Curve.P_256));
+		assertTrue(ECKey.SUPPORTED_CURVES.contains(Curve.P_384));
+		assertTrue(ECKey.SUPPORTED_CURVES.contains(Curve.P_521));
+		assertEquals(3, ECKey.SUPPORTED_CURVES.size());
+	}
 
 
 	public void testUnknownCurve() {
-
+		
 		try {
 			new ECKey.Builder(new Curve("unknown"), ExampleKeyP256.X, ExampleKeyP256.Y).build();
 			fail();
 		} catch (IllegalStateException e) {
 			assertEquals("Unknown / unsupported curve: unknown", e.getMessage());
+			assertTrue(e.getCause() instanceof IllegalArgumentException);
 		}
 	}
 

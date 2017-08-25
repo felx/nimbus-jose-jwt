@@ -124,6 +124,16 @@ public class OctetKeyPairTest extends TestCase {
 	}
 	
 	
+	public void testSupportedCurvesConstant() {
+		
+		assertTrue(OctetKeyPair.SUPPORTED_CURVES.contains(Curve.Ed25519));
+		assertTrue(OctetKeyPair.SUPPORTED_CURVES.contains(Curve.Ed448));
+		assertTrue(OctetKeyPair.SUPPORTED_CURVES.contains(Curve.X25519));
+		assertTrue(OctetKeyPair.SUPPORTED_CURVES.contains(Curve.X448));
+		assertEquals(4, OctetKeyPair.SUPPORTED_CURVES.size());
+	}
+	
+	
 	public void testPrivateConstructorAndSerialization()
 		throws Exception {
 		
@@ -396,5 +406,37 @@ public class OctetKeyPairTest extends TestCase {
 			.build();
 		
 		assertEquals(key.computeThumbprint().toString(), key.getKeyID());
+	}
+	
+	
+	public void testRejectUnsupportedCurve() {
+		
+		for(Curve crv: new HashSet<>(Arrays.asList(Curve.P_256, Curve.P_384, Curve.P_521))) {
+			
+			// public OKP
+			try {
+				new OctetKeyPair(crv, EXAMPLE_OKP_ED25519.X, null, null, null, null, null, null, null, null, null);
+				fail();
+			} catch (IllegalArgumentException e) {
+				assertEquals("Unknown / unsupported curve: " + crv , e.getMessage());
+			}
+			
+			// public / private OKP
+			try {
+				new OctetKeyPair(crv, EXAMPLE_OKP_ED25519.X, EXAMPLE_OKP_ED25519.D, null, null, null, null, null, null, null, null, null);
+				fail();
+			} catch (IllegalArgumentException e) {
+				assertEquals("Unknown / unsupported curve: " + crv , e.getMessage());
+			}
+			
+			// builder
+			try {
+				new OctetKeyPair.Builder(crv, EXAMPLE_OKP_ED25519.X).build();
+				fail();
+			} catch (IllegalStateException e) {
+				assertEquals("Unknown / unsupported curve: " + crv , e.getMessage());
+				assertTrue(e.getCause() instanceof IllegalArgumentException);
+			}
+		}
 	}
 }
